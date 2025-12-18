@@ -684,7 +684,7 @@ export default function CustomerCandidateLists(props) {
                   Applied{reportData?.Applied > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Applied}</span>)}
                 </Button>
 
-                {isStaffingFirm && (<Button
+                {isStaffingFirm === true && (<Button
                   color="primary"
                   disabled={loading}
                   className={

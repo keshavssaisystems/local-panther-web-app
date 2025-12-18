@@ -514,8 +514,9 @@ export const CandidateCardView = (props) => {
                   color="primary"
                   onClick={() => onActionClick("presented")}
                   size="sm"
+                  disabled={props?.data?.ispresented}
                 >
-                  <BsCheckCircle ></BsCheckCircle >  Present
+                  <BsCheckCircle ></BsCheckCircle >  {props?.data?.ispresented ? "Presented" : "Present"}
                 </Button>
               )}
               <Button

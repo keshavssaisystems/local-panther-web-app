@@ -36,6 +36,7 @@ import axios from "axios";
 
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { is } from "date-fns/locale";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -51,6 +52,31 @@ export const CustCandidateListView = (props) => {
   const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
   const [offerUploadLoading, setOfferUploadLoading] = useState(false);
   const [isStaffingFirm, setIsStaffingFirm] = useState(props.isStaffingFirm);
+  // custom styles to make column sizing predictable and enable truncation
+  const customStyles = {
+    table: {
+      style: {
+        tableLayout: "fixed",
+      },
+    },
+    headCells: {
+      style: {
+        fontSize: "14px",
+        fontWeight: 600,
+        paddingLeft: '8px',
+        paddingRight: '8px',
+      },
+    },
+    cells: {
+      style: {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        paddingLeft: '8px',
+        paddingRight: '8px',
+      },
+    },
+  };
   // Use Redux dispatch for snackbar
   const dispatch = useDispatch();
   const durationOptions = useSelector(
@@ -273,7 +299,7 @@ export const CustCandidateListView = (props) => {
           ) : (
             <></>
           )}
-          {isStaffingFirm && (
+          {isStaffingFirm === true && (
             <Button
               // outline
               title={row.ispresented ? "Candidate already presented" : "Present"}
@@ -321,7 +347,7 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_schedule} alt="list maybe"></img>
           </Button>
-          {isStaffingFirm && (
+          {isStaffingFirm === true && (
             <Button
               // outline
               title={row.ispresented === true ? "Candidate already presented" : "Present"}
@@ -626,7 +652,7 @@ export const CustCandidateListView = (props) => {
             wrap: true,
             width: "15%",
           },
-          {
+          ...isStaffingFirm === false ? [] : [{
             name: <span className="table-title">Client name</span>,
             id: "Clientname",
             cell: (row) => (
@@ -638,8 +664,7 @@ export const CustCandidateListView = (props) => {
             sortable: true,
             wrap: true,
             width: "15%",
-            hide: isStaffingFirm
-          },
+          }],
           {
             name: <span className="table-title">Job title</span>,
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
@@ -690,9 +715,10 @@ export const CustCandidateListView = (props) => {
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
               wrap: true,
-              width: "12%",
+              maxWidth: "12%",
+              minWidth: "10%",
             },
-            {
+            ...isStaffingFirm === false ? [] : [{
               name: <span className="table-title">Client name</span>,
               id: "Clientname",
               cell: (row) => (
@@ -703,15 +729,16 @@ export const CustCandidateListView = (props) => {
               selector: (row) => row.clientcompanyname,
               sortable: true,
               wrap: true,
-              width: "12%",
-              hide: isStaffingFirm
-            },
+              maxWidth: "12%",
+              minWidth: "10%",
+            }],
             {
               name: <span className="table-title">Job title</span>,
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "15%",
+              maxWidth: "18%",
+              minWidth: "12%",
             },
             {
               name: <span className="table-title">Offered salary</span>,
@@ -752,7 +779,8 @@ export const CustCandidateListView = (props) => {
                       row?.jobOfferDtos[0]?.salary
                     ),
               sortable: true,
-              width: "12%",
+              maxWidth: "12%",
+              minWidth: "10%",
             },
             {
               name: <span className="table-title">Start date</span>,
@@ -786,7 +814,8 @@ export const CustCandidateListView = (props) => {
                       "MM/DD/YYYY"
                     ),
               sortable: true,
-              width: "10%",
+              maxWidth: "12%",
+              minWidth: "10%",
             },
             {
               name: <span className="table-title">Offer</span>,
@@ -875,7 +904,8 @@ export const CustCandidateListView = (props) => {
                 ),
               ignoreRowClick: true,
               button: true,
-              width: "6%",
+              maxWidthh: "8%",
+              minWidth: "6%",
             },
             {
               name: <span className="table-title">Status</span>,
@@ -942,14 +972,18 @@ export const CustCandidateListView = (props) => {
                       : "-",
               ignoreRowClick: true,
               button: true,
-              width: "10%",
+              maxWidth: "18%",
+              minWidth: "12%",
+
             },
             {
               name: <span className="table-title">Rejected by</span>,
               cell: (row) => <span title={row.customerrejectedbyname}>{row.customerrejectedbyname}</span>,
               selector: (row) => row?.customerrejectedbyname,
               sortable: true,
-              width: "10%",
+              maxWidth: "15%",
+              minWidth: "10%",
+
             },
             {
               name: <span className="table-title">Interest</span>,
@@ -962,7 +996,7 @@ export const CustCandidateListView = (props) => {
               ),
               ignoreRowClick: true,
               button: true,
-              width: "8%",
+              maxWidth: "8%"
             },
 
             {
@@ -971,7 +1005,7 @@ export const CustCandidateListView = (props) => {
               ignoreRowClick: true,
               allowOverflow: true,
               button: true,
-              width: "5%",
+              maxWidth: "5%"
             },
           ]
           : props.type === "offers" || props.type === "accepted"
@@ -1007,9 +1041,9 @@ export const CustCandidateListView = (props) => {
                 selector: (row) => row.firstname + " " + row.lastname,
                 sortable: true,
                 wrap: true,
-                width: "13%",
+                maxWidth: "20%",
               },
-              {
+              ...isStaffingFirm === false ? [] : [{
                 name: <span className="table-title">Client name</span>,
                 id: "Clientname",
                 cell: (row) => (
@@ -1020,15 +1054,15 @@ export const CustCandidateListView = (props) => {
                 selector: (row) => row.clientcompanyname,
                 sortable: true,
                 wrap: true,
-                width: "12%",
-                hide: isStaffingFirm
-              },
+                maxWidth: "12%",
+              }],
               {
                 name: <span className="table-title">Job title</span>,
                 cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
                 selector: (row) => row?.jobtitle,
                 sortable: true,
-                width: "20%",
+                maxWidth: "25%",
+                minWidth: "20%",
               },
               {
                 name: <span className="table-title">Offered salary</span>,
@@ -1069,7 +1103,7 @@ export const CustCandidateListView = (props) => {
                         row?.jobOfferDtos[0]?.salary
                       ),
                 sortable: true,
-                width: "10%",
+                maxWidth: "15%",
               },
               {
                 name: <span className="table-title">Start date</span>,
@@ -1103,7 +1137,7 @@ export const CustCandidateListView = (props) => {
                         "MM/DD/YYYY"
                       ),
                 sortable: true,
-                width: "10%",
+                maxWidth: "12%",
               },
               {
                 name: <span className="table-title">Offer</span>,
@@ -1192,14 +1226,14 @@ export const CustCandidateListView = (props) => {
                   ),
                 ignoreRowClick: true,
                 button: true,
-                width: "10%",
+                maxWidth: "12%",
               },
               {
                 name: <span className="table-title">{props?.type === "offers" ? "Offered by" : "Job posted by"}</span>,
                 cell: (row) => <span title={props?.type === "offers" ? row.customerofferedbyname : row.jobpostedbyname}>{props?.type === "offers" ? row.customerofferedbyname : row.jobpostedbyname}</span>,
                 selector: (row) => props?.type === "offers" ? row.customerofferedbyname : row.jobpostedbyname,
                 sortable: true,
-                width: "10%",
+                maxWidth: "12%",
               },
               {
                 name: <span className="table-title">Interest</span>,
@@ -1212,7 +1246,7 @@ export const CustCandidateListView = (props) => {
                 ),
                 ignoreRowClick: true,
                 button: true,
-                width: "10%",
+                maxWidth: "10%",
               },
 
               {
@@ -1221,7 +1255,7 @@ export const CustCandidateListView = (props) => {
                 ignoreRowClick: true,
                 allowOverflow: true,
                 button: true,
-                width: "5%",
+                maxWidth: "6%",
               },
             ]
 
@@ -1239,7 +1273,7 @@ export const CustCandidateListView = (props) => {
                 wrap: true,
                 width: "15%",
               },
-              {
+              ...isStaffingFirm === false ? [] : [{
                 name: <span className="table-title">Client name</span>,
                 id: "Clientname",
                 cell: (row) => (
@@ -1251,8 +1285,7 @@ export const CustCandidateListView = (props) => {
                 sortable: true,
                 wrap: true,
                 width: "15%",
-                hide: isStaffingFirm
-              },
+              }],
               {
                 name: <span className="table-title">Job title</span>,
                 cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
@@ -1261,16 +1294,16 @@ export const CustCandidateListView = (props) => {
                 width: "20%",
               },
               {
-                name: <span className="table-title">{"Presented by"}</span>,
-                cell: (row) => <span title={row.customerpresentbyname}>{row.customerpresentbyname}</span>,
-                selector: (row) => row.customerpresentbyname,
+                name: <span className="table-title">{"Presented Date"}</span>,
+                cell: (row) => <span title={moment(row?.customerpresenteddatetime).format("YYYY-MM-DD")}>{moment(row?.customerpresenteddatetime).format("YYYY-MM-DD")}</span>,
+                selector: (row) => moment(row?.customerpresenteddatetime).format("YYYY-MM-DD"),
                 sortable: true,
                 width: "15%",
               },
               {
                 name: <span className="table-title">{"Current Status"}</span>,
-                cell: (row) => <span title={row.customerrecommendedjobstatus}>{row.customerrecommendedjobstatus || row.candidaterecommendedjobstatus}</span>,
-                selector: (row) => row.customerrecommendedjobstatus,
+                cell: (row) => <span title={row.staffingfirmstatus}>{row.staffingfirmstatus}</span>,
+                selector: (row) => row.staffingfirmstatus,
                 sortable: true,
                 width: "15%",
               },
@@ -1334,9 +1367,10 @@ export const CustCandidateListView = (props) => {
                   selector: (row) => row.firstname + " " + row.lastname,
                   sortable: true,
                   wrap: true,
-                  width: "13%",
+                  maxWidth: "18%",
+                  minWidth: "15%",
                 },
-                {
+                ...isStaffingFirm === false ? [] : [{
                   name: <span className="table-title">Client name</span>,
                   id: "Clientname",
                   cell: (row) => (
@@ -1347,15 +1381,16 @@ export const CustCandidateListView = (props) => {
                   selector: (row) => row.clientcompanyname,
                   sortable: true,
                   wrap: true,
-                  width: "12%",
-                  hide: isStaffingFirm
-                },
+                  maxWidth: "15%",
+                  minWidth: "10%",
+                }],
                 {
                   name: <span className="table-title">Job title</span>,
                   cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
                   selector: (row) => row?.jobtitle,
                   sortable: true,
-                  width: "15%",
+                  maxWidth: "20%",
+                  minWidth: "18%",
                 },
                 {
                   name: <span className="table-title">Applied date</span>,
@@ -1369,77 +1404,9 @@ export const CustCandidateListView = (props) => {
 
                   ignoreRowClick: true,
                   button: true,
-                  width: "12%",
+                  maxWidth: "15%",
+                  minWidth: "12%",
                 },
-                // {
-                //   name: <span className="table-title">Location</span>,
-                //   cell: (row) => (
-                //     <span
-                //       title={
-                //         row?.recommendedationCandidateShortList &&
-                //         row.recommendedationCandidateShortList?.length > 0
-                //           ? (row?.recommendedationCandidateShortList[0].cityname
-                //               ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                //               : "") +
-                //             "" +
-                //             (row.recommendedationCandidateShortList[0].statename
-                //               ? row.recommendedationCandidateShortList[0].statename
-                //               : "")
-                //           : ""
-                //       }
-                //     >
-                //       {row?.recommendedationCandidateShortList &&
-                //       row.recommendedationCandidateShortList?.length > 0
-                //         ? (row?.recommendedationCandidateShortList[0].cityname
-                //             ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                //             : "") +
-                //           "" +
-                //           (row.recommendedationCandidateShortList[0].statename
-                //             ? row.recommendedationCandidateShortList[0].statename
-                //             : "")
-                //         : ""}
-                //     </span>
-                //   ),
-                //   selector: (row) =>
-                //     row?.recommendedationCandidateShortList &&
-                //     row.recommendedationCandidateShortList?.length > 0
-                //       ? (row?.recommendedationCandidateShortList[0].cityname
-                //           ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                //           : "") +
-                //         "" +
-                //         (row.recommendedationCandidateShortList[0].statename
-                //           ? row.recommendedationCandidateShortList[0].statename
-                //           : "")
-                //       : "",
-                //   sortable: true,
-                //   width: "15%",
-                // },
-
-                // {
-                //   name: <span className="table-title">Experience</span>,
-                //   cell: (row) => (
-                //     <span
-                //       title={
-                //         row?.recommendedationCandidateShortList &&
-                //         row?.recommendedationCandidateShortList.length > 0
-                //           ? row?.recommendedationCandidateShortList[0]?.experience
-                //           : "-"
-                //       }
-                //     >
-                //       {row?.recommendedationCandidateShortList &&
-                //       row?.recommendedationCandidateShortList.length > 0
-                //         ? row?.recommendedationCandidateShortList[0]?.experience
-                //         : "-"}
-                //     </span>
-                //   ),
-                //   selector: (row) =>
-                //     row?.recommendedationCandidateShortList &&
-                //     row?.recommendedationCandidateShortList.length > 0
-                //       ? row?.recommendedationCandidateShortList[0]?.experience
-                //       : "-",
-                //   sortable: true,
-                //   width: "15%",
-                // },
                 {
                   name: <span className="table-title">Pre-screen</span>,
                   cell: (row) =>
@@ -1459,14 +1426,16 @@ export const CustCandidateListView = (props) => {
                     ),
                   ignoreRowClick: true,
                   button: true,
-                  width: "13%",
+                  maxWidth: "13%",
+                  minWidth: "13%",
                 },
                 {
                   name: <span className="table-title">Job posted by</span>,
                   cell: (row) => <span title={row.jobpostedbyname}>{row.jobpostedbyname}</span>,
                   selector: (row) => row?.jobpostedbyname,
                   sortable: true,
-                  width: "15%",
+                  maxWidth: "20%",
+                  minWidth: "14%",
                 },
                 {
                   name: <span className="table-title">Interest</span>,
@@ -1479,7 +1448,8 @@ export const CustCandidateListView = (props) => {
                   ),
                   ignoreRowClick: true,
                   button: true,
-                  width: "15%",
+                  maxWidth: "16%",
+                  minWidth: "12%",
                 },
 
                 {
@@ -1488,7 +1458,8 @@ export const CustCandidateListView = (props) => {
                   ignoreRowClick: true,
                   allowOverflow: true,
                   button: true,
-                  width: "5%",
+                  maxWidth: "5%",
+                  minWidth: "5%",
                 },
               ]
       : [
@@ -1504,7 +1475,7 @@ export const CustCandidateListView = (props) => {
           sortable: true,
           //width: "12%",
         },
-        {
+        ...isStaffingFirm === false ? [] : [{
           name: <span className="table-title">Client name</span>,
           id: "Clientname",
           cell: (row) => (
@@ -1516,8 +1487,7 @@ export const CustCandidateListView = (props) => {
           sortable: true,
           wrap: true,
           width: "12%",
-          hide: isStaffingFirm
-        },
+        }],
         {
           name: <span className="table-title">Job title</span>,
           cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
@@ -1994,6 +1964,7 @@ export const CustCandidateListView = (props) => {
         // pagination
         className="cust-list-view popover-height"
         responsive
+        customStyles={customStyles}
       />
       <>
         {showAModal ? (
