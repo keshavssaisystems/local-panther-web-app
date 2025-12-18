@@ -34,7 +34,7 @@ export default function CustomerDashboard() {
     description: "",
   });
   const [isCompanyAdmin, setIsCompanyAdmin] = useState(
-    JSON.parse(localStorage.getItem("userDetails"))?.isCompanyAdmin || false
+    JSON.parse(localStorage.getItem("userDetails"))?.isCompanyAdmin || JSON.parse(localStorage.getItem("userDetails"))?.UserroleId === "4" || false
   );
   const [confAlert, SetConfAlert] = useState({
     show: false,
