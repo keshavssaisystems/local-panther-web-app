@@ -336,9 +336,9 @@ export function CustJobDetail({
     ...(isStaffingFirm === true ? [{
       name: "Presented",
       count:
-        jobDetail.totalPresentedCandidates === null || jobDetail.totalPresentedCandidates === undefined || jobDetail.totalPresentedCandidates === 0
+        jobDetail.totalpresentedcandidates === null || jobDetail.totalpresentedcandidates === undefined || jobDetail.totalpresentedcandidates === 0
           ? 0
-          : jobDetail.totalPresentedCandidates,
+          : jobDetail.totalpresentedcandidates,
       action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: presentIcon,
     }] : []),
