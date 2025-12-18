@@ -24,6 +24,7 @@ export const PaymentModal = (props) => {
       <ModalHeader toggle={() => props.onClose()}>Payment Details</ModalHeader>
       <ModalBody style={{ maxHeight: "80vh", overflow: "auto" }}>
         <PaymentDetails
+          isCompanyBilling={props.isCompanyBilling || false}
           isAdmin={true}
           selectedCustomer={props.selectedCustomer}
           onClose={() => props.onClose()}

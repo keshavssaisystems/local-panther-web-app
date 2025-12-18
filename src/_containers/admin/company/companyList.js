@@ -714,6 +714,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           isAdmin={true}
           userId={userDetails?.InternalUserId}
           companyid={selectedCustomer?.companyid}
+          isCompanyBilling={true}
         />
       ) : (
         <></>
