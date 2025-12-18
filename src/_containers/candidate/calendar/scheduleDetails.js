@@ -549,7 +549,7 @@ export function ScheduleDetails({
                           >
                             Click here
                           </a>{" "}
-                          to downlaod the interview guide.
+                          to download the interview guide.
                         </p>
                       </div>
                     </>

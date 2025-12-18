@@ -63,19 +63,19 @@ export const CustCandidateListView = (props) => {
       style: {
         fontSize: "14px",
         fontWeight: 600,
-        paddingLeft: '8px',
+        // paddingLeft: '8px',
         paddingRight: '8px',
       },
     },
-    cells: {
-      style: {
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        paddingLeft: '8px',
-        paddingRight: '8px',
-      },
-    },
+    // cells: {
+    //   style: {
+    //     whiteSpace: 'nowrap',
+    //     overflow: 'hidden',
+    //textOverflow: 'ellipsis',
+    //     paddingLeft: '8px',
+    //     paddingRight: '8px',
+    //   },
+    // },
   };
   // Use Redux dispatch for snackbar
   const dispatch = useDispatch();
