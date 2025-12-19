@@ -14,7 +14,7 @@ import { atsActions } from "_store/ats.slice";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atscandidatelist.css"; // add this import
-
+import Loader from "react-loaders";
 const ATSCandidateList = () => {
     let isCompanyAdmin = true;
     let entity = "candidates";
@@ -24,7 +24,7 @@ const ATSCandidateList = () => {
     const dispatch = useDispatch();
     // read candidates and loading directly from redux so component re-renders when data arrives
     const data = useSelector((state) => state.ats?.candidates || []);
-    const loading = useSelector((state) => state.ats?.loading);
+    const loading = useSelector((state) => state.ats?.loader || false);
 
     // pagination state
     const [currentPage, setCurrentPage] = useState(1); // 1-based
@@ -183,6 +183,14 @@ const ATSCandidateList = () => {
                 <Col md="12">
                     <Card className="mb-3">
                         <CardBody>
+                            {loading && (
+                                <div className="overlay-loader">
+                                    <Loader
+                                        type="line-scale-pulse-out-rapid"
+                                        className="d-flex justify-content-center"
+                                    />
+                                </div>
+                            )}
                             <Row className="mb-3">
 
                                 <Col
