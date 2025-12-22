@@ -1,0 +1,78 @@
+/* Google Font import */
+// @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #e5e7eb;
+}
+
+/* main resume container */
+.resume-container {
+  max-width: 950px;
+  margin: 2rem auto;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* accent color utility */
+.accent-color {
+  color: #038ffe !important;
+}
+
+/* section title */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #2F479B;
+}
+
+/* skill badges */
+.skill-badge {
+  padding: 0.25rem 0.5rem;
+  background-color: #eef5ff;
+  color: #2F2E2E;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid #2F479B;
+  display: inline-block;
+  margin: 0.25rem;
+}
+
+/* work experience background */
+.work-experience-section {
+  background-color: #f0f8ff;
+  border-color: #b3d4ff !important;
+}
+
+/* list items within work section */
+.work-experience-section ul li {
+  color: #2F2E2E;
+}
+
+/* preference label (if needed later) */
+.preference-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  color: #1e293b;
+  font-size: 0.95rem;
+  display: inline-block;
+  min-width: 100px;
+}
+
+/* preference badge */
+.preference-badge {
+  font-size: 0.85rem;
+  padding: 0.35em 0.65em;
+  background-color: #eef5ff;
+  color: #2F2E2E;
+  border-radius: 0.3rem;
+  font-weight: 600;
+  border: 1px solid #2F479B;
+  display: inline-block;
+}
