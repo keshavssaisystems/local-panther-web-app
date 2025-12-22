@@ -179,7 +179,10 @@ export const OpenWorXResume = forwardRef((props, ref) => {
         return text;
     };
 
+    const getCandidateJobRole = () => {
+        return qualificationInfo && qualificationInfo.length > 0 ? qualificationInfo[0]?.jobtitle : "";
 
+    }
 
     return (
         <Container fluid className="py-4" style={{ backgroundColor: "#e5e7eb" }}>
@@ -211,7 +214,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                         )}
                     </h1>)}
                     <p className="h5 text-secondary mb-3">
-                        Senior QA Engineer | Mobile & Performance Testing Specialist
+                        {getCandidateJobRole()}
                     </p>
 
                     <Row className="gx-4 gy-2 text-secondary text-sm">
@@ -233,42 +236,43 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                 </header>
 
                 {/* WORK EXPERIENCE */}
-                {qualificationInfo?.length > 0 ? (<section className="p-4 p-sm-5 work-experience-section border-start-0 border-end-0 border-bottom">
-                    <h2 className="section-title d-flex align-items-center gap-2">
-                        <BsBriefcaseFill className="accent-color" size={22} />
-                        Work Experience
-                    </h2>
-                    {qualificationInfo?.map((item) => (
-                        <div className="pb-3 border-bottom">
-                            <p className="small fw-semibold accent-color m-0">
-                                {item.startdate && item.enddate ? (
-                                    <p> {getDate(item)}</p>
-                                ) : (
-                                    ""
-                                )}
-                            </p>
-                            <h3 className="h5 fw-bold text-dark">{item.jobtitle}</h3>
-                            <p className="h6 text-secondary mb-3">
-                                {item.company !== "" ? (
-                                    <p style={{ color: "#979797" }}>
-                                        {getLocationText(item)}
-                                    </p>
-                                ) : (
-                                    ""
-                                )}
-                            </p>
-                            {item.jobdescription !== "" ? (
-                                <p className="" style={{ whiteSpace: "pre-wrap" }}>
-                                    {item.jobdescription}{" "}
+                {qualificationInfo?.length > 0 ? (
+                    <section className="p-4 p-sm-5 work-experience-section border-start-0 border-end-0 border-bottom">
+                        <h2 className="section-title d-flex align-items-center gap-2">
+                            <BsBriefcaseFill className="accent-color" size={22} />
+                            Work Experience
+                        </h2>
+                        {qualificationInfo?.map((item) => (
+                            <div className="pb-3 border-bottom m-1 mt-3" key={item.candidatequalificationid}>
+                                <p className="small fw-semibold accent-color m-0 mt-6">
+                                    {item.startdate && item.enddate ? (
+                                        <p> {getDate(item)}</p>
+                                    ) : (
+                                        ""
+                                    )}
                                 </p>
+                                <h3 className="h5 fw-bold text-dark">{item.jobtitle}</h3>
+                                <p className="h6 text-secondary mb-3">
+                                    {item.company !== "" ? (
+                                        <p style={{ color: "#979797" }}>
+                                            {getLocationText(item)}
+                                        </p>
+                                    ) : (
+                                        ""
+                                    )}
+                                </p>
+                                {item.jobdescription !== "" ? (
+                                    <p className="" style={{ whiteSpace: "pre-wrap" }}>
+                                        {item.jobdescription}{" "}
+                                    </p>
 
-                            ) : ("")}
-                            {/* <ul>
+                                ) : ("")}
+                                {/* <ul>
                                 <li>Onsite collaboration and meetings</li>
                             </ul> */}
-                        </div>
-                    ))}
-                </section>)
+                            </div>
+                        ))}
+                    </section>)
                     : <>  </>}
 
                 {/* SKILLS */}
@@ -354,7 +358,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                 {/* FOOTER */}
                 <footer className="text-center border-top p-3 text-muted">
                     <p className="small fst-italic m-0">
-                        This resume was professionally generated by OpenWorX.
+                        This resume was professionally generated and optimized using the advanced capabilities of the OpenWorX AI Agent for enhanced presentation and readability.
                     </p>
                 </footer>
 

@@ -2,7 +2,7 @@
 // @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", sans-serif !important;
   background-color: #e5e7eb;
 }
 
@@ -24,7 +24,7 @@ body {
 /* section title */
 .section-title {
   font-size: 1.6rem;
-  font-weight: 800;
+  font-weight: bold !important;
   color: #1e293b;
   margin-bottom: 0.75rem;
   padding-bottom: 0.25rem;
