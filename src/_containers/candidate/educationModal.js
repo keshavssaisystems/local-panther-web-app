@@ -81,6 +81,8 @@ export function EducationModal(props) {
       data.push({
         candidateeducationid: 0,
         error: false,
+        fieldofstudyerror: false,
+        schoolerror: false,
         education: {
           value: 0,
           label: "",
@@ -134,6 +136,8 @@ export function EducationModal(props) {
     } else {
       data.push({
         error: false,
+        fieldofstudyerror: false,
+        schoolerror: false,
         candidateeducationid: props.selected.candidateeducationid,
         education: {
           value: props.selected.levelofeducationid,
@@ -285,6 +289,10 @@ export function EducationModal(props) {
     let new_data = [...formDetails];
     if (new_data[index - 1].education.value == 0) {
       new_data[index - 1].error = true;
+      new_data[index - 1].fieldofstudyerror =
+        new_data[index - 1].fieldofstudy.label == "" ? true : false;
+      new_data[index - 1].schoolerror =
+        new_data[index - 1].school == "" ? true : false;
       setFormData(new_data);
       return;
     }
@@ -292,6 +300,8 @@ export function EducationModal(props) {
     const newTab = {
       candidateeducationid: 0,
       error: false,
+      fieldofstudyerror: false,
+      schoolerror: false,
       education: {
         value: 0,
         label: "",
@@ -360,8 +370,14 @@ export function EducationModal(props) {
       dropdown.value = data.value;
       dropdown.label = data.label;
       new_data[index].fieldofstudy = dropdown;
+      if (new_data[index].fieldofstudy !== "") {
+        new_data[index].fieldofstudyerror = false;
+      }
     } else if (check === "school") {
       new_data[index].school = data;
+      if (new_data[index].school !== "") {
+        new_data[index].schoolerror = false;
+      }
     } else if (check === "city") {
       dropdown.value = data.value;
       dropdown.label = data.label;
@@ -511,6 +527,16 @@ export function EducationModal(props) {
     for (let i = 0; i < formDetails.length; i++) {
       if (formDetails[i].education.label === "") {
         error_data[i].error = true;
+        setFormData(error_data);
+        return;
+      }
+      if (formDetails[i].fieldofstudy.label === "") {
+        error_data[i].fieldofstudyerror = true;
+        setFormData(error_data);
+        return;
+      }
+      if (formDetails[i].school === "") {
+        error_data[i].schoolerror = true;
         setFormData(error_data);
         return;
       }
@@ -733,6 +759,7 @@ export function EducationModal(props) {
                 <FormGroup>
                   <Label for={"studyField"} className="fw-semi-bold">
                     Field of study
+                    <span className="required-icon"> *</span>
                   </Label>
                   <CreatableSelect
                     placeholder="Select..."
@@ -752,6 +779,9 @@ export function EducationModal(props) {
                     formatCreateLabel={formatCreateLabel1}
                     onCreateOption={(e) => onCreateFieldOfStudy(e, index)}
                   />
+                  <div className="filter-info-text filter-error-msg">
+                    {item.fieldofstudyerror ? "Field of study is required" : ""}
+                  </div>
                 </FormGroup>
               </div>
             </Col>
@@ -759,6 +789,7 @@ export function EducationModal(props) {
               <FormGroup>
                 <Label for="school" className="fw-semi-bold">
                   School
+                  <span className="required-icon"> *</span>
                 </Label>
                 <input
                   placeholder="Enter school"
@@ -772,6 +803,9 @@ export function EducationModal(props) {
                   }
                   className="field-input placeholder-text form-control"
                 />
+                <div className="filter-info-text filter-error-msg">
+                  {item.schoolerror ? "School is required" : ""}
+                </div>
               </FormGroup>
             </Col>
           </Row>

@@ -20,6 +20,7 @@ import scheduledIcon from "assets/utils/images/job-detail-icons/scheduled.svg";
 import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
 import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
 import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
+import presentIcon from "assets/utils/images/job-detail-icons/present.svg";
 import { CloseJobReasonPopup } from "./closeJobReasonPopup";
 import infoIcon from "assets/utils/images/yellow-info-big.svg";
 
@@ -48,6 +49,9 @@ export function CustJobDetail({
   );
   let customerApproval = customerDetails?.customerstatusid === 2 ? true : false;
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
+
   let loading = true;
   let jobDetail = {};
   let skillsData = "-";
@@ -329,6 +333,15 @@ export function CustJobDetail({
       action: `/customer-candidate-applied/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: appliedIcon,
     },
+    ...(isStaffingFirm === true ? [{
+      name: "Presented",
+      count:
+        jobDetail.totalpresentedcandidates === null || jobDetail.totalpresentedcandidates === undefined || jobDetail.totalpresentedcandidates === 0
+          ? 0
+          : jobDetail.totalpresentedcandidates,
+      action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      icon: presentIcon,
+    }] : []),
     {
       name: "Scheduled",
       count:
@@ -370,8 +383,8 @@ export function CustJobDetail({
   const renderSteps = () => {
     return steps.map((s, i) => (
       <li className="form-wizard-step-done" key={i} value={i}>
-        <span className="count-details">{steps[i].count}</span>
-        <em></em>
+        <span className="count-details" onClick={(e) => navigateTo(steps[i].action)}>{steps[i].count}</span>
+        <em onClick={(e) => navigateTo(steps[i].action)}></em>
         <span onClick={(e) => navigateTo(steps[i].action)}>
           {steps[i].name}
         </span>
@@ -390,6 +403,14 @@ export function CustJobDetail({
     navigate(action);
   };
   const [noPaymentPopup, setNoPaymentPopup] = useState(false);
+
+  const returnClientName = () => {
+    if (jobDetail?.clientcompanyDto !== null && jobDetail?.clientcompanyDto !== undefined) {
+      return jobDetail?.clientcompanyDto?.name || "";
+    }
+    return jobDetail?.clientcompanyname || "";
+  };
+
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -413,7 +434,7 @@ export function CustJobDetail({
                         <p className="mb-0 mt-0">
                           {jobDetail.companyname}
                           {jobDetail?.subsidiaryid !== undefined &&
-                          jobDetail?.subsidiaryid !== 0
+                            jobDetail?.subsidiaryid !== 0
                             ? " (" + jobDetail?.subsidiaryname + ")"
                             : ""}
                         </p>
@@ -440,13 +461,13 @@ export function CustJobDetail({
                           </Button>
                           {(billingStatus === true ||
                             customerDetails?.companyBillingdetailstatus ===
-                              true) &&
+                            true) &&
                             customerApproval === true && (
                               <Button
                                 color="primary"
                                 className={"me-3 mt-3"}
                                 onClick={(e) => {
-                                  setPublishSuccess(true);
+                                  //setPublishSuccess(true);
                                   publishJob(jobDetail.jobid);
                                 }}
                               >
@@ -513,7 +534,7 @@ export function CustJobDetail({
                             )}
                           {billingStatus === false &&
                             customerDetails?.companyBillingdetailstatus ===
-                              false &&
+                            false &&
                             customerApproval === true && (
                               <>
                                 <Button
@@ -604,6 +625,12 @@ export function CustJobDetail({
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job Details</h6>
             </div>
+            {isStaffingFirm &&
+              (<HeadingAndDetailWithDiv
+                heading={"Client name"}
+                detail={returnClientName()}
+                iconId={5}
+              />)}
             <HeadingAndDetailWithDiv
               heading={"Job type"}
               detail={returnJobType()}
@@ -636,7 +663,7 @@ export function CustJobDetail({
               heading={"Experience"}
               detail={
                 jobDetail?.jobExperienceScheduleDtos &&
-                jobDetail?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  jobDetail?.jobExperienceScheduleDtos[0]?.experiencelevel
                   ? jobDetail?.jobExperienceScheduleDtos[0]?.experiencelevel
                   : "-"
               }
@@ -651,7 +678,7 @@ export function CustJobDetail({
               heading={"Hiring timeline"}
               detail={
                 jobDetail?.jobExperienceScheduleDtos &&
-                jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
+                  jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
                   ? jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
                   : "-"
               }
@@ -713,7 +740,7 @@ export function CustJobDetail({
               heading={"About company"}
               detail={
                 jobDetail.companydetails !== "" &&
-                jobDetail.companydetails !== null
+                  jobDetail.companydetails !== null
                   ? jobDetail.companydetails
                   : "-"
               }
@@ -722,19 +749,19 @@ export function CustJobDetail({
               heading={"Benefits"}
               detail={
                 jobDetail?.jobPaymentBenefitDtos &&
-                jobDetail?.jobPaymentBenefitDtos[0]?.benefits
+                  jobDetail?.jobPaymentBenefitDtos[0]?.benefits
                   ? jobDetail?.jobPaymentBenefitDtos[0]?.benefits
                   : "-"
               }
             />
             {jobDetail?.jobKeyQualificationDtos &&
-            jobDetail?.jobKeyQualificationDtos?.length > 0 ? (
+              jobDetail?.jobKeyQualificationDtos?.length > 0 ? (
               <>
                 <HeadingAndDetailWithoutIcon
                   heading={"Additional crieteria for the role"}
                   detail={
                     jobDetail?.jobKeyQualificationDtos &&
-                    jobDetail?.jobKeyQualificationDtos?.length > 0
+                      jobDetail?.jobKeyQualificationDtos?.length > 0
                       ? returnAdditionalCriteria()
                       : "-"
                   }
@@ -745,13 +772,13 @@ export function CustJobDetail({
               <></>
             )}
             {jobDetail?.jobPrescreenApplicationDtos &&
-            jobDetail?.jobPrescreenApplicationDtos?.length > 0 ? (
+              jobDetail?.jobPrescreenApplicationDtos?.length > 0 ? (
               <>
                 <HeadingAndDetailWithoutIcon
                   heading={"Pre-screen applicants"}
                   detail={
                     jobDetail?.jobPrescreenApplicationDtos &&
-                    jobDetail?.jobPrescreenApplicationDtos?.length > 0
+                      jobDetail?.jobPrescreenApplicationDtos?.length > 0
                       ? returnPrescreenInfo()
                       : "-"
                   }

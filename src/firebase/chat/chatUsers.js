@@ -15,8 +15,10 @@ export function ChatUsers({ list, getSelectedChatGroup }) {
     firebase.initializeApp(firebaseConfig);
   }
   const firestore = firebase.firestore();
-  const chatUsersRef = firestore.collection("chatUsers");
-  const query = chatUsersRef
+  
+  const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
+  const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
+  const query = chatUserRef
     .where(userRole === 2 ? "customerId" : "candidateId", "==", userId)
     .orderBy("lastMessageDateTime", "desc");
   const [chatUsers] = useCollectionData(query, { idField: "id" });

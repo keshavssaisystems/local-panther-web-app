@@ -73,6 +73,9 @@ import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
 // import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
 import { getPublicIP } from "_helpers/helper";
+import { isMobile, isTablet } from "../../_helpers/helper";
+import GetAppPopup from "_components/common/GetAppPopup";
+
 // import { TermsAndConditions } from "_containers/static/terms";
 // import { PrivacyPolicy } from "_containers/static/privacy";
 // import { Support } from "_containers/static/support";
@@ -80,7 +83,11 @@ import { getPublicIP } from "_helpers/helper";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import { EnhancedSnackbarExamples } from "_components/common/EnhancedSnackbarExamples";
-
+import SuccessPage from "_components/unifiedApp/unifiedSuccess";
+import UnifiedCandidates from "_components/unifiedApp/unifiedCandidates";
+import UnifiedJobs from "_components/unifiedApp/unifiedJobs";
+import AtsUnified from "_components/unifiedApp/atsUnified";
+import ATSCandidateList from "_containers/customer/atscustomercandidatelist/atscandidatelist";
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
 const AIJobOffCanvas = React.lazy(() =>
@@ -143,6 +150,7 @@ export function App() {
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showGetAppPopup, setShowGetAppPopup] = useState(false);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -221,6 +229,9 @@ export function App() {
       });
     }
     getPublicIpAdd();
+    if (isMobile() || isTablet()) {
+      setShowGetAppPopup(true);
+    }
     return () => {
       localStorage.removeItem("publicip");
     };
@@ -427,7 +438,7 @@ export function App() {
           />
         </>
       );
-    } else if (userroleid === 2) {
+    } else if (userroleid === 2 || userroleid === 4) {
       return (
         <>
           <Route
@@ -506,7 +517,10 @@ export function App() {
             path="/customer-candidate-offers/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"offers"} />}
           />
-
+          <Route
+            path="/customer-candidate-presented/:id/:jobPostedbyId"
+            element={<CustomerCandidateLists type={"presented"} />}
+          />
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
 
           <Route
@@ -653,6 +667,36 @@ export function App() {
           <Route
             path="/report/open-jobs"
             element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
+          />
+
+          <Route
+            path="/success/:integrationType"
+            element={<SuccessPage />}
+          />
+
+          <Route
+            path="/unified-candidates/:connectionId"
+            element={<UnifiedCandidates />}
+          />
+          <Route
+            path="/unified-jobs/:connectionId"
+            element={<UnifiedJobs />}
+          />
+          <Route
+            path="/ats"
+            element={
+              <PrivateRoute>
+                <AtsUnified />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/acl/candidates"
+            element={
+              <PrivateRoute>
+                <ATSCandidateList isCompanyAdmin={true} entity="candidates" />
+              </PrivateRoute>
+            }
           />
         </>
       );
@@ -842,8 +886,8 @@ export function App() {
             )}
             <div className={authUser ? `app-main` : ""}>
               {/* <AIProfileOffCanvas>  </AIProfileOffCanvas> */}
-              <AIJobOffCanvas></AIJobOffCanvas>
-              
+              {/* <AIJobOffCanvas></AIJobOffCanvas> */}
+
               {authUser && !hideSidebar && (
                 <AppSidebar
                   isSidebarOpen={isSidebarOpen}
@@ -876,6 +920,7 @@ export function App() {
                     <Route path="/login" element={<Login />} />
                     {/* <Route path="/login/:id" element={<Login />} /> */}
                     <Route path="/registration" element={<Registration />} />
+                    <Route path="/registration/:role" element={<Registration />} />
                     <Route
                       path="/customer-registration"
                       element={<CustomerRegistration />}
@@ -920,6 +965,10 @@ export function App() {
               </div>
             </div>
           </>
+        )}
+
+        {(isMobile() || isTablet()) && (
+          <GetAppPopup isOpen={showGetAppPopup} toggle={() => setShowGetAppPopup(false)} />
         )}
       </Suspense>
     </>

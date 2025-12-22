@@ -9,16 +9,17 @@
 
 .skills-badge {
   position: absolute;
-  top: -10px;
+  top: 10px;
   right: 10px;
   background: #f59e0b;
   color: white;
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: 20px;
   font-size: 12px;
 }
 
 .skills-list {
+  margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -35,7 +36,8 @@
   font-weight: 500;
   font-size: 15px;
   margin-bottom: 4px;
-  position: relative;   /* important for the strike */
+  position: relative;
+  /* important for the strike */
   overflow: hidden;
 }
 
@@ -58,6 +60,7 @@
   background: #d32f2f;
   transform: translateY(-50%);
 }
+
 .skill-remove {
   margin-left: 8px;
   cursor: pointer;

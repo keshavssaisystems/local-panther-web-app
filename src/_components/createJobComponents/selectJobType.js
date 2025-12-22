@@ -5,6 +5,7 @@ import AIJobCreation from "./aiJobCreation";
 import { jobTypeActions } from "_store";
 import { useDispatch } from "react-redux";
 import "./createJob.scss";
+import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 
 export default function SelectJobType({
   getJobTypeData,
@@ -153,6 +154,7 @@ export default function SelectJobType({
             />
           )}
         </>
+        <AIJobOffCanvas/>
       </div>
     </>
   );

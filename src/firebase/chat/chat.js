@@ -48,9 +48,10 @@ export function Chat({ groupId, details }) {
     firebase.initializeApp(firebaseConfig);
   }
   const firestore = firebase.firestore();
+  const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
   const dummy = useRef();
-  const messagesRef = firestore.collection("messages");
-  const chatUserRef = firestore.collection("chatUsers");
+  const messagesRef = firestore.collection("messages"  + (firebaseEnv ? `-${firebaseEnv}` : ""));
+  const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const query = messagesRef
     .where("groupId", "==", groupId)
     .orderBy("createdAt")
@@ -88,7 +89,7 @@ export function Chat({ groupId, details }) {
         });
       }
       if (messages.length > 0) {
-        await chatUserRef.doc(chatList[0].id).update({
+        await chatUserRef.doc(chatList[0]?.id).update({
           lastMessage: formData,
           lastMessageBy: Number(localStorage.getItem("userId")),
           lastMessageDateTime: firebase.firestore.FieldValue.serverTimestamp(),

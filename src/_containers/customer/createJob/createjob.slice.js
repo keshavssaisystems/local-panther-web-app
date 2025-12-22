@@ -53,6 +53,7 @@ export const getCustomerDetailsThunk = createAsyncThunk(
   `${name}/getCustomerDetailsThunk`,
   async (customerid) => {
     const CUSTOMER_DETAILS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Customer/GetCustomerById/${customerid}`;
+    //const CUSTOMER_DETAILS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Report/GetReportBySP?storedProcedure=Fetch_Get_CustomerById&parameter=${customerid}`;
     return await fetchWrapper.get(CUSTOMER_DETAILS_END_POINT);
   }
 );
@@ -150,9 +151,10 @@ const createjobSlice = createSlice({
     },
     [getCustomerDetailsThunk.fulfilled]: (state, action) => {
       state.customerDetails = action.payload.data;
+      //state.customerDetails = JSON.parse(action.payload?.data[0]?.data);
       localStorage.setItem(
         "companyid",
-        action?.payload?.data?.companyid ? action?.payload?.data?.companyid : ""
+        state.customerDetails?.companyid ? state.customerDetails?.companyid : ""
       );
       state.loading = false;
     },

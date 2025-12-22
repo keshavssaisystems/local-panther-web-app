@@ -63,6 +63,9 @@ export const AddEditCompany = (props) => {
   const [locationValidation, setLocationValidation] = useState(false);
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
+  const [isStaffingFirm, setIsStaffingFirm] = useState(data.isstaffingfirm);
+  const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
+
   useEffect(() => {
     if (!isAddMode) {
       let name = data?.logourl?.replace(/^.*[\\\/]/, "");
@@ -215,6 +218,9 @@ export const AddEditCompany = (props) => {
     } else if (check === "zipcode") {
       data.zipcode = event.target.value;
     }
+    else if (check === "isstaffingfirm") {
+      data.isstaffingfirm = event.target.checked;
+    }
     setEditData(data);
   };
 
@@ -295,6 +301,7 @@ export const AddEditCompany = (props) => {
     form.append("Address", editData.address);
     form.append("Logourl", logourl ? logourl : "");
     form.append("Logourlfile", logo?.[0] ? logo[0] : logo);
+    form.append("Isstaffingfirm", isStaffingFirm ? isStaffingFirm : false);
     if (isAddMode) {
       form.append("Companyid", 0);
 
@@ -304,10 +311,6 @@ export const AddEditCompany = (props) => {
           if (result.data) {
             if (result.data.status === "Success") {
               setSuccess(true);
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "success",
-              // });
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.SUCCESS,
@@ -316,12 +319,8 @@ export const AddEditCompany = (props) => {
                 autoCloseDelay: 3000,
                 maxWidth: 500,
               }));
-
+              onClose();
             } else {
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "error",
-              // });
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.ERROR,
@@ -330,15 +329,10 @@ export const AddEditCompany = (props) => {
                 autoCloseDelay: 3000,
                 maxWidth: 500,
               }));
-
               setError(true);
             }
           } else {
             setError(true);
-            // showSweetAlert({
-            //   title: "Something went wrong, please try again later",
-            //   type: "warning",
-            // });
             dispatch(showSnackbar({
               message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
               type: SNACKBAR_TYPES.ERROR,
@@ -347,7 +341,6 @@ export const AddEditCompany = (props) => {
               autoCloseDelay: 3000,
               maxWidth: 500,
             }));
-
           }
         })
         .catch((error) => { });
@@ -359,10 +352,6 @@ export const AddEditCompany = (props) => {
           if (result.data) {
             if (result.data.status === "Success") {
               setSuccess(true);
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "success",
-              // });
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.SUCCESS,
@@ -373,10 +362,6 @@ export const AddEditCompany = (props) => {
               }));
               onClose();
             } else {
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "error",
-              // });
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.ERROR,
@@ -388,11 +373,6 @@ export const AddEditCompany = (props) => {
               setError(true);
             }
           } else {
-            setError(true);
-            // showSweetAlert({
-            //   title: "Something went wrong, please try again later",
-            //   type: "warning",
-            // });
             dispatch(showSnackbar({
               message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
               type: SNACKBAR_TYPES.ERROR,
@@ -475,7 +455,27 @@ export const AddEditCompany = (props) => {
                   />
                 </FormGroup>
               </Col>
-
+              <Col md={6}>
+                <FormGroup>
+                  <Input
+                    disabled={isViewMode || (props?.isCompanyAdmin || currentRoleId !== 1)}
+                    id={"isstaffingfirm"}
+                    name={"isstaffingfirm"}
+                    type={"checkbox"}
+                    defaultChecked={isStaffingFirm}
+                    onChange={(e) => {
+                      if (currentRoleId === 1) {
+                        setIsStaffingFirm(e.target.checked);
+                        handleInputChange(e, "isstaffingfirm")
+                      }
+                    }}
+                  />{" "}
+                  {"  "}
+                  <Label for="isstaffingfirm">
+                    Staffing firm
+                  </Label>
+                </FormGroup>
+              </Col>
               <Col md={12}>
                 <FormGroup>
                   <Label for="description">Description</Label>
@@ -495,6 +495,7 @@ export const AddEditCompany = (props) => {
                   />
                 </FormGroup>
               </Col>
+
               <Col md={6}>
                 <FormGroup>
                   <Label for="employee">No of employees</Label>

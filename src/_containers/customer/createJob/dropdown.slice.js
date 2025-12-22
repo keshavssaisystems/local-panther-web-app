@@ -179,6 +179,14 @@ export const getJobsListThunk = createAsyncThunk(
   }
 );
 
+export const getDropdownListThunk = createAsyncThunk(
+  `${name}/getDropdownListThunk`,
+  async ({searchText, commonId, searchBy}) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=${searchText}&commonId=${commonId}&searchBy=${searchBy}`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 // Create the slice
 const dropdownSlice = createSlice({
   name,
@@ -430,6 +438,16 @@ const dropdownSlice = createSlice({
     [getJobsListThunk.rejected]: (state, action) => {
       state.error = action.error;
       state.loading = true;
+    },
+    [getDropdownListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getDropdownListThunk.fulfilled]: (state, action) => {
+      state.loading = false;
+    },
+    [getDropdownListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
     }
   }
 });
@@ -456,7 +474,8 @@ export const dropdownActions = {
   getSecurityClearanceListThunk,
   getCloseJobReasonListThunk,
   getFlaggedWordsListThunk,
-  getJobsListThunk
+  getJobsListThunk,
+  getDropdownListThunk
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

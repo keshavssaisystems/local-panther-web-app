@@ -29,6 +29,7 @@ function createInitialState() {
     prescreenQues: [],
     custOfferHistory: [],
     offerLetterTemplates: [],
+    reportData: null, // New state variable to store report data
   };
 }
 
@@ -49,7 +50,12 @@ function createExtraActions() {
     getPrescreenDetails: getPrescreenDetails(),
     getCustOfferHistory: getCustOfferHistory(),
     getofferLetterTemplate: getofferLetterTemplate(),
-    getInterviewSlots: getInterviewSlots()
+    getInterviewSlots: getInterviewSlots(),
+    getReportBySP: getCandidateCardCount(), // New action for fetching report
+    getPresentedCandidateLists: getPresentedCandidateLists(),
+    putPresentCandidate: putPresentCandidate(),
+    putCandidatePlaced: putCandidatePlaced()
+
   };
 
   function getDrpDwnJobLists() {
@@ -196,9 +202,9 @@ function createExtraActions() {
     );
   }
   function getDurationOptions() {
+
     return createAsyncThunk(
       `${name}/getDurationOptions`,
-
       async () =>
         await fetchWrapper.get(
           `${newUrl}/Common/GetCommonDropdown?searchText=duration`
@@ -288,6 +294,67 @@ function createExtraActions() {
 
     );
   }
+
+  function getCandidateCardCount() {
+    return createAsyncThunk(
+      `${name}/getReportBySP`,
+      async ({ jobId, userId, searchText }) => {
+        const jobIdToUse = (jobId === undefined || jobId === null || jobId === "") ? null : jobId;
+
+        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId},@searchText='${searchText}'`;
+        return await fetchWrapper.get(REPORT_API_URL);
+      }
+    );
+  }
+
+  function getPresentedCandidateLists() {
+    return createAsyncThunk(
+      `${name}/getPresentedCandidateLists`,
+
+      async ({
+        pageNumber,
+        pageSize,
+        jobId,
+        searchText,
+        actionbyId = ""
+      }) => {
+        let parameters = "";
+        let actionBy = "";
+        actionBy = `@userid=${actionbyId}`;
+        parameters += actionBy;
+        parameters += `,@isactive=1`;
+        parameters += `,@pagesize=${pageSize}`;
+        parameters += `,@currentpage=${pageNumber}`;
+        if (searchText) parameters += `,@searchtext='${searchText}'`;
+        if (jobId) parameters += `,@jobid=${jobId}`;
+
+        return await fetchWrapper.get(`${newUrl}/V2/Get_Presented_candidate_list?parameter=${parameters}`);
+
+      }
+    );
+  }
+
+  function putPresentCandidate() {
+    return createAsyncThunk(
+      `${name}/putPresentCandidate`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/customerPresented/${id}`
+        )
+    );
+  }
+
+  function putCandidatePlaced() {
+    return createAsyncThunk(
+      `${name}/putCandidatePlaced`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/staffingfirmcandidateaccepted/${id}`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -307,6 +374,10 @@ function createExtraReducers() {
     getCustOfferHistory();
     getofferLetterTemplate();
     getInterviewSlots();
+    getCandidateCardCount(); // Register the new report action
+    getPresentedCandidateLists();
+    putPresentCandidate();
+    putCandidatePlaced();
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -561,6 +632,88 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           state.interviewSlots = [];
+        });
+    }
+
+    function getCandidateCardCount() {
+      let { pending, fulfilled, rejected } = extraActions.getReportBySP;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+          //state.reportData = null;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.reportData = action?.payload?.data?.[0] ? action.payload.data[0] : null;
+          state.loading = false;
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
+          state.reportData = null;
+        });
+    }
+
+
+    function getPresentedCandidateLists() {
+      let { pending, fulfilled, rejected } = extraActions.getPresentedCandidateLists;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+          state.candidateList = [];
+          state.totalRecords = 0;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.candidateList = action?.payload?.data?.data ? action?.payload?.data?.data
+            : [];
+
+          state.totalRecords = action?.payload?.data?.totalRows
+            ? action?.payload?.data?.totalRows
+            : 0;
+          state.loading = false;
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
+        });
+    }
+
+    function putRejectCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putRejectCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
+        });
+    }
+
+    function putPresentCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putPresentCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
+        });
+    }
+
+    function putCandidatePlaced() {
+      let { pending, fulfilled, rejected } = extraActions.putCandidatePlaced;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
         });
     }
   };

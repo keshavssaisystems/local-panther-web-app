@@ -14,6 +14,7 @@ import { showSnackbar } from "_store/snackbar.slice";
 import { QualificationAIProfile } from "./qualificationAIProfile";
 import SkillAIProfile from "./skillAIProfile";
 import "./AIProfileCanvas.scss";
+import { Bold } from "ckeditor5";
 
 export default function AIProfileOffCanvas({ closeOffcanvas }) {
     const dispatch = useDispatch();
@@ -22,12 +23,13 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
     const [loadInput, setLoadInput] = useState(false);
     const [generatedHtml, setGeneratedHtml] = useState("");
     const bottomRef = useRef(null);
-    const [bottomHeight, setBottomHeight] = useState(156);
+    const [bottomHeight, setBottomHeight] = useState(176);
     const loadAIProfileCanvas = useSelector((state) => state.getProfile?.loadAIProfileCanvas);
     const [aiResponse, setAIResponse] = useState({ EducationList: [] });
     const [educationData, setEducationData] = useState([]);
     const [qualifactionData, setQualifactionData] = useState([]);
     const [isUpdateButtonDisable, setIsUpdateButtonDisable] = useState(true);
+    let placeholderText = "Type your prompt to add, update, or delete Skill, Education, or Qualification...";
     useEffect(() => {
         setIsOpen(loadAIProfileCanvas);
     }, [loadAIProfileCanvas]);
@@ -80,6 +82,17 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                 console.log("result", result);
                 let profileData = result?.data?.Profile_data;
 
+                if (profileData?.EducationList?.length === 0 && profileData?.QualificationList?.length === 0 && profileData?.SkillsList?.length === 0) {
+                    dispatch(showSnackbar({
+                        message: "No data available for update the profile",
+                        type: SNACKBAR_TYPES.WARNING,
+                        position: SNACKBAR_POSITION.TOP_CENTER,
+                        autoClose: true,
+                        autoCloseDelay: 2000,
+                        maxWidth: 500,
+                    }));
+                    return;
+                }
                 if (profileData) {
 
                     if (profileData?.EducationList?.length > 0) {
@@ -365,7 +378,7 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
     return (
         <div>
             <Offcanvas direction="end" isOpen={isOpen} toggle={() => closeAIProfile()} backdrop="static">
-                <OffcanvasHeader toggle={() => toggleOffcanvas()}>Update Profile with OpenWorX Agent</OffcanvasHeader>
+                <OffcanvasHeader toggle={() => toggleOffcanvas()} style={{ backgroundColor: "#f8f9fa", borderBottom: "1px solid #dee2e6", fontWeight: "bold!important" }}>Update Profile with OpenWorX Agent</OffcanvasHeader>
                 <hr style={{ margin: "0px" }}></hr>
                 <OffcanvasBody
                     className="jd-covas-body"
@@ -439,7 +452,15 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                             )}
                         </div>
                         <div ref={bottomRef} style={{ width: "calc(100% - 24px)", textAlign: "center", }}>
-                            <SpeechToTextInput setInput1={setInput1} input1={input1} handleUpdateData={() => handleUpdateData()} loadInput={loadInput} />
+                            <SpeechToTextInput setInput1={setInput1} input1={input1} handleUpdateData={() => handleUpdateData()} loadInput={loadInput}
+                                placeholder={placeholderText}
+                            >   </SpeechToTextInput>
+                            <div style={{
+                                textAlign: "left",
+                                marginLeft: "1px",
+                                fontSize: "10px",
+                                marginBottom: "-12px"
+                            }}>Example: “I worked at Google in 2023 as UI developer. Remove primary education and add a Applied Physics MS from Stanford University in 2020 to 2024.”</div>
                             <Button className="mt-2" color="primary" onClick={() => submitProfileData()}
                                 disabled={isUpdateButtonDisable}>
                                 Update Profile
@@ -448,6 +469,6 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                     </div>
                 </OffcanvasBody>
             </Offcanvas>
-        </div>
+        </div >
     );
 }

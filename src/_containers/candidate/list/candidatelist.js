@@ -74,6 +74,7 @@ export default function CandidateList(props) {
   const offerHistory = useSelector(
     (state) => state.candidateListReducer.offerHistory
   );
+  const reportData = useSelector((state) => state.customerCandidateList.reportData);
 
   const handlePageChange = (page) => {
     setPageNo(page);
@@ -149,6 +150,7 @@ export default function CandidateList(props) {
     if (candidateRecommendedJobStatusId === 7) {
       dispatch(candidateListActions.getAcceptedJobListThunk(internalUserId));
     }
+    onGetCandidatesCount();
   };
 
   const getSelectedJob = (e) => {
@@ -755,6 +757,9 @@ export default function CandidateList(props) {
       }));
     }
   };
+  const onGetCandidatesCount = () => {
+    dispatch(customerCandidateListsActions.getReportBySP({ userId: JSON.parse(localStorage.getItem("userDetails"))?.UserId, searchTex: null }));
+  }
   return (
     <>
       <Row className="cand-list-cont">
@@ -778,7 +783,7 @@ export default function CandidateList(props) {
                 toggle("matched");
               }}
             >
-              Matched
+              Matched{reportData?.Matched > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Matched}</span>)}
             </Button>
             <Button
               color="primary"
@@ -791,7 +796,7 @@ export default function CandidateList(props) {
                 toggle("maybe");
               }}
             >
-              Maybe
+              Maybe{reportData?.Maybe > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Maybe}</span>)}
             </Button>
             <Button
               color="primary"
@@ -804,7 +809,7 @@ export default function CandidateList(props) {
                 toggle("applied");
               }}
             >
-              Applied
+              Applied{reportData?.Applied > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Applied}</span>)}
             </Button>
             <Button
               color="primary"
@@ -817,7 +822,7 @@ export default function CandidateList(props) {
                 toggle("interview");
               }}
             >
-              Interview
+              Interview{reportData?.Scheduled > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Scheduled}</span>)}
             </Button>
             <Button
               color="primary"
@@ -830,7 +835,7 @@ export default function CandidateList(props) {
                 toggle("offers");
               }}
             >
-              Offer
+              Offer{reportData?.Offer > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Offer}</span>)}
             </Button>
             <Button
               color="primary"
@@ -843,7 +848,7 @@ export default function CandidateList(props) {
                 toggle("accepted");
               }}
             >
-              Accepted
+              Accepted{reportData?.Accept > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Accept}</span>)}
             </Button>
             <Button
               color="primary"
@@ -856,7 +861,7 @@ export default function CandidateList(props) {
                 toggle("rejected");
               }}
             >
-              Declined
+              Declined{reportData?.Reject > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Reject}</span>)}
             </Button>
           </ButtonGroup>
         </Col>

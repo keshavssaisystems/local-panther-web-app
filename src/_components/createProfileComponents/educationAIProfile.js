@@ -25,7 +25,7 @@ import debounce from "lodash/debounce";
 
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
+import "./aiCommon.scss"
 export function EducationAIProfile({ educationData, setEducationData }) {
     const dispatch = useDispatch();
 
@@ -47,7 +47,7 @@ export function EducationAIProfile({ educationData, setEducationData }) {
         loadData();
         getDropdownLists();
 
-        
+
     }, []);
 
     const [success, setSuccess] = useState(false);
@@ -410,29 +410,12 @@ export function EducationAIProfile({ educationData, setEducationData }) {
 
                         <Form key={index}>
                             <div
-                                
-                                style={{
-                                    border: "2px solid #facc15",
-                                    borderRadius: "8px",
-                                    padding: "16px",
-                                    backgroundColor: "#fefce8",
-                                    marginBottom: "20px",
-                                    position: "relative",
-                                }}
+                                className={edu?.operation === "update" ? "ai-section ai-update" : "ai-section ai-new"}
                             >
                                 <span
-                                    style={{
-                                        position: "absolute",
-                                        top: "-10px",
-                                        right: "10px",
-                                        background: "#f59e0b",
-                                        color: "white",
-                                        padding: "2px 8px",
-                                        borderRadius: "6px",
-                                        fontSize: "12px",
-                                    }}
+                                    className={edu?.operation === "update" ? "ai-badge badge-update" : "ai-badge badge-new"}
                                 >
-                                    {edu?.operation === "add" ? 'Added' : 'Updated'}
+                                    {edu?.operation === "add" ? 'New' : 'Update'}
                                 </span>
 
                                 <div className="row mb-2">
@@ -685,28 +668,9 @@ export function EducationAIProfile({ educationData, setEducationData }) {
                 {formDetails?.map((edu, index) => (
                     edu?.operation === "delete" && (
 
-                        <div key={index}
-                            style={{
-                                border: "2px dashed red",
-                                borderRadius: "8px",
-                                padding: "16px",
-                                backgroundColor: "#fef2f2",
-                                position: "relative",
-                            }}
-                        >
-                            <span
-                                style={{
-                                    position: "absolute",
-                                    top: "-10px",
-                                    right: "10px",
-                                    background: "red",
-                                    color: "white",
-                                    padding: "2px 8px",
-                                    borderRadius: "6px",
-                                    fontSize: "12px",
-                                }}
-                            >
-                                Deleted
+                        <div key={index} className="ai-section-delete">
+                            <span className="ai-badge-delete">
+                                Delete
                             </span>
 
                             <div style={{ opacity: 0.6, pointerEvents: "none" }}>
