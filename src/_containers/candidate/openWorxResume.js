@@ -13,9 +13,11 @@ import {
     BsBriefcaseFill,
     BsListCheck,
     BsMortarboardFill,
-    BsSliders
+    BsSliders,
+    BsPatchCheckFill,
+    BsInfoCircleFill
 } from "react-icons/bs";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/openworx-blue-logo_w200.svg";
 import "./openWorxResume.scss"; // optional if styles moved here
 import { useSelector } from "react-redux";
 
@@ -190,7 +192,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
                 {/* HEADER */}
                 <header
-                    className="position-relative border-bottom border-4 p-4 p-sm-5"
+                    className="position-relative border-bottom p-4 p-sm-5"
                     style={{ borderColor: "#2F479B" }}
                 >
                     <div className="position-absolute top-0 end-0 p-3 text-end">
@@ -198,7 +200,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                         <img src={logo} width={150} alt="logo" />
                     </div>
 
-                    {(userRoleId === 3 || isStaffingFirm === true) && (<h1 className="fw-bold text-dark mb-1">
+                    {(userRoleId === 3 || isStaffingFirm === true) && (<h1 className="h2 fw-bolder text-dark mb-1">
                         {personalInfo_temp?.firstname}{" "}
                         {personalInfo_temp?.lastname}{" "}
                         {personalInfo_temp?.pronounname !== "" && (
@@ -242,8 +244,9 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                             <BsBriefcaseFill className="accent-color" size={22} />
                             Work Experience
                         </h2>
-                        {qualificationInfo?.map((item) => (
-                            <div className="pb-3 border-bottom m-1 mt-3" key={item.candidatequalificationid}>
+                        {qualificationInfo?.map((item, index) => (
+                            <div className={`pb-3 m-1 mt-3 ${index !== qualificationInfo.length - 1 ? "border-bottom" : ""
+                                }`} key={item.candidatequalificationid}>
                                 <p className="small fw-semibold accent-color m-0 mt-6">
                                     {item.startdate && item.enddate ? (
                                         <p> {getDate(item)}</p>
@@ -267,9 +270,6 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                     </p>
 
                                 ) : ("")}
-                                {/* <ul>
-                                <li>Onsite collaboration and meetings</li>
-                            </ul> */}
                             </div>
                         ))}
                     </section>)
@@ -303,12 +303,84 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                             <p className="mb-1 fw-medium text-dark">
                                 {getEducText(item)}
                             </p>
-                            <p className="small text-secondary m-0">
+                            <p className="text-secondary m-0">
                                 {getDate(item)}
                             </p>
                         </div>
                     ))}
                 </section>) : <> </>}
+
+                {/* CERTIFICATIONS */}
+                {certificationInfo?.length > 0 ? (
+                    <section className="p-4 p-sm-5">
+                        <h2 className="section-title d-flex align-items-center gap-2">
+                            <BsPatchCheckFill className="accent-color" size={22} />
+                            Certification and Licenses
+                        </h2>
+                        {certificationInfo?.map((item) => (
+                            <div className="pb-3">
+                                <h5 className="fw-bold text-dark"> {item.certificationtype} </h5>
+                                <h6 className="fw-medium text-dark mb-1">
+                                    {item.certificationname}
+                                </h6>
+                                <p className="small text-secondary mb-1">
+                                    {getDate(item)} {item.isexpired ? "(Expired)" : ""}
+                                </p>
+                                {item.description !== "" ? (
+                                    <><h6 className="small fw-medium text-dark mb-1">
+                                        Description
+                                    </h6>
+                                        <p className="small text-secondary m-0" style={{ whiteSpace: "pre-wrap" }}>
+                                            {item.description}
+                                        </p></>
+                                ) : (
+                                    ""
+                                )}
+                            </div>
+                        ))}
+                    </section>) : <> </>}
+
+                {/* Additional Information */}
+                {additionalInfo?.length > 0 ? (
+                    <section className="p-4 p-sm-5">
+                        <h2 className="section-title d-flex align-items-center gap-2">
+                            <BsInfoCircleFill className="accent-color" size={22} />
+                            Additional Information
+                        </h2>
+                        {additionalInfo?.map((item) => (
+                            <>
+                                <div className="mb-4">
+                                    {item.candidateLanguageDetailsDtos?.length > 0 && (
+                                        <>
+                                            <h5 className="fw-bold text-dark">Languages</h5>
+                                            <h6 className="fw-medium text-dark mb-1">
+                                                {item.candidateLanguageDetailsDtos?.map((lang, ind) => (
+                                                    <>{lang.language} < span className="small text-secondary" > {lang.proficiency ? "(" + lang.proficiency + ")" : " "}{ind === item.candidateLanguageDetailsDtos?.length - 1 ? "" : ", "}</span></>
+                                                ))}
+                                            </h6 >
+                                        </>
+                                    )}
+                                </div>
+                                {personalInfo_temp?.summary !== "" ? (<div className="mb-4">
+                                    <h5 className="fw-bold text-dark"> Summary </h5>
+                                    <p className="small text-secondary m-0">
+                                        {personalInfo_temp?.summary}
+                                    </p>
+                                </div>
+                                ) : (<> </>)}
+                                {personalInfo_temp?.additionalinformation !== "" ? (<div className="mb-4">
+                                    <h5 className="fw-bold text-dark"> Additional Information </h5>
+                                    <p className="small text-secondary m-0">
+                                        {personalInfo_temp?.additionalinformation}
+                                    </p>
+                                </div>
+                                ) : (<> </>)}
+
+                            </>
+                        ))}
+                    </section>) : <> </>}
+
+                {/* JOB PREFERENCES */}
                 {getData?.length > 0 ? (
                     <section className="p-4 p-sm-5">
                         <h2 className="section-title flex items-center gap-2">
@@ -363,32 +435,34 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                 </footer>
 
             </Container>
-            {isGenerating && (
-                <div style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: "rgba(0,0,0,0.3)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 9999
-                }}>
+            {
+                isGenerating && (
                     <div style={{
-                        background: "#fff",
-                        padding: "20px",
-                        borderRadius: "8px",
-                        textAlign: "center"
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: "rgba(0,0,0,0.3)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 9999
                     }}>
-                        <p>Generating PDF...</p>
-                        <div className="spinner-border" role="status">
-                            <span className="visually-hidden">Loading...</span>
+                        <div style={{
+                            background: "#fff",
+                            padding: "20px",
+                            borderRadius: "8px",
+                            textAlign: "center"
+                        }}>
+                            <p>Generating PDF...</p>
+                            <div className="spinner-border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </Container>
+                )
+            }
+        </Container >
     );
 });
