@@ -252,3 +252,33 @@ body {
 .resume-container footer p {
   margin: 0.25rem 0;
 }
+
+.accent-color {
+  color: #038FFE !important;
+}
+
+/* Allow normal flow */
+section {
+  break-inside: auto;
+}
+
+/* Keep section headers with content */
+.section-title {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Prevent splitting of individual items */
+// .work-experience-section > div {
+//   page-break-inside: avoid;
+//   break-inside: avoid;
+// }
+
+/* Borders handled safely */
+.work-experience-section > div:last-child {
+  border-bottom: none;
+}
+* {
+  page-break-before: auto !important;
+  page-break-after: auto !important;
+}

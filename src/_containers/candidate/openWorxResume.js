@@ -123,17 +123,39 @@ export const OpenWorXResume = forwardRef((props, ref) => {
             // use setTimeout to allow UI to update with loading state
             await new Promise((resolve) => setTimeout(resolve, 100));
 
+            // const pdfOptions = {
+            //     margin: 10,
+            //     filename:
+            //         personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname + ".pdf",
+            //     image: { type: "jpeg", quality: 0.98 },
+            //     html2canvas: { scale: 2, logging: false }, // reduce scale for faster processing
+            //     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+            // };
+
+            // // Generate PDF asynchronously
+            // await html2pdf().set(pdfOptions).from(content).save();
             const pdfOptions = {
-                margin: 10,
-                filename:
-                    personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname + ".pdf",
+                margin: [10, 10, 10, 10],
+                filename: `${personalInfo_temp?.firstname} ${personalInfo_temp?.lastname}.pdf`,
                 image: { type: "jpeg", quality: 0.98 },
-                html2canvas: { scale: 2, logging: false }, // reduce scale for faster processing
-                jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: {
+                    unit: "mm",
+                    format: "a4",
+                    orientation: "portrait"
+                },
+                pagebreak: {
+                    mode: ["css", "avoid-all"]
+                }
             };
 
-            // Generate PDF asynchronously
-            await html2pdf().set(pdfOptions).from(content).save();
+            await html2pdf().set(pdfOptions).from(componentRef.current).save();
+
+
         } catch (error) {
             console.error("PDF generation error:", error);
             alert("Failed to generate PDF. Please try again.");
@@ -245,25 +267,25 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                             Work Experience
                         </h2>
                         {qualificationInfo?.map((item, index) => (
-                            <div className={`pb-3 m-1 mt-3 ${index !== qualificationInfo.length - 1 ? "border-bottom" : ""
+                            <div className={`mb-4 pb-3 border-secondary-subtle ${index !== qualificationInfo.length - 1 ? "border-bottom" : ""
                                 }`} key={item.candidatequalificationid}>
-                                <p className="small fw-semibold accent-color m-0 mt-6">
-                                    {item.startdate && item.enddate ? (
-                                        <p> {getDate(item)}</p>
-                                    ) : (
-                                        ""
-                                    )}
-                                </p>
+
+                                {item.startdate && item.enddate ? (
+                                    <p className="small fw-semibold accent-color m-0 mt-6"> {getDate(item)}</p>
+                                ) : (
+                                    ""
+                                )}
+
                                 <h3 className="h5 fw-bold text-dark">{item.jobtitle}</h3>
-                                <p className="h6 text-secondary mb-3">
-                                    {item.company !== "" ? (
-                                        <p style={{ color: "#979797" }}>
-                                            {getLocationText(item)}
-                                        </p>
-                                    ) : (
-                                        ""
-                                    )}
-                                </p>
+
+                                {item.company !== "" ? (
+                                    <p className="h6 fw-medium text-secondary mb-3">
+                                        {getLocationText(item)}
+                                    </p>
+                                ) : (
+                                    ""
+                                )}
+
                                 {item.jobdescription !== "" ? (
                                     <p className="" style={{ whiteSpace: "pre-wrap" }}>
                                         {item.jobdescription}{" "}
@@ -276,7 +298,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                     : <>  </>}
 
                 {/* SKILLS */}
-                {skillsInfo?.length > 0 ? (<section className="p-4 p-sm-5">
+                {skillsInfo?.length > 0 ? (<section className="mb-0 p-4 p-sm-5 pt-0 pb-0">
                     <h2 className="section-title d-flex align-items-center gap-2">
                         <BsListCheck className="accent-color" size={22} />
                         Skills
