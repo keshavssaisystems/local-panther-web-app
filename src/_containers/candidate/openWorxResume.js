@@ -136,12 +136,10 @@ export const OpenWorXResume = forwardRef((props, ref) => {
             // await html2pdf().set(pdfOptions).from(content).save();
             const pdfOptions = {
                 margin: [10, 10, 10, 10],
-                filename: `${personalInfo_temp?.firstname} ${personalInfo_temp?.lastname}.pdf`,
-                image: { type: "jpeg", quality: 0.98 },
+                image: { type: "jpeg", quality: 0.95 },
                 html2canvas: {
                     scale: 2,
-                    useCORS: true,
-                    logging: false
+                    useCORS: true
                 },
                 jsPDF: {
                     unit: "mm",
@@ -149,11 +147,12 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                     orientation: "portrait"
                 },
                 pagebreak: {
-                    mode: ["css", "avoid-all"]
+                    mode: ["css"]
                 }
             };
 
             await html2pdf().set(pdfOptions).from(componentRef.current).save();
+
 
 
         } catch (error) {
@@ -260,42 +259,47 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                 </header>
 
                 {/* WORK EXPERIENCE */}
-                {qualificationInfo?.length > 0 ? (
-                    <section className="p-4 p-sm-5 work-experience-section border-start-0 border-end-0 border-bottom">
-                        <h2 className="section-title d-flex align-items-center gap-2">
-                            <BsBriefcaseFill className="accent-color" size={22} />
-                            Work Experience
-                        </h2>
-                        {qualificationInfo?.map((item, index) => (
-                            <div className={`mb-4 pb-3 border-secondary-subtle ${index !== qualificationInfo.length - 1 ? "border-bottom" : ""
-                                }`} key={item.candidatequalificationid}>
+                {qualificationInfo?.length > 0 && (
+                    <section className="work-experience-section">
+                        <div className="work-experience-inner p-4 p-sm-5 border-bottom">
 
-                                {item.startdate && item.enddate ? (
-                                    <p className="small fw-semibold accent-color m-0 mt-6"> {getDate(item)}</p>
-                                ) : (
-                                    ""
-                                )}
+                            <h2 className="section-title d-flex align-items-center gap-2">
+                                <BsBriefcaseFill className="accent-color" size={22} />
+                                Work Experience
+                            </h2>
 
-                                <h3 className="h5 fw-bold text-dark">{item.jobtitle}</h3>
+                            {qualificationInfo.map((item, index) => (
+                                <div
+                                    key={item.candidatequalificationid}
+                                    className={`mb-4 pb-3 ${index !== qualificationInfo.length - 1 ? "border-bottom" : ""
+                                        }`}
+                                >
+                                    {item.startdate && item.enddate && (
+                                        <p className="small fw-semibold accent-color m-0">
+                                            {getDate(item)}
+                                        </p>
+                                    )}
 
-                                {item.company !== "" ? (
-                                    <p className="h6 fw-medium text-secondary mb-3">
-                                        {getLocationText(item)}
-                                    </p>
-                                ) : (
-                                    ""
-                                )}
+                                    <h3 className="h5 fw-bold text-dark">{item.jobtitle}</h3>
 
-                                {item.jobdescription !== "" ? (
-                                    <p className="" style={{ whiteSpace: "pre-wrap" }}>
-                                        {item.jobdescription}{" "}
-                                    </p>
+                                    {item.company && (
+                                        <p className="h6 fw-medium text-secondary mb-3">
+                                            {getLocationText(item)}
+                                        </p>
+                                    )}
 
-                                ) : ("")}
-                            </div>
-                        ))}
-                    </section>)
-                    : <>  </>}
+                                    {item.jobdescription && (
+                                        <p style={{ whiteSpace: "pre-wrap" }}>
+                                            {item.jobdescription}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+
+                        </div>
+                    </section>
+                )}
+
 
                 {/* SKILLS */}
                 {skillsInfo?.length > 0 ? (<section className="mb-0 p-4 p-sm-5 pt-0 pb-0">
@@ -416,20 +420,39 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                 {item.desiredJobTypes !== "" && item.desiredJobTypes ? (
                                     <div className="pb-1">
                                         <span className="preference-label">Job Types:</span>
-                                        <span className="preference-badge"> {item.desiredJobTypes}</span>
+                                        {item.desiredJobTypes?.split(',')?.map((type, index) => (
+                                            <>
+                                                <span key={type} className="preference-badge">
+                                                    {type}
+                                                </span>{" "}
+                                            </>
+                                        ))}
+                                        {/* <span className="preference-badge"> {item.desiredJobTypes}</span> */}
 
                                     </div>
                                 ) : (<> </>)}
                                 {item.workSchedules !== "" && item.workSchedules ? (
                                     <div className="pb-1">
                                         <span className="preference-label">Work Schedule:</span>
-                                        <span className="preference-badge"> {item.workSchedules}</span>
+                                        {item.workSchedules?.split(',')?.map((type, index) => (
+                                            <>
+                                                <span key={type} className="preference-badge">
+                                                    {type}
+                                                </span>{" "}
+                                            </>
+                                        ))}
                                     </div>
                                 ) : (<> </>)}
                                 {item.shifts !== "" && item.shifts ? (
                                     <div className="pb-1">
                                         <span className="preference-label">Shifts:</span>
-                                        <span className="preference-badge"> {item.shifts}</span>
+                                        {item.shifts?.split(',')?.map((type, index) => (
+                                            <>
+                                                <span key={type} className="preference-badge">
+                                                    {type}
+                                                </span>{" "}
+                                            </>
+                                        ))}
                                     </div>
                                 ) : (<> </>)}
                                 {item.pay !== "" && item.pay ? (
@@ -441,7 +464,13 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                 {item.desiredWorkTypes !== "" && item.desiredWorkTypes ? (
                                     <div className="pb-1">
                                         <span className="preference-label">Work Types:</span>
-                                        <span className="preference-badge"> {item.desiredWorkTypes}</span>
+                                        {item.desiredWorkTypes?.split(',')?.map((type, index) => (
+                                            <>
+                                                <span key={type} className="preference-badge">
+                                                    {type}
+                                                </span>{" "}
+                                            </>
+                                        ))}
                                     </div>
                                 ) : (<> </>)}
                             </div>

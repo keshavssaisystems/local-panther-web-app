@@ -257,28 +257,30 @@ body {
   color: #038FFE !important;
 }
 
-/* Allow normal flow */
-section {
+/* Allow section to split across pages */
+.work-experience-section {
   break-inside: auto;
 }
 
-/* Keep section headers with content */
+/* This wrapper can be split */
+.work-experience-inner {
+  break-inside: auto;
+}
+
+/* Protect individual job items */
+.work-experience-section > .work-experience-inner > div {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Keep section title with first item */
 .section-title {
   page-break-after: avoid;
   break-after: avoid;
 }
-
-/* Prevent splitting of individual items */
-// .work-experience-section > div {
-//   page-break-inside: avoid;
-//   break-inside: avoid;
-// }
-
-/* Borders handled safely */
-.work-experience-section > div:last-child {
-  border-bottom: none;
-}
-* {
-  page-break-before: auto !important;
-  page-break-after: auto !important;
+@media print {
+  header {
+    padding-bottom: 0.75rem !important;
+    margin-bottom: 0 !important;
+  }
 }
