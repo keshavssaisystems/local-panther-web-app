@@ -77,8 +77,9 @@ const atsSlice = createSlice({
                 console.log(action.payload);
                 state.atsauthorizationList = action.payload?.data?.data || [];
                 //state.atsauthorizationList = payload?.data?.data;
+                state.loader = false;
             })
-            .addCase(getCompanyATS.rejected, (state, action) => { })
+            .addCase(getCompanyATS.rejected, (state, action) => { state.loader = false; })
             .addCase(postAtsAuthorization.pending, (state, { payload }) => {
                 state.loader = true;
             })
@@ -96,9 +97,10 @@ const atsSlice = createSlice({
             .addCase(getATSList.fulfilled, (state, action) => {
                 console.log(action.payload);
                 state.atstypeList = action?.payload?.data?.data || [];
+                state.loader = false;
                 //state.atsauthorizationList = payload?.data?.data;
             })
-            .addCase(getATSList.rejected, (state, action) => { })
+            .addCase(getATSList.rejected, (state, action) => { state.loader = false; })
             .addCase(deleteAtsAuthorization.pending, (state, { payload }) => {
                 state.loader = true;
             })
@@ -113,9 +115,11 @@ const atsSlice = createSlice({
             })
             .addCase(fetchCustomerCandidates.fulfilled, (state, action) => {
                 console.log(action.payload);
-                state.candidates = JSON.parse(action.payload?.data[0]?.data || []);
-                state.totalrows = action.payload?.data[0]?.totalrecord || 0;
                 state.loader = false;
+                if (action.payload?.data[0]?.data?.length > 0)
+                    state.candidates = JSON.parse(action.payload?.data[0]?.data || []);
+                state.totalrows = action.payload?.data[0]?.totalrecord || 0;
+
             })
             .addCase(fetchCustomerCandidates.rejected, (state, action) => {
                 state.loader = false;
