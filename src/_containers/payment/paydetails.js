@@ -152,7 +152,7 @@ export const PaymentDetails = ({
     }
   }, [id, sameAsCust]);
   useEffect(() => {
-    if (userDetails?.customerid && compBillingDetails.length === 0 && billingDetails.length === 0) {
+    if (userDetails?.customerid && (!compBillingDetails || compBillingDetails?.length === 0) && (!billingDetails || billingDetails?.length === 0)) {
       setDetails(userDetails);
       setDisableSAC(userDetails?.billingdetailstatus);
       if (!userId && userDetails?.billingdetailstatus && (authUser || isAdmin)
