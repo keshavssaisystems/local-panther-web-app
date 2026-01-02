@@ -30,6 +30,7 @@ import "../_containers/sharejob/sharejob.scss";
 import "./zoom-video.css";
 
 export default function ZoomVideoScreen(props) {
+  const userRoleId = localStorage.getItem("userroleid");
   const { ...rest } = useParams();
 
   const [sessionData, setSessionData] = useState([]);
@@ -48,7 +49,7 @@ export default function ZoomVideoScreen(props) {
   const fbUserRef = useRef(fbUsersData);
 
   const [isOpen, setIsOpen] = useState(
-    localStorage.getItem("userroleid") === "2"
+    userRoleId === "2" || userRoleId === "4"
   );
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -62,7 +63,7 @@ export default function ZoomVideoScreen(props) {
   let name = userDetails
     ? userDetails.FirstName + " " + userDetails.LastName
     : "Guest";
-  const host = localStorage.getItem("userroleid") === "2";
+  const host = userRoleId === "2" || userRoleId === "4";
   const navigate = useNavigate();
   let config = {
     videoSDKJWT: "",
@@ -93,7 +94,7 @@ export default function ZoomVideoScreen(props) {
         "button[id='leave-meeting-button']"
       ); // or other DOM clues
       if (endScreen) {
-        if (localStorage.getItem("userroleid") === "2") {
+        if (userRoleId === "2" || userRoleId === "4") {
           endScreen.addEventListener("click", () => {
             updateLocatSorageUsersData();
           });
@@ -103,8 +104,8 @@ export default function ZoomVideoScreen(props) {
 
     observer.observe(document.body, { childList: true, subtree: true });
     if (
-      localStorage.getItem("userroleid") &&
-      localStorage.getItem("userroleid") === "2"
+      userRoleId &&
+      (userRoleId === "2" || userRoleId === "4")
     ) {
       dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     }
@@ -116,7 +117,7 @@ export default function ZoomVideoScreen(props) {
       const data = snapshot.val();
       setIsLoaded(true);
 
-      if (localStorage.getItem("userroleid") === "2") {
+      if (userRoleId === "2" || userRoleId === "4") {
         checkUserJoinedEvent(data, usersData);
       }
       setFBUsersData(data ? data : []);
@@ -125,7 +126,7 @@ export default function ZoomVideoScreen(props) {
 
     // Cleanup listener on unmount
     return () => {
-      if (localStorage.getItem("userroleid") === "2" && !hostLeave) {
+      if ((userRoleId === "2" || userRoleId === "4") && !hostLeave) {
         database.ref("users/" + urlParams).remove();
       }
       nameRef.off();
@@ -146,14 +147,14 @@ export default function ZoomVideoScreen(props) {
     event.returnValue = ""; // Required for Chrome to show confirmation dialog
     await UserLeftSession();
     // Add your cleanup or API call logic here
-    if (localStorage.getItem("userroleid") === "2" && !hostLeave) {
+    if (userRoleId === "2" && !hostLeave) {
       database.ref("users/" + urlParams).remove();
     }
 
     if (
       sessionContainer &&
       uitoolkit &&
-      localStorage.getItem("userroleid") === "2"
+      (userRoleId === "2" || userRoleId === "4")
     ) {
       // uitoolkit?.closeSession(sessionContainer);
       uitoolkit?.offSessionJoined(sessionJoined);
@@ -175,8 +176,8 @@ export default function ZoomVideoScreen(props) {
       config.videoSDKJWT = sessionData[0].zoomSessionToken;
       config.sessionName = sessionData[0].sessionName;
       config.userName =
-        localStorage.getItem("userroleid") === "3" ||
-        localStorage.getItem("userroleid") === null
+        userRoleId === "3" ||
+          userRoleId === null
           ? participantData.length > 0
             ? participantData[0]?.name
             : "Guest"
@@ -210,8 +211,8 @@ export default function ZoomVideoScreen(props) {
   useEffect(() => {
     fbUserRef.current = fbUsersData;
     if (
-      localStorage.getItem("userroleid") === "3" ||
-      (localStorage.getItem("userroleid") === null && fbUsersData?.length > 0)
+      userRoleId === "3" ||
+      (userRoleId === null && fbUsersData?.length > 0)
     ) {
       checkParticipantActivity(fbUsersData);
     }
@@ -220,14 +221,14 @@ export default function ZoomVideoScreen(props) {
   useEffect(() => {
     if (
       participantData?.length > 0 &&
-      localStorage.getItem("userroleid") === "3"
+      userRoleId === "3"
     ) {
       if (fbUsersData.length > 0) {
         let users = [...fbUsersData];
         let ind = users.findIndex(
           (d) =>
             d.email ===
-              JSON.parse(localStorage.getItem("userDetails")).EmailId &&
+            JSON.parse(localStorage.getItem("userDetails")).EmailId &&
             !d.isDenied
         );
         if (ind > -1) {
@@ -296,14 +297,14 @@ export default function ZoomVideoScreen(props) {
       uitoolkit?.destroy();
     }
   };
-  const onBtnClicked = (evt) => {};
+  const onBtnClicked = (evt) => { };
 
   const UserLeftSession = () => {
     if (
       fbUsersData.length > 0 &&
       participantData.length > 0 &&
-      (localStorage.getItem("userroleid") === "3" ||
-        localStorage.getItem("userroleid") === null)
+      (userRoleId === "3" ||
+        userRoleId === null)
     ) {
       let ind = fbUsersData.findIndex(
         (d) => d.email === participantData[0].email
@@ -321,8 +322,8 @@ export default function ZoomVideoScreen(props) {
   const sessionClosed = async (evt) => {
     await UserLeftSession();
     if (
-      localStorage.getItem("userroleid") &&
-      localStorage.getItem("userroleid") === "2"
+      userRoleId &&
+      (userRoleId === "2" || userRoleId === "4")
     ) {
       setShowFBModal(true);
     } else {
@@ -341,17 +342,17 @@ export default function ZoomVideoScreen(props) {
       let data = [];
       data.push(response.payload.data);
       setShowScreen(
-        localStorage.getItem("userroleid") &&
-          localStorage.getItem("userroleid") === "2"
+        userRoleId &&
+          (userRoleId === "2" || userRoleId === "4")
           ? "host"
-          : localStorage.getItem("userroleid") &&
-            localStorage.getItem("userroleid") === "3"
-          ? "waiting"
-          : "guest"
+          : userRoleId &&
+            userRoleId === "3"
+            ? "waiting"
+            : "guest"
       );
 
       setSessionData(data);
-      if (localStorage.getItem("userroleid") === "3") {
+      if (userRoleId === "3") {
         setTimeout(() => {
           setParticipantData([
             {
@@ -394,8 +395,8 @@ export default function ZoomVideoScreen(props) {
     await UserLeftSession();
 
     if (
-      localStorage.getItem("userroleid") &&
-      localStorage.getItem("userroleid") === "2"
+      userRoleId &&
+      (userRoleId === "2" || userRoleId === "4")
     ) {
       navigate("/scheduled-interview");
     } else {
