@@ -71,7 +71,7 @@ export const GuestPreview = (props) => {
   const routeToHome = () => {
     if (
       localStorage.getItem("userroleid") &&
-      localStorage.getItem("userroleid") === "2"
+      (localStorage.getItem("userroleid") === "2" || localStorage.getItem("userroleid") === "4")
     ) {
       navigate("/scheduled-interview");
     } else {
@@ -137,9 +137,8 @@ export const GuestPreview = (props) => {
                     id="name"
                     placeholder="Enter your full name"
                     {...register("name")}
-                    className={` form-control ${
-                      errors.name ? "is-invalid error-text" : "input-text"
-                    }`}
+                    className={` form-control ${errors.name ? "is-invalid error-text" : "input-text"
+                      }`}
                   />
                   <div className="invalid-feedback">{errors.name?.message}</div>
                 </FormGroup>
@@ -156,9 +155,8 @@ export const GuestPreview = (props) => {
                     type={"text"}
                     id="email"
                     {...register("email")}
-                    className={`form-control ${
-                      errors.email ? "is-invalid" : ""
-                    }`}
+                    className={`form-control ${errors.email ? "is-invalid" : ""
+                      }`}
                   />
 
                   <div className="invalid-feedback">

@@ -92,7 +92,7 @@ export const HostPreview = ({
   const routeToHome = () => {
     if (
       localStorage.getItem("userroleid") &&
-      localStorage.getItem("userroleid") === "2"
+      (localStorage.getItem("userroleid") === "2" || localStorage.getItem("userroleid") === "4")
     ) {
       navigate("/scheduled-interview");
     } else {
@@ -110,7 +110,7 @@ export const HostPreview = ({
       if (
         res?.payload?.data?.scheduledInterviewList[0]?.intervieweremailids &&
         res?.payload?.data?.scheduledInterviewList[0]?.intervieweremailids !==
-          ""
+        ""
       ) {
         let ids =
           res?.payload?.data?.scheduledInterviewList[0]?.intervieweremailids.split(
@@ -140,7 +140,7 @@ export const HostPreview = ({
         setUsersData(cand);
         let userFBData =
           localStorage.getItem("zoomusersList" + urlParams) &&
-          localStorage.getItem("zoomusersList" + urlParams).length > 5
+            localStorage.getItem("zoomusersList" + urlParams).length > 5
             ? JSON.parse(localStorage.getItem("zoomusersList" + urlParams))
             : [...fbUsersData];
         if (
@@ -305,7 +305,7 @@ export const HostPreview = ({
                             }}
                           >
                             {row.isDenied === false &&
-                            row.isAllowed === false ? (
+                              row.isAllowed === false ? (
                               <>
                                 <Badge
                                   onClick={() => {
