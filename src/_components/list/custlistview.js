@@ -11,6 +11,7 @@ import {
   Button,
   ButtonGroup,
   UncontrolledTooltip,
+  Input,
 } from "reactstrap";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
@@ -37,7 +38,8 @@ import axios from "axios";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { is } from "date-fns/locale";
-
+import { OfflineInterviewModal } from "_components/scheduleInterview/offlineInterviewModal";
+import { OfflineOffer } from "_components/modal/offlineOffer";
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -52,6 +54,7 @@ export const CustCandidateListView = (props) => {
   const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
   const [offerUploadLoading, setOfferUploadLoading] = useState(false);
   const [isStaffingFirm, setIsStaffingFirm] = useState(props.isStaffingFirm);
+  const [showOfflineInterviewModal, setShowOfflineInterviewModal] = useState(false);
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -523,38 +526,6 @@ export const CustCandidateListView = (props) => {
           ) : (
             <></>
           )}
-          {/* <Button
-            // outline
-            size="sm"
-            title="Make offer"
-            onClick={() => onAcceptClick(row)}
-            className="btn-icon"
-            color="success"
-          >
-            <img src={customerIcons.list_accept} alt="list accept"></img>
-          </Button> */}
-
-          {/* <Button
-            // outline
-            size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onActionClick("like", candidaterecommendedjobid)}
-          >
-            <img src={customerIcons.list_liked} alt="list liked"></img>
-          </Button> */}
-
-          {/* <Button
-            // outline
-            size="sm"
-            title="maybe"
-            className=" btn-icon"
-            color="warning"
-            onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
-          >
-            <img src={customerIcons.list_maybe} alt="list maybe"></img>
-          </Button> */}
         </ButtonGroup>
       );
     }
@@ -1284,7 +1255,7 @@ export const CustCandidateListView = (props) => {
                 selector: (row) => row.clientcompanyname,
                 sortable: true,
                 wrap: true,
-                width: "15%",
+                width: "14%",
               }],
               {
                 name: <span className="table-title">Job title</span>,
@@ -1294,21 +1265,44 @@ export const CustCandidateListView = (props) => {
                 width: "20%",
               },
               {
-                name: <span className="table-title">{"Presented Date"}</span>,
-                cell: (row) => <span title={moment(row?.customerpresenteddatetime).format("YYYY-MM-DD")}>{moment(row?.customerpresenteddatetime).format("YYYY-MM-DD")}</span>,
-                selector: (row) => moment(row?.customerpresenteddatetime).format("YYYY-MM-DD"),
+                name: <span className="table-title">{"Presented date"}</span>,
+                cell: (row) => <span title={moment(row?.customerpresenteddatetime).format("MM/DD/YYYY")}>{moment(row?.customerpresenteddatetime).format("MM/DD/YYYY")}</span>,
+                selector: (row) => moment(row?.customerpresenteddatetime).format("MM/DD/YYYY"),
                 sortable: true,
-                width: "15%",
+                width: "13%",
               },
               {
-                name: <span className="table-title">{"Current Status"}</span>,
-                cell: (row) => <span title={row.staffingfirmstatus}>{row.staffingfirmstatus}</span>,
+                name: <span className="table-title">{"Current status (Offline)"}</span>,
+                cell: (row) =>
+                  <Input
+                    type="select"
+                    title="Current Status"
+                    value={row.staffingfirmstatus}
+                    name="CurrentStatus"
+                    id={crypto.randomUUID()}
+                    className="no-border-select"
+                    onChange={(e) => {
+                      updateCurrentStatus(e.target.value, row);
+                      //   resetPageURL();
+                    }}
+                  >
+                    {props?.offlineStatuses?.length > 0 ? (
+                      props?.offlineStatuses?.map((data) => (
+                        <option value={data.name} key={data.id}>
+                          {data.name}
+                        </option>
+                      ))
+                    ) : null
+                    }
+                  </Input >
+
+                ,
                 selector: (row) => row.staffingfirmstatus,
                 sortable: true,
-                width: "15%",
+                width: "18%",
               },
               {
-                name: <span className="table-title">Interest</span>,
+                name: <span className="table-title">Interest (Ecosystem)</span>,
                 cell: (row) => (
                   <div className="list-btn-group">
                     {/* {row?.customerrecommendedjobstatusid !== 5 && (
@@ -1954,6 +1948,88 @@ export const CustCandidateListView = (props) => {
     setOfferUploadLoading(data);
   };
 
+  const [currentStatus, setCurrentStatus] = useState("");
+  const [showOfflineOfferModal, setShowOfflineOfferModal] = useState(false);
+
+  const updateCurrentStatus = async (status, row) => {
+    setCurrentStatus(status);
+    if (status === "Declined") {
+      setCurrCRJId(row.candidaterecommendedjobid);
+      setShowReModal(true);
+      return;
+    }
+    else if (status === "Interview Scheduled" || status === "Interview Completed") {
+      setSelectedRowData(row);
+      setShowOfflineInterviewModal(true);
+      return;
+    }
+    else if (status === "Offer Out" || status === "Accepted") {
+      setSelectedRowData(row);
+      setShowOfflineOfferModal(true);
+      return;
+    }
+
+  };
+
+  const onUploadOfferOffline = (payType, payVal, startDate, offerDate) => {
+    setOfferUploadLoading(true);
+    const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const form = new FormData();
+    form.append("Candidaterecommendedjobid", selectedRowData.candidaterecommendedjobid);
+    form.append("CurrentUserId", JSON.parse(localStorage.getItem("userDetails")).UserId);
+    form.append("Salary", payVal);
+    form.append("Payperiodtype", payType);
+    form.append("Startdate", moment(startDate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    if (currentStatus === "Accepted") {
+      form.append("Iscandidateaccepted", true);
+    }
+    // form.append("Offerdate", moment(offerDate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    axios.post(`${process.env.REACT_APP_MAIN_API_URL}/api/JobOffer/MakeJobOfferOffline`, form, config)
+      .then((result) => {
+        setOfferUploadLoading(false);
+        if (result.data.statusCode === 200) {
+          setShowUploadOfferModal(false);
+          dispatch(showSnackbar({
+            message: result.data.message,
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+          setShowOfflineOfferModal(false);
+          props.updateList();
+        } else {
+          dispatch(showSnackbar({
+            message: result.data.message || result.data.status,
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+        }
+      })
+      .catch((error) => {
+        dispatch(showSnackbar({
+          message: "An error occurred while updating the offer.",
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+      });
+  };
+
+
   return (
     <>
       <DataTable
@@ -2096,7 +2172,38 @@ export const CustCandidateListView = (props) => {
           <></>
         )}
       </>
-
+      <>
+        {" "}
+        {showOfflineInterviewModal ? (
+          <OfflineInterviewModal
+            type={currentStatus}
+            candidateData={selectedRowData}
+            durationOptions={props.durationOptions}
+            postData={(e) => {
+              getFormData(e);
+            }}
+            isOpen={showOfflineInterviewModal}
+            onClose={() => setShowOfflineInterviewModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showOfflineOfferModal ? (
+          <OfflineOffer
+            isOpen={showOfflineOfferModal}
+            onClose={() => setShowOfflineOfferModal(false)}
+            onUploadOfferOffline={(payType, payVal, startDate, offerDate) => onUploadOfferOffline(payType, payVal, startDate, offerDate)}
+            loading={offerUploadLoading}
+            updateLoading={(data) => onOfferUploading(data)}
+            data={selectedRowData}
+            currentStatus={currentStatus}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 };

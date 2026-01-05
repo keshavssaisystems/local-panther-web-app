@@ -90,7 +90,7 @@ export default function CustomerCandidateLists(props) {
   let [endDate, setEndDate] = useState();
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList.some(company => company.isstaffingfirm === true));
-
+  const [offlineStatuses, setOfflineStatuses] = useState([]);
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
 
   const rejectDrpDwnList = useSelector(
@@ -143,6 +143,7 @@ export default function CustomerCandidateLists(props) {
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+    getCandidateOfflineStatusesDropdown();
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "employer job list",
@@ -613,6 +614,16 @@ export default function CustomerCandidateLists(props) {
     }
   }
 
+  const getCandidateOfflineStatusesDropdown = async () => {
+    let response = await dispatch(dropdownActions.getDropdownListThunk({ searchText: 'RecommendedJobOfflineStatus', commonId: 0, searchBy: '' }));
+    if (response?.payload) {
+      let statues = response?.payload?.data ||
+        response?.payload?.data?.data ||
+        response?.payload ||
+        [];
+      setOfflineStatuses(statues);
+    }
+  }
   return (
     <>
       <Row className="customercandidatelist">
@@ -1275,6 +1286,7 @@ export default function CustomerCandidateLists(props) {
                             onCandidateResume(candidateId, url)
                           }
                           isStaffingFirm={isStaffingFirm}
+                          offlineStatuses={offlineStatuses}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
