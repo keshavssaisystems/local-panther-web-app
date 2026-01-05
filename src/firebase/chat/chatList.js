@@ -14,7 +14,7 @@ export function ChatList({ list }) {
   const currentUserId = localStorage.getItem("userId");
   const getSelectedChatGroup = (event) => {
     setSelectedGroupId(
-      userRole === 2
+      (userRole === 2 || userRole === 4)
         ? currentUserId + "-" + event.id
         : event.id + "-" + currentUserId
     );
@@ -64,7 +64,7 @@ export function ChatList({ list }) {
                   <tr>
                     <td className="text-center align-middle">
                       Start a chat with{" "}
-                      {userRole === 2 ? "candidates" : "employers"}
+                      {(userRole === 2 || userRole === 4) ? "candidates" : "employers"}
                     </td>
                   </tr>
                 </tbody>

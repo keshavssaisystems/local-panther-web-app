@@ -33,9 +33,9 @@ export function Chat({ groupId, details }) {
   let userRole = Number(localStorage.getItem("userroleid"));
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   let candidateId =
-    userRole === 2 ? details.id : Number(localStorage.getItem("userId"));
+    (userRole === 2 || userRole === 4) ? details.id : Number(localStorage.getItem("userId"));
   let candidateName =
-    userRole === 2
+    (userRole === 2 || userRole === 4)
       ? details.name
       : userDetails.FirstName + " " + userDetails.LastName;
   let customerId =
