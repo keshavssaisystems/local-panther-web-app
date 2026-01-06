@@ -54,7 +54,8 @@ function createExtraActions() {
     getReportBySP: getCandidateCardCount(), // New action for fetching report
     getPresentedCandidateLists: getPresentedCandidateLists(),
     putPresentCandidate: putPresentCandidate(),
-    putCandidatePlaced: putCandidatePlaced()
+    putCandidatePlaced: putCandidatePlaced(),
+    postScheduleInterviewOffline: postScheduleInterviewOffline(),
 
   };
 
@@ -355,6 +356,14 @@ function createExtraActions() {
         )
     );
   }
+
+  function postScheduleInterviewOffline() {
+    return createAsyncThunk(
+      `${name}/postScheduleInterviewOffline`,
+      async (payload) =>
+        await fetchWrapper.post(`${newUrl}/ScheduledInterview/ScheduledInterviewOffline`, payload)
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -378,6 +387,7 @@ function createExtraReducers() {
     getPresentedCandidateLists();
     putPresentCandidate();
     putCandidatePlaced();
+    postScheduleInterviewOffline();
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -714,6 +724,20 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           //no action
+        });
+    }
+
+    function postScheduleInterviewOffline() {
+      let { pending, fulfilled, rejected } = extraActions.postScheduleInterviewOffline;
+      builder
+        .addCase(pending, (state) => {
+          //No action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //No action
+        })
+        .addCase(rejected, (state, action) => {
+          //No action
         });
     }
   };
