@@ -28,15 +28,15 @@ export function ChatNameCard({
     userId = chatUsers.id;
     userName = chatUsers.name;
   } else {
-    userId = userRole === 2 ? chatUsers.candidateId : chatUsers.customerId;
+    userId = (userRole === 2 || userRole === 4) ? chatUsers.candidateId : chatUsers.customerId;
     userName =
-      userRole === 2 ? chatUsers.candidateName : chatUsers.customerName;
+      (userRole === 2 || userRole === 4) ? chatUsers.candidateName : chatUsers.customerName;
     lastMessage = chatUsers.lastMessage;
     seen = chatUsers.seen;
     lastMessageSender = chatUsers.lastMessageBy;
     id = chatUsers.id;
   }
-  
+
   const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
   const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const getChatData = (event) => {

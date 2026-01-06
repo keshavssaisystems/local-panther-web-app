@@ -19,7 +19,7 @@ export function ChatUsers({ list, getSelectedChatGroup }) {
   const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
   const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const query = chatUserRef
-    .where(userRole === 2 ? "customerId" : "candidateId", "==", userId)
+    .where((userRole === 2 || userRole === 4) ? "customerId" : "candidateId", "==", userId)
     .orderBy("lastMessageDateTime", "desc");
   const [chatUsers] = useCollectionData(query, { idField: "id" });
   let recentCustomerArray = [];
@@ -31,7 +31,7 @@ export function ChatUsers({ list, getSelectedChatGroup }) {
     });
   }
   const filteredArray =
-    userRole === 2
+    (userRole === 2 || userRole === 4)
       ? list.filter((value) => !recentCandidateArray.includes(value.id))
       : list.filter((value) => !recentCustomerArray.includes(value.id));
   const getSelectedChat = (event) => {
@@ -87,7 +87,7 @@ export function ChatUsers({ list, getSelectedChatGroup }) {
           <div className="app-inner-layout__sidebar-header">
             <Nav vertical>
               <NavItem className="mt-2 ms-3 mb-2 me-2 text-center">
-                {userRole === 2
+                {(userRole === 2 || userRole === 4)
                   ? "Chat will become available once a candidate is matched with a job and the interview is scheduled. "
                   : "Chat will be enabled once you're matched to a job and an interview is scheduled. At that point, you'll be able to communicate directly with the hiring manager."}
               </NavItem>
