@@ -22,6 +22,7 @@ import DatePicker from "react-datepicker";
 import Loader from "react-loaders";
 import { useDispatch, useSelector } from "react-redux";
 import { dropdownActions } from "_store";
+import { use } from "react";
 
 export const OfflineOffer = (props) => {
     const dispatch = useDispatch();
@@ -42,7 +43,16 @@ export const OfflineOffer = (props) => {
     useEffect(() => {
         getPayPeriod();
     }, []);
-    
+
+    useEffect(() => {
+        if (props.data?.jobOfferDtos && props.data.jobOfferDtos.length > 0) {
+            setPayType(props.data.jobOfferDtos[0].payperiodtype || "");
+            setPay(props.data.jobOfferDtos[0].salary || "");
+            setStartDate(props.data.jobOfferDtos[0].startdate ? new Date(props.data.jobOfferDtos[0].startdate) : null);
+            setOfferDate(props.data.jobOfferDtos[0].offerdate ? new Date(props.data.jobOfferDtos[0].offerdate) : null);
+        }
+    }, [props.data]);
+
     const getFormValidation = (e) => {
         e.preventDefault();
         let validation = false;
@@ -113,6 +123,7 @@ export const OfflineOffer = (props) => {
                                 id={"payPeriodType"}
                                 name={"payPeriodType"}
                                 type={"select"}
+                                 value={payType}
                                 onChange={(e) => onPayType(e)}
                             >
                                 <option key={0} value={""}>

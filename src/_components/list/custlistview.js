@@ -1982,6 +1982,10 @@ export const CustCandidateListView = (props) => {
     };
 
     const form = new FormData();
+
+    if (selectedRowData?.jobOfferDtos && selectedRowData?.jobOfferDtos?.length > 0) {
+      form.append("Jobofferid", selectedRowData?.jobOfferDtos[0].jobofferid);
+    }
     form.append("Candidaterecommendedjobid", selectedRowData.candidaterecommendedjobid);
     form.append("CurrentUserId", JSON.parse(localStorage.getItem("userDetails")).UserId);
     form.append("Salary", payVal);
@@ -1989,6 +1993,8 @@ export const CustCandidateListView = (props) => {
     form.append("Startdate", moment(startDate).tz("Etc/UTC").format("YYYY-MM-DD"));
     if (currentStatus === "Accepted") {
       form.append("Iscandidateaccepted", true);
+    } else {
+      form.append("Iscandidateaccepted", false);
     }
     // form.append("Offerdate", moment(offerDate).tz("Etc/UTC").format("YYYY-MM-DD"));
     axios.post(`${process.env.REACT_APP_MAIN_API_URL}/api/JobOffer/MakeJobOfferOffline`, form, config)
@@ -2027,6 +2033,34 @@ export const CustCandidateListView = (props) => {
           maxWidth: 500,
         }));
       });
+  };
+
+   const postScheduledInterviewOffline = async function (formData) {
+    let res = await dispatch(
+      customerCandidateListsActions.postScheduleInterviewOffline(formData)
+    );
+    if (res.payload?.statusCode === 201) {
+      setShowSchdIntSModal(false);
+      props.updateList();
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.INTERVIEW_SCHEDULED_SUCCESSFULLY,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+    } else {
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
   };
 
 
@@ -2180,7 +2214,7 @@ export const CustCandidateListView = (props) => {
             candidateData={selectedRowData}
             durationOptions={props.durationOptions}
             postData={(e) => {
-              getFormData(e);
+              postScheduledInterviewOffline(e);
             }}
             isOpen={showOfflineInterviewModal}
             onClose={() => setShowOfflineInterviewModal(false)}

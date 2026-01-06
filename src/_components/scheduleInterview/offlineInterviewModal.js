@@ -15,8 +15,10 @@ import {
 import "./scheduledInterview.scss";
 import moment from "moment-timezone";
 import DatePicker from "react-datepicker";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { customerCandidateListsActions } from "_store";
+import { use } from "react";
+import { getTimezoneDateTime } from "_helpers/helper";
 export function OfflineInterviewModal({
   candidateData,
   durationOptions,
@@ -31,10 +33,44 @@ export function OfflineInterviewModal({
   const [modal, setModal] = useState(false);
   const [scheduleDateValidation, setScheduleDateValidation] = useState(false);
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
+  const [interviewStatusValidation, setInterviewStatusValidation] = useState(false);
   const [scheduledDate, setScheduledDate] = useState();
   const [slotDurationOptions, setSlotDurationOptions] = useState([]);
-
+  const [slotTime, setSlotTime] = useState("");
+  const interviewStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    let newdate = new Date(
+      getTimezoneDateTime(
+        moment(moment().format("YYYY-MM-DD") +
+          " " +
+          moment().format("HH:mm:ss")
+        ).format("YYYY-MM-DD HH:mm:ss"),
+        "YYYY-MM-DD HH:mm:ss"
+      )
+
+    );
+    onScheduleDateChange(newdate);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isOpen && candidateData?.scheduledInterviewDtos && candidateData?.scheduledInterviewDtos?.length > 0) {
+      let date = new Date(getTimezoneDateTime(candidateData?.scheduledInterviewDtos[0].scheduledate.slice(0, 11) + candidateData?.scheduledInterviewDtos[0]?.starttime,
+        "YYYY-MM-DD HH:mm:ss"));
+
+      let t = getTimezoneDateTime(
+        moment(moment(candidateData?.scheduledInterviewDtos[0].scheduledate).format("YYYY-MM-DD") +
+          " " +
+          (candidateData?.scheduledInterviewDtos[0].starttime)
+        ).format("YYYY-MM-DD hh:mm A"),
+        "HH:mm:ss"
+      );
+      setSlotTime(t);
+      setScheduledDate(date);
+    }
+  }, [isOpen]);
+
   const toggle = () => {
     setModal(!modal);
   };
@@ -80,6 +116,7 @@ export function OfflineInterviewModal({
     setTimeOption(timeOptions);
   };
   const convertTo12Hour = (time24) => {
+    if (!time24) return "";
     const [hourStr, minute, second] = time24.split(":");
     let hour = parseInt(hourStr, 10);
     const ampm = hour >= 12 ? "PM" : "AM";
@@ -128,8 +165,11 @@ export function OfflineInterviewModal({
     event.preventDefault();
     event.target.elements.scheduleDate.value === "" ? setScheduleDateValidation(true) : setScheduleDateValidation(false);
     event.target.elements.scheduleStartTime.value === "" ? setScheduleTimeValidation(true) : setScheduleTimeValidation(false);
+    if (type === "Interview Completed") event.target.elements.interviewStatusId.value === "" || event.target.elements.interviewStatusId.value === null ? setInterviewStatusValidation(true) : setInterviewStatusValidation(false);
 
-    if (event.target.elements.scheduleDate.value !== "" && event.target.elements.scheduleStartTime.value !== "") {
+    if (event.target.elements.scheduleDate.value !== "" && event.target.elements.scheduleStartTime.value !== ""
+      && (type !== "Interview Completed" || (type === "Interview Completed" && (event.target.elements.interviewStatusId.value !== "" && event.target.elements.interviewStatusId.value !== null)))
+    ) {
       getFormData(event);
     }
   };
@@ -139,19 +179,15 @@ export function OfflineInterviewModal({
     let scheduleDateUTC = moment(event.target.elements.scheduleDate.value + " " + event.target.elements.scheduleStartTime.value).tz("Etc/UTC").format("YYYY-MM-DD");
     let scheduleTimeUTC = moment(event.target.elements.scheduleDate.value + " " + event.target.elements.scheduleStartTime.value).tz("Etc/UTC").format("HH:mm:ss");
     let data = {
-      scheduleinterviewid: 0,
+      scheduleinterviewid: candidateData.scheduledInterviewDtos && candidateData.scheduledInterviewDtos.length > 0 ? candidateData.scheduledInterviewDtos[0].scheduleinterviewid : 0,
       jobid: candidateData.jobid,
       candidateid: candidateData.candidateid,
       scheduledate: scheduleDateUTC,
       starttime: scheduleTimeUTC,
-      durationid: 30,
-      format: "In-person",
-      isappvideocall: false,
-      videolink: "",
-      interviewAddress: "",
-      messagetocandidate: "",
-      intervieweremailids: "",
-      textremaindernumbers: "",
+      durationid: 60,
+      isaccepted: type === "Interview Completed" ? true : false,
+      interviewfeedback: type === "Interview Completed" ? event.target.elements.interviewFeedbacktext.value : "",
+      interviewstatusid: type === "Interview Completed" ? Number(event.target.elements.interviewStatusId.value) : 0,
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
     };
@@ -186,7 +222,6 @@ export function OfflineInterviewModal({
                       onChange={(date) => {
                         setScheduledDate(date);
                         setScheduleDateValidation(false);
-                        onScheduleDateChange(date);
                       }}
                       dateFormat="MM/dd/yyyy"
                       placeholderText="Eg. mm/dd/yyyy"
@@ -208,14 +243,47 @@ export function OfflineInterviewModal({
                       name="scheduleStartTime"
                       id="scheduleStartTime"
                       invalid={scheduleTimeValidation}
-                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); }}
+                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); setSlotTime(time) }}
                     >
                       <option key={0} value={""}>
                         Select start time
                       </option>
                       {timeOption.length > 0 &&
                         timeOption.map((options) => (
-                          <option key={options.slottime} value={options.slottime} disabled={!options.isavailable}>
+                          <option key={options.slottime} value={options.slottime}
+                            selected={
+                              String(convertTo12Hour(options.slottime)) ===
+                              String(
+                                getTimezoneDateTime(
+                                  moment(
+                                    moment(
+                                      candidateData?.scheduledInterviewDtos &&
+                                        candidateData?.scheduledInterviewDtos
+                                          ?.length > 0
+                                        ? candidateData
+                                          ?.scheduledInterviewDtos[0]
+                                          .scheduledate
+                                        : candidateData?.scheduledate?.slice(
+                                          0,
+                                          11
+                                        ) + candidateData?.starttime
+                                    ).format("YYYY-MM-DD") +
+                                    " " +
+                                    (candidateData?.scheduledInterviewDtos &&
+                                      candidateData?.scheduledInterviewDtos
+                                        ?.length > 0
+                                      ? candidateData
+                                        ?.scheduledInterviewDtos[0]
+                                        .starttime
+                                      : candidateData?.starttime)
+                                  ).format("YYYY-MM-DD hh:mm A"),
+                                  "hh:mm A"
+                                )
+                              )
+                            }
+
+
+                          >
                             {convertTo12Hour(options.slottime)}{" "}
                           </option>
                         ))}
@@ -227,6 +295,39 @@ export function OfflineInterviewModal({
                     )}
                   </FormGroup>
                 </Col>
+                {type === "Interview Completed" && (
+                  <Col md={12}>
+                    <FormGroup>
+                      <Label for="interviewFeedback" className="fw-semi-bold">
+                        Select Interview feedback <span className="required-star">* </span>
+                      </Label>
+                      <Input type="select" name="interviewStatusId">
+                        <option key={0} value={""}>Select interview feedback</option>
+                        {interviewStatus?.length > 0 &&
+                          interviewStatus.map((data) => {
+                            return (
+                              <option value={data.id} key={data.id}>
+                                {data.name}
+                              </option>
+                            );
+                          })}
+                      </Input>
+                      {interviewStatusValidation === true && (
+                        <FormText color="danger">
+                          Please select interview feedback
+                        </FormText>
+                      )}
+                    </FormGroup>
+                    <FormGroup>
+                      <Input
+                        type="textarea"
+                        name="interviewFeedbacktext"
+                        id="interviewFeedback"
+                        placeholder="Enter interview feedback"
+                        rows="5"
+                      />
+                    </FormGroup>
+                  </Col>)}
               </Row>
             </Col>
             <div className="divider" />
