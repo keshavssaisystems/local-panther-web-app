@@ -41,39 +41,29 @@ const ATSCompanyList = () => {
     const setSearchText = (text) => {
         setSearchData(text);
     };
-    // fetch helper - requests server with paging params and updates local totalRows
-    // const fetchData = async (page = 1, pageSize = perPage, status, searchText) => {
-    //     try {
-    //         const params = {endpoint:"Get_ATS_Company_List", pageNumber: page, pageSize: pageSize, status: status || 0, searchText: searchText || "" };
-    //         const res = await dispatch(fetchATSCompanyList(params));
-            
-    //         // try to derive total rows from common response shapes
-    //         const payload = res?.payload || {};
-    //         console.log(payload);
-    //         const total =
-    //             payload?.total ||
-    //             payload?.totalRecords ||
-    //             payload?.totalCount ||
-    //             payload?.data?.total ||
-    //             payload?.data?.totalRecords ||
-    //             // fallback to length of returned array
-    //             (Array.isArray(payload?.data) ? payload.data.length : data.length);
-
-    //         // setTotalRows(Number(total) || 0);
-    //         console.log("Total rows:", data);
-    //     } catch (err) {
-            
-    //     }
-    // };
-    const fetchData = (page = 1, pageSize = perPage, status = 0, searchText = "") => {
-    dispatch(
-        fetchATSCompanyList({
-            SearchText: searchText,
-            IsActive: status === 0 ? null : status,
-            currentpage: page,
-            PageSize: pageSize
-        })
-    );
+   // fetch helper - requests server with paging params and updates local totalRows
+    const fetchData =async (page = 1, pageSize = perPage, status = 0, searchText = "") => {
+         try {
+                const params = {
+                SearchText: searchText || "",
+                IsActive: status === 0 ? null : status,
+                currentpage: page,
+                PageSize: pageSize,
+                };
+                const res = await dispatch(fetchATSCompanyList(params));
+                const payload = res?.payload || {};
+                const total =
+                payload?.total ||
+                payload?.totalRecords ||
+                payload?.totalCount ||
+                payload?.data?.total ||
+                payload?.data?.totalRecords ||
+                (Array.isArray(payload?.data) ? payload.data.length : 0);
+                 console.log("Total rows:", total);
+            } 
+            catch (error) {
+                    console.error("ATS Company list fetch failed", error);
+            }
 };
 
     useEffect(() => {
@@ -104,11 +94,6 @@ const ATSCompanyList = () => {
     };
 
     let columns = [
-    {
-        name: "Company ID",
-        selector: (row) => row.pkatscompanyid,
-        sortable: true
-    },
     {
         name: "ATS Company ID",
         selector: (row) => row.atscompanyid,
