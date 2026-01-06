@@ -444,6 +444,7 @@ const dropdownSlice = createSlice({
     },
     [getDropdownListThunk.fulfilled]: (state, action) => {
       state.loading = false;
+      console.log('action.payload', action);
     },
     [getDropdownListThunk.rejected]: (state, action) => {
       state.error = action.error;
