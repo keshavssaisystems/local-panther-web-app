@@ -19,10 +19,12 @@ import {
 import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import DatePicker from "react-datepicker";
+import { createPortal } from "react-dom";
 import Loader from "react-loaders";
 import { useDispatch, useSelector } from "react-redux";
 import { dropdownActions } from "_store";
 import { use } from "react";
+import { replace } from "lodash";
 
 export const OfflineOffer = (props) => {
     const dispatch = useDispatch();
@@ -46,8 +48,9 @@ export const OfflineOffer = (props) => {
 
     useEffect(() => {
         if (props.data?.jobOfferDtos && props.data.jobOfferDtos.length > 0) {
+            let salary = props.data.jobOfferDtos[0]?.salary ? parseInt(replace(props.data.jobOfferDtos[0].salary, /[^0-9]/g, "")) : "";
             setPayType(props.data.jobOfferDtos[0].payperiodtype || "");
-            setPay(props.data.jobOfferDtos[0].salary || "");
+            setPay(salary);
             setStartDate(props.data.jobOfferDtos[0].startdate ? new Date(props.data.jobOfferDtos[0].startdate) : null);
             setOfferDate(props.data.jobOfferDtos[0].offerdate ? new Date(props.data.jobOfferDtos[0].offerdate) : null);
         }
@@ -101,6 +104,7 @@ export const OfflineOffer = (props) => {
     const onClose = () => {
         props.onClose();
     }
+
     return (
         <Modal
             size="md"
@@ -123,7 +127,7 @@ export const OfflineOffer = (props) => {
                                 id={"payPeriodType"}
                                 name={"payPeriodType"}
                                 type={"select"}
-                                 value={payType}
+                                value={payType}
                                 onChange={(e) => onPayType(e)}
                             >
                                 <option key={0} value={""}>
@@ -185,6 +189,9 @@ export const OfflineOffer = (props) => {
                                             setStartDateValidation(false);
                                             onStartDateChange(date);
                                         }}
+                                        popperPlacement={"top-start"}
+                                        //popperModifiers={[{ name: 'preventOverflow', options: { boundary: 'viewport' } }]}
+
                                         dateFormat="MM/dd/yyyy"
                                         placeholderText="Eg. mm/dd/yyyy"
                                         name={"startDate"}
@@ -226,7 +233,7 @@ export const OfflineOffer = (props) => {
                         <Button size="lg" color="danger" type="button" onClick={() => onClose()}>
                             Close
                         </Button>{" "}
-                        <Button size="lg" color="primary" type="submit">
+                        <Button size="lg" color="primary" type="submit" disabled={props?.loading}>
                             Save
                         </Button>
                     </div>
