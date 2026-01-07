@@ -436,9 +436,9 @@ export function Login() {
                     {!reload && (
                       <img
                         src={
-                          localStorage.getItem("logo")
+                          localStorage.getItem("logo") && localStorage.getItem("logo")!=="undefined"
                             ? localStorage.getItem("logo")
-                            : logoOld
+                            : logo
                         }
                         className="logo mb-2"
                         style={{

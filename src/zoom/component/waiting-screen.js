@@ -42,7 +42,7 @@ export const WaitingPreview = (props) => {
   const routeToHome = () => {
     if (
       localStorage.getItem("userroleid") &&
-      localStorage.getItem("userroleid") === "2"
+      (localStorage.getItem("userroleid") === "2" || localStorage.getItem("userroleid") === "4")
     ) {
       navigate("/scheduled-interview");
     } else {

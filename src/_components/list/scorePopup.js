@@ -13,6 +13,9 @@ import {
 import "./scorePopup.scss";
 
 export function ScorePopup({ scoreJson }) {
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
+
   try {
     const [open, setOpen] = useState(1);
     const toggle = (id) => {
@@ -23,9 +26,10 @@ export function ScorePopup({ scoreJson }) {
       }
     };
     let validatedJson = JSON.parse(scoreJson);
+
     let isHiringManager =
       localStorage.getItem("userroleid") &&
-      localStorage.getItem("userroleid") === "2";
+      localStorage.getItem("userroleid") === "2" || isStaffingFirm || localStorage.getItem("userroleid") === "4";
 
     let keys = [
       "jobtitlescore",

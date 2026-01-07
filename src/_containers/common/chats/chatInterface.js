@@ -10,7 +10,7 @@ export function ChatInterface() {
   let userRole = Number(localStorage.getItem("userroleid"));
   const dispatch = useDispatch();
   useEffect(() => {
-    if (userRole === 2) {
+    if (userRole === 2 || userRole === 4) {
       getCandidateList();
     }
     if (userRole === 3) {
@@ -34,7 +34,7 @@ export function ChatInterface() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (userRole !== 2) getCustomerList();
+      if (userRole !== 2 && userRole !== 4) getCustomerList();
     }, 30000); // 30000 ms = 30 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
@@ -44,7 +44,7 @@ export function ChatInterface() {
   const newChatUserCustomerList = useSelector(
     (state) => state.chat.customerList
   );
-  let chatList = userRole === 2 ? newChatUserList : newChatUserCustomerList;
+  let chatList = (userRole === 2 || userRole === 4) ? newChatUserList : newChatUserCustomerList;
   return (
     <>
       <div>

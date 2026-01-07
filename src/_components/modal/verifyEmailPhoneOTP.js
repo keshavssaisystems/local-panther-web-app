@@ -27,6 +27,7 @@ export const VerifyEmailPhoneOTPModal = (props) => {
   const [mobileValidError, setMobileValidError] = useState(false);
   const [emailValidError, setEmailValidError] = useState(false);
   const [type, setType] = useState(detectInputType(props.email));
+  const initialSeconds = 120;
   useEffect(() => {
     if (timer > 0) {
       const countdown = setTimeout(() => {
@@ -172,6 +173,22 @@ export const VerifyEmailPhoneOTPModal = (props) => {
       props.loginWithOTP(otp[type], type);
     }
   };
+
+
+  const [timeLeft, setTimeLeft] = useState(initialSeconds);
+
+  useEffect(() => {
+    // Exit condition to stop the timer at 0
+    if (timeLeft <= 0) return;
+    const intervalId = setInterval(() => {
+      setTimeLeft(prevTimeLeft => prevTimeLeft - 1);
+    }, 1000);
+
+    // Clear interval on cleanup
+    return () => clearInterval(intervalId);
+  }, [timeLeft]); // Dependency on timeLeft re-runs the effect (and interval)
+
+
   return (
     <Modal
       className="modal-reject-align registration-container"
@@ -251,11 +268,13 @@ export const VerifyEmailPhoneOTPModal = (props) => {
                   <button
                     href="#"
                     onClick={() => {
+                      if (timeLeft > 0) return;
                       props.onGetMobileEmailOTP();
+                      setTimeLeft(initialSeconds);
                     }}
                     className="btn-lg btn btn-link otp-link-label"
                   >
-                    Resend Code
+                    {timeLeft > 0 ? `Wait for ${parseInt(timeLeft / 60)}m:${timeLeft % 60}s to sent code again` : "Resend code"}
                   </button>
                 </div>
               </Col>

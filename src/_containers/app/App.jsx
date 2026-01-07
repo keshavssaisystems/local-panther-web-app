@@ -83,7 +83,12 @@ import GetAppPopup from "_components/common/GetAppPopup";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import { EnhancedSnackbarExamples } from "_components/common/EnhancedSnackbarExamples";
-
+import SuccessPage from "_components/unifiedApp/unifiedSuccess";
+import UnifiedCandidates from "_components/unifiedApp/unifiedCandidates";
+import UnifiedJobs from "_components/unifiedApp/unifiedJobs";
+import AtsUnified from "_components/unifiedApp/atsUnified";
+import ATSCandidateList from "_containers/customer/atscustomercandidatelist/atscandidatelist";
+import ATSCompanyList from "_containers/customer/atscompanylist/atscompanylist";
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
 const AIJobOffCanvas = React.lazy(() =>
@@ -434,7 +439,7 @@ export function App() {
           />
         </>
       );
-    } else if (userroleid === 2) {
+    } else if (userroleid === 2 || userroleid === 4) {
       return (
         <>
           <Route
@@ -513,7 +518,10 @@ export function App() {
             path="/customer-candidate-offers/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"offers"} />}
           />
-
+          <Route
+            path="/customer-candidate-presented/:id/:jobPostedbyId"
+            element={<CustomerCandidateLists type={"presented"} />}
+          />
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
 
           <Route
@@ -660,6 +668,44 @@ export function App() {
           <Route
             path="/report/open-jobs"
             element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
+          />
+
+          <Route
+            path="/success/:integrationType"
+            element={<SuccessPage />}
+          />
+
+          <Route
+            path="/unified-candidates/:connectionId"
+            element={<UnifiedCandidates />}
+          />
+          <Route
+            path="/unified-jobs/:connectionId"
+            element={<UnifiedJobs />}
+          />
+          <Route
+            path="/ats"
+            element={
+              <PrivateRoute>
+                <AtsUnified />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/ats/candidates"
+            element={
+              <PrivateRoute>
+                <ATSCandidateList isCompanyAdmin={true} entity="candidates" />
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/ats/atscompany"
+            element={
+              <PrivateRoute>
+                <ATSCompanyList isCompanyAdmin={true} entity="atscompany" />
+              </PrivateRoute>
+            }
           />
         </>
       );
@@ -849,8 +895,8 @@ export function App() {
             )}
             <div className={authUser ? `app-main` : ""}>
               {/* <AIProfileOffCanvas>  </AIProfileOffCanvas> */}
-              <AIJobOffCanvas></AIJobOffCanvas>
-              
+              {/* <AIJobOffCanvas></AIJobOffCanvas> */}
+
               {authUser && !hideSidebar && (
                 <AppSidebar
                   isSidebarOpen={isSidebarOpen}
@@ -929,8 +975,8 @@ export function App() {
             </div>
           </>
         )}
-        
-        {(isMobile() || isTablet()) && (          
+
+        {(isMobile() || isTablet()) && (
           <GetAppPopup isOpen={showGetAppPopup} toggle={() => setShowGetAppPopup(false)} />
         )}
       </Suspense>

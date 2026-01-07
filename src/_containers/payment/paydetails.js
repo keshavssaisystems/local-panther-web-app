@@ -37,6 +37,7 @@ import { SNACKBAR_TYPES, SNACKBAR_POSITION, CARD_MESSAGES } from "_constants/sna
 import { showSnackbar } from "_store/snackbar.slice";
 // import Squarepayment from "src/_containers/square-payment/squarepayment";
 export const PaymentDetails = ({
+  isCompanyBilling = false,
   isAdmin = false,
   selectedCustomer = {},
   onClose,
@@ -151,13 +152,10 @@ export const PaymentDetails = ({
     }
   }, [id, sameAsCust]);
   useEffect(() => {
-    if (userDetails?.customerid) {
-      if (!(userDetails?.billingdetailstatus)) setDetails(userDetails);
+    if (userDetails?.customerid && (!compBillingDetails || compBillingDetails?.length === 0) && (!billingDetails || billingDetails?.length === 0)) {
+      setDetails(userDetails);
       setDisableSAC(userDetails?.billingdetailstatus);
-      if (
-        !userId &&
-        userDetails?.billingdetailstatus &&
-        (authUser || isAdmin)
+      if (!userId && userDetails?.billingdetailstatus && (authUser || isAdmin)
       ) {
         dispatch(paymentActions.getBillingDetails(userDetails?.customerid));
       }
@@ -179,13 +177,13 @@ export const PaymentDetails = ({
   }, [selectedCustomer]);
 
   useEffect(() => {
-    if (billingDetails?.billingdetailid) {
+    if (billingDetails?.billingdetailid && isCompanyBilling === false) {
       setCardData(billingDetails);
     }
   }, [billingDetails]);
 
   useEffect(() => {
-    if (compBillingDetails?.billingdetailid) {
+    if (compBillingDetails?.billingdetailid && isCompanyBilling === true) {
       setDisableCABillStat(compBillingDetails?.billingdetailid);
       setCardData(compBillingDetails);
     }
@@ -521,7 +519,7 @@ export const PaymentDetails = ({
       }
       setDeletedCard(false);
       if (authUser) {
-        dispatch(paymentActions.updateShowBilling(false));
+        dispatch(paymentActions.updateShowBilling(true));
       }
       dispatch(showSnackbar({
         message: response.payload.message,

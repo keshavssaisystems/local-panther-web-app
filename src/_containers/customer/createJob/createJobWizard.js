@@ -253,7 +253,7 @@ export function CreateJobWizard({ type }) {
     {
       name: "Preview job",
       component: (
-        <JobPreview previewData={jobPreviewData} editdata={(e) => editJob(e)} />
+        <JobPreview previewData={jobPreviewData} editdata={(e) => editJob(e)}  customerDetails={customerDetails}/>
       ),
     },
     {

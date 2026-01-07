@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Row, Col } from "reactstrap";
 import "./createJob.scss";
 
-export default function JobPreview({ previewData, editdata }) {
+export default function JobPreview({ previewData, editdata, customerDetails }) {
   useEffect(() => {
     editdata(previewData);
   }, [previewData]);
@@ -147,7 +147,7 @@ export default function JobPreview({ previewData, editdata }) {
     previewData.basicInformation.subsidiaryid !== "" &&
     previewData.basicInformation.subsidiaryOption !== undefined
   ) {
-    previewData.basicInformation.subsidiaryOption.forEach((element) => {
+    previewData.basicInformation.subsidiaryOption?.forEach((element) => {
       if (
         Number(previewData.basicInformation.subsidiaryid) ===
         element.subsidiaryid
@@ -170,19 +170,45 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Company name</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.companyId === undefined
+                      previewData.basicInformation.companyId === undefined
                       ? "-"
                       : previewData.basicInformation.companyId}
                   </p>
                 </div>
               </Col>
+              {customerDetails?.isatsenable === true && (
+                <>
+                  <Col md={6} lg={3}>
+                    <div className="detail-padding">
+                      <h6 className="mb-0 job-heading-custom">Client company</h6>
+                      <p className="mb-0 mt-1 mr-1">
+                        {previewData.basicInformation === undefined ||
+                          previewData.basicInformation.clientCompanyDto === undefined
+                          ? "-"
+                          : previewData.basicInformation.clientCompanyDto.name}
+                      </p>
+                    </div>
+                  </Col>
+                  <Col md={6} lg={3}>
+                    <div className="detail-padding">
+                      <h6 className="mb-0 job-heading-custom">Contact</h6>
+                      <p className="mb-0 mt-1 mr-1">
+                        {previewData.basicInformation === undefined ||
+                          previewData.basicInformation.hiringManagerDto === undefined
+                          ? "-"
+                          : previewData.basicInformation.hiringManagerDto.name}
+                      </p>
+                    </div>
+                  </Col>
+                </>
+              )}
               {previewData?.basicInformation?.subsidiaryOption?.length > 0 && (
                 <Col md={6} lg={3}>
                   <div className="detail-padding">
                     <h6 className="mb-0 job-heading-custom">Subsidiary name</h6>
                     <p className="mb-0 mt-1 mr-1">
                       {previewData.basicInformation === undefined ||
-                      previewData.basicInformation.subsidiaryid === undefined
+                        previewData.basicInformation.subsidiaryid === undefined
                         ? "-"
                         : subsidiaryData}
                     </p>
@@ -195,7 +221,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Job title</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.jobTitle === undefined
+                      previewData.basicInformation.jobTitle === undefined
                       ? "-"
                       : previewData.basicInformation.jobTitle}
                   </p>
@@ -208,7 +234,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.noOfPostions === undefined
+                      previewData.basicInformation.noOfPostions === undefined
                       ? "-"
                       : previewData.basicInformation.noOfPostions}
                   </p>
@@ -219,7 +245,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Job location</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.jobLocation === undefined
+                      previewData.basicInformation.jobLocation === undefined
                       ? "-"
                       : jobLocationData}
                   </p>
@@ -231,7 +257,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Address</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.address === undefined
+                      previewData.basicInformation.address === undefined
                       ? "-"
                       : previewData.basicInformation.address}
                   </p>
@@ -242,7 +268,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">City</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.cityName === undefined
+                      previewData.basicInformation.cityName === undefined
                       ? "-"
                       : previewData.basicInformation.cityName}
                   </p>
@@ -253,7 +279,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">State</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.stateName === undefined
+                      previewData.basicInformation.stateName === undefined
                       ? "-"
                       : previewData.basicInformation.stateName}
                   </p>
@@ -264,7 +290,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Country</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.stateName === undefined
+                      previewData.basicInformation.stateName === undefined
                       ? "-"
                       : "US"}
                   </p>
@@ -276,12 +302,23 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Zip code</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.zipcode === undefined
+                      previewData.basicInformation.zipcode === undefined
                       ? "-"
                       : previewData.basicInformation.zipcode}
                   </p>
                 </div>
               </Col>
+              {customerDetails?.isatsenable === true && (<Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Assign To</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                      previewData.basicInformation.recruiterDto === undefined
+                      ? "-"
+                      : previewData.basicInformation.recruiterDto.name}
+                  </p>
+                </div>
+              </Col>)}
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
@@ -289,13 +326,13 @@ export default function JobPreview({ previewData, editdata }) {
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.authorizedtoworkinus ===
+                      previewData.basicInformation.authorizedtoworkinus ===
                       undefined
                       ? "-"
                       : previewData.basicInformation.authorizedtoworkinus ===
                         true
-                      ? "Yes"
-                      : "No"}
+                        ? "Yes"
+                        : "No"}
                   </p>
                 </div>
               </Col>
@@ -306,13 +343,13 @@ export default function JobPreview({ previewData, editdata }) {
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.sponsorshiprequiured ===
+                      previewData.basicInformation.sponsorshiprequiured ===
                       undefined
                       ? "-"
                       : previewData.basicInformation.sponsorshiprequiured ===
                         true
-                      ? "Yes"
-                      : "No"}
+                        ? "Yes"
+                        : "No"}
                   </p>
                 </div>
               </Col>
@@ -323,27 +360,27 @@ export default function JobPreview({ previewData, editdata }) {
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.issecurityclearancerequired ===
+                      previewData.basicInformation.issecurityclearancerequired ===
                       undefined
                       ? "-"
                       : previewData.basicInformation
-                          .issecurityclearancerequired === true
-                      ? "Yes"
-                      : "No"}
+                        .issecurityclearancerequired === true
+                        ? "Yes"
+                        : "No"}
                   </p>
                 </div>
               </Col>
               {previewData.basicInformation.issecurityclearancerequired ===
                 true && (
-                <Col md={6} lg={3}>
-                  <div className="detail-padding">
-                    <h6 className="mb-0 job-heading-custom">
-                      Security clearance
-                    </h6>
-                    <p className="mb-0 mt-1 mr-1">{securityClearenceData}</p>
-                  </div>
-                </Col>
-              )}
+                  <Col md={6} lg={3}>
+                    <div className="detail-padding">
+                      <h6 className="mb-0 job-heading-custom">
+                        Security clearance
+                      </h6>
+                      <p className="mb-0 mt-1 mr-1">{securityClearenceData}</p>
+                    </div>
+                  </Col>
+                )}
 
               <Col md={6} lg={3}>
                 <div className="detail-padding">
@@ -370,7 +407,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Certifications</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    certificationsString === undefined
+                      certificationsString === undefined
                       ? "-"
                       : certificationsString}
                   </p>
@@ -385,7 +422,7 @@ export default function JobPreview({ previewData, editdata }) {
                     dangerouslySetInnerHTML={{
                       __html:
                         previewData.basicInformation === undefined ||
-                        previewData.basicInformation.description === undefined
+                          previewData.basicInformation.description === undefined
                           ? "-"
                           : previewData.basicInformation.description,
                     }}
@@ -398,15 +435,15 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Company details</h6>
                   <p className="mb-2 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.companyDetail === undefined
+                      previewData.basicInformation.companyDetail === undefined
                       ? "-"
                       : previewData.basicInformation.companyDetail}
                   </p>
                 </div>
               </Col>
             </Row>
-          </div>
-        </Col>
+          </div >
+        </Col >
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3">
             Experience & Schedules
@@ -418,7 +455,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Job type</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.experienceSchedule === undefined ||
-                    previewData.experienceSchedule.jobType === undefined
+                      previewData.experienceSchedule.jobType === undefined
                       ? "-"
                       : jobTypeData}
                   </p>
@@ -429,7 +466,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Work schedules</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.experienceSchedule === undefined ||
-                    previewData.experienceSchedule.workSchedule === undefined
+                      previewData.experienceSchedule.workSchedule === undefined
                       ? "-"
                       : workScheduleData}
                   </p>
@@ -440,7 +477,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Experience level</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.experienceSchedule === undefined ||
-                    previewData.experienceSchedule.experienceLevel === undefined
+                      previewData.experienceSchedule.experienceLevel === undefined
                       ? "-"
                       : experinceLevelData}
                   </p>
@@ -453,7 +490,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Shifts</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.experienceSchedule === undefined ||
-                    previewData.experienceSchedule.shift === undefined
+                      previewData.experienceSchedule.shift === undefined
                       ? "-"
                       : shiftData}
                   </p>
@@ -464,7 +501,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Hiring timeline</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.experienceSchedule === undefined ||
-                    previewData.experienceSchedule.hiringTimeline === undefined
+                      previewData.experienceSchedule.hiringTimeline === undefined
                       ? "-"
                       : hiringTimelineData}
                   </p>
@@ -485,7 +522,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Pay period type</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.paymentBenifits === undefined ||
-                    previewData.paymentBenifits.payPeriodType === undefined
+                      previewData.paymentBenifits.payPeriodType === undefined
                       ? "-"
                       : payPeriodTypeData}
                   </p>
@@ -496,12 +533,12 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Minimum amount</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.paymentBenifits === undefined ||
-                    previewData.paymentBenifits.minimumAmount === undefined
+                      previewData.paymentBenifits.minimumAmount === undefined
                       ? "-"
                       : "$" +
-                        new Intl.NumberFormat("en-US").format(
-                          previewData.paymentBenifits.minimumAmount
-                        )}
+                      new Intl.NumberFormat("en-US").format(
+                        previewData.paymentBenifits.minimumAmount
+                      )}
                   </p>
                 </div>
               </Col>
@@ -510,12 +547,12 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Maximum amount</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.paymentBenifits === undefined ||
-                    previewData.paymentBenifits.maximumAmount === undefined
+                      previewData.paymentBenifits.maximumAmount === undefined
                       ? "-"
                       : "$" +
-                        new Intl.NumberFormat("en-US").format(
-                          previewData.paymentBenifits.maximumAmount
-                        )}
+                      new Intl.NumberFormat("en-US").format(
+                        previewData.paymentBenifits.maximumAmount
+                      )}
                   </p>
                 </div>
               </Col>
@@ -528,7 +565,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.paymentBenifits === undefined ||
-                    previewData.paymentBenifits.compensationPackage ===
+                      previewData.paymentBenifits.compensationPackage ===
                       undefined
                       ? "-"
                       : previewData.paymentBenifits.compensationPackage}
@@ -540,7 +577,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Benefits</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.paymentBenifits === undefined ||
-                    previewData.paymentBenifits.benefits === undefined
+                      previewData.paymentBenifits.benefits === undefined
                       ? "-"
                       : previewData.paymentBenifits.benefits}
                   </p>
@@ -624,7 +661,7 @@ export default function JobPreview({ previewData, editdata }) {
             </Row>
           </div>
         </Col>
-      </Row>
+      </Row >
     </>
   );
 }

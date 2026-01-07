@@ -28,10 +28,10 @@ export function OpenJobsGraph({ openJobsCount, graphData }) {
       {
         name: "New jobs",
         data: [
-          graphData?.Last7daysOpenJobs,
-          graphData?.Last30daysOpenJobs,
-          graphData?.Last60daysOpenJobs,
-          graphData?.Last90daysOpenJobs,
+          graphData?.Last7daysOpenJobs || 0,
+          graphData?.Last30daysOpenJobs || 0,
+          graphData?.Last60daysOpenJobs || 0,
+          graphData?.Last90daysOpenJobs || 0,
         ],
       },
     ],

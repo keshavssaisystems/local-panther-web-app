@@ -26,7 +26,8 @@ export const CANDIDATE_MESSAGES = {
   CANDIDATE_ACCEPTED_SUCCESS: 'Candidate accepted successfully!',
   OFFER_UPLOADED_SUCCESS: 'Offer uploaded successfully!',
   INTERVIEW_RESCHEDULED_SUCCESS: 'Interview rescheduled successfully!',
-  JOB_STATUS_UPDATED_SUCCESS: 'Job status updated successfully!'
+  JOB_STATUS_UPDATED_SUCCESS: 'Job status updated successfully!',
+  RESUME_NOT_AVAILABLE: 'Candidate CV/Resume not available!'
 };
 
 // Card Details

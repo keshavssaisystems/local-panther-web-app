@@ -15,6 +15,9 @@ import moment from "moment/moment";
 import { analytics } from "../../../firebase/index";
 import { CommonFilters } from "../../../_components/common/commonFilters";
 import { setJobStatus, setHiringManagerId } from "_store/commonCustFiltersSlice";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 export default function CustJobList() {
   const [page, setPage] = useState(1);
   // const [placeHolder, setPlaceHolder] = useState("Search job title");
@@ -116,21 +119,44 @@ export default function CustJobList() {
     dispatch(custJobListActions.getJobDetail({ jobId: e }));
   };
 
-  const publishNewJob = function (event) {
+  const publishNewJob = async function (event) {
     let jobId = event;
     let payload = {
       currentUserId: localStorage.getItem("userId"),
     };
-    dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
-    dispatch(
-      custJobListActions.publishJob({
-        jobList: jobList,
-        jobDetail: jobDetail,
-        jobId: jobId,
-        publisheddate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
-      })
-    );
-    getSelectedJob(jobId);
+    let res = await dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
+
+    if (res?.payload) {
+      dispatch(showSnackbar({
+        message: "Job published successfully.",
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+
+      dispatch(
+        custJobListActions.publishJob({
+          jobList: jobList,
+          jobDetail: jobDetail,
+          jobId: jobId,
+          publisheddate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
+        })
+      );
+      getSelectedJob(jobId);
+    }
+    else {
+      dispatch(showSnackbar({
+        message: res?.error?.message || GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+      return;
+    }
   };
   const closeJob = (event) => {
     let jobId = event.jobId;

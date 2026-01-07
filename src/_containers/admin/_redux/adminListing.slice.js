@@ -271,6 +271,16 @@ export const updateIsCompanyAdminByUserId = createAsyncThunk(
     return await fetchWrapper.put(PUT_VISIBILITY_STATS);
   }
 );
+
+
+export const updateAllowDataSharing = createAsyncThunk(
+  `${name}/updateAllowDataSharing`,
+  async ({ id, payload }) => {
+    const put_allow_data_sharing_url = `${baseUrl}/Company/isexcludecandidatesfromecosystem/${id}`;
+    return await fetchWrapper.put(put_allow_data_sharing_url, payload);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -691,6 +701,17 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+    [updateAllowDataSharing.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateAllowDataSharing.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateAllowDataSharing.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   }
 });
 
@@ -726,7 +747,7 @@ export const adminListingActions = {
   admAddCandidate,
   updateIsVisibleToOthersById,
   updateIsCompanyAdminByUserId,
-
+  updateAllowDataSharing
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

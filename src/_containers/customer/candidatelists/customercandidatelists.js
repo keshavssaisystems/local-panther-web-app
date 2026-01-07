@@ -28,6 +28,7 @@ import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { CandidateHistoryModal } from "_components/modal/candidatehistorymodal";
+import { CandidateCVModal } from "_components/modal/candidatecvmodal";
 import {
   getProfileActions,
   dropdownActions,
@@ -63,6 +64,8 @@ import {
   setPlaceHolder,
   clearFilters,
 } from "_store/commonCustFiltersSlice";
+import { ca, is } from "date-fns/locale";
+
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
   const { jobPostedbyId } = useParams();
@@ -98,6 +101,9 @@ export default function CustomerCandidateLists(props) {
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList.some(company => company.isstaffingfirm === true));
+  const [offlineStatuses, setOfflineStatuses] = useState([]);
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
 
   const rejectDrpDwnList = useSelector(
@@ -127,6 +133,8 @@ export default function CustomerCandidateLists(props) {
   const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
   const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const [interviewStatus, setInterviewStatus] = useState([]);
+  const [openDocumentModal, setOpenDocumentModal] = useState(false);
+  const [candidateDocumentUrl, setCandidateDocumentUrl] = useState("");
   const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
   const reportData = useSelector((state) => state.customerCandidateList.reportData);
   // // // Set default actionbyId after hiringManagerDownList is loaded
@@ -148,6 +156,7 @@ export default function CustomerCandidateLists(props) {
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+    getCandidateOfflineStatusesDropdown();
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "employer job list",
@@ -157,14 +166,14 @@ export default function CustomerCandidateLists(props) {
     }
   }, []);
 
-  useEffect(() => {
-    const currentJobId = id || selectedJobId || null; // Prioritize id, then selectedJobId, then null
-    const currentUserId = hiringManagerId;
+  // useEffect(() => {
+  //   const currentJobId = id || selectedJobId || null; // Prioritize id, then selectedJobId, then null
+  //   const currentUserId = actionbyId;
 
-    if (currentUserId) {
-      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: currentUserId }));
-    }
-  }, [id, selectedJobId, hiringManagerId, dispatch]);
+  //   if (currentUserId) {
+  //     dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: currentUserId, searchText: searchText }));
+  //   }
+  // }, [id, selectedJobId, actionbyId, dispatch]);
 
   useEffect(() => {
     if (window?.location?.pathname?.includes("candidate-list")) {
@@ -172,7 +181,7 @@ export default function CustomerCandidateLists(props) {
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, "");
     }
-  }, [props.type, hiringManagerId]);
+  }, [props.type, actionbyId, selectedJobId]);
 
   useEffect(() => {
     if (id) {
@@ -181,7 +190,7 @@ export default function CustomerCandidateLists(props) {
       onGetPageList(pageno, props.type || activeTab, id);
 
     }
-  }, [props.type, id, hiringManagerId]);
+  }, [props.type, id, actionbyId, selectedJobId]);
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
@@ -220,6 +229,10 @@ export default function CustomerCandidateLists(props) {
     }
   };
 
+  const onGetCandidatesCount = (id, clearText = false) => {
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: actionbyId, searchText: clearText ? "" : searchText }));
+  }
+
   const onGetPageList = (pageNo, type, id, clearText = false) => {
     let candObj = {
       pageNumber: pageNo,
@@ -230,7 +243,7 @@ export default function CustomerCandidateLists(props) {
       actionbyId: hiringManagerId
     };
 
-    if (activeTab === 'scheduled') {
+    if (type === 'scheduled') {
       let fromDate = startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null;
       let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
       candObj = {
@@ -242,8 +255,14 @@ export default function CustomerCandidateLists(props) {
         interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
       };
     }
+    if (type === 'presented') {
+      dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
+      onGetCandidatesCount(id, clearText);
+      return
+    }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
+    onGetCandidatesCount(id, clearText);
   };
 
   const handlePageChange = (page) => {
@@ -261,7 +280,8 @@ export default function CustomerCandidateLists(props) {
       //setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
-      onGetPageList(pageNo, activetab, "", false);
+      let pageno = 1;
+      onGetPageList(pageno, activetab, "", false);
     }
   };
 
@@ -340,6 +360,12 @@ export default function CustomerCandidateLists(props) {
         }));
 
       }
+    }
+    else if (type === "presented") {
+      handlePresentClick(evt, type);
+    }
+    else if (type === "candidatePlaced") {
+      handleCandidatePlacedClick(evt, type);
     }
   };
 
@@ -429,10 +455,10 @@ export default function CustomerCandidateLists(props) {
 
   const searchCandidate = async () => {
     onSearchJob();
-    if (searchText && hiringManagerId) {
-      const currentJobId = selectedJobId || id || null;
-      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: hiringManagerId }));
-    }
+    // if (searchText && actionbyId) {
+    //   const currentJobId = selectedJobId || id || null;
+    //   dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: actionbyId, searchText: searchText }));
+    // }
   };
   const onCandidateHistoryClick = async (candidateId, row) => {
     setCandidateName(row?.firstname + " " + row?.lastname);
@@ -551,6 +577,84 @@ export default function CustomerCandidateLists(props) {
     };
     getInterviewListByFilters(candObj);
   };
+  const onCandidateResume = async (candidateId, url) => {
+    if (!url) {
+      return dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.RESUME_NOT_AVAILABLE,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+    setOpenDocumentModal(true);
+    setCandidateDocumentUrl(url);
+  }
+
+  const handlePresentClick = async (evt, type) => {
+    let res = await dispatch(
+      customerCandidateListsActions.putPresentCandidate({ id: evt })
+    );
+    if (res.payload.statusCode === 204) {
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      onGetPageList(pageNo, props.type || activeTab, id);
+    } else {
+
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const handleCandidatePlacedClick = async (evt, type) => {
+    let res = await dispatch(
+      customerCandidateListsActions.putCandidatePlaced({ id: evt })
+    );
+    if (res.payload.statusCode === 204) {
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      onGetPageList(pageNo, props.type || activeTab, id);
+    } else {
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const getCandidateOfflineStatusesDropdown = async () => {
+    let response = await dispatch(dropdownActions.getDropdownListThunk({ searchText: 'RecommendedJobOfflineStatus', commonId: 0, searchBy: '' }));
+    if (response?.payload) {
+      let statues = response?.payload?.data ||
+        response?.payload?.data?.data ||
+        response?.payload ||
+        [];
+      setOfflineStatuses(statues);
+    }
+  }
   return (
     <>
 
@@ -642,6 +746,21 @@ export default function CustomerCandidateLists(props) {
                   Applied{reportData?.Applied > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Applied}</span>)}
                 </Button>
 
+                {isStaffingFirm === true && (<Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "presented" })
+                  }
+                  onClick={() => {
+                    toggle("presented");
+                  }}
+                >
+                  Presented{reportData?.Presented > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Presented}</span>)}
+                </Button>
+                )}
+
                 <Button
                   color="primary"
                   disabled={loading}
@@ -694,6 +813,7 @@ export default function CustomerCandidateLists(props) {
                 >
                   Declined{reportData?.Reject > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Reject}</span>)}
                 </Button>
+
 
               </ButtonGroup></Col>
             {false && (
@@ -871,6 +991,10 @@ export default function CustomerCandidateLists(props) {
                                 onBuildResume={(candidateId) =>
                                   onBuildResumeClick(candidateId)
                                 }
+                                onCandidateResume={(candidateId, url) =>
+                                  onCandidateResume(candidateId, url)
+                                }
+                                isStaffingFirm={isStaffingFirm}
                               ></CandidateCardView>
                             </Col>
                           );
@@ -956,6 +1080,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1037,6 +1165,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1119,6 +1251,96 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
+                        />
+                        {totalRecords > listPageSize ? (
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="presented">
+              {/* <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      Candidates are individuals unsure about being invited to
+                      apply, often marked with a question or doubt. They may
+                      also be saved in a separate section of the user account,
+                      allowing users to review and change decisions later. This
+                      helps make informed decisions about potential candidates.
+                    </span>
+                  </Col>
+                </Row>
+              </div> */}
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CustCandidateListView
+                          type={props.type || activeTab}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
+                          }
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
+                          offlineStatuses={offlineStatuses}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1317,6 +1539,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1402,6 +1628,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1485,6 +1715,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1570,6 +1804,11 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
+
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1674,6 +1913,13 @@ export default function CustomerCandidateLists(props) {
           </>
         ) : (
           <></>
+        )}
+      </>
+      <>
+        {openDocumentModal && (
+          <CandidateCVModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)}
+            url={candidateDocumentUrl}
+          />
         )}
       </>
     </>

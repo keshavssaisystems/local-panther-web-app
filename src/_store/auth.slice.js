@@ -187,7 +187,7 @@ const authSlice = createSlice({
       state.loader = true;
     },
     [loginThunk.fulfilled]: (state, { payload: { data = {} } = {} }) => {
-      const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+      const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
       state.menuList = menuDtoList;
       state.user = data;
       state.token = token;
@@ -206,22 +206,25 @@ const authSlice = createSlice({
       localStorage.setItem("userId", decodedData.UserId);
       localStorage.setItem("profileImage", decodedData.Profilephotopath);
       localStorage.setItem("userLoginInfoId", userLoginInfoId);
-      localStorage.setItem(
-        "userroleid",
-        decodedData.role.toLowerCase() === "admin"
-          ? 1
-          : decodedData.role.toLowerCase() === "employer" ||
-            decodedData.role.toLowerCase() === "hiring manager"
-          ? 2
-          : 3
-      );
-      state.userroleid =
-        decodedData.role.toLowerCase() === "admin"
-          ? 1
-          : decodedData.role.toLowerCase() === "employer" ||
-            decodedData.role.toLowerCase() === "hiring manager"
-          ? 2
-          : 3;
+      // localStorage.setItem(
+      //   "userroleid",
+      //   decodedData.role.toLowerCase() === "admin"
+      //     ? 1
+      //     : decodedData.role.toLowerCase() === "employer" ||
+      //       decodedData.role.toLowerCase() === "hiring manager"
+      //     ? 2
+      //     : 3
+      // );
+      // state.userroleid =
+      //   decodedData.role.toLowerCase() === "admin"
+      //     ? 1
+      //     : decodedData.role.toLowerCase() === "employer" ||
+      //       decodedData.role.toLowerCase() === "hiring manager"
+      //       ? 2
+      //       : 3;
+      // console.log("decodedData", decodedData);
+      localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
+      state.userroleid = parseInt(decodedData.UserroleId);
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
       localStorage.setItem(
         "pushnotification",
@@ -232,12 +235,12 @@ const authSlice = createSlice({
         decodedData?.role?.toLowerCase() === "candidate"
           ? ""
           : cmpLogo?.length > 0
-          ? cmpLogo
-          : companyLogo?.length > 0
-          ? companyLogo[0]?.appconfigurationvalue
-          : defLogo?.length > 0
-          ? defLogo[0]?.appconfigurationvalue
-          : ""
+            ? cmpLogo
+            : companyLogo?.length > 0
+              ? companyLogo[0]?.appconfigurationvalue
+              : defLogo?.length > 0
+                ? defLogo[0]?.appconfigurationvalue
+                : ""
       );
       localStorage.setItem(
         "emailnotification",
@@ -254,6 +257,10 @@ const authSlice = createSlice({
       const { from } = history.location.state || {
         from: { pathname: "/" },
       };
+
+      if (companyList && companyList.length > 0) {
+        localStorage.setItem("companyList", JSON.stringify(companyList));
+      }
       state.loader = false;
       history.navigate(from);
     },
@@ -274,7 +281,7 @@ const authSlice = createSlice({
     [forgotPasswordThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => {},
+    [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => { },
     [forgotPasswordThunk.rejected]: (state, action) => {
       state.error = null;
     },
@@ -282,14 +289,14 @@ const authSlice = createSlice({
     [userRegisterThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [userRegisterThunk.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunk.fulfilled]: (state, { payload = {} }) => { },
     [userRegisterThunk.rejected]: (state, action) => {
       state.error = null;
     },
     [verifyOTPThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => {},
+    [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => { },
     [verifyOTPThunk.rejected]: (state, action) => {
       state.error = null;
     },
@@ -297,14 +304,14 @@ const authSlice = createSlice({
     [userRegisterThunkNew.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => { },
     [userRegisterThunkNew.rejected]: (state, action) => {
       state.error = null;
     },
     [generateToken.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [generateToken.fulfilled]: (state, { payload = {} }) => {},
+    [generateToken.fulfilled]: (state, { payload = {} }) => { },
     [generateToken.rejected]: (state, action) => {
       state.error = action.error;
     },
@@ -327,7 +334,7 @@ const authSlice = createSlice({
 
       if (payload?.data?.token) {
         let data = payload.data;
-        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
         state.menuList = menuDtoList;
         state.user = data;
         state.token = token;
@@ -346,22 +353,24 @@ const authSlice = createSlice({
         localStorage.setItem("userId", decodedData.UserId);
         localStorage.setItem("profileImage", decodedData.Profilephotopath);
         localStorage.setItem("userLoginInfoId", userLoginInfoId);
-        localStorage.setItem(
-          "userroleid",
-          decodedData.role.toLowerCase() === "admin"
-            ? 1
-            : decodedData.role.toLowerCase() === "employer" ||
-              decodedData.role.toLowerCase() === "hiring manager"
-            ? 2
-            : 3
-        );
-        state.userroleid =
-          decodedData.role.toLowerCase() === "admin"
-            ? 1
-            : decodedData.role.toLowerCase() === "employer" ||
-              decodedData.role.toLowerCase() === "hiring manager"
-            ? 2
-            : 3;
+        // localStorage.setItem(
+        //   "userroleid",
+        //   decodedData.role.toLowerCase() === "admin"
+        //     ? 1
+        //     : decodedData.role.toLowerCase() === "employer" ||
+        //       decodedData.role.toLowerCase() === "hiring manager"
+        //       ? 2
+        //       : 3
+        // );
+        // state.userroleid =
+        //   decodedData.role.toLowerCase() === "admin"
+        //     ? 1
+        //     : decodedData.role.toLowerCase() === "employer" ||
+        //       decodedData.role.toLowerCase() === "hiring manager"
+        //       ? 2
+        //       : 3;
+        localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
+        state.userroleid = parseInt(decodedData.UserroleId);
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -372,12 +381,12 @@ const authSlice = createSlice({
           decodedData?.role?.toLowerCase() === "candidate"
             ? ""
             : cmpLogo?.length > 0
-            ? cmpLogo
-            : companyLogo?.length > 0
-            ? companyLogo[0]?.appconfigurationvalue
-            : defLogo?.length > 0
-            ? defLogo[0]?.appconfigurationvalue
-            : ""
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
         );
         localStorage.setItem(
           "emailnotification",
@@ -394,6 +403,11 @@ const authSlice = createSlice({
         const { from } = history.location.state || {
           from: { pathname: "/" },
         };
+
+        if (companyList && companyList.length > 0) {
+          localStorage.setItem("companyList", JSON.stringify(companyList));
+        }
+
         state.loader = false;
         history.navigate(from);
       }
@@ -451,7 +465,7 @@ const authSlice = createSlice({
     },
     [loginWithOTP.fulfilled]: (state, { payload: { data = {} } = {} }) => {
       if (data?.token) {
-        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
         state.menuList = menuDtoList;
         state.user = data;
         state.token = token;
@@ -470,22 +484,24 @@ const authSlice = createSlice({
         localStorage.setItem("userId", decodedData.UserId);
         localStorage.setItem("profileImage", decodedData.Profilephotopath);
         localStorage.setItem("userLoginInfoId", userLoginInfoId);
-        localStorage.setItem(
-          "userroleid",
-          decodedData.role.toLowerCase() === "admin"
-            ? 1
-            : decodedData.role.toLowerCase() === "employer" ||
-              decodedData.role.toLowerCase() === "hiring manager"
-            ? 2
-            : 3
-        );
-        state.userroleid =
-          decodedData.role.toLowerCase() === "admin"
-            ? 1
-            : decodedData.role.toLowerCase() === "employer" ||
-              decodedData.role.toLowerCase() === "hiring manager"
-            ? 2
-            : 3;
+        // localStorage.setItem(
+        //   "userroleid",
+        //   decodedData.role.toLowerCase() === "admin"
+        //     ? 1
+        //     : decodedData.role.toLowerCase() === "employer" ||
+        //       decodedData.role.toLowerCase() === "hiring manager"
+        //       ? 2
+        //       : 3
+        // );
+        // state.userroleid =
+        //   decodedData.role.toLowerCase() === "admin"
+        //     ? 1
+        //     : decodedData.role.toLowerCase() === "employer" ||
+        //       decodedData.role.toLowerCase() === "hiring manager"
+        //       ? 2
+        //       : 3;
+        localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
+        state.userroleid = parseInt(decodedData.UserroleId);
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -496,12 +512,12 @@ const authSlice = createSlice({
           decodedData?.role?.toLowerCase() === "candidate"
             ? ""
             : cmpLogo?.length > 0
-            ? cmpLogo
-            : companyLogo?.length > 0
-            ? companyLogo[0]?.appconfigurationvalue
-            : defLogo?.length > 0
-            ? defLogo[0]?.appconfigurationvalue
-            : ""
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
         );
         localStorage.setItem(
           "emailnotification",
@@ -518,6 +534,9 @@ const authSlice = createSlice({
         const { from } = history.location.state || {
           from: { pathname: "/" },
         };
+        if (companyList && companyList.length > 0) {
+          localStorage.setItem("companyList", JSON.stringify(companyList));
+        }
         state.loader = false;
         history.navigate(from);
       }
@@ -534,7 +553,7 @@ const authSlice = createSlice({
       { payload: { data = {} } = {} }
     ) => {
       if (data?.token) {
-        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
         state.menuList = menuDtoList;
         state.user = data;
         state.token = token;
@@ -553,22 +572,24 @@ const authSlice = createSlice({
         localStorage.setItem("userId", decodedData.UserId);
         localStorage.setItem("profileImage", decodedData.Profilephotopath);
         localStorage.setItem("userLoginInfoId", userLoginInfoId);
-        localStorage.setItem(
-          "userroleid",
-          decodedData.role.toLowerCase() === "admin"
-            ? 1
-            : decodedData.role.toLowerCase() === "employer" ||
-              decodedData.role.toLowerCase() === "hiring manager"
-            ? 2
-            : 3
-        );
-        state.userroleid =
-          decodedData.role.toLowerCase() === "admin"
-            ? 1
-            : decodedData.role.toLowerCase() === "employer" ||
-              decodedData.role.toLowerCase() === "hiring manager"
-            ? 2
-            : 3;
+        // localStorage.setItem(
+        //   "userroleid",
+        //   decodedData.role.toLowerCase() === "admin"
+        //     ? 1
+        //     : decodedData.role.toLowerCase() === "employer" ||
+        //       decodedData.role.toLowerCase() === "hiring manager"
+        //       ? 2
+        //       : 3
+        // );
+        // state.userroleid =
+        //   decodedData.role.toLowerCase() === "admin"
+        //     ? 1
+        //     : decodedData.role.toLowerCase() === "employer" ||
+        //       decodedData.role.toLowerCase() === "hiring manager"
+        //       ? 2
+        //       : 3;
+        localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
+        state.userroleid = parseInt(decodedData.UserroleId);
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -579,12 +600,12 @@ const authSlice = createSlice({
           decodedData?.role?.toLowerCase() === "candidate"
             ? ""
             : cmpLogo?.length > 0
-            ? cmpLogo
-            : companyLogo?.length > 0
-            ? companyLogo[0]?.appconfigurationvalue
-            : defLogo?.length > 0
-            ? defLogo[0]?.appconfigurationvalue
-            : ""
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
         );
         localStorage.setItem(
           "emailnotification",
@@ -594,6 +615,9 @@ const authSlice = createSlice({
         const { from } = history.location.state || {
           from: { pathname: "/" },
         };
+         if (companyList && companyList.length > 0) {
+        localStorage.setItem("companyList", JSON.stringify(companyList));
+      }
         state.loader = false;
         history.navigate(from);
       }
@@ -601,12 +625,12 @@ const authSlice = createSlice({
     [candRegisterOTPThunk.rejected]: (state, action) => {
       // do nothing
     },
-    [postCompanyReferralLogs.pending]: (state, { payload }) => {},
-    [postCompanyReferralLogs.fulfilled]: (state, { payload }) => {},
-    [postCompanyReferralLogs.rejected]: (state, action) => {},
-    [putCompanyReferralLogs.pending]: (state, { payload }) => {},
-    [putCompanyReferralLogs.fulfilled]: (state, { payload }) => {},
-    [putCompanyReferralLogs.rejected]: (state, action) => {},
+    [postCompanyReferralLogs.pending]: (state, { payload }) => { },
+    [postCompanyReferralLogs.fulfilled]: (state, { payload }) => { },
+    [postCompanyReferralLogs.rejected]: (state, action) => { },
+    [putCompanyReferralLogs.pending]: (state, { payload }) => { },
+    [putCompanyReferralLogs.fulfilled]: (state, { payload }) => { },
+    [putCompanyReferralLogs.rejected]: (state, action) => { },
   },
 });
 

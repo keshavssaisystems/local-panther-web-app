@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     getDashboardCounts();
     getStatistics();
     getAnalyiticalCounts();
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(JSON.parse(localStorage.getItem("userDetails")).UserId));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -271,7 +271,7 @@ export default function AdminDashboard() {
           </Col>
           <Col sm="6" md="6" lg="3">
             <OpenJobsGraph
-              openJobsCount={dashboardCounts.openjobcount}
+              openJobsCount={dashboardCounts?.openjobcount}
               graphData={analyiticalCounts}
             />
           </Col>

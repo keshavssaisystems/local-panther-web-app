@@ -20,6 +20,7 @@ import scheduledIcon from "assets/utils/images/job-detail-icons/scheduled.svg";
 import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
 import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
 import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
+import presentIcon from "assets/utils/images/job-detail-icons/present.svg";
 import { CloseJobReasonPopup } from "./closeJobReasonPopup";
 import infoIcon from "assets/utils/images/yellow-info-big.svg";
 
@@ -48,6 +49,9 @@ export function CustJobDetail({
   );
   let customerApproval = customerDetails?.customerstatusid === 2 ? true : false;
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
+
   let loading = true;
   let jobDetail = {};
   let skillsData = "-";
@@ -329,6 +333,15 @@ export function CustJobDetail({
       action: `/customer-candidate-applied/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: appliedIcon,
     },
+    ...(isStaffingFirm === true ? [{
+      name: "Presented",
+      count:
+        jobDetail.totalpresentedcandidates === null || jobDetail.totalpresentedcandidates === undefined || jobDetail.totalpresentedcandidates === 0
+          ? 0
+          : jobDetail.totalpresentedcandidates,
+      action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      icon: presentIcon,
+    }] : []),
     {
       name: "Scheduled",
       count:
@@ -390,6 +403,14 @@ export function CustJobDetail({
     navigate(action);
   };
   const [noPaymentPopup, setNoPaymentPopup] = useState(false);
+
+  const returnClientName = () => {
+    if (jobDetail?.clientcompanyDto !== null && jobDetail?.clientcompanyDto !== undefined) {
+      return jobDetail?.clientcompanyDto?.name || "";
+    }
+    return jobDetail?.clientcompanyname || "";
+  };
+
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -446,7 +467,7 @@ export function CustJobDetail({
                                 color="primary"
                                 className={"me-3 mt-3"}
                                 onClick={(e) => {
-                                  setPublishSuccess(true);
+                                  //setPublishSuccess(true);
                                   publishJob(jobDetail.jobid);
                                 }}
                               >
@@ -604,6 +625,12 @@ export function CustJobDetail({
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job Details</h6>
             </div>
+            {isStaffingFirm &&
+              (<HeadingAndDetailWithDiv
+                heading={"Client name"}
+                detail={returnClientName()}
+                iconId={5}
+              />)}
             <HeadingAndDetailWithDiv
               heading={"Job type"}
               detail={returnJobType()}

@@ -58,7 +58,8 @@ import {
 import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
-import { on } from "stream";
+import { assign } from "lodash";
+
 export const CreateJob = forwardRef(
   (
     {
@@ -230,6 +231,55 @@ export const CreateJob = forwardRef(
           label: previousData?.cityname + ", " + previousData?.statename,
         });
       }
+
+      // load once on mount
+
+      // optionally set default selected value if jobData contains assigned to id
+      const hiringManagerDto =
+        (type === "new_template" && previousStep !== 3)
+          ? null
+          : previousStep === 3
+            ? jobData?.basicInformation?.hiringManagerDto
+            : previousData?.hiringManagerDto;
+
+
+      if (hiringManagerDto) {
+        const found = {
+          value: hiringManagerDto?.id,
+          label: hiringManagerDto?.name,
+        };
+        if (found) setHiringManagerValue(found);
+      }
+
+      const recruiterDto =
+        (type === "new_template" && previousStep !== 3)
+          ? null
+          : previousStep === 3
+            ? jobData?.basicInformation?.recruiterDto
+            : previousData?.recruiterDto;
+      if (recruiterDto) {
+        const found1 = {
+          value: recruiterDto?.id,
+          label: recruiterDto?.name,
+        };
+        if (found1) setAssignedToValue(found1);
+      }
+
+      const clientCompanyDto =
+        (type === "new_template" && previousStep !== 3)
+          ? null
+          : previousStep === 3
+            ? jobData?.basicInformation?.clientcompanyDto
+            : previousData?.clientcompanyDto;
+
+      if (clientCompanyDto) {
+        const found = {
+          value: clientCompanyDto?.id,
+          label: clientCompanyDto?.name,
+        };
+        if (found) setClientCompanyValue(found);
+      }
+
     }, []);
 
     const fieldOfStudyOption = useSelector(
@@ -272,6 +322,13 @@ export const CreateJob = forwardRef(
     const [stateData, setStateData] = useState({});
     const [mustHaveSkills, setMustHaveSkills] = useState([]);
     const [niceToHaveSkills, setNiceToHaveSkills] = useState([]);
+    const [assignedToUserOptions, setAssignedToUserOptions] = useState([]);
+    const [assignedToValue, setAssignedToValue] = useState(null);
+    const [clientCompanyOptions, setClientCompanyOptions] = useState([]);
+    const [clientCompanyValue, setClientCompanyValue] = useState(null);
+    const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
+    const [hiringManagerValue, setHiringManagerValue] = useState(null);
+
     const customStyles = {
       valueContainer: (provided, state) => ({
         ...provided,
@@ -560,52 +617,52 @@ export const CreateJob = forwardRef(
           ? ""
           : previousData.securityclearanceid,
       jobType:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].jobtypes.slice(","),
       workSchedule:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].workschedules.slice(","),
       shift:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].shifts.slice(","),
       experienceLevel:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].experiencelevelid,
       hiringTimeline:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].hiringtimelineid,
       payPeriodType:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].payperiodtypeid,
       minimumAmount:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].minimumamount,
       maximumAmount:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].maximumamount,
       compensationPackage:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].compensationpackage,
       benefits:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].benefits,
@@ -722,7 +779,7 @@ export const CreateJob = forwardRef(
         setCertificateArr(certificationData);
         setCertificatePrevArr(certificationData);
       }
-      
+
     }, []);
     const [descriptionData, setDescriptionData] = useState(
       previousStep === 3 && preValue.description !== ""
@@ -775,6 +832,9 @@ export const CreateJob = forwardRef(
     const [certificateArr, setCertificateArr] = useState([]);
     const [certificatePrevArr, setCertificatePrevArr] = useState([]);
     const [certificateChange, setCertificateChange] = useState(false);
+    const [clientCompanyValidation, setClientCompanyValidation] = useState(false);
+    const [hiringmanagerValidation, setHiringmanagerValidation] = useState(false);
+    const [recruiterIdValidation, setRecruiterIdValidation] = useState(false);
     const flaggedWordList = useSelector(
       (state) => state.dropdown.flaggedWordsList
     );
@@ -818,7 +878,7 @@ export const CreateJob = forwardRef(
         isactive: true,
       },
     ];
-    if (previousStep === 3 && jobData.preScreen.length > 0) {
+    if (previousStep === 3 && jobData.preScreen?.length > 0) {
       jobData.preScreen.forEach((element) => {
         questionArray.push(element.prescreenquestion);
       });
@@ -911,6 +971,18 @@ export const CreateJob = forwardRef(
         ? setMustHaveValidation(true)
         : setMustHaveValidation(false);
 
+      customerDetails.isatsenable === true && (event.target.elements.recruiterid.value === "" || event.target.elements.recruiterid.value === "0")
+        ? setRecruiterIdValidation(true)
+        : setRecruiterIdValidation(false);
+
+      customerDetails.isatsenable === true && (event.target.elements.clientCompany.value === "" || event.target.elements.clientCompany.value === "0")
+        ? setClientCompanyValidation(true)
+        : setClientCompanyValidation(false);
+
+      customerDetails.isatsenable === true && (event.target.elements.hiringmanagerid.value === "" || event.target.elements.hiringmanagerid.value === "0")
+        ? setHiringmanagerValidation(true)
+        : setHiringmanagerValidation(false);
+
       if (mustHaveValidation === true) {
         setAccordion([false, false, false, true, false]);
       }
@@ -931,7 +1003,9 @@ export const CreateJob = forwardRef(
         jobLocationValidation === true ||
         cityValidation === true ||
         descriptionValidation === true ||
-        addressValidation === true
+        addressValidation === true ||
+        hiringmanagerValidation === true ||
+        clientCompanyValidation === true
       ) {
         setAccordion([true, false, false, false, false]);
       }
@@ -952,7 +1026,14 @@ export const CreateJob = forwardRef(
         event.target.elements.minimumAmount.value !== "" &&
         event.target.elements.maximumAmount.value !== "" &&
         (event.target.elements.mustHave.value !== "" ||
-          event.target.elements.mustHave.length > 0)
+          event.target.elements.mustHave?.length > 0) &&
+        (customerDetails?.isatsenable === true ? (event.target.elements.clientCompany.value !== "" ||
+          event.target.elements.clientCompany?.length > 0) : true) &&
+        (customerDetails?.isatsenable === true ? (event.target.elements.recruiterid.value !== "" ||
+          event.target.elements.recruiterid?.length > 0) : true)
+        &&
+        (customerDetails?.isatsenable === true ? (event.target.elements.hiringmanagerid.value !== "" ||
+          event.target.elements.hiringmanagerid?.length > 0) : true)
       ) {
         saveData(event);
       }
@@ -1020,6 +1101,12 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
+        hiringmanagerid: hiringManagerValue?.value || 0,
+        hiringManagerDto: { id: hiringManagerValue?.value || 0, name: hiringManagerValue?.label || '' },
+        clientcompanyid: clientCompanyValue?.value || 0,
+        clientCompanyDto: { id: clientCompanyValue?.value || 0, name: clientCompanyValue?.label || '' },
+        recruiterid: assignedToValue?.value || 0,
+        recruiterDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
 
         // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
@@ -1056,13 +1143,13 @@ export const CreateJob = forwardRef(
       );
       if (
         eventData.target.elements.mustHave.value !== "" ||
-        eventData.target.elements.mustHave.length > 0
+        eventData.target.elements.mustHave?.length > 0
       ) {
         mustHaveHasData = true;
       }
       if (
         eventData.target.elements.niceToHave.value !== "" ||
-        eventData.target.elements.niceToHave.length > 0
+        eventData.target.elements.niceToHave?.length > 0
       ) {
         niceToHaveHasData = true;
       }
@@ -1081,7 +1168,7 @@ export const CreateJob = forwardRef(
         eventData?.target?.elements?.applicantsRecordAnswer?.value === undefined
           ? ""
           : eventData.target.elements.applicantsRecordAnswer.value;
-      if (eventData.target.elements.question.length > 0) {
+      if (eventData.target.elements.question?.length > 0) {
         eventData.target.elements.question.forEach((element) => {
           if (element.checked === true) {
             let questionIdString = element.id.split("_");
@@ -1099,7 +1186,7 @@ export const CreateJob = forwardRef(
       }
       if (
         eventData.target.elements.custom_question !== undefined &&
-        eventData.target.elements.custom_question.length > 0
+        eventData.target.elements.custom_question?.length > 0
       ) {
         eventData.target.elements.custom_question.forEach((element) => {
           if (element.value !== "") {
@@ -1117,7 +1204,7 @@ export const CreateJob = forwardRef(
       }
       if (
         eventData.target.elements.custom_question !== undefined &&
-        eventData.target.elements.custom_question.length === undefined &&
+        eventData.target.elements.custom_question?.length === undefined &&
         eventData.target.elements.custom_question.value !== ""
       ) {
         let obj = {
@@ -1150,7 +1237,7 @@ export const CreateJob = forwardRef(
       [] // Important: memoize once!
     );
     const loadOptions = async (inputValue) => {
-      if (inputValue.length > 0) {
+      if (inputValue && inputValue?.length > 0) {
         const { data = [] } = await getLocation(inputValue);
         return data.map(({ cityid: value, ...rest }) => {
           setZipcodeCityState({
@@ -1170,12 +1257,12 @@ export const CreateJob = forwardRef(
     };
 
     const loadOptionsByZip = async (inputValue) => {
-      if (inputValue.length > 0) {
+      if (inputValue && inputValue?.length > 0) {
         setZipCodeValidation(false);
       } else {
         setZipCodeValidation(true);
       }
-      if (inputValue.length > 3) {
+      if (inputValue && inputValue?.length > 3) {
         const { data = [] } = await getLocation(inputValue);
         return data.map(({ cityid: value, ...rest }) => {
           setZipcodeCityState({
@@ -1295,7 +1382,7 @@ export const CreateJob = forwardRef(
         : previousValue.hiringTimeline;
     const getStringData = (data, type) => {
       let dataArray = [];
-      if (data.length === undefined) {
+      if (data?.length === undefined) {
         let skillArr = data.value.split(", ");
         return [
           {
@@ -1308,7 +1395,7 @@ export const CreateJob = forwardRef(
           },
         ];
       }
-      if (data.length !== undefined) {
+      if (data?.length !== undefined) {
         data.forEach((element) => {
           let skillArr = element.value.split(", ");
           let obj = {
@@ -1374,7 +1461,7 @@ export const CreateJob = forwardRef(
       [] // Important: memoize once!
     );
     const loadOptions2 = async (inputValue) => {
-      if (inputValue.length > 0) {
+      if (inputValue && inputValue?.length > 0) {
         setLabelVisibility(true);
         setSearchText(inputValue);
         let payload = {
@@ -1409,7 +1496,7 @@ export const CreateJob = forwardRef(
       [] // Important: memoize once!
     );
     const loadOptionsoptional = async (inputValue) => {
-      if (inputValue.length > 0) {
+      if (inputValue && inputValue?.length > 0) {
         setLabelVisibility(true);
         setSearchOptionalText(inputValue);
         let payload = {
@@ -1450,7 +1537,7 @@ export const CreateJob = forwardRef(
     };
     const onSelectSkillsDropdown = function (data) {
       setSearchText("");
-      if (data.length === 0) {
+      if (data?.length === 0) {
         setMustHaveValidation(true);
         setPrevKey([]);
         setKeyQual1([]);
@@ -1462,7 +1549,7 @@ export const CreateJob = forwardRef(
     };
 
     const onSelectEduDropdown = function (data) {
-      if (data.length === 0) {
+      if (data?.length === 0) {
         setEduArr([]);
         setEduPrevArr([]);
       } else {
@@ -1472,7 +1559,7 @@ export const CreateJob = forwardRef(
     };
 
     const onSelectStudyFieldDropdown = (data) => {
-      if (data.length === 0) {
+      if (data?.length === 0) {
         setStudyFieldArr([]);
         setStudyFieldPrevArr([]);
       } else {
@@ -1482,7 +1569,7 @@ export const CreateJob = forwardRef(
     };
     const selectOptionalSkills = function (data) {
       setSearchOptionalText("");
-      if (data.length === 0) {
+      if (data?.length === 0) {
         setPrevKey2([]);
         setKeyQual2([]);
       } else {
@@ -1491,7 +1578,7 @@ export const CreateJob = forwardRef(
       }
     };
     const onSelectCertificateDropdown = (data) => {
-      if (data.length === 0) {
+      if (data?.length === 0) {
         setCertificateArr([]);
         setCertificatePrevArr([]);
       } else {
@@ -1501,7 +1588,7 @@ export const CreateJob = forwardRef(
     };
 
     const formatCreateLabel = (inputValue) => {
-      if (skillExist && inputValue !== "" && inputValue.length > 0) {
+      if (skillExist && inputValue && inputValue?.length > 0) {
         return (
           <span style={{ cursor: "pointer" }}>
             Add new skill -{" "}
@@ -1513,7 +1600,7 @@ export const CreateJob = forwardRef(
       }
     };
     const checkRestrictedWord = (fieldName, string) => {
-      if (wordArray.length > 0) {
+      if (wordArray?.length > 0) {
         if (fieldName === "custom_question_1") {
           let restrictedWords = findRestrictedWords(wordArray, string);
           restrictedWords.wordsCount > 0
@@ -1624,7 +1711,7 @@ export const CreateJob = forwardRef(
     customCount = Number(customCount1) + Number(customCount2);
 
     const formatCreateLabel2 = (inputValue) => {
-      if (inputValue !== "" && inputValue.length > 2) {
+      if (inputValue && inputValue?.length > 2) {
         return (
           <span style={{ cursor: "pointer" }}>
             Add new eductaion -{" "}
@@ -1637,7 +1724,7 @@ export const CreateJob = forwardRef(
     };
 
     const formatCreateLabel1 = (inputValue) => {
-      if (inputValue !== "" && inputValue.length > 2) {
+      if (inputValue && inputValue?.length > 2) {
         return (
           <span style={{ cursor: "pointer" }}>
             Add new field of study -{" "}
@@ -1710,7 +1797,7 @@ export const CreateJob = forwardRef(
 
 
     const formatCreateCertificateLabel = (inputValue) => {
-      if (inputValue !== "" && inputValue.length > 2) {
+      if (inputValue && inputValue?.length > 2) {
         return (
           <span style={{ cursor: "pointer" }}>
             Add new certificate -{" "}
@@ -1753,6 +1840,160 @@ export const CreateJob = forwardRef(
         console.log(res?.error);
       }
     };
+
+
+    const getAssignedToOptions = async (inputValue) => {
+      try {
+        const companyId =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const response = await dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "AssignedTo",
+            commonId: companyId,
+            searchBy: inputValue || "",
+          })
+        );
+
+        // handle possible response shapes
+        const users =
+          response?.payload?.data ||
+          response?.payload?.data?.data ||
+          response?.payload ||
+          [];
+
+        const userOptions = (users || []).map((user) => ({
+          value: user.id,
+          label: user.name,
+        }));
+        return userOptions;
+      } catch (err) {
+        // keep silent or console.log(err) for debugging
+        // console.error(err);
+      }
+    };
+    const loadOptionsAssignedTo = useCallback(
+      async (inputValue) => {
+        // return all options when input empty so AsyncSelect shows choices
+        const source = await getAssignedToOptions(inputValue) || [];
+        if (!inputValue) return source;
+        const filtered = source.filter((option) =>
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        return filtered;
+      },
+      [assignedToUserOptions]
+    );
+
+    const loadOptionsDebAssignedTo = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionsAssignedTo(inputValue).then(callback);
+      }, 300),
+      [loadOptionsAssignedTo]
+    );
+
+    const getClientCompany = async (inputValue) => {
+      try {
+        const companyId =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const response = await dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "ClientCompany",
+            commonId: companyId,
+            searchBy: inputValue || "",
+          })
+        );
+
+        // handle possible response shapes
+        const companies =
+          response?.payload?.data ||
+          response?.payload?.data?.data ||
+          response?.payload ||
+          [];
+
+        const clientCompanyOptions = (companies || []).map((company) => ({
+          value: company.id,
+          label: company.name,
+        }));
+
+        setClientCompanyOptions(clientCompanyOptions);
+        return clientCompanyOptions;
+
+      } catch (err) {
+        // keep silent or console.log(err) for debugging
+        // console.error(err);
+      }
+    };
+
+    const loadOptionClientCompany = useCallback(
+      async (inputValue) => {
+        // return all options when input empty so AsyncSelect shows choices
+        const source = await getClientCompany(inputValue) || [];
+        if (!inputValue) return source;
+        const filtered = source.filter((option) =>
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        return filtered;
+      },
+      [clientCompanyOptions]
+    );
+
+    const loadOptionsDebClientCompany = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionClientCompany(inputValue).then(callback);
+      }, 300),
+      [loadOptionClientCompany]
+    );
+
+
+    //Contact (Hiring Manager) Dropdown
+    const getHiringManagerOptions = async (inputValue) => {
+      try {
+        const companyId =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const response = await dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "ClientContact",
+            commonId: companyId,
+            searchBy: inputValue || "",
+          })
+        );
+
+        // handle possible response shapes
+        const users =
+          response?.payload?.data ||
+          response?.payload?.data?.data ||
+          response?.payload ||
+          [];
+
+        const userOptions = (users || []).map((user) => ({
+          value: user.id,
+          label: user.name,
+        }));
+        return userOptions;
+      } catch (err) {
+        // keep silent or console.log(err) for debugging
+        // console.error(err);
+      }
+    };
+    const loadOptionsHiringManager = useCallback(
+      async (inputValue) => {
+        // return all options when input empty so AsyncSelect shows choices
+        const source = await getHiringManagerOptions(inputValue) || [];
+        if (!inputValue) return source;
+        const filtered = source.filter((option) =>
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        return filtered;
+      },
+      [hiringManagerOptions]
+    );
+
+    const loadOptionsDebHiringManager = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionsHiringManager(inputValue).then(callback);
+      }, 300),
+      [loadOptionsHiringManager]
+    );
 
     return (
       <>
@@ -1799,7 +2040,7 @@ export const CreateJob = forwardRef(
                           )}
                         </FormGroup>
                       </Col>
-                      {subsidiaryOption.length > 0 && (
+                      {subsidiaryOption?.length > 0 && (
                         <Col md={6} lg={3}>
                           <FormGroup>
                             <Label for={"jobTitle"} className="fw-semi-bold">
@@ -1813,7 +2054,7 @@ export const CreateJob = forwardRef(
                               <option key={0} value={0}>
                                 Select subsidiary
                               </option>
-                              {subsidiaryOption.length > 0 &&
+                              {subsidiaryOption?.length > 0 &&
                                 subsidiaryOption.map((options) => (
                                   <option
                                     key={options.subsidiaryid}
@@ -1834,6 +2075,69 @@ export const CreateJob = forwardRef(
                             </Input>
                           </FormGroup>
                         </Col>
+                      )}
+
+                      {customerDetails?.isatsenable === true && (
+                        <>
+                          <Col md={6} lg={3}>
+                            <FormGroup>
+                              <Label className="fw-semi-bold">
+                                Client company<span style={{ color: "red" }}>* </span>
+                              </Label>
+                              <AsyncSelect
+                                name={"clientCompany"}
+                                placeholder="Search Client Company"
+                                cacheOptions
+                                loadOptions={loadOptionsDebClientCompany}
+                                defaultOptions={clientCompanyOptions}
+                                value={clientCompanyValue}
+                                onChange={(val) => {
+                                  setClientCompanyValue(val);
+                                  setClientCompanyValidation(false);
+                                  // if you need to persist selection to the form submission,
+                                  // write the selected id into a hidden input or local state used by saveData
+                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                }}
+                                isMulti={false}
+                                styles={customStyles}
+                                invalid={clientCompanyValidation === true ? true : false}
+                              />
+                              {clientCompanyValidation === true && (
+                                <FormText color="danger">
+                                  Please select client company
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          </Col>
+                          <Col md={6} lg={3}>
+                            <FormGroup>
+                              <Label for="contact" className="fw-semi-bold">
+                                Contact<span style={{ color: "red" }}>* </span>
+                              </Label>
+                              <AsyncSelect
+                                name={"hiringmanagerid"}
+                                placeholder="Search Contact"
+                                cacheOptions
+                                loadOptions={loadOptionsDebHiringManager}
+                                defaultOptions={hiringManagerOptions}
+                                value={hiringManagerValue}
+                                onChange={(val) => {
+                                  setHiringManagerValue(val);
+                                  // if you need to persist selection to the form submission,
+                                  // write the selected id into a hidden input or local state used by saveData
+                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                }}
+                                isMulti={false}
+                                styles={customStyles}
+                              />
+                              {hiringmanagerValidation === true && (
+                                <FormText color="danger">
+                                  Please select Contact
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        </>
                       )}
                     </Row>
                     <Row>
@@ -1917,7 +2221,7 @@ export const CreateJob = forwardRef(
                             <option key={0} value={0}>
                               Select job location
                             </option>
-                            {jobLocationOptions.length > 0 &&
+                            {jobLocationOptions?.length > 0 &&
                               jobLocationOptions.map((options) => (
                                 <option
                                   key={options.id}
@@ -2097,6 +2401,36 @@ export const CreateJob = forwardRef(
                           </FormGroup>
                         </Col>
                       )}
+                      {customerDetails?.isatsenable === true && (
+                        <Col md={6} lg={3}>
+                          <FormGroup>
+                            <Label for="city" className="fw-semi-bold">
+                              Assigned To<span style={{ color: "red" }}>* </span>
+                            </Label>
+                            <AsyncSelect
+                              name={"recruiterid"}
+                              placeholder="Search Assigned To"
+                              cacheOptions
+                              loadOptions={loadOptionsDebAssignedTo}
+                              defaultOptions={assignedToUserOptions}
+                              value={assignedToValue}
+                              onChange={(val) => {
+                                setAssignedToValue(val);
+                                // if you need to persist selection to the form submission,
+                                // write the selected id into a hidden input or local state used by saveData
+                                // e.g. setSelectedAssignedToId(val ? val.value : null);
+                              }}
+                              isMulti={false}
+                              styles={customStyles}
+                            />
+                            {recruiterIdValidation === true && (
+                              <FormText color="danger">
+                                Please select Assigned To
+                              </FormText>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      )}
                     </Row>
                     <Row>
                       <Col md={6} lg={3}>
@@ -2215,7 +2549,7 @@ export const CreateJob = forwardRef(
                               <option key={0} value={0}>
                                 Select security clearance
                               </option>
-                              {securityClearanceOptions.length > 0 &&
+                              {securityClearanceOptions?.length > 0 &&
                                 securityClearanceOptions.map((options) => (
                                   <option
                                     key={options.id}
@@ -2524,7 +2858,7 @@ export const CreateJob = forwardRef(
                           <Label className="fw-semi-bold">
                             Job type<span style={{ color: "red" }}>* </span>
                           </Label>
-                          {jobTypeOption.length > 0 &&
+                          {jobTypeOption?.length > 0 &&
                             jobTypeOption.map((options) => (
                               <div className="form-group-custom">
                                 <Input
@@ -2565,7 +2899,7 @@ export const CreateJob = forwardRef(
                           <Label for="workSchedule" className="fw-semi-bold">
                             Work schedules
                           </Label>
-                          {workScheduleOptions.length > 0 &&
+                          {workScheduleOptions?.length > 0 &&
                             workScheduleOptions.map((options) => (
                               <div className="form-group-custom">
                                 <Input
@@ -2600,7 +2934,7 @@ export const CreateJob = forwardRef(
                           <Label for="shifts" className="fw-semi-bold">
                             Shifts
                           </Label>
-                          {shiftsOption.length > 0 &&
+                          {shiftsOption?.length > 0 &&
                             shiftsOption.map((options) => (
                               <div className="form-group-custom">
                                 <Input
@@ -2647,7 +2981,7 @@ export const CreateJob = forwardRef(
                             <option key={0} value={""}>
                               Select experience level
                             </option>
-                            {experienceLevelOption.length > 0 &&
+                            {experienceLevelOption?.length > 0 &&
                               experienceLevelOption.map((options) => (
                                 <option
                                   key={options.id}
@@ -2681,7 +3015,7 @@ export const CreateJob = forwardRef(
                             <option key={0} value={""}>
                               Select hiring timeline
                             </option>
-                            {hiringTimelineOption.length > 0 &&
+                            {hiringTimelineOption?.length > 0 &&
                               hiringTimelineOption.map((options) => (
                                 <option
                                   key={options.id}
@@ -2744,7 +3078,7 @@ export const CreateJob = forwardRef(
                             <option key={0} value={""}>
                               Select pay period type
                             </option>
-                            {payPeriodTypeOption.length > 0 &&
+                            {payPeriodTypeOption?.length > 0 &&
                               payPeriodTypeOption.map((options) => (
                                 <option
                                   key={options.id}
@@ -3009,7 +3343,7 @@ export const CreateJob = forwardRef(
                   <CardBody>
                     <Row>
                       <Col>
-                        {preScreenQuestionsOption.length > 0 &&
+                        {preScreenQuestionsOption?.length > 0 &&
                           preScreenQuestionsOption.map((options) => (
                             <FormGroup>
                               <Input

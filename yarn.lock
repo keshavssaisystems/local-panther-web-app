@@ -5651,6 +5651,11 @@
   resolved "https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.2.0.tgz"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
+"@unified-api/react-directory@^1.1.20":
+  version "1.1.20"
+  resolved "https://registry.npmjs.org/@unified-api/react-directory/-/react-directory-1.1.20.tgz"
+  integrity sha512-oUGL4Z5hp1cpYsscw+5rLwThHtOOG6LR1OEKWFUNa4KMoKy29mGHWrZOcZ6nsYeiEptirSIxlo+IYH+y8yV5VQ==
+
 "@uploadcare/file-uploader@1.12.0":
   version "1.12.0"
   resolved "https://registry.npmjs.org/@uploadcare/file-uploader/-/file-uploader-1.12.0.tgz"
