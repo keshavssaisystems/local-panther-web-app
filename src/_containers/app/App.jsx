@@ -692,7 +692,7 @@ export function App() {
             }
           />
           <Route
-            path="/acl/candidates"
+            path="/ats/candidates"
             element={
               <PrivateRoute>
                 <ATSCandidateList isCompanyAdmin={true} entity="candidates" />
@@ -700,7 +700,7 @@ export function App() {
             }
           />
            <Route
-            path="/acl/atscompany"
+            path="/ats/atscompany"
             element={
               <PrivateRoute>
                 <ATSCompanyList isCompanyAdmin={true} entity="atscompany" />
