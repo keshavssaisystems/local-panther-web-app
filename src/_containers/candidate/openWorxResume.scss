@@ -1,0 +1,286 @@
+/* Google Font import */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+body {
+  font-family: "Inter", sans-serif !important;
+  background-color: #e5e7eb;
+}
+
+/* main resume container */
+.resume-container {
+  max-width: 950px;
+  margin: 2rem auto;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Header adjustments to match uploaded design */
+.resume-container header {
+  padding: 2.0rem 2.5rem;
+  position: relative;
+}
+
+/* Make header divider thinner to match screenshot */
+.resume-container header {
+  border-bottom: 2px solid #2F479B;
+}
+
+.resume-container header h1 {
+  font-size: 2.25rem;
+  line-height: 1.05;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.resume-container header .h5 {
+  font-size: 1.05rem;
+  color: #6b7280;
+  /* muted gray similar to sample */
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.resume-container header .position-absolute.top-0.end-0 {
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+.resume-container header .position-absolute.top-0.end-0 img {
+  width: 160px;
+  height: auto;
+  display: inline-block;
+}
+
+/* accent color utility */
+.accent-color {
+  color: #038FFE !important;
+}
+
+/* section title */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 800 !important;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #2F479B;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Make the section underline stronger and with spacing similar to screenshot */
+.section-title {
+  padding-bottom: 0.5rem;
+  border-bottom-width: 3px;
+}
+
+/* skill badges */
+.skill-badge {
+  padding: 0.25rem 0.5rem;
+  background-color: #eef5ff;
+  color: #2F2E2E;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid #2F479B;
+  display: inline-block;
+  margin: 0.25rem;
+}
+
+/* work experience background */
+.work-experience-section {
+  background-color: #f0f8ff;
+  border-color: #b3d4ff !important;
+}
+
+/* Increase padding and create the spacious panel look */
+.work-experience-section {
+  padding: 1.5rem 1.75rem !important;
+
+}
+
+/* Add full-width blue divider above the first section to match design */
+.resume-container section:first-of-type {
+  border-top: 5px solid #2F479B !important;
+  // margin-top: 1rem;
+}
+
+/* Accent date style inside work section */
+.work-experience-section .small.fw-semibold.accent-color,
+.work-experience-section .small.accent-color {
+  color: #0b74d1;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Each work item block */
+.work-experience-section>div {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(47, 71, 155, 0.08);
+}
+
+.work-experience-section>div:last-child {
+  border-bottom: none;
+}
+
+/* Job title & company styling */
+.work-experience-section h3.h5 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.work-experience-section p.h6 {
+  color: #9ca3af;
+  /* muted */
+  margin-bottom: 0.75rem;
+}
+
+/* Widen paragraph measure and comfortable line-height */
+.work-experience-section p {
+  color: #374151;
+  line-height: 1.65;
+  margin-bottom: 0.8rem;
+  font-size: 0.97rem;
+}
+
+/* Bullet styles and list spacing to match sample */
+.work-experience-section ul {
+  margin-left: 1.1rem;
+  padding-left: 0.9rem;
+}
+
+.work-experience-section ul li {
+  margin-bottom: 0.65rem;
+  list-style-type: disc;
+}
+
+
+/* Contact row icon sizing/gap */
+.resume-container .gx-4>.col,
+.resume-container .d-flex.align-items-center.gap-2 {
+  gap: 0.75rem !important;
+}
+
+/* list items within work section */
+.work-experience-section ul li {
+  color: #2F2E2E;
+}
+
+/* preference label (if needed later) */
+.preference-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  color: #1e293b;
+  font-size: 0.95rem;
+  display: inline-block;
+  min-width: 100px;
+}
+
+/* preference badge */
+.preference-badge {
+  font-size: 0.85rem;
+  padding: 0.35em 0.65em;
+  background-color: #eef5ff;
+  color: #2F2E2E;
+  border-radius: 0.3rem;
+  font-weight: 600;
+  border: 1px solid #2F479B;
+  display: inline-block;
+}
+
+/* Improve vertical rhythm and spacing for resume readability */
+.resume-container {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.resume-container * {
+  box-sizing: border-box;
+}
+
+/* Headings spacing */
+.resume-container header h1,
+.resume-container header .h5,
+.resume-container h2,
+.resume-container h3,
+.resume-container h4,
+.resume-container h5 {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+}
+
+/* Paragraphs and small text */
+.resume-container p,
+.resume-container .small,
+.resume-container .text-secondary {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Work experience item spacing */
+.work-experience-section>div,
+.work-experience-section .pb-3 {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Ensure lists have comfortable spacing */
+.resume-container ul {
+  margin: 0.25rem 0 0.75rem 1.25rem;
+}
+
+.resume-container ul li {
+  margin-bottom: 0.4rem;
+}
+
+/* Section padding consistency (override bootstrap utility where necessary) */
+.resume-container section {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+/* Slightly tighter skill badges layout */
+.skill-badge {
+  margin: 0.2rem 0.35rem 0.2rem 0;
+}
+
+/* Footer spacing */
+.resume-container footer p {
+  margin: 0.25rem 0;
+}
+
+.accent-color {
+  color: #038FFE !important;
+}
+
+/* Allow section to split across pages */
+.work-experience-section {
+  break-inside: auto;
+}
+
+/* This wrapper can be split */
+.work-experience-inner {
+  break-inside: auto;
+}
+
+/* Protect individual job items */
+.work-experience-section > .work-experience-inner > div {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Keep section title with first item */
+.section-title {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+@media print {
+  header {
+    padding-bottom: 0.75rem !important;
+    margin-bottom: 0 !important;
+  }
+}
