@@ -209,7 +209,7 @@ export const CustomerUploadOffer = (props) => {
       candidateFirstName: props.data.firstname ? props.data.firstname : props.data?.candidatename?.split(" ")[0],
       companyName: props.data.companyname,
       jobTitle: props.data.jobtitle,
-      startDate: moment(startDate)?.format("YYYY-MM-DD").toString(),
+      startDate: moment(startDate)?.format("MM/DD/YYYY").toString(),
       salaryAmount: new Intl.NumberFormat("en-US").format(
         pay.replaceAll(",", "")
       ),

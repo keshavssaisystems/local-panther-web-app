@@ -731,13 +731,13 @@ function createExtraReducers() {
       let { pending, fulfilled, rejected } = extraActions.postScheduleInterviewOffline;
       builder
         .addCase(pending, (state) => {
-          //No action
+          state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          //No action
+           state.loading = false;
         })
         .addCase(rejected, (state, action) => {
-          //No action
+           state.loading = false;
         });
     }
   };
