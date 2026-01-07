@@ -53,6 +53,34 @@ export const fetchCustomerCandidates = createAsyncThunk(
     }
 );
 
+export const fetchATSCompanyList = createAsyncThunk(
+    `${name}/fetchATSCompanyList`,
+    async (params) => {
+
+        const {SearchText = "",IsActive = null,currentpage = 1,PageSize = 10} = params;
+
+        //parameter string as api
+        let parameterParts = [];
+
+        if (SearchText) {
+            parameterParts.push(`@SearchText='${SearchText}'`);
+        }
+
+        if (IsActive !== null && IsActive !== undefined) {
+            parameterParts.push(`@IsActive=${IsActive}`);
+        }
+
+        parameterParts.push(`@currentpage=${currentpage}`);
+        parameterParts.push(`@PageSize=${PageSize}`);
+
+        const parameter = parameterParts.join(",");
+
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_ATS_Company_List?parameter=${encodeURIComponent(parameter)}`;
+
+        return await fetchWrapper.get(TOKEN_END_POINT);
+    }
+);
+
 // Create the slice
 const atsSlice = createSlice({
     name,
@@ -124,6 +152,24 @@ const atsSlice = createSlice({
             .addCase(fetchCustomerCandidates.rejected, (state, action) => {
                 state.loader = false;
             })
+            .addCase(fetchATSCompanyList.pending, (state) => {
+                state.loader = true;
+                state.companyList = [];
+            })
+            .addCase(fetchATSCompanyList.fulfilled, (state, action) => {
+                state.loader = false;
+                // sp response
+                if (action?.payload?.data?.data) {
+                    state.companyList = action?.payload?.data?.data;
+                    state.totalrows = action.payload.data?.totalRows || 0;
+                } else {
+                    state.companyList = [];
+                    state.totalrows = 0;
+                }
+            })
+            .addCase(fetchATSCompanyList.rejected, (state) => {
+                state.loader = false;
+            });
     },
 });
 
@@ -135,6 +181,7 @@ export const atsActions = {
     getATSList,
     deleteAtsAuthorization,
     fetchCustomerCandidates,
+    fetchATSCompanyList,
 };
 
 export const atsReducer = atsSlice.reducer;
