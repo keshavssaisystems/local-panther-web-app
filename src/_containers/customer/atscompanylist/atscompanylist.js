@@ -109,37 +109,22 @@ const ATSCompanyList = () => {
         selector: (row) => row.atstype || "-",
         sortable: true
     },
-    {
-        name: "Email",
-        selector: (row) => row.email || "-",
-        sortable: true
-    },
-    {
-        name: "Phone",
-        selector: (row) => row.phonenumber || "-",
-        sortable: true
-    },
+    // {
+    //     name: "Email",
+    //     selector: (row) => row.email || "-",
+    //     sortable: true
+    // },
+    // {
+    //     name: "Phone",
+    //     selector: (row) => row.phonenumber || "-",
+    //     sortable: true
+    // },
     {
         name: "Status",
         selector: (row) => row.isactive ? "Active" : "Inactive",
         sortable: true
     }
 ];
-
-    const removeCommas = (input) => {
-        // return data.replace(/(,)+/g, ",").replace(/^,|,$/g, "");
-        return input.replace(/(,\s*)+/g, ", ").replace(/^, |, $/g, "").trim();
-    }
-    const getCity = (cityObj) => {
-        if (!cityObj) return "";
-        const city = JSON.parse(cityObj);
-        return city.cityname || "";
-    }
-    const getState = (stateObj) => {
-        if (!stateObj) return "";
-        const state = JSON.parse(stateObj);
-        return state.statename || "";
-    }
 
     const customStyles = {
         headCells: {
