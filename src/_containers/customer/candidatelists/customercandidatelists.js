@@ -43,7 +43,7 @@ import { analytics } from "../../../firebase/index";
 import cx from "classnames";
 import moment from "moment";
 import { getHiringMangerList } from "_store";
-import PageTitle from "../../../_components/common/pagetitle";
+import NewPageTitle from "../../../_components/common/newpagetitle";
 import { CommonFilters } from "../../../_components/common/commonFilters";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
@@ -55,7 +55,7 @@ import {
   faSearch,
   faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
-import { ca } from "date-fns/locale";
+
 import {
   setSelectedOpt,
   setSearchText,
@@ -87,11 +87,12 @@ export default function CustomerCandidateLists(props) {
   // const [searchText, setSearchText] = useState("");
   // const [actionbyId, setActionbyId] = useState();
   // const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
-  const { searchText, hiringManagerId } = useSelector(
+  const { searchText, hiringManagerId, interviewFeedbackStatusId } = useSelector(
     (state) => state.commonCustFilters
   );
+
   const [candidateHistoryList, setCandidateHistoryList] = useState([]);
-  const [interviewFeedbackStatusId, setInterviewFeedbackStatusId] = useState(0);
+  const [interviewFeedbackStatusId1, setInterviewFeedbackStatusId1] = useState(0);
   const [interviewStatusId, setInterviewStatusId] = useState("");
 
   const [filteredItems, setFilteredItems] = useState([]);
@@ -181,7 +182,7 @@ export default function CustomerCandidateLists(props) {
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, "");
     }
-  }, [props.type, actionbyId, selectedJobId]);
+  }, [props.type, hiringManagerId, selectedJobId]);
 
   useEffect(() => {
     if (id) {
@@ -190,7 +191,7 @@ export default function CustomerCandidateLists(props) {
       onGetPageList(pageno, props.type || activeTab, id);
 
     }
-  }, [props.type, id, actionbyId, selectedJobId]);
+  }, [props.type, id, hiringManagerId, selectedJobId]);
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
@@ -230,7 +231,7 @@ export default function CustomerCandidateLists(props) {
   };
 
   const onGetCandidatesCount = (id, clearText = false) => {
-    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: actionbyId, searchText: clearText ? "" : searchText }));
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: hiringManagerId, searchText: clearText ? "" : searchText }));
   }
 
   const onGetPageList = (pageNo, type, id, clearText = false) => {
@@ -498,7 +499,7 @@ export default function CustomerCandidateLists(props) {
   }
 
   const clearInterviewFilters = () => {
-    setInterviewFeedbackStatusId(0);
+    setInterviewFeedbackStatusId1(0);
     setStartDate(null);
     setEndDate(null);
     setInterviewStatusId(0);
@@ -659,23 +660,25 @@ export default function CustomerCandidateLists(props) {
     <>
 
 
-      <PageTitle heading="Candidates" />
+      <NewPageTitle heading="Candidates" />
 
       <CommonFilters
         showJobStatus={false}
         onSearchData={() => onSearchData()}
         showClearButton={false}
         showOnlyJobTitle={true}
-      // placeHolder={placeHolder}
-      // setPlaceHolder={setPlaceHolder}
-      // selectedOpt={selectedOpt}
-      // setSelectedOpt={setSelectedOpt}
-      // searchText={searchText}
-      // setSearchText={setSearchText}
-      // onJobStatusChange={onJobStatusChange}
-      // onJobHiringMangerChange={onJobHiringMangerChange}
-      // hiringManagerId={hiringManagerId}
-      // setHiringMangerId={setHiringMangerId} 
+        // placeHolder={placeHolder}
+        // setPlaceHolder={setPlaceHolder}
+        // selectedOpt={selectedOpt}
+        // setSelectedOpt={setSelectedOpt}
+        // searchText={searchText}
+        // setSearchText={setSearchText}
+        // onJobStatusChange={onJobStatusChange}
+        // onJobHiringMangerChange={onJobHiringMangerChange}
+        // hiringManagerId={hiringManagerId}
+        // setHiringMangerId={setHiringMangerId} 
+        interviewFeedbackStatus={interviewFeedbackStatus}
+
       />
       <Row className="customercandidatelist">
         <div
@@ -1376,9 +1379,9 @@ export default function CustomerCandidateLists(props) {
               </p>
             </TabPane>
             <TabPane tabId="scheduled">
-              <Card className="mb-3">
+              <Card className="mb-3" style={{ display: 'none' }}>
                 <CardBody>
-                  <Row className="g-2">
+                  <Row className="g-2" >
                     <Col xs="12" sm="12" md="6" lg="3" style={{ display: 'none' }}>
                       <Input
                         className="w-100"
@@ -1412,7 +1415,7 @@ export default function CustomerCandidateLists(props) {
                         placeholder="Interview Feedback Status"
                         style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}
                         onChange={(e) => {
-                          setInterviewFeedbackStatusId(e.target.value);
+                          setInterviewFeedbackStatusId1(e.target.value);
                         }}                      >
                         <option value={""}>Select Interview Feedback Status</option>
                         {interviewFeedbackStatus?.length > 0 ? (
@@ -1490,7 +1493,7 @@ export default function CustomerCandidateLists(props) {
                 </CardBody>
               </Card>
 
-              <div className="p-3 tab-info" style={{ display: "none" }}>
+              <div className="p-3 tab-info">
 
                 <Row>
                   <Col>
