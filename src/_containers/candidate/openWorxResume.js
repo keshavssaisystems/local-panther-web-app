@@ -136,6 +136,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
             // await html2pdf().set(pdfOptions).from(content).save();
             const pdfOptions = {
                 margin: [10, 10, 10, 10],
+                filename: personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname + ".pdf",
                 image: { type: "jpeg", quality: 0.95 },
                 html2canvas: {
                     scale: 2,
@@ -253,7 +254,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
                         <Col xs="auto" className="d-flex align-items-center gap-2">
                             <BsGlobe className="accent-color" size={18} />
-                            Remote Availability
+                            {getData?.map((item) => (item.desiredWorkTypes + " Availability"))}
                         </Col>
                     </Row>
                 </header>
@@ -352,7 +353,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                 <p className="small text-secondary mb-1">
                                     {getDate(item)} {item.isexpired ? "(Expired)" : ""}
                                 </p>
-                                {item.description !== "" ? (
+                                {item.description && item.description !== "" ? (
                                     <><h6 className="small fw-medium text-dark mb-1">
                                         Description
                                     </h6>

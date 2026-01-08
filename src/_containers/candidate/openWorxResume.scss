@@ -1,13 +1,14 @@
 /* Google Font import */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
-body {
-  font-family: "Inter", sans-serif !important;
-  background-color: #e5e7eb;
-}
+// body {
+//   font-family: "Inter", sans-serif !important;
+//   background-color: #e5e7eb;
+// }
 
 /* main resume container */
 .resume-container {
+  font-family: "Inter", sans-serif !important;
   max-width: 950px;
   margin: 2rem auto;
   background-color: white;
@@ -92,7 +93,7 @@ body {
 
 /* work experience background */
 .work-experience-section {
-  background-color: #f0f8ff;
+  //background-color: #f0f8ff;
   border-color: #b3d4ff !important;
 }
 
@@ -268,7 +269,7 @@ body {
 }
 
 /* Protect individual job items */
-.work-experience-section > .work-experience-inner > div {
+.work-experience-section>.work-experience-inner>div {
   break-inside: avoid;
   page-break-inside: avoid;
 }
@@ -278,6 +279,7 @@ body {
   page-break-after: avoid;
   break-after: avoid;
 }
+
 @media print {
   header {
     padding-bottom: 0.75rem !important;
