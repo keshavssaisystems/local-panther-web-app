@@ -188,7 +188,8 @@ export const store = configureStore({
     payment: paymentReducer,
     snackbar: snackbarReducer,
     hiringManager: hiringManagerReducer,
-    ats: atsReducer
+    ats: atsReducer,
+    atsgeneric: atsgenericReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
