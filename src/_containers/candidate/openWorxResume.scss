@@ -59,6 +59,33 @@
   color: #038FFE !important;
 }
 
+.pdf-section {
+  // page-break-inside: avoid;
+  // break-inside: avoid;
+  display: block;
+  padding-bottom: 2px;
+  page-break-inside: avoid;
+}
+
+// .p1::before {
+//   // content: "•$$";
+//   position: absolute;
+//   left: 0;
+//   top: 0;
+// }
+
+// .pdf-section::before {
+//   // content: "•";
+//   // position: absolute;
+//   // left: 0;
+//   top: 0;
+// }
+
+.pdf-page-break {
+  page-break-before: always;
+  break-before: page;
+}
+
 /* section title */
 .section-title {
   font-size: 1.6rem;
@@ -285,4 +312,10 @@
     padding-bottom: 0.75rem !important;
     margin-bottom: 0 !important;
   }
+}
+
+.p1 .bullet {
+  flex-shrink: 0;
+  font-size: 18px;
+  line-height: 1.45;
 }
