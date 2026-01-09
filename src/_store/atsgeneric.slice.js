@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit"
 import { history, fetchWrapper } from "_helpers";
 import jwtDecode from "jwt-decode";
-
+import { useLocation } from "react-router-dom";
 const name="atsgeneric"
 
 
@@ -41,6 +41,7 @@ export const fetchATSGenericList = createAsyncThunk(
         parameterParts.push(`@PageSize=${PageSize}`);
 
         const parameter = parameterParts.join(",");
+       
 
         const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_ATS_HiringManagerContact_List?parameter=${encodeURIComponent(parameter)}`;
 

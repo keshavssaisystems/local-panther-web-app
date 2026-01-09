@@ -26,6 +26,7 @@ const ATSGenericList = () => {
     const dispatch = useDispatch();
     // read candidates and loading directly from redux so component re-renders when data arrives
     const data = useSelector((state) => state.atsgeneric.atsgeneric || []);
+    
     //console.log("data",data);
     const loading = useSelector((state) => state.atsgeneric?.loader || false);
 
@@ -38,6 +39,25 @@ const ATSGenericList = () => {
     const setSearchText = (text) => {
         setSearchData(text);
     };
+    const generateColumns = (rows) => {
+        if (!rows || rows.length === 0) return [];
+
+        const sample = rows[0]; // take first row keys
+
+        return Object.keys(sample).map((key) => ({
+            name: key.replace(/([A-Z])/g, " $1")       // convert camelCase → "Camel Case"
+                    .replace(/_/g, " ")              // convert snake_case → "snake case"
+                    .replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize words
+            selector: (row) => {
+            if (key === "isactive") {
+                return row[key] ? "Active" : "Inactive";
+            }
+            return row[key] ?? "-";
+            },
+            sortable: true
+        }));
+    };
+     const dynamicColumns = generateColumns(data);
    // fetch helper - requests server with paging params and updates local totalRows
     const fetchData =async (page = 1, pageSize = perPage, status = 0, searchText = "") => {
          try {
@@ -216,7 +236,7 @@ const ATSGenericList = () => {
                                     
                                     <DataTable
                                         data={data}
-                                        columns={columns}
+                                        columns={dynamicColumns}
                                         pagination
                                         paginationServer
                                         paginationTotalRows={totalRows}
