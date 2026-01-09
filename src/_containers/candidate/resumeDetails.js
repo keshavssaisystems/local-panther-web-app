@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Label } from "reactstrap";
 import {
   Row,
   Col,
   Modal,
+  ModalBody, ModalFooter,
+
   ModalHeader,
   Card,
   CardBody,
@@ -31,6 +33,7 @@ import { ProfilePDF } from "./profilePDF";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { OpenWorXResume } from "./openWorxResume";
 
 export function ResumeDetails(props) {
   const dispatch = useDispatch();
@@ -267,6 +270,15 @@ export function ResumeDetails(props) {
   const toggle = function (data) {
     setActiveTab(data);
   };
+
+  const profilePDFRef = useRef();
+
+  const handleDownloadPDF = () => {
+    if (profilePDFRef.current) {
+      profilePDFRef.current.generatePDF();
+    }
+  };
+
 
   return (
     <div>
@@ -634,10 +646,23 @@ export function ResumeDetails(props) {
         </Card>
       </Modal>
 
-      <Modal className="personal-information" size="lg" isOpen={buildModal}>
+      <Modal className="personal-information" size="xl" isOpen={buildModal}>
         <ModalHeader toggle={() => close()} charCode="Y"></ModalHeader>
 
-        <ProfilePDF />
+        <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
+          {/* <ProfilePDF hideDownLoad={true} ref={profilePDFRef} /> */}
+          <OpenWorXResume hideDownLoad={true} ref={profilePDFRef} />
+        </ModalBody>
+
+        <ModalFooter>
+          <Button color="primary" onClick={handleDownloadPDF}>
+            Download
+          </Button>
+
+          <Button color="primary" onClick={() => close()}>
+            Close
+          </Button>
+        </ModalFooter>
       </Modal>
     </div>
   );
