@@ -135,7 +135,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
             // // Generate PDF asynchronously
             // await html2pdf().set(pdfOptions).from(content).save();
             const pdfOptions = {
-                margin: [10, 10, 10, 10],
+                margin: [0, 0, 0, 0],
                 filename: personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname + ".pdf",
                 image: { type: "jpeg", quality: 0.95 },
                 html2canvas: {
@@ -208,6 +208,21 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
     }
 
+    const getJobDescriptionLines = (jobdescription) => {
+        return jobdescription
+            .replace(/;/g, '\n')
+            .split(/\n+/)
+            .map(line => line.trim())
+            .filter(Boolean);
+    }
+
+    const BULLETS = {
+        round: "•",
+        hollow: "◦",
+        square: "▪",
+        dash: "–"
+    };
+
     return (
         <Container fluid className="py-4" style={{ backgroundColor: "#e5e7eb" }}>
             <Container className="resume-container shadow px-0" ref={componentRef}>
@@ -222,7 +237,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                         <img src={logo} width={150} alt="logo" />
                     </div>
 
-                    {(userRoleId === 3 || isStaffingFirm === true) && (<h1 className="h2 fw-bolder text-dark mb-1">
+                    {(userRoleId === "3" || isStaffingFirm === true) && (<h1 className="h2 fw-bolder text-dark mb-1">
                         {personalInfo_temp?.firstname}{" "}
                         {personalInfo_temp?.lastname}{" "}
                         {personalInfo_temp?.pronounname !== "" && (
@@ -247,7 +262,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                             {personalInfo_temp?.city + ", " + personalInfo_temp?.state}
                         </Col>
 
-                        {(userRoleId === 3 || isStaffingFirm === true) && (<Col xs="auto" className="d-flex align-items-center gap-2">
+                        {(userRoleId === "3" || isStaffingFirm === true) && (<Col xs="auto" className="d-flex align-items-center gap-2">
                             <BsEnvelopeFill className="accent-color" size={18} />
                             {personalInfo_temp?.email}
                         </Col>)}
@@ -261,7 +276,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
                 {/* WORK EXPERIENCE */}
                 {qualificationInfo?.length > 0 && (
-                    <section className="work-experience-section">
+                    <section className="work-experience-section pdf-section">
                         <div className="work-experience-inner p-4 p-sm-5 border-bottom">
 
                             <h2 className="section-title d-flex align-items-center gap-2">
@@ -289,11 +304,17 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                         </p>
                                     )}
 
-                                    {item.jobdescription && (
-                                        <p style={{ whiteSpace: "pre-wrap" }}>
+                                    {/* {item.jobdescription && (
+                                        <p class="p1" style={{ whiteSpace: "pre-wrap" }}>
                                             {item.jobdescription}
                                         </p>
-                                    )}
+                                    )} */}
+                                    {item.jobdescription && getJobDescriptionLines(item.jobdescription).map((line, index) => (
+                                        <p class="p1" style={{ whiteSpace: "pre-wrap" }}>
+                                            <span className="bullet">{BULLETS.round}</span>    {line.replace(/•/g, '')}
+                                        </p>
+                                    ))}
+
                                 </div>
                             ))}
 
@@ -303,7 +324,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
 
                 {/* SKILLS */}
-                {skillsInfo?.length > 0 ? (<section className="mb-0 p-4 p-sm-5 pt-0 pb-0">
+                {skillsInfo?.length > 0 ? (<section className="mb-0 p-4 p-sm-5 pt-0 pb-0 pdf-section">
                     <h2 className="section-title d-flex align-items-center gap-2">
                         <BsListCheck className="accent-color" size={22} />
                         Skills
@@ -319,7 +340,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                 </section>) : <> </>}
 
                 {/* EDUCATION */}
-                {educationInfo?.length > 0 ? (<section className="p-4 p-sm-5">
+                {educationInfo?.length > 0 ? (<section className="p-4 p-sm-5 pdf-section">
                     <h2 className="section-title d-flex align-items-center gap-2">
                         <BsMortarboardFill className="accent-color" size={22} />
                         Education
@@ -339,7 +360,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
                 {/* CERTIFICATIONS */}
                 {certificationInfo?.length > 0 ? (
-                    <section className="p-4 p-sm-5">
+                    <section className="p-4 p-sm-5 pdf-section">
                         <h2 className="section-title d-flex align-items-center gap-2">
                             <BsPatchCheckFill className="accent-color" size={22} />
                             Certification and Licenses
@@ -369,7 +390,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
                 {/* Additional Information */}
                 {additionalInfo?.length > 0 ? (
-                    <section className="p-4 p-sm-5">
+                    <section className="p-4 p-sm-5 pdf-section">
                         <h2 className="section-title d-flex align-items-center gap-2">
                             <BsInfoCircleFill className="accent-color" size={22} />
                             Additional Information
@@ -409,7 +430,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
 
                 {/* JOB PREFERENCES */}
                 {getData?.length > 0 ? (
-                    <section className="p-4 p-sm-5">
+                    <section className="p-4 p-sm-5 pdf-section">
                         <h2 className="section-title flex items-center gap-2">
                             <BsSliders className="accent-color" size={24} />
                             Job Preferences
@@ -480,11 +501,12 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                 ) : (<> </>)}
 
                 {/* FOOTER */}
-                <footer className="text-center border-top p-3 text-muted">
+                {false && (<footer className="text-center border-top p-3 text-muted">
                     <p className="small fst-italic m-0">
                         This resume was professionally generated and optimized using the advanced capabilities of the OpenWorX AI Agent for enhanced presentation and readability.
                     </p>
-                </footer>
+                </footer>)}
+
 
             </Container>
             {
