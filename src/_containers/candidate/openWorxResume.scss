@@ -10,7 +10,7 @@
 .resume-container {
   font-family: "Inter", sans-serif !important;
   max-width: 950px;
-  margin: 2rem auto;
+  margin: 0rem auto;
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
@@ -19,13 +19,13 @@
 
 /* Header adjustments to match uploaded design */
 .resume-container header {
-  padding: 2.0rem 2.5rem;
+  //padding: 2.0rem 2.5rem;
   position: relative;
 }
 
 /* Make header divider thinner to match screenshot */
 .resume-container header {
-  border-bottom: 2px solid #2F479B;
+  border-bottom: 1px solid #2F479B;
 }
 
 .resume-container header h1 {
@@ -60,8 +60,8 @@
 }
 
 .pdf-section {
-  // page-break-inside: avoid;
-  // break-inside: avoid;
+  page-break-inside: avoid;
+  break-inside: avoid;
   display: block;
   padding-bottom: 2px;
   page-break-inside: avoid;
@@ -74,12 +74,12 @@
 //   top: 0;
 // }
 
-// .pdf-section::before {
-//   // content: "•";
-//   // position: absolute;
-//   // left: 0;
-//   top: 0;
-// }
+.pdf-section::before {
+  // content: "•";
+  // position: absolute;
+  // left: 0;
+  top: 0;
+}
 
 .pdf-page-break {
   page-break-before: always;
@@ -93,7 +93,7 @@
   color: #1e293b;
   margin-bottom: 0.75rem;
   padding-bottom: 0.25rem;
-  border-bottom: 2px solid #2F479B;
+  border-bottom: 1px solid #2F479B;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -102,89 +102,78 @@
 /* Make the section underline stronger and with spacing similar to screenshot */
 .section-title {
   padding-bottom: 0.5rem;
-  border-bottom-width: 3px;
+  border-bottom-width: 1px;
 }
 
 /* skill badges */
 .skill-badge {
-  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  padding: 0.35em 0.65em;
   background-color: #eef5ff;
   color: #2F2E2E;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  border-radius: 0.3rem;
+  font-weight: 600;
   border: 1px solid #2F479B;
   display: inline-block;
-  margin: 0.25rem;
 }
 
 /* work experience background */
-.work-experience-section {
+.resume-section {
   //background-color: #f0f8ff;
   border-color: #b3d4ff !important;
 }
 
 /* Increase padding and create the spacious panel look */
-.work-experience-section {
+.resume-section {
   padding: 1.5rem 1.75rem !important;
 
 }
 
 /* Add full-width blue divider above the first section to match design */
 .resume-container section:first-of-type {
-  border-top: 5px solid #2F479B !important;
+  border-top: 1px solid #2F479B !important;
   // margin-top: 1rem;
 }
 
 /* Accent date style inside work section */
-.work-experience-section .small.fw-semibold.accent-color,
-.work-experience-section .small.accent-color {
+.resume-section .small.fw-semibold.accent-color,
+.resume-section .small.accent-color {
   color: #0b74d1;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
 /* Each work item block */
-.work-experience-section>div {
-  padding: 1rem 0;
+.resume-section>div {
+  padding: 0.4rem 0;
   border-bottom: 1px solid rgba(47, 71, 155, 0.08);
 }
 
-.work-experience-section>div:last-child {
+.resume-section>div:last-child {
   border-bottom: none;
 }
 
 /* Job title & company styling */
-.work-experience-section h3.h5 {
+.resume-section h3.h5 {
   font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
 }
 
-.work-experience-section p.h6 {
+.resume-section p.h6 {
   color: #9ca3af;
   /* muted */
   margin-bottom: 0.75rem;
 }
 
 /* Widen paragraph measure and comfortable line-height */
-.work-experience-section p {
+.resume-section p {
   color: #374151;
   line-height: 1.65;
   margin-bottom: 0.8rem;
-  font-size: 0.97rem;
+  // font-size: 0.97rem;
 }
 
-/* Bullet styles and list spacing to match sample */
-.work-experience-section ul {
-  margin-left: 1.1rem;
-  padding-left: 0.9rem;
-}
-
-.work-experience-section ul li {
-  margin-bottom: 0.65rem;
-  list-style-type: disc;
-}
 
 
 /* Contact row icon sizing/gap */
@@ -193,10 +182,6 @@
   gap: 0.75rem !important;
 }
 
-/* list items within work section */
-.work-experience-section ul li {
-  color: #2F2E2E;
-}
 
 /* preference label (if needed later) */
 .preference-label {
@@ -250,10 +235,33 @@
 }
 
 /* Work experience item spacing */
-.work-experience-section>div,
-.work-experience-section .pb-3 {
+.resume-section>div,
+.resume-section .pb-1 {
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
+}
+
+
+/* Allow section to split across pages */
+.resume-section {
+  break-inside: auto;
+}
+
+/* This wrapper can be split */
+.work-experience-inner {
+  break-inside: auto;
+}
+
+/* Protect individual job items */
+.resume-section>.work-experience-inner>div {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Keep section title with first item */
+.section-title {
+  page-break-after: avoid;
+  break-after: avoid;
 }
 
 /* Ensure lists have comfortable spacing */
@@ -271,11 +279,6 @@
   padding-bottom: 1rem !important;
 }
 
-/* Slightly tighter skill badges layout */
-.skill-badge {
-  margin: 0.2rem 0.35rem 0.2rem 0;
-}
-
 /* Footer spacing */
 .resume-container footer p {
   margin: 0.25rem 0;
@@ -285,27 +288,6 @@
   color: #038FFE !important;
 }
 
-/* Allow section to split across pages */
-.work-experience-section {
-  break-inside: auto;
-}
-
-/* This wrapper can be split */
-.work-experience-inner {
-  break-inside: auto;
-}
-
-/* Protect individual job items */
-.work-experience-section>.work-experience-inner>div {
-  break-inside: avoid;
-  page-break-inside: avoid;
-}
-
-/* Keep section title with first item */
-.section-title {
-  page-break-after: avoid;
-  break-after: avoid;
-}
 
 @media print {
   header {
@@ -316,6 +298,30 @@
 
 .p1 .bullet {
   flex-shrink: 0;
-  font-size: 18px;
-  line-height: 1.45;
+  // font-size: 18px;
+  line-height: 1.5;
+}
+
+// .page-break-before {
+//   page-break-before: always;
+//   break-before: page;
+// }
+
+.pdf-bullet-row {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 4px;
+}
+
+.bullet-col {
+  width: 14px !important;
+  text-align: center;
+  flex-shrink: 0;
+  // font-size: 14px;
+  // line-height: 1.45;
+}
+
+.text-col {
+  // line-height: 1.45;
+  word-break: break-word;
 }
