@@ -55,7 +55,7 @@ const ATSGenericList = () => {
 
     
     // pagination state
-    const [currentPage, setCurrentPage] = useState(1); // 1-based
+    const [currentPage, setCurrentPage] = useState(1); 
     const [perPage, setPerPage] = useState(10);
     const totalRows = useSelector((state) => state.atsgeneric?.totalrows || 0);
     const [searchData, setSearchData] = useState("");
@@ -84,11 +84,11 @@ const ATSGenericList = () => {
     };  
      const dynamicColumns = generateColumns(data);
    // fetch helper - requests server with paging params and updates local totalRows
-    const fetchData =async (page = 1, pageSize = perPage, status, searchText = "") => {
+    const fetchData =async (page = 1, pageSize = perPage, statusFilter, searchText = "") => {
          try {
                 const params = {    
                 SearchText: searchText || "",
-                IsActive: status || 0,
+                IsActive: statusFilter || 3,
                 currentpage: page,
                 PageSize: pageSize,
                 };
@@ -102,7 +102,10 @@ const ATSGenericList = () => {
 };
 
     useEffect(() => {
-        fetchData(1, perPage, statusFilter, searchData);
+        setSearchData("");
+        setStatusFilter(3);
+        setCurrentPage(1);
+        fetchData(1, perPage, 3, "");
     
     },[path]);
 
@@ -118,14 +121,14 @@ const ATSGenericList = () => {
     };
 
     const onStatusSelect = (status) => {
-        // implement status filter logic here
-        setStatusFilter(Number(status));
-        fetchData(currentPage, perPage, status, searchData);
+        const newStatus = Number(status);
+        setStatusFilter(newStatus);
+        fetchData(currentPage, perPage, newStatus, searchData);
     };
 
     const onClearSearch = () => {
         setSearchData("");
-        fetchData(1, perPage, statusFilter, "");
+        fetchData(currentPage, perPage, statusFilter, "");
     };
     
     const customStyles = {
@@ -173,7 +176,7 @@ const ATSGenericList = () => {
                                         <Input
                                             type="select"
                                             name="status"
-                                            defaultValue="Active"
+                                            value={statusFilter}
                                             onChange={(e) => onStatusSelect(e.target.value)}
                                         >
                                             <option value={3}>All status</option>
@@ -205,7 +208,7 @@ const ATSGenericList = () => {
                                                 onClick={(evt) => onClearSearch()}
                                             />
                                             <button
-                                                onClick={(evt) => fetchData(1, perPage, 0, searchData)}
+                                                onClick={(evt) => fetchData(currentPage, perPage, statusFilter, searchData)}
                                                 className="search-icon"
                                             >
                                                 <span />
