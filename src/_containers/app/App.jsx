@@ -693,7 +693,7 @@ export function App() {
             }
           />
           <Route
-            path="/ats/candidates"
+            path="/acl/candidates"
             element={
               <PrivateRoute>
                 <ATSCandidateList isCompanyAdmin={true} entity="candidates" />

@@ -25,7 +25,8 @@ export function OfflineInterviewModal({
   postData,
   isOpen = false,
   onClose,
-  type
+  type,
+  loading
 }) {
   const [videoModeCheck, setVideoModeCheck] = useState(0);
   const [timeOption, setTimeOption] = useState([]);
@@ -39,7 +40,7 @@ export function OfflineInterviewModal({
   const [slotTime, setSlotTime] = useState("");
   const interviewStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const dispatch = useDispatch();
-
+ 
   useEffect(() => {
     let newdate = new Date(
       getTimezoneDateTime(
@@ -335,7 +336,7 @@ export function OfflineInterviewModal({
               <Button size="lg" color="danger" type="button" onClick={() => onClose()}>
                 Close
               </Button>{" "}
-              <Button size="lg" color="primary" type="submit">
+              <Button size="lg" color="primary" type="submit" disabled={loading}>
                 Save
               </Button>
             </div>

@@ -55,6 +55,7 @@ export const CustCandidateListView = (props) => {
   const [offerUploadLoading, setOfferUploadLoading] = useState(false);
   const [isStaffingFirm, setIsStaffingFirm] = useState(props.isStaffingFirm);
   const [showOfflineInterviewModal, setShowOfflineInterviewModal] = useState(false);
+  const [offlineInterviewLoading, setOfflineInterviewLoading] = useState(false);
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -528,22 +529,107 @@ export const CustCandidateListView = (props) => {
           )}
         </ButtonGroup>
       );
-    }
-    else if (props.type === "presented") {
+    } else if (props.type === "presented") {
       return (
-        <ButtonGroup>
-          <Button
-            // outline
-            size="sm"
-            title="Place"
-            onClick={() => onPlacedClick("candidatePlaced", candidaterecommendedjobid, row)}
-            className="btn-icon"
-            color="success"
-          >
-            <img src={customerIcons.list_accept} alt="list place"></img>
-          </Button>
-        </ButtonGroup>
-      );
+        <>
+          {row?.staffingfirmstatus === "Presented" && (
+            (<ButtonGroup>
+              <Button
+                size="sm"
+                title="Reschedule Interview"
+                onClick={() => onRescheduleInterview(row)}
+                className="btn-icon"
+                color="alternate"
+              >
+                <img src={customerIcons.list_schedule} alt="list reject"></img>
+              </Button>
+              {/* <Button
+                size="sm"
+                title="Place"
+                onClick={() => onPlacedClick("candidatePlaced", candidaterecommendedjobid, row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list place"></img>
+              </Button> */}
+              <Button
+                // outline
+                size="sm"
+                title="Make offer"
+                onClick={() => onAcceptClick(row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+              <Button
+                size="sm"
+                title="Decline candidate"
+                onClick={() => onRejectClick(candidaterecommendedjobid)}
+                className="btn-icon"
+                color="danger"
+              >
+                <img src={customerIcons.list_reject} alt="list reject"></img>
+              </Button>
+            </ButtonGroup>))}
+
+          {(row?.staffingfirmstatus === "Interview Scheduled" || row?.staffingfirmstatus === "Interview Completed") && (
+            <ButtonGroup>
+              {/* <Button
+                size="sm"
+                title="Place"
+                onClick={() => onPlacedClick("candidatePlaced", candidaterecommendedjobid, row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list place"></img>
+              </Button> */}
+              <Button
+                // outline
+                size="sm"
+                title="Make offer"
+                onClick={() => onAcceptClick(row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+              <Button
+                size="sm"
+                title="Decline candidate"
+                onClick={() => onRejectClick(candidaterecommendedjobid)}
+                className="btn-icon"
+                color="danger"
+              >
+                <img src={customerIcons.list_reject} alt="list reject"></img>
+              </Button>
+            </ButtonGroup>)}
+
+          {(row?.staffingfirmstatus === "Offer Out" || row?.staffingfirmstatus === "Accepted") && (<ButtonGroup>
+
+            <Button
+              size="sm"
+              title="Decline candidate"
+              onClick={() => onRejectClick(candidaterecommendedjobid)}
+              className="btn-icon"
+              color="danger"
+            >
+              <img src={customerIcons.list_reject} alt="list reject"></img>
+            </Button>
+          </ButtonGroup>)}
+          {row?.staffingfirmstatus === "Declined" && (<ButtonGroup>
+
+            <Button
+              size="sm"
+              title="Reschedule Interview"
+              onClick={() => onRescheduleInterview(row)}
+              className="btn-icon"
+              color="alternate"
+            >
+              <img src={customerIcons.list_schedule} alt="list reject"></img>
+            </Button>
+          </ButtonGroup>)}
+        </>)
     }
   };
 
@@ -1117,39 +1203,42 @@ export const CustCandidateListView = (props) => {
                     <>
                       {row?.jobOfferDtos?.length === 2 && (
                         <>
-                          <img
-                            src={previousOffer}
-                            alt="list maybe"
-                            className={"icon-pointer me-2"}
-                            width={"20px"}
-                            title="Previous Offer - Click to view offer"
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[1]?.offerfilepath)
-                            }
-                          ></img>
+                          {row?.jobOfferDtos[1]?.offerfilepath && row?.jobOfferDtos[1]?.offerfilepath !== "" && (
+                            <img
+                              src={previousOffer}
+                              alt="list maybe"
+                              className={"icon-pointer me-2"}
+                              width={"20px"}
+                              title="Previous Offer - Click to view offer"
+                              onClick={() =>
+                                window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                              }
+                            ></img>
+                          )}
                         </>
                       )}
                       {row?.isfinaloffer === true && (
                         <>
-                          <img
-                            src={finalOffer}
-                            alt="list maybe"
-                            className={"icon-pointer me-2"}
-                            width={"20px"}
-                            title={
-                              props.type === "accepted"
-                                ? "Click to view accepted offer"
-                                : "Final Offer - Click to view offer"
-                            }
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                            }
-                          ></img>
+                          {row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath !== "" && (
+                            <img
+                              src={finalOffer}
+                              alt="list maybe"
+                              className={"icon-pointer me-2"}
+                              width={"20px"}
+                              title={
+                                props.type === "accepted"
+                                  ? "Click to view accepted offer"
+                                  : "Final Offer - Click to view offer"
+                              }
+                              onClick={() =>
+                                window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                              }
+                            ></img>)}
                         </>
                       )}
                       {row?.jobOfferDtos?.length === 1 &&
                         row?.isfinaloffer === false && (
-                          <>
+                          <> {row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath !== "" && (
                             <img
                               src={
                                 props.type === "accepted"
@@ -1167,12 +1256,12 @@ export const CustCandidateListView = (props) => {
                               onClick={() =>
                                 window.open(row?.jobOfferDtos[0]?.offerfilepath)
                               }
-                            ></img>
+                            ></img>)}
                           </>
                         )}
                       {row?.jobOfferDtos?.length === 2 &&
                         row?.isfinaloffer === false && (
-                          <>
+                          <> {row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath !== "" && (
                             <img
                               src={
                                 props.type === "accepted" ? finalOffer : newoffer
@@ -1188,7 +1277,7 @@ export const CustCandidateListView = (props) => {
                               onClick={() =>
                                 window.open(row?.jobOfferDtos[0]?.offerfilepath)
                               }
-                            ></img>
+                            ></img>)}
                           </>
                         )}
                     </>
@@ -1272,7 +1361,7 @@ export const CustCandidateListView = (props) => {
                 width: "13%",
               },
               {
-                name: <span className="table-title">{"Current status (Offline)"}</span>,
+                name: <span className="table-title">{"Current status"}</span>,
                 cell: (row) =>
                   <Input
                     type="select"
@@ -1302,23 +1391,15 @@ export const CustCandidateListView = (props) => {
                 width: "18%",
               },
               {
-                name: <span className="table-title">Interest (Ecosystem)</span>,
+                name: <span className="table-title">Interest</span>,
                 cell: (row) => (
-                  <div className="list-btn-group">
-                    {/* {row?.customerrecommendedjobstatusid !== 5 && (
-                      <ButtonGroup>
-                      {renderButtons(row.candidaterecommendedjobid, row)}
-                    </ButtonGroup>
-                  )} */}
-
-                    <ButtonGroup>
-                      {renderButtons(row.candidaterecommendedjobid, row)}
-                    </ButtonGroup>
+                  <div className="d-flex justify-content-start">
+                    {renderButtons(row.candidaterecommendedjobid, row)}
 
                   </div>
                 ),
                 ignoreRowClick: true,
-                button: true,
+                // button: true,
                 width: "12%",
               },
               {
@@ -2035,11 +2116,13 @@ export const CustCandidateListView = (props) => {
       });
   };
 
-   const postScheduledInterviewOffline = async function (formData) {
+  const postScheduledInterviewOffline = async function (formData) {
+    setOfflineInterviewLoading(true);
     let res = await dispatch(
       customerCandidateListsActions.postScheduleInterviewOffline(formData)
     );
     if (res.payload?.statusCode === 201) {
+      setOfflineInterviewLoading(false);
       setShowSchdIntSModal(false);
       props.updateList();
       dispatch(showSnackbar({
@@ -2052,6 +2135,7 @@ export const CustCandidateListView = (props) => {
       }));
 
     } else {
+      setOfflineInterviewLoading(false);
       dispatch(showSnackbar({
         message: res.payload.message || res.payload.status,
         type: SNACKBAR_TYPES.ERROR,
@@ -2218,6 +2302,7 @@ export const CustCandidateListView = (props) => {
             }}
             isOpen={showOfflineInterviewModal}
             onClose={() => setShowOfflineInterviewModal(false)}
+            loading={offlineInterviewLoading}
           />
         ) : (
           <></>
