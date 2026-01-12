@@ -23,6 +23,8 @@ import {
   faSearch,
   faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
+import AsyncSelect from "react-select/async";
+import debounce from "lodash/debounce";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -56,6 +58,7 @@ export function CustomerReportScheduledInterviews() {
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
   let [jobId, setJobId] = useState();
+  const [jobSelected, setJobSelected] = useState(null);
   let [candidateId, setCandidateId] = useState();
   const [excelData, setExcelData] = useState([]);
   const [showJDModal, setShowJDModal] = useState(false);
@@ -93,6 +96,41 @@ export function CustomerReportScheduledInterviews() {
       });
     }
   }, []);
+
+  const debouncedFetch = React.useMemo(
+    () =>
+      debounce((inputValue, callback) => {
+        dispatch(getJobDropdown(inputValue)).then((res) => {
+          const data = res?.payload?.data || [];
+          const options = data.map((j) => ({
+            label: j.jobtitle || j.name,
+            value: j.jobid || j.id,
+            jobid: j.jobid || j.id,
+          }));
+          callback(options);
+        });
+      }, 300),
+    [dispatch]
+  );
+
+  const loadJobOptions = (inputValue) =>
+    new Promise((resolve) => debouncedFetch(inputValue, resolve));
+
+  const custJobSelectStyles = {
+    menuPortal: (base) => ({ ...base, zIndex: 9999, borderRadius: 0 }),
+    menu: (base) => ({ ...base, borderRadius: 0 }),
+    menuList: (base) => ({ ...base, borderRadius: 0 }),
+    control: (base, state) => ({
+      ...base,
+      minHeight: "38px",
+      height: "38px",
+      boxShadow: state.isFocused ? base.boxShadow : "none",
+      borderRadius: 0,
+    }),
+    valueContainer: (base) => ({ ...base, height: "38px", padding: "0 8px" }),
+    input: (base) => ({ ...base, margin: 0, padding: 0 }),
+    indicatorsContainer: (base) => ({ ...base, height: "38px" }),
+  };
 
   useEffect(() => {
     if (schdInterviewList?.length > 0) {
@@ -146,6 +184,7 @@ export function CustomerReportScheduledInterviews() {
     setEndDate(null);
     setCandidateId("");
     setJobId("");
+    setJobSelected(null);
     onGetCustReportScheduleIVList({});
   };
 
@@ -243,11 +282,11 @@ export function CustomerReportScheduledInterviews() {
           title={
             row.scheduledate
               ? getTimezoneDateTime(
-                  moment(row.scheduledate.slice(0, 11) + row.starttime).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                  ),
-                  "MM/DD/YYYY"
-                )
+                moment(row.scheduledate.slice(0, 11) + row.starttime).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                ),
+                "MM/DD/YYYY"
+              )
               : ""
           }
         >
@@ -257,11 +296,11 @@ export function CustomerReportScheduledInterviews() {
           >
             {row.scheduledate
               ? getTimezoneDateTime(
-                  moment(row.scheduledate.slice(0, 11) + row.starttime).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                  ),
-                  "MM/DD/YYYY"
-                )
+                moment(row.scheduledate.slice(0, 11) + row.starttime).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                ),
+                "MM/DD/YYYY"
+              )
               : ""}
           </Button>
         </span>
@@ -383,39 +422,28 @@ export function CustomerReportScheduledInterviews() {
                 </Col>
                 <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
-                    {/* <Label for="jobid">Job Id</Label> */}
-                    {/* <Input
-                      name="jobid"
-                      id="jobid"
-                      placeholder="Job Id"
-                      value={jobId}
-                      onChange={(e) => {
-                        handleChange("jobid", e.target.value);
-                        setJobId(e.target.value);
+                    <AsyncSelect
+                      cacheOptions
+                      defaultOptions={(jobDropDownList || []).map((j) => ({
+                        label: j.jobtitle,
+                        value: j.jobid,
+                        jobid: j.jobid,
+                      }))}
+                      loadOptions={loadJobOptions}
+                      className="cust-job-autosuggest"
+                      classNamePrefix="react-select"
+                      placeholder="Search job"
+                      onChange={(selected) => {
+                        handleChange("jobid", selected ? selected.jobid : null);
+                        setJobId(selected ? selected.jobid : null);
+                        setJobSelected(selected);
                       }}
-                    /> */}
-                    <Input
-                      type="select"
-                      value={jobId}
-                      name="jobid"
-                      id="jobid"
-                      placeholder="Job Id"
-                      onChange={(e) => {
-                        handleChange("jobid", e.target.value);
-                        setJobId(e.target.value);
-                      }}
-                    >
-                      <option value={""}>Select a job</option>
-                      {jobDropDownList?.length > 0 ? (
-                        jobDropDownList.map((data) => (
-                          <option value={data.jobid} key={data.jobid}>
-                            {data.jobtitle}
-                          </option>
-                        ))
-                      ) : (
-                        <></>
-                      )}
-                    </Input>
+                      value={jobSelected}
+                      menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+                      menuPosition="fixed"
+                      menuPlacement="auto"
+                      styles={custJobSelectStyles}
+                    />
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="4" sm="12" sx="12">

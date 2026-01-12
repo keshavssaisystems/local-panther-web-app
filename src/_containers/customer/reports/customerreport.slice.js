@@ -119,8 +119,13 @@ export const getCustReporCandStatList = createAsyncThunk(
 // get job dropdown list
 export const getJobDropdown = createAsyncThunk(
   `${name}/getJobDropdown`,
-  async () => {
-    const GET_JOB_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDropdown`;
+  async (search = "") => {
+    // const GET_JOB_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDropdown`;
+    let companyid = Number(localStorage.getItem("companyid"));
+    const base = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=JobList`;
+    const GET_JOB_DROPDOWN_END_POINT = search
+      ? `${base}&searchBy=${encodeURIComponent(search)}`
+      : `${base}`;
     return await fetchWrapper.get(GET_JOB_DROPDOWN_END_POINT);
   }
 );
@@ -324,7 +329,11 @@ const customerReportSlice = createSlice({
       state.jobDropDownList = [];
     },
     [getJobDropdown.fulfilled]: (state, action) => {
-      state.jobDropDownList = action?.payload?.data;
+      state.jobDropDownList = action?.payload?.data?.map((item => ({
+        jobtitle: item.name,
+        jobid: item.id
+      })));
+      // state.jobDropDownList = action?.payload?.data;
     },
     [getJobDropdown.rejected]: (state, action) => { },
 

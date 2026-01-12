@@ -1361,7 +1361,7 @@ export const CustCandidateListView = (props) => {
                 width: "13%",
               },
               {
-                name: <span className="table-title">{"Current status (Offline)"}</span>,
+                name: <span className="table-title">{"Current status"}</span>,
                 cell: (row) =>
                   <Input
                     type="select"
@@ -1391,7 +1391,7 @@ export const CustCandidateListView = (props) => {
                 width: "18%",
               },
               {
-                name: <span className="table-title">Interest (Ecosystem)</span>,
+                name: <span className="table-title">Interest</span>,
                 cell: (row) => (
                   <div className="d-flex justify-content-start">
                     {renderButtons(row.candidaterecommendedjobid, row)}
