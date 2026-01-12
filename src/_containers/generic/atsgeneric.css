@@ -1,0 +1,30 @@
+/* horizontal scroll container */
+.table-scroll-wrapper{
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 8px;
+}
+
+/* inner element controls minimum table width */
+.table-inner{
+  min-width: 1100px; /* adjust to desired minimum width so columns don't wrap */
+}
+
+/* make react-data-table table obey min-width (class names from rdt) */
+.cust-rep-list-view .rdt_Table,
+.cust-rep-list-view .rdt_TableWrapper {
+  min-width: 1100px;
+}
+
+/* optional: nicer horizontal scrollbar */
+.table-scroll-wrapper::-webkit-scrollbar{
+  height: 8px;
+}
+.table-scroll-wrapper::-webkit-scrollbar-track{
+  background: transparent;
+}
+.table-scroll-wrapper::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,0.12);
+  border-radius: 6px;
+}

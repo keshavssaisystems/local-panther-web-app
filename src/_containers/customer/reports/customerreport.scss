@@ -55,3 +55,37 @@
     }
   }
 }
+
+/* react-select styling for job autosuggest (scoped) */
+.cust-report-job-cont .cust-job-autosuggest {
+  .react-select__control {
+    min-height: 35px;
+    height: 35px;
+    border-radius: 0 !important;
+  }
+
+  .react-select__control--is-focused {
+    box-shadow: none;
+  }
+
+  .react-select__value-container {
+    height: 35px;
+    padding: 0 8px;
+  }
+
+  .react-select__input {
+    margin: 0;
+    padding: 0;
+  }
+
+  .react-select__indicators {
+    height: 35px;
+  }
+
+  .react-select__menu,
+  .react-select__menu-portal,
+  .react-select__menu-list {
+    z-index: 9999;
+    border-radius: 0;
+  }
+}

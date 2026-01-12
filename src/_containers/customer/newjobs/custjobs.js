@@ -227,7 +227,7 @@ export default function CustJobList() {
                             createdDate={data.jobcreatedatetime}
                             type={"Open"}
                             selectedJob={
-                              jobDetail?.length > 0 ? jobDetail[0].jobid : ""
+                              jobDetail?.length > 0 ? jobDetail[0]?.jobid : ""
                             }
                             getSelectedJobId={(e) => getSelectedJob(e)}
                             additionalData={data}
@@ -237,7 +237,7 @@ export default function CustJobList() {
                     ) : (
                       <></>
                     )}
-                    {/* {!loading && jobList?.length > 0 ? (
+                    {!loading && jobList?.length > 0 ? (
                       <>
                         <CardPagination
                           totalPages={current}
@@ -247,9 +247,9 @@ export default function CustJobList() {
                       </>
                     ) : (
                       <></>
-                    )} */}
+                    )}
                   </Col>
-                  <Col
+                  {/* <Col
                     xs={{ size: 12, order: 2 }}
                     sm={{ size: 12, order: 2 }}
                     md={{ size: 12, order: 2 }}
@@ -268,7 +268,7 @@ export default function CustJobList() {
                     ) : (
                       <></>
                     )}
-                  </Col>
+                  </Col> */}
                   <Col
                     xs={{ size: 12, order: 3 }}
                     sm={{ size: 12, order: 3 }}

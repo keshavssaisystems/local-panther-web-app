@@ -649,15 +649,15 @@ function createExtraReducers() {
       let { pending, fulfilled, rejected } = extraActions.getReportBySP;
       builder
         .addCase(pending, (state) => {
-          state.loading = true;
+          // state.loading = true;
           //state.reportData = null;
         })
         .addCase(fulfilled, (state, action) => {
           state.reportData = action?.payload?.data?.[0] ? action.payload.data[0] : null;
-          state.loading = false;
+          // state.loading = false;
         })
         .addCase(rejected, (state, action) => {
-          state.loading = false;
+          // state.loading = false;
           state.reportData = null;
         });
     }
