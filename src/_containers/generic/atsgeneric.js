@@ -104,7 +104,7 @@ const ATSGenericList = () => {
     useEffect(() => {
         fetchData(1, perPage, statusFilter, searchData);
     
-    }, []);
+    },[path]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
