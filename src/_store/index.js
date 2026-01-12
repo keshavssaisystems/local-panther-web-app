@@ -63,6 +63,7 @@ import { snackbarReducer } from "./snackbar.slice";
 
 import { hiringManagerReducer } from "./dropDownHiringManager.slice";
 import { atsReducer } from "./ats.slice";
+import { atsgenericReducer } from "./atsgeneric.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -188,7 +189,8 @@ export const store = configureStore({
     payment: paymentReducer,
     snackbar: snackbarReducer,
     hiringManager: hiringManagerReducer,
-    ats: atsReducer
+    ats: atsReducer,
+    atsgeneric: atsgenericReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
