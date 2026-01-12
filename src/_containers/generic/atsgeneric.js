@@ -16,26 +16,44 @@ import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atsgeneric.css"; // add this import
 import Loader from "react-loaders";
+import { useLocation } from "react-router-dom";
+import { param } from "jquery";
 const ATSGenericList = () => {
     console.log("ATS Hiring Contact List component rendered");
     let isCompanyAdmin = true;
     let entity = "Contact";
-    const title = "ATS Hiring Manager";
+    
     const icon = "mdi mdi-account-multiple-outline";
 
     const dispatch = useDispatch();
     // read candidates and loading directly from redux so component re-renders when data arrives
     const data = useSelector((state) => state.atsgeneric.atsgeneric || []);
-    
-    //console.log("data",data);
     const loading = useSelector((state) => state.atsgeneric?.loader || false);
 
+    const location = useLocation(); 
+    const path = location.pathname.toLowerCase();
+
+    const endpointMap = { "/ats/atscompany": "Get_ATS_Company_List", 
+                         "/ats/atscontact": "Get_ATS_HiringManagerContact_List", 
+                         "/ats/atsassignee": "Get_ATS_EmployeeAssignedUsers_List",
+                        };
+    const endpoint = endpointMap[path];
+    //for title
+    const titleMap = {
+      "/ats/atscompany": "ATS Company List",
+      "/ats/atscontact": "ATS Hiring Manager List",
+      "/ats/atsassignee": "ATS Assignee List",
+    };
+    const title =  titleMap[path] || "ATS";
+
+
+    
     // pagination state
     const [currentPage, setCurrentPage] = useState(1); // 1-based
     const [perPage, setPerPage] = useState(10);
     const totalRows = useSelector((state) => state.atsgeneric?.totalrows || 0);
     const [searchData, setSearchData] = useState("");
-    const [statusFilter, setStatusFilter] = useState(0);
+    const [statusFilter, setStatusFilter] = useState(3);
     const setSearchText = (text) => {
         setSearchData(text);
     };
@@ -45,8 +63,8 @@ const ATSGenericList = () => {
         const sample = rows[0]; // take first row keys
 
         return Object.keys(sample).map((key) => ({
-            name: key.replace(/([A-Z])/g, " $1")       // convert camelCase → "Camel Case"
-                    .replace(/_/g, " ")              // convert snake_case → "snake case"
+            name: key.replace(/([A-Z])/g, " $1")       // convert camelCase 
+                    .replace(/_/g, " ")              // convert snake_case
                     .replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize words
             selector: (row) => {
             if (key === "isactive") {
@@ -56,28 +74,20 @@ const ATSGenericList = () => {
             },
             sortable: true
         }));
-    };
+    };  
      const dynamicColumns = generateColumns(data);
    // fetch helper - requests server with paging params and updates local totalRows
-    const fetchData =async (page = 1, pageSize = perPage, status = 0, searchText = "") => {
+    const fetchData =async (page = 1, pageSize = perPage, status, searchText = "") => {
          try {
-                const params = {
+                const params = {    
                 SearchText: searchText || "",
-                IsActive: status === 0 ? null : status,
+                IsActive: status || 0,
                 currentpage: page,
                 PageSize: pageSize,
                 };
-                 await dispatch(fetchATSGenericList(params));
-                //console.log("new",res)
-                // const payload = res?.payload || {};
-                // const total =
-                // payload?.total ||
-                // payload?.totalRecords ||
-                // payload?.totalCount ||
-                // payload?.data?.totalRows ||
-                // payload?.data?.totalRecords ||
-                // (Array.isArray(payload?.data?.data) ? payload?.data?.length : 0);
-                // console.log("Total rows:", total);
+    
+                await dispatch(fetchATSGenericList({endpoint,params}));
+                
             } 
             catch (error) {
                     console.error("ATS Hiring Contact list fetch failed", error);
@@ -102,7 +112,7 @@ const ATSGenericList = () => {
 
     const onStatusSelect = (status) => {
         // implement status filter logic here
-        setStatusFilter(status);
+        setStatusFilter(Number(status));
         fetchData(currentPage, perPage, status, searchData);
     };
 
@@ -110,39 +120,7 @@ const ATSGenericList = () => {
         setSearchData("");
         fetchData(1, perPage, statusFilter, "");
     };
-    console.log("RAW ROWS:", JSON.stringify(data, null, 2))
-    const columns = [
-  {
-    name: "Hiring Manager ID",
-    selector: row => row.hiringmanagercontactid,
-    sortable: true,
-  },
-  {
-    name: "Name",
-    selector: row => row.name,
-    sortable: true,
-  },
-  {
-    name: "ATS Type",
-    selector: row => row.atstype ?? "-",
-  },
-  {
-
-    name: "Email",
-    selector: row => row.email,
-  },
-  {
-    name: "Phone",
-    selector: row => row.phonenumber,
-  },
-  {
-    name: "Status",
-    selector: row => (row.isactive ? "Active" : "Inactive"),
-    sortable: true,
-  },
-];
-
-
+    
     const customStyles = {
         headCells: {
             style: {
@@ -191,11 +169,11 @@ const ATSGenericList = () => {
                                             defaultValue="Active"
                                             onChange={(e) => onStatusSelect(e.target.value)}
                                         >
-                                            <option value={1}>All status</option>
+                                            <option value={3}>All status</option>
                                             <option value={1}>Active</option>
                                             <option value={0}>In-active</option>
                                         </Input>
-                                    </FormGroup>
+                                     </FormGroup>
                                 </Col>
                                 <Col>
                                     <div
