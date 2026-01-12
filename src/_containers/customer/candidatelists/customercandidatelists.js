@@ -217,7 +217,7 @@ export default function CustomerCandidateLists(props) {
   };
 
   const onGetCandidatesCount = (id, clearText = false) => {
-    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: actionbyId, searchText: clearText ? "" : searchText }));
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: actionbyId, searchText: clearText ? "" : searchText ? searchText : "" }));
   }
 
   const onGetPageList = (pageNo, type, id, clearText = false) => {
@@ -226,7 +226,7 @@ export default function CustomerCandidateLists(props) {
       pageSize: type === "matched" ? cardPageSize : listPageSize,
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
-      searchText: clearText ? "" : searchText,
+      searchText: clearText ? "" : searchText ? searchText : "",
       actionbyId: actionbyId
     };
 
@@ -244,12 +244,13 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      onGetCandidatesCount(id, clearText);
+      if (pageNo === 1) onGetCandidatesCount(id, clearText);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    onGetCandidatesCount(id, clearText);
+    if (pageNo === 1)
+      onGetCandidatesCount(id, clearText);
   };
 
   const handlePageChange = (page) => {
@@ -613,7 +614,6 @@ export default function CustomerCandidateLists(props) {
       }));
     }
   }
-
   const getCandidateOfflineStatusesDropdown = async () => {
     let response = await dispatch(dropdownActions.getDropdownListThunk({ searchText: 'RecommendedJobOfflineStatus', commonId: 0, searchBy: '' }));
     if (response?.payload) {
@@ -624,6 +624,7 @@ export default function CustomerCandidateLists(props) {
       setOfflineStatuses(statues);
     }
   }
+
   return (
     <>
       <Row className="customercandidatelist">
