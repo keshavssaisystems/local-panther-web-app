@@ -21,8 +21,7 @@ import { param } from "jquery";
 const ATSGenericList = () => {
     console.log("ATS Hiring Contact List component rendered");
     let isCompanyAdmin = true;
-    let entity = "Contact";
-    
+
     const icon = "mdi mdi-account-multiple-outline";
 
     const dispatch = useDispatch();
@@ -32,7 +31,7 @@ const ATSGenericList = () => {
 
     const location = useLocation(); 
     const path = location.pathname.toLowerCase();
-
+    //for path
     const endpointMap = { "/ats/atscompany": "Get_ATS_Company_List", 
                          "/ats/atscontact": "Get_ATS_HiringManagerContact_List", 
                          "/ats/atsassignee": "Get_ATS_EmployeeAssignedUsers_List",
@@ -45,6 +44,13 @@ const ATSGenericList = () => {
       "/ats/atsassignee": "ATS Assignee List",
     };
     const title =  titleMap[path] || "ATS";
+    //for entity
+    const entityMap = {
+      "ats/atscompany": "atscompany",
+      "ats/atscontact": "atscontact",
+      "ats/atsassignee":"atsassignee",
+    };
+    let entity = entityMap[path];
 
 
     
@@ -72,7 +78,8 @@ const ATSGenericList = () => {
             }
             return row[key] ?? "-";
             },
-            sortable: true
+            wrap :true,
+            sortable: true  
         }));
     };  
      const dynamicColumns = generateColumns(data);
