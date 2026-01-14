@@ -13,6 +13,7 @@
     display: -webkit-box;
     overflow: hidden;
     -webkit-line-clamp: 1; /* how many lines you wanna restrict */
+    line-clamp: 1;
     -webkit-box-orient: vertical;
     .btn {
       text-align: justify;
