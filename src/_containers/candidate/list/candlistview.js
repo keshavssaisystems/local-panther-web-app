@@ -977,36 +977,39 @@ export const CandListView = (props) => {
               cell: (row) =>
                 row?.jobOfferDtos?.length > 0 ? (
                   <>
-                    {row?.jobOfferDtos?.length === 2 && (
-                      <>
-                        <img
-                          src={previousOffer}
-                          alt="list maybe"
-                          className={"icon-pointer me-2"}
-                          width={"20px"}
-                          title="Previous Offer - Click to view offer"
-                          onClick={() =>
-                            window.open(row?.jobOfferDtos[1]?.offerfilepath)
-                          }
-                        ></img>
-                      </>
-                    )}
-                    {row?.isfinaloffer === true && (
-                      <>
-                        <img
-                          src={finalOffer}
-                          alt="list maybe"
-                          className={"icon-pointer me-2"}
-                          width={"20px"}
-                          title="Final Offer - Click to view offer"
-                          onClick={() =>
-                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                          }
-                        ></img>
-                      </>
-                    )}
+                    {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath && row?.jobOfferDtos[1]?.offerfilepath != "" &&
+                      (
+                        <>
+                          <img
+                            src={previousOffer}
+                            alt="list maybe"
+                            className={"icon-pointer me-2"}
+                            width={"20px"}
+                            title="Previous Offer - Click to view offer"
+                            onClick={() =>
+                              window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                            }
+                          ></img>
+                        </>
+                      )}
+                    {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath != "" &&
+                      (
+                        <>
+                          <img
+                            src={finalOffer}
+                            alt="list maybe"
+                            className={"icon-pointer me-2"}
+                            width={"20px"}
+                            title="Final Offer - Click to view offer"
+                            onClick={() =>
+                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                            }
+                          ></img>
+                        </>
+                      )}
                     {row?.jobOfferDtos?.length === 1 &&
-                      row?.isfinaloffer === false && (
+                      row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath != "" &&
+                      (
                         <>
                           <img
                             src={currentOffer}
@@ -1021,7 +1024,8 @@ export const CandListView = (props) => {
                         </>
                       )}
                     {row?.jobOfferDtos?.length === 2 &&
-                      row?.isfinaloffer === false && (
+                      row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath != "" &&
+                      (
                         <>
                           <img
                             src={newOffer}
@@ -1214,36 +1218,39 @@ export const CandListView = (props) => {
                 cell: (row) =>
                   row?.jobOfferDtos?.length > 0 ? (
                     <>
-                      {row?.jobOfferDtos?.length === 2 && (
-                        <>
-                          <img
-                            src={previousOffer}
-                            alt="list maybe"
-                            className={"icon-pointer me-2"}
-                            width={"20px"}
-                            title="Previous Offer - Click to view offer"
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[1]?.offerfilepath)
-                            }
-                          ></img>
-                        </>
-                      )}
-                      {row?.isfinaloffer === true && (
-                        <>
-                          <img
-                            src={finalOffer}
-                            alt="list maybe"
-                            className={"icon-pointer me-2"}
-                            width={"20px"}
-                            title="Click to view accepted offer"
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                            }
-                          ></img>
-                        </>
-                      )}
+                      {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath && row?.jobOfferDtos[1]?.offerfilepath != "" &&
+                        (
+                          <>
+                            <img
+                              src={previousOffer}
+                              alt="list maybe"
+                              className={"icon-pointer me-2"}
+                              width={"20px"}
+                              title="Previous Offer - Click to view offer"
+                              onClick={() =>
+                                window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                              }
+                            ></img>
+                          </>
+                        )}
+                      {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath != "" &&
+                        (
+                          <>
+                            <img
+                              src={finalOffer}
+                              alt="list maybe"
+                              className={"icon-pointer me-2"}
+                              width={"20px"}
+                              title="Click to view accepted offer"
+                              onClick={() =>
+                                window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                              }
+                            ></img>
+                          </>
+                        )}
                       {row?.jobOfferDtos?.length === 1 &&
-                        row?.isfinaloffer === false && (
+                        row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath != "" &&
+                        (
                           <>
                             <img
                               src={finalOffer}
@@ -1258,7 +1265,8 @@ export const CandListView = (props) => {
                           </>
                         )}
                       {row?.jobOfferDtos?.length === 2 &&
-                        row?.isfinaloffer === false && (
+                        row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath != "" &&
+                        (
                           <>
                             <img
                               src={finalOffer}
