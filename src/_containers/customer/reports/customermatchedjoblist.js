@@ -317,7 +317,7 @@ export function CustomerReportMatchedCandidate() {
         heading={"Hiring Manager Matched Candidate List by Job Report"}
         icon={titlelogo}
       />
-      <Row>
+      <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
             <CardHeader className="card-header-tab">

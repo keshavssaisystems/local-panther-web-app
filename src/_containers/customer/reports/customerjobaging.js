@@ -231,7 +231,7 @@ export function CustomerReportJobAging() {
         heading={"Hiring Manager Aging Group Report"}
         icon={titlelogo}
       />
-      <Row>
+      <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
             <CardHeader className="card-header-tab">
