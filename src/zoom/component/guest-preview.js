@@ -98,19 +98,19 @@ export const GuestPreview = (props) => {
       } else {
         if (ind2 > -1) {
           props.showSweetAlert({
-            title: "Host denied permission for the meeting!!",
+            title: "Access denied. The host did not grant permission.",
             type: "error",
           });
         } else {
           showSweetAlert({
-            title: "You are not authorized person to join this meeting!",
+            title: "You’re not authorized to join this meeting.",
             type: "error",
           });
         }
       }
     } else {
       showSweetAlert({
-        title: "Host hasn't started meeting yet please wait for few more time!",
+        title: "The host hasn’t started the meeting yet. Please wait",
         type: "error",
       });
     }
