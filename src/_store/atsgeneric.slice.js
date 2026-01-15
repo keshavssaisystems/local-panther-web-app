@@ -87,10 +87,11 @@ const atsgenericSlice = createSlice({
                                    
                                     state.loader = false;
                                     // sp response
-                                    console.log(action.type);
+                                    //console.log(action.type);
                                     if (action?.payload?.data) {
                                        
                                         state.atsgeneric = action?.payload?.data?.data || [];
+                                        state.header=action?.payload?.data?.header;
                                         state.totalrows = action?.payload?.data?.totalRows || 0;
                                     } else {
                                         
