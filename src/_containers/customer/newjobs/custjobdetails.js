@@ -73,14 +73,14 @@ export function CustJobDetail({
   }
 
   const returnAddress = () => {
-    if (jobDetail.cityname && jobDetail.statename && jobDetail.countryname) {
-      return `${jobDetail.cityname}, ${jobDetail.statename}, ${jobDetail.countryname}`;
-    } else if (jobDetail.cityname && jobDetail.statename) {
-      return `${jobDetail.cityname}, ${jobDetail.statename}`;
-    } else if (jobDetail.statename && jobDetail.countryname) {
-      return `${jobDetail.statename}, ${jobDetail.countryname}`;
-    } else if (jobDetail.cityname && jobDetail.countryname) {
-      return `${jobDetail.cityname} , ${jobDetail.countryname}`;
+    if ( jobDetail?.cityname && jobDetail?.statename && jobDetail?.countryname) {
+      return `${ jobDetail?.cityname}, ${ jobDetail?.statename}, ${ jobDetail?.countryname}`;
+    } else if ( jobDetail?.cityname && jobDetail?.statename) {
+      return `${ jobDetail?.cityname}, ${ jobDetail?.statename}`;
+    } else if ( jobDetail?.statename && jobDetail?.countryname) {
+      return `${ jobDetail?.statename}, ${ jobDetail?.countryname}`;
+    } else if ( jobDetail?.cityname && jobDetail?.countryname) {
+      return `${ jobDetail?.cityname} , ${ jobDetail?.countryname}`;
     } else {
       return "";
     }
@@ -94,23 +94,23 @@ export function CustJobDetail({
       jobDetail?.jobPaymentBenefitDtos[0]?.payperiodtype
     ) {
       return `$${new Intl.NumberFormat("en-US").format(
-        jobDetail.jobPaymentBenefitDtos[0].minimumamount
+        jobDetail?.jobPaymentBenefitDtos[0].minimumamount
       )} - $${new Intl.NumberFormat("en-US").format(
-        jobDetail.jobPaymentBenefitDtos[0].maximumamount
-      )} ${jobDetail.jobPaymentBenefitDtos[0].payperiodtype}`;
+        jobDetail?.jobPaymentBenefitDtos[0].maximumamount
+      )} ${ jobDetail?.jobPaymentBenefitDtos[0].payperiodtype}`;
     } else if (
       jobDetail?.jobPaymentBenefitDtos &&
       jobDetail?.jobPaymentBenefitDtos[0]?.minimumamount
     ) {
       return `$${new Intl.NumberFormat("en-US").format(
-        jobDetail.jobPaymentBenefitDtos[0].minimumamount
+        jobDetail?.jobPaymentBenefitDtos[0].minimumamount
       )}`;
     } else if (
       jobDetail?.jobPaymentBenefitDtos &&
       jobDetail?.jobPaymentBenefitDtos[0]?.maximumamount
     ) {
       return `$${new Intl.NumberFormat("en-US").format(
-        jobDetail.jobPaymentBenefitDtos[0].maximumamount
+        jobDetail?.jobPaymentBenefitDtos[0].maximumamount
       )}`;
     } else {
       return "-";
@@ -300,81 +300,81 @@ export function CustJobDetail({
     {
       name: "Matched",
       count:
-        jobDetail.totalRecommendedCandidates === null
+        jobDetail?.totalRecommendedCandidates === null
           ? 0
-          : jobDetail.totalRecommendedCandidates,
+          : jobDetail?.totalRecommendedCandidates,
       action: `/customer-candidate-matched/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: matchedIcon,
     },
     {
       name: "Maybe",
       count:
-        jobDetail.totalMaybeCandidates === null
+        jobDetail?.totalMaybeCandidates === null
           ? 0
-          : jobDetail.totalMaybeCandidates,
+          : jobDetail?.totalMaybeCandidates,
       action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: maybeIcon,
     },
     {
       name: "Liked",
       count:
-        jobDetail.totalLikedCandidates === null
+        jobDetail?.totalLikedCandidates === null
           ? 0
-          : jobDetail.totalLikedCandidates,
+          : jobDetail?.totalLikedCandidates,
       action: `/customer-candidate-liked/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: likedIcon,
     },
     {
       name: "Applied",
       count:
-        jobDetail.totalAppliedCandidates === null
+        jobDetail?.totalAppliedCandidates === null
           ? 0
-          : jobDetail.totalAppliedCandidates,
+          : jobDetail?.totalAppliedCandidates,
       action: `/customer-candidate-applied/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: appliedIcon,
     },
     ...(isStaffingFirm === true ? [{
       name: "Presented",
       count:
-        jobDetail.totalpresentedcandidates === null || jobDetail.totalpresentedcandidates === undefined || jobDetail.totalpresentedcandidates === 0
+        jobDetail?.totalpresentedcandidates === null || jobDetail?.totalpresentedcandidates === undefined || jobDetail?.totalpresentedcandidates === 0
           ? 0
-          : jobDetail.totalpresentedcandidates,
+          : jobDetail?.totalpresentedcandidates,
       action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: presentIcon,
     }] : []),
     {
       name: "Scheduled",
       count:
-        jobDetail.totalScheduledCandidates === null
+        jobDetail?.totalScheduledCandidates === null
           ? 0
-          : jobDetail.totalScheduledCandidates,
+          : jobDetail?.totalScheduledCandidates,
       action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: scheduledIcon,
     },
     {
       name: "Offer",
       count:
-        jobDetail.totalOfferedCandidates === null
+        jobDetail?.totalOfferedCandidates === null
           ? 0
-          : jobDetail.totalOfferedCandidates,
+          : jobDetail?.totalOfferedCandidates,
       action: `/customer-candidate-offers/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: offersIcon,
     },
     {
       name: "Accepted",
       count:
-        jobDetail.totalAcceptedCandidates === null
+        jobDetail?.totalAcceptedCandidates === null
           ? 0
-          : jobDetail.totalAcceptedCandidates,
+          : jobDetail?.totalAcceptedCandidates,
       action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: acceptedIcon,
     },
     {
       name: "Declined",
       count:
-        jobDetail.totalRejectedCandidates === null
+        jobDetail?.totalRejectedCandidates === null
           ? 0
-          : jobDetail.totalRejectedCandidates,
+          : jobDetail?.totalRejectedCandidates,
       action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: rejectedIcon,
     },
@@ -429,10 +429,10 @@ export function CustJobDetail({
                     <div className="menu-header-content btn-pane-right text-start">
                       <div>
                         <h5 className="menu-header-title job-title-details">
-                          {jobDetail.jobtitle}
+                          { jobDetail?.jobtitle}
                         </h5>
                         <p className="mb-0 mt-0">
-                          {jobDetail.companyname}
+                          { jobDetail?.companyname}
                           {jobDetail?.subsidiaryid !== undefined &&
                             jobDetail?.subsidiaryid !== 0
                             ? " (" + jobDetail?.subsidiaryname + ")"
@@ -448,13 +448,13 @@ export function CustJobDetail({
 
                   {!isAdmin ? (
                     <>
-                      {jobDetail.isdraft && !isShare ? (
+                      { jobDetail?.isdraft && !isShare ? (
                         <Col md={12} lg={4} className="right-align">
                           <Button
                             color="primary"
                             className={"me-1 mt-3"}
                             onClick={(e) =>
-                              navigate(`/customer-edit-job/${jobDetail.jobid}`)
+                              navigate(`/customer-edit-job/${ jobDetail?.jobid}`)
                             }
                           >
                             <FiEdit className="mb-1" /> Edit job
@@ -468,7 +468,7 @@ export function CustJobDetail({
                                 className={"me-3 mt-3"}
                                 onClick={(e) => {
                                   //setPublishSuccess(true);
-                                  publishJob(jobDetail.jobid);
+                                  publishJob( jobDetail?.jobid);
                                 }}
                               >
                                 <FiCheckSquare className="mb-1" /> Publish job
@@ -569,8 +569,8 @@ export function CustJobDetail({
                       ) : (
                         <></>
                       )}
-                      {jobDetail.isdraft === false &&
-                        jobDetail.isclosed === false &&
+                      { jobDetail?.isdraft === false &&
+                        jobDetail?.isclosed === false &&
                         !isShare && (
                           <>
                             {" "}
@@ -580,7 +580,7 @@ export function CustJobDetail({
                                 className={"me-1 mt-3"}
                                 onClick={(e) =>
                                   navigate(
-                                    `/customer-edit-job/${jobDetail.jobid}`
+                                    `/customer-edit-job/${ jobDetail?.jobid}`
                                   )
                                 }
                               >
@@ -598,7 +598,7 @@ export function CustJobDetail({
                             </Col>
                           </>
                         )}
-                      {jobDetail.isclosed === true && !isShare && (
+                      { jobDetail?.isclosed === true && !isShare && (
                         <Col md={4} lg={4} className="right-align">
                           <div className="mb-1 me-3 mt-2 badge bg-danger text-normal">
                             Job closed
@@ -617,7 +617,7 @@ export function CustJobDetail({
                 </Row>
               </div>
             </div>
-            {type === "Open" && jobDetail.isdraft === false && (
+            {type === "Open" && jobDetail?.isdraft === false && (
               <div className="forms-wizard-alt ms-3 me-3">
                 <ol className="forms-wizard">{renderSteps()}</ol>
               </div>
@@ -671,7 +671,7 @@ export function CustJobDetail({
             />
             <HeadingAndDetailWithDiv
               heading={"No of openings"}
-              detail={jobDetail.noofopenposition}
+              detail={ jobDetail?.noofopenposition}
               iconId={6}
             />
             <HeadingAndDetailWithDiv
@@ -710,12 +710,12 @@ export function CustJobDetail({
             />
             <HeadingAndDetailWithDiv
               heading={"Authorized to work in United States"}
-              detail={jobDetail.authorizedtoworkinus === true ? "Yes" : "No"}
+              detail={ jobDetail?.authorizedtoworkinus === true ? "Yes" : "No"}
               iconId={9}
             />
             <HeadingAndDetailWithDiv
               heading={"Willing to sponsor"}
-              detail={jobDetail.sponsorshiprequiured === true ? "Yes" : "No"}
+              detail={ jobDetail?.sponsorshiprequiured === true ? "Yes" : "No"}
               iconId={9}
             />
             <HeadingAndDetailWithDiv
@@ -734,14 +734,14 @@ export function CustJobDetail({
             )}
             <HeadingAndDetailWithoutIcon
               heading={"Job description"}
-              detail={jobDetail.description}
+              detail={ jobDetail?.description}
             />
             <HeadingAndDetailWithoutIcon
               heading={"About company"}
               detail={
-                jobDetail.companydetails !== "" &&
-                  jobDetail.companydetails !== null
-                  ? jobDetail.companydetails
+                jobDetail?.companydetails !== "" &&
+                  jobDetail?.companydetails !== null
+                  ? jobDetail?.companydetails
                   : "-"
               }
             />
