@@ -13,6 +13,7 @@ import {
   UncontrolledTooltip,
   Input,
 } from "reactstrap";
+import { BsXCircle } from "react-icons/bs";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
@@ -536,7 +537,7 @@ export const CustCandidateListView = (props) => {
             (<ButtonGroup>
               <Button
                 size="sm"
-                title="Reschedule Interview"
+                title="Schedule Interview"
                 onClick={() => onRescheduleInterview(row)}
                 className="btn-icon"
                 color="alternate"
@@ -739,11 +740,22 @@ export const CustCandidateListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">
-                <ButtonGroup>
-                  {renderButtons(row.candidaterecommendedjobid, row)}
-                </ButtonGroup>
-              </div>
+              row?.isclosed === false ? (
+                <div className="list-btn-group">
+                  <ButtonGroup>
+                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  </ButtonGroup>
+                </div>) : row?.isclosed === true ? (
+                  <Button
+                    outline
+                    title="Job Closed"
+                    className="btn-icon lg-12"
+                    color="danger"
+                    size="lg"
+                    disabled={true}
+                  >
+                    <BsXCircle />Job Closed
+                  </Button>) : null
             ),
             ignoreRowClick: true,
             button: true,
@@ -1045,15 +1057,27 @@ export const CustCandidateListView = (props) => {
             {
               name: <span className="table-title">Interest</span>,
               cell: (row) => (
-                <div className="list-btn-group">
-                  <ButtonGroup>
-                    {renderButtons(row.candidaterecommendedjobid, row)}
-                  </ButtonGroup>
-                </div>
+                row?.isclosed === false ? (
+                  <div className="list-btn-group">
+                    <ButtonGroup>
+                      {renderButtons(row.candidaterecommendedjobid, row)}
+                    </ButtonGroup>
+                  </div>) : row?.isclosed === true ? (
+                    <Button
+                      outline
+                      title="Job Closed"
+                      className="btn-icon lg-12"
+                      color="danger"
+                      size="lg"
+                      disabled={true}
+                    >
+                      <BsXCircle />Job Closed
+                    </Button>) : null
               ),
               ignoreRowClick: true,
               button: true,
-              maxWidth: "8%"
+              maxWidth: "10%",
+              minWidth: "10%",
             },
 
             {
@@ -1171,7 +1195,7 @@ export const CustCandidateListView = (props) => {
                         ? "-"
                         : row?.jobOfferDtos[0]?.startdate === null
                           ? "-"
-                          : moment(row?.jobOfferDtos[0]?.startdate).format(
+                          : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                             "MM/DD/YYYY"
                           )
                     }
@@ -1180,7 +1204,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                         ? "-"
-                        : moment(row?.jobOfferDtos[0]?.startdate).format(
+                        : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                           "MM/DD/YYYY"
                         )}
                   </span>
@@ -1190,7 +1214,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : moment(row?.jobOfferDtos[0]?.startdate).format(
+                      : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                         "MM/DD/YYYY"
                       ),
                 sortable: true,
@@ -1297,16 +1321,29 @@ export const CustCandidateListView = (props) => {
               },
               {
                 name: <span className="table-title">Interest</span>,
-                cell: (row) => (
-                  <div className="list-btn-group">
-                    <ButtonGroup>
-                      {renderButtons(row.candidaterecommendedjobid, row)}
-                    </ButtonGroup>
-                  </div>
-                ),
+                cell: (row) =>
+                  row?.isclosed === false ? (
+                    <div className="list-btn-group">
+                      <ButtonGroup>
+                        {renderButtons(row.candidaterecommendedjobid, row)}
+                      </ButtonGroup>
+                    </div>) : row?.isclosed === true ?
+                    (
+                      <Button
+                        outline
+                        title="Job Closed"
+                        className="btn-icon lg-12"
+                        color="danger"
+                        size="lg"
+                        disabled={true}
+                      >
+                        <BsXCircle />Job Closed
+                      </Button>
+                    ) : null,
                 ignoreRowClick: true,
                 button: true,
-                maxWidth: "10%",
+                minWidth: "10%",
+                maxWidth: "10%"
               },
 
               {
@@ -1370,6 +1407,7 @@ export const CustCandidateListView = (props) => {
                     name="CurrentStatus"
                     id={crypto.randomUUID()}
                     className="no-border-select"
+                    disabled={row?.isclosed === true}
                     onChange={(e) => {
                       updateCurrentStatus(e.target.value, row);
                       //   resetPageURL();
@@ -1393,13 +1431,32 @@ export const CustCandidateListView = (props) => {
               {
                 name: <span className="table-title">Interest</span>,
                 cell: (row) => (
-                  <div className="d-flex justify-content-start">
-                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  row?.isclosed === false ? (
+                    <div className="list-btn-group">
+                      {/* {row?.customerrecommendedjobstatusid !== 5 && (
+                      <ButtonGroup>
+                      {renderButtons(row.candidaterecommendedjobid, row)}
+                    </ButtonGroup>
+                  )} */}
 
-                  </div>
+                      <ButtonGroup>
+                        {renderButtons(row.candidaterecommendedjobid, row)}
+                      </ButtonGroup>
+
+                    </div>) : row?.isclosed === true ? (
+                      <Button
+                        outline
+                        title="Job Closed"
+                        className="btn-icon lg-12"
+                        color="danger"
+                        size="lg"
+                        disabled={true}
+                      >
+                        <BsXCircle />Job Closed
+                      </Button>) : null
                 ),
                 ignoreRowClick: true,
-                // button: true,
+                button: true,
                 width: "12%",
               },
               {
@@ -1515,11 +1572,22 @@ export const CustCandidateListView = (props) => {
                 {
                   name: <span className="table-title">Interest</span>,
                   cell: (row) => (
-                    <div className="list-btn-group">
-                      <ButtonGroup>
-                        {renderButtons(row.candidaterecommendedjobid, row)}
-                      </ButtonGroup>
-                    </div>
+                    row?.isclosed === false ? (
+                      <div className="list-btn-group">
+                        <ButtonGroup>
+                          {renderButtons(row.candidaterecommendedjobid, row)}
+                        </ButtonGroup>
+                      </div>) : row?.isclosed === true ? (
+                        <Button
+                          outline
+                          title="Job Closed"
+                          className="btn-icon lg-12"
+                          color="danger"
+                          size="lg"
+                          disabled={true}
+                        >
+                          <BsXCircle />Job Closed
+                        </Button>) : null
                   ),
                   ignoreRowClick: true,
                   button: true,
@@ -1847,13 +1915,25 @@ export const CustCandidateListView = (props) => {
         {
           name: <span className="table-title">Interest</span>,
           cell: (row) => (
-            <div className="list-btn-group">
-              {renderButtons(row.candidaterecommendedjobid, row)}
-            </div>
+            row?.isclosed === false ? (
+              <div className="list-btn-group">
+                {renderButtons(row.candidaterecommendedjobid, row)}
+              </div>) : row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />Job Closed
+                </Button>) : null
           ),
           ignoreRowClick: true,
           button: true,
-          //width: "10%",
+          width: "10%",
+
         },
         {
           name: <span className="table-title">Action</span>,

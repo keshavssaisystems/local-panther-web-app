@@ -27,6 +27,7 @@ const ATSGenericList = () => {
     const dispatch = useDispatch();
     // read candidates and loading directly from redux so component re-renders when data arrives
     const data = useSelector((state) => state.atsgeneric.atsgeneric || []);
+    const header = useSelector((state) => state.atsgeneric.header || {});
     const loading = useSelector((state) => state.atsgeneric?.loader || false);
 
     const location = useLocation(); 
@@ -63,36 +64,40 @@ const ATSGenericList = () => {
     const setSearchText = (text) => {
         setSearchData(text);
     };
-    const generateColumns = (rows) => {
+    const generateColumns = (rows,headerWidths={}) => {
         if (!rows || rows.length === 0) return [];
 
         const sample = rows[0]; // take first row keys
 
-        return Object.keys(sample).map((key) => ({
-            name: key.replace(/([A-Z])/g, " $1")       // convert camelCase 
-                    .replace(/_/g, " ")              // convert snake_case
-                    .replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize words
-            selector: (row) => {
-            if (key === "isactive") {
-                return row[key] ? "Active" : "Inactive";
+        return Object.keys(sample).map((key) => {
+            const width = headerWidths[key]; // setwidth from api
+            return {
+                     name: key.replace(/([A-Z])/g, " $1")       // convert camelCase 
+                        .replace(/_/g, " ")              // convert snake_case
+                        .replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize words
+                    selector: (row) => {
+                        if (key === "isactive") {
+                            return row[key] ? "Active" : "Inactive";
+                        }
+                        return row[key] ?? "-";
+                    },
+                    
+                     wrap :true,
+                     sortable: true ,
+                     width: width ? `${width}%` : "auto"
             }
-            return row[key] ?? "-";
-            },
-            wrap :true,
-            sortable: true  
-        }));
+        });
     };  
-     const dynamicColumns = generateColumns(data);
+     const dynamicColumns = generateColumns(data,header);
    // fetch helper - requests server with paging params and updates local totalRows
     const fetchData =async (page = 1, pageSize = perPage, statusFilter, searchText = "") => {
          try {
-                const params = {    
+                 const params = {    
                 SearchText: searchText || "",
-                IsActive: statusFilter || 3,
+                IsActive: statusFilter ?? 3,
                 currentpage: page,
                 PageSize: pageSize,
                 };
-    
                 await dispatch(fetchATSGenericList({endpoint,params}));
                 
             } 
@@ -102,10 +107,10 @@ const ATSGenericList = () => {
 };
 
     useEffect(() => {
-        setSearchData("");
-        setStatusFilter(3);
-        setCurrentPage(1);
-        fetchData(1, perPage, 3, "");
+         setSearchData("");
+         setStatusFilter(3);
+         setCurrentPage(1);
+         fetchData(1, perPage);
     
     },[path]);
 
