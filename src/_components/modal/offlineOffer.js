@@ -53,7 +53,15 @@ export const OfflineOffer = (props) => {
             setPay(salary);
             setStartDate(props.data.jobOfferDtos[0].startdate ? new Date(props.data.jobOfferDtos[0].startdate) : null);
             setOfferDate(props.data.jobOfferDtos[0].offerdate ? new Date(props.data.jobOfferDtos[0].offerdate) : null);
+        } else {
+            if (props?.data?.jobPaymentBenefitDtos?.length > 0) {
+                let salary = props.data.jobPaymentBenefitDtos[0]?.minimumamount ? parseInt(replace(props.data.jobPaymentBenefitDtos[0].minimumamount, /[^0-9]/g, "")) : "";
+                setPayType(props?.data?.jobPaymentBenefitDtos[0].payperiodtype || "");
+                setPay(salary);
+            }
         }
+
+
     }, [props.data]);
 
     const getFormValidation = (e) => {
@@ -115,7 +123,7 @@ export const OfflineOffer = (props) => {
         >
             <ModalHeader toggle={() => props.onClose()}>Offer Details</ModalHeader>
             <ModalBody
-                style={{ maxHeight: "75vh", overflow: "auto" }}
+                style={{ maxHeight: "90vh", overflow: "auto" }}
             >
                 <Form onSubmit={(e) => getFormValidation(e)}>
                     <Col md={12}>
@@ -189,14 +197,14 @@ export const OfflineOffer = (props) => {
                                             setStartDateValidation(false);
                                             onStartDateChange(date);
                                         }}
-                                        popperPlacement={"top-start"}
-                                        //popperModifiers={[{ name: 'preventOverflow', options: { boundary: 'viewport' } }]}
-
+                                        popperPlacement="bottom-start"
+                                        // portalId="datepicker-portal"
                                         dateFormat="MM/dd/yyyy"
                                         placeholderText="Eg. mm/dd/yyyy"
-                                        name={"startDate"}
+                                        name="startDate"
                                         minDate={new Date()}
                                     />
+
                                     {startDateValidation === true && (
                                         <FormText color="danger">Please enter start date</FormText>
                                     )}
