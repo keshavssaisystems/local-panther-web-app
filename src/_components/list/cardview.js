@@ -12,6 +12,7 @@ import {
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { FiMapPin } from "react-icons/fi";
+import Alert from 'react-bootstrap/Alert';
 import {
   BsBriefcase,
   BsAward,
@@ -23,7 +24,8 @@ import {
   BsMortarboard,
   BsFileEarmark,
   BsBuildings,
-  BsCheckCircle
+  BsCheckCircle,
+  BsPerson
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
@@ -470,11 +472,27 @@ export const CandidateCardView = (props) => {
                     </Row>
                   </p>
                 </Col>
+                <Col className="col-12">
+                  <p className="card-details">
+                    <Row>
+                      <Col md="1" lg="1">
+                        <span className="pe-2">
+                          <BsPerson size={"16px"} />
+                        </span>
+                      </Col>
+                      <Col md="11" lg="11">
+                        <b>Candidate Name</b>
+                        <p>{`${props?.data?.firstname} ${props?.data?.lastname}`}</p>
+                      </Col>
+                    </Row>
+                  </p>
+                </Col>
               </>)}
           </Row>
         </CardBody>
         <CardFooter className="auto-margin">
           <Row noGutters>
+          {props?.data?.isclosed === false ? (
             <ButtonGroup className="card-btn-grp" size="sm">
               {/* <Col>
               <Button
@@ -516,7 +534,7 @@ export const CandidateCardView = (props) => {
                   size="sm"
                   disabled={props?.data?.ispresented}
                 >
-                  <BsCheckCircle ></BsCheckCircle >  {props?.data?.ispresented ? "Presented" : "Present"}
+                  <BsCheckCircle/> {props?.data?.ispresented ? "Presented" : "Present"}
                 </Button>
               )}
               <Button
@@ -541,6 +559,18 @@ export const CandidateCardView = (props) => {
               </Button>
 
             </ButtonGroup>
+             ) :  props?.data?.isclosed === true ?(
+                <Button
+                outline
+                title="Job Closed"
+                className="btn-icon lg-12"
+                color="danger"
+                size="lg"
+                disabled={true}
+              >
+                <BsXCircle></BsXCircle>  Job Closed
+              </Button>
+          ):null}
           </Row>
         </CardFooter>
       </Card>
