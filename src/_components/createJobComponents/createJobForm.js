@@ -2112,6 +2112,10 @@ export const CreateJob = forwardRef(
                               )}
                             </FormGroup>
                           </Col>
+                        </>
+                      )}
+                      {(customerDetails?.isatsenable === true) && (
+                        <>
                           <Col md={6} lg={3}>
                             <FormGroup>
                               <Label for="contact" className="fw-semi-bold">
