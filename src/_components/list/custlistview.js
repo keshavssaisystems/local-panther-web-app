@@ -2054,10 +2054,8 @@ export const CustCandidateListView = (props) => {
     form.append("Isfinaloffer", finaloffer);
     form.append("Salary", pay);
     form.append("Payperiodtype", payType);
-    form.append(
-      "Startdate",
-      moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
-    );
+    // form.append("Startdate", moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    form.append("Startdate", moment(startdate).format("YYYY-MM-DD"));
     if (selectedTemplate && generatedHtml) {
       form.append("Offerlettertemplateid", selectedTemplate);
       form.append("Offerlettertemplatefinaltext", generatedHtml);
@@ -2151,7 +2149,8 @@ export const CustCandidateListView = (props) => {
     form.append("CurrentUserId", JSON.parse(localStorage.getItem("userDetails")).UserId);
     form.append("Salary", payVal);
     form.append("Payperiodtype", payType);
-    form.append("Startdate", moment(startDate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    // form.append("Startdate", moment(startDate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    form.append("Startdate", moment(startDate).format("YYYY-MM-DD"));
     if (currentStatus === "Accepted") {
       form.append("Iscandidateaccepted", true);
     } else {

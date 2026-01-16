@@ -144,6 +144,14 @@ export const putCompanyReferralLogs = createAsyncThunk(
   }
 );
 
+export const postInterviewSessionAccess = createAsyncThunk(
+  `${name}/postInterviewSessionAccess`,
+  async (payload) => {
+    const Session_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/InterviewSessionAccess`;
+    return await fetchWrapper.post(Session_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -159,6 +167,7 @@ const authSlice = createSlice({
     error: null,
     shareJobDetail: [],
     loader: false,
+    interviewSessionAccess: null
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -615,9 +624,9 @@ const authSlice = createSlice({
         const { from } = history.location.state || {
           from: { pathname: "/" },
         };
-         if (companyList && companyList.length > 0) {
-        localStorage.setItem("companyList", JSON.stringify(companyList));
-      }
+        if (companyList && companyList.length > 0) {
+          localStorage.setItem("companyList", JSON.stringify(companyList));
+        }
         state.loader = false;
         history.navigate(from);
       }
@@ -631,6 +640,13 @@ const authSlice = createSlice({
     [putCompanyReferralLogs.pending]: (state, { payload }) => { },
     [putCompanyReferralLogs.fulfilled]: (state, { payload }) => { },
     [putCompanyReferralLogs.rejected]: (state, action) => { },
+    [postInterviewSessionAccess.pending]: (state, { payload }) => {
+      state.interviewSessionAccess = null;
+    },
+    [postInterviewSessionAccess.fulfilled]: (state, { payload }) => {
+      state.interviewSessionAccess = payload.data;
+    },
+    [postInterviewSessionAccess.rejected]: (state, action) => { },
   },
 });
 
@@ -653,6 +669,7 @@ export const authActions = {
   candRegisterOTPThunk,
   postCompanyReferralLogs,
   putCompanyReferralLogs,
+  postInterviewSessionAccess
 };
 
 export const authReducer = authSlice.reducer;
