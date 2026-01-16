@@ -295,7 +295,10 @@ export const CreateJob = forwardRef(
     const securityClearanceOptions = useSelector(
       (state) => state.dropdown.securityClearanceList
     );
-
+    
+    let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+    const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
+    
     let educationOptions = levelOfEducationOption.map(
       ({ id: value, ...rest }) => {
         return {
@@ -975,7 +978,7 @@ export const CreateJob = forwardRef(
         ? setRecruiterIdValidation(true)
         : setRecruiterIdValidation(false);
 
-      customerDetails.isatsenable === true && (event.target.elements.clientCompany.value === "" || event.target.elements.clientCompany.value === "0")
+      isStaffingFirm === true && (event.target.elements.clientCompany.value === "" || event.target.elements.clientCompany.value === "0")
         ? setClientCompanyValidation(true)
         : setClientCompanyValidation(false);
 
@@ -2077,7 +2080,7 @@ export const CreateJob = forwardRef(
                         </Col>
                       )}
 
-                      {customerDetails?.isatsenable === true && (
+                      {(isStaffingFirm === true) && (
                         <>
                           <Col md={6} lg={3}>
                             <FormGroup>
@@ -2109,6 +2112,10 @@ export const CreateJob = forwardRef(
                               )}
                             </FormGroup>
                           </Col>
+                        </>
+                      )}
+                      {(customerDetails?.isatsenable === true) && (
+                        <>
                           <Col md={6} lg={3}>
                             <FormGroup>
                               <Label for="contact" className="fw-semi-bold">

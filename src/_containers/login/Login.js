@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -34,8 +34,13 @@ import { getPublicIP, detectInputType } from "_helpers/helper";
 import { VerifyEmailPhoneOTPModal } from "_components/modal/verifyEmailPhoneOTP";
 
 import "./login.scss";
+import { use } from "react";
 export function Login() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const emailFromState = location.state?.email || "";
+  const redirectUrl = location.state?.redirect || "/";
+
 
   const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
@@ -88,7 +93,10 @@ export function Login() {
       return;
     }
     if (authUser) {
-      if (authUser) {
+      if (redirectUrl) {
+        history.navigate(redirectUrl);
+      }
+      else if (authUser) {
         history.navigate("/");
       } else {
         setError(true);
@@ -151,8 +159,23 @@ export function Login() {
   };
 
   // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState, getValues } = useForm(formOptions);
+  const { register, handleSubmit, formState, getValues, setValue } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
+
+  useEffect(() => {
+    if (emailFromState) {
+      setValue("email", emailFromState); // ✅ prefill
+    }
+  }, [emailFromState, setValue]);
+
+  useEffect(() => {
+    if (redirectUrl) {
+      // history.location = { state: redirectUrl };
+      // history.push("/login", {
+      //   redirect: "/video-screen/340-923-13692"
+      // });
+    }
+  }, [redirectUrl]);
 
   function onSubmit(payload) {
     firebasemessaging(payload);
@@ -173,8 +196,7 @@ export function Login() {
       const registration = await navigator.serviceWorker.ready;
       // Generate Token
       const token = await messaging?.getToken({
-        vapidKey:
-          "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+        vapidKey: "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
         serviceWorkerRegistration: registration,
       });
       payload.firebasetoken = token;
@@ -436,7 +458,7 @@ export function Login() {
                     {!reload && (
                       <img
                         src={
-                          localStorage.getItem("logo") && localStorage.getItem("logo")!=="undefined"
+                          localStorage.getItem("logo") && localStorage.getItem("logo") !== "undefined"
                             ? localStorage.getItem("logo")
                             : logo
                         }

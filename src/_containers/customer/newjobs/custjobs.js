@@ -329,6 +329,161 @@ export default function CustJobList() {
             </Row>
           </>
         )}
+
+        <Row>
+          {jobList?.length > 0 ? (
+            <>
+              {!loading ? (
+                <>
+                  {" "}
+                  <p className="mb-1 row-count">{totalRows} jobs</p>
+                  <Col
+                    xs={{ size: 12, order: 1 }}
+                    sm={{ size: 12, order: 1 }}
+                    md={{ size: 12, order: 1 }}
+                    lg={{ size: 4, order: 1 }}
+                    xl={{ size: 4, order: 1 }}
+                    xxl={{ size: 4, order: 1 }}
+                  >
+                    {jobList?.length > 0 ? (
+                      jobList.map((data) => {
+                        return (
+                          <CustJobCard
+                            key={data.jobid}
+                            name={data.jobtitle}
+                            customer={data.companyname}
+                            minExperience={data.minexperience}
+                            maxExperience={data.maxexperience}
+                            location={data.cityname + ", " + data.statename}
+                            description={data.description}
+                            role={data.jobrole}
+                            jobId={data.jobid}
+                            createdDate={data.jobcreatedatetime}
+                            type={"Open"}
+                            selectedJob={
+                              jobDetail?.length > 0 ? jobDetail[0]?.jobid : ""
+                            }
+                            getSelectedJobId={(e) => getSelectedJob(e)}
+                            additionalData={data}
+                          />
+                        );
+                      })
+                    ) : (
+                      <></>
+                    )}
+                    {!loading && jobList?.length > 0 ? (
+                      <>
+                        <CardPagination
+                          totalPages={current}
+                          pageIndex={page}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Col>
+                  {/* <Col
+                    xs={{ size: 12, order: 2 }}
+                    sm={{ size: 12, order: 2 }}
+                    md={{ size: 12, order: 2 }}
+                    lg={{ size: 4, order: 3 }}
+                    xl={{ size: 4, order: 3 }}
+                    xxl={{ size: 4, order: 3 }}
+                  >
+                    {!loading && jobList?.length > 0 ? (
+                      <>
+                        <CardPagination
+                          totalPages={current}
+                          pageIndex={page}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Col> */}
+                  <Col
+                    xs={{ size: 12, order: 3 }}
+                    sm={{ size: 12, order: 3 }}
+                    md={{ size: 12, order: 3 }}
+                    lg={{ size: 8, order: 2 }}
+                    xl={{ size: 8, order: 2 }}
+                    xxl={{ size: 8, order: 2 }}
+                  >
+                    {!jdLoading ? (
+                      <>
+                        {jobDetail?.length > 0 && jobList?.length > 0 ? (
+                          <>
+                            <CustJobDetail
+                              jobDetails={jobDetail}
+                              type={"Open"}
+                              publishJob={(e) => publishNewJob(e)}
+                              closeJob={(e) => closeJob(e)}
+                              hiringManagerId={hiringManagerId}
+                            ></CustJobDetail>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {" "}
+                        <Loader
+                          type="line-scale-pulse-out-rapid"
+                          className="d-flex justify-content-center"
+                        />
+                      </>
+                    )}
+                  </Col>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <Row
+                style={{ textAlign: "center", minHeight: "40vh" }}
+                className="center-middle-align"
+              >
+                <Col>
+                  {" "}
+                  <NoDataFound></NoDataFound>
+                </Col>
+              </Row>
+            </>
+          )}
+        </Row>
+        <Row>
+          {/* <Col
+            xs={{ size: 12, order: 2 }}
+            sm={{ size: 12, order: 2 }}
+            md={{ size: 12, order: 2 }}
+            lg={{ size: 4, order: 3 }}
+            xl={{ size: 4, order: 3 }}
+            xxl={{ size: 4, order: 3 }}
+          >
+            {!loading && jobList?.length > 0 ? (
+              <>
+                <CardPagination
+                  totalPages={current}
+                  pageIndex={page}
+                  onCallBack={(evt) => handlePageChange(evt)}
+                ></CardPagination>
+              </>
+            ) : (
+              <></>
+            )}
+          </Col> */}
+        </Row>
       </Row>
     </>
   );

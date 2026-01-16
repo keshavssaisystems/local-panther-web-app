@@ -64,6 +64,7 @@ import { snackbarReducer } from "./snackbar.slice";
 import { hiringManagerReducer } from "./dropDownHiringManager.slice";
 import commonCustFiltersReducer from "./commonCustFiltersSlice";
 import { atsReducer } from "./ats.slice";
+import { atsgenericReducer } from "./atsgeneric.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -190,7 +191,8 @@ export const store = configureStore({
     snackbar: snackbarReducer,
     hiringManager: hiringManagerReducer,
     commonCustFilters: commonCustFiltersReducer,
-    ats: atsReducer
+    ats: atsReducer,
+    atsgeneric: atsgenericReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

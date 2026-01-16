@@ -16,7 +16,7 @@ import { AdminSlider } from "_components/dashboard/adminSlider";
 import moment from "moment";
 import { getTimezoneDateTime } from "_helpers/helper";
 import custDashIcons from "assets/utils/images/customer/dashboard";
-import { ApprovalPendingList } from "_components/dashboard/approvalPendingList";
+// import { ApprovalPendingList } from "_components/dashboard/approvalPendingList";
 import { analytics } from "../../../firebase/index";
 
 export default function AdminDashboard() {
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
             />
           </Col>
         </Row>
-        <ApprovalPendingList />
+        {/* <ApprovalPendingList /> */}
       </div>
     </>
   );

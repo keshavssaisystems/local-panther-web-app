@@ -85,7 +85,7 @@ export function EmployerRegistration() {
       let data = await postCompanySearch(getValues("empemail"));
       if (data?.data?.companyDetailsList?.length > 0) {
         showSweetAlert({
-          title: "The company domain already exist.",
+          title: "This company domain is already registered.",
           type: "error",
         });
         return;
@@ -97,7 +97,7 @@ export function EmployerRegistration() {
       if (ind === -1) {
         showSweetAlert({
           title:
-            "The hiring manager email domain should match with company email domain for registration.",
+            "This email doesn’t match the company’s domain. Please use your company email to continue.",
           type: "error",
         });
         return;
