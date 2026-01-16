@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import "./createJob.scss";
 
 export default function JobPreview({ previewData, editdata, customerDetails }) {
+
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
+
   useEffect(() => {
     editdata(previewData);
   }, [previewData]);
@@ -176,7 +180,7 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   </p>
                 </div>
               </Col>
-              {customerDetails?.isatsenable === true && (
+              {isStaffingFirm === true && (
                 <>
                   <Col md={6} lg={3}>
                     <div className="detail-padding">
@@ -189,6 +193,10 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                       </p>
                     </div>
                   </Col>
+                  </>
+              )}
+              {customerDetails?.isatsenable === true && (
+                <>
                   <Col md={6} lg={3}>
                     <div className="detail-padding">
                       <h6 className="mb-0 job-heading-custom">Contact</h6>
