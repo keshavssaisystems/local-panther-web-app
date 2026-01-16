@@ -1087,7 +1087,7 @@ export function ScheduleInterview({ fromDashboard }) {
       {updateSuccessPopup === true && (
         <SweetAlert
           success
-          title="Interview updated successfully!"
+          title="Success."
           onConfirm={(e) => setUpdateSuccess(false)}
         ></SweetAlert>
       )}

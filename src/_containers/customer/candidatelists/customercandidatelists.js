@@ -307,7 +307,7 @@ export default function CustomerCandidateLists(props) {
         // });
 
         dispatch(showSnackbar({
-          message: res.payload.message || res.payload.status,
+          message:GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
           type: SNACKBAR_TYPES.ERROR,
           position: SNACKBAR_POSITION.TOP_CENTER,
           autoClose: true,
@@ -338,7 +338,7 @@ export default function CustomerCandidateLists(props) {
         //   type: "danger",
         // });
         dispatch(showSnackbar({
-          message: res.payload.message || res.payload.status,
+          message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
           type: SNACKBAR_TYPES.ERROR,
           position: SNACKBAR_POSITION.TOP_CENTER,
           autoClose: true,
@@ -410,7 +410,7 @@ export default function CustomerCandidateLists(props) {
       //   type: "danger",
       // });
       dispatch(showSnackbar({
-        message: res.payload.message || res.payload.status,
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
@@ -578,7 +578,7 @@ export default function CustomerCandidateLists(props) {
     } else {
 
       dispatch(showSnackbar({
-        message: res.payload.message || res.payload.status,
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
@@ -604,7 +604,7 @@ export default function CustomerCandidateLists(props) {
       onGetPageList(pageNo, props.type || activeTab, id);
     } else {
       dispatch(showSnackbar({
-        message: res.payload.message || res.payload.status,
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
