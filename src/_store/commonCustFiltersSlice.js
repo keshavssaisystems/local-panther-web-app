@@ -9,6 +9,8 @@ const initialState = {
     jobStatus: "",
     placeHolder: "Search job title",
     interviewFeedbackStatusId: "",
+    startDate: null,
+    endDate: null
 };
 
 const commonCustFiltersSlice = createSlice({
@@ -30,16 +32,24 @@ const commonCustFiltersSlice = createSlice({
         setPlaceHolder: (state, action) => {
             state.placeHolder = action.payload;
         },
-         setInterviewFeedbackStatusId: (state, action) => {
+        setInterviewFeedbackStatusId: (state, action) => {
             state.interviewFeedbackStatusId = action.payload;
+        },
+        setStartDate: (state, action) => {
+            state.startDate = action.payload;
+        },
+        setEndDate: (state, action) => {
+            state.endDate = action.payload;
         },
         clearFilters: (state) => {
             state.selectedOpt = "JobTitle";
             state.searchText = "";
             state.hiringManagerId = localStorage.getItem("userId") || "";
             state.jobStatus = "";
-            state.placeHolder = "Search job title"; 
+            state.placeHolder = "Search job title";
             state.interviewFeedbackStatusId = "";
+            state.startDate = null;
+            state.endDate = null;
         }
     }
 });
@@ -51,7 +61,10 @@ export const {
     setJobStatus,
     setPlaceHolder,
     clearFilters,
-    setInterviewStatusId
+    setInterviewStatusId,
+    setStartDate,
+    setEndDate,
+    setInterviewFeedbackStatusId
 } = commonCustFiltersSlice.actions;
 
 export default commonCustFiltersSlice.reducer;

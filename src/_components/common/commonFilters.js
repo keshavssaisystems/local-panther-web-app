@@ -18,7 +18,9 @@ import {
     setJobStatus,
     setPlaceHolder,
     clearFilters,
-    setInterviewFeedbackStatusId
+    setInterviewFeedbackStatusId,
+    setStartDate,
+    setEndDate
 } from "_store/commonCustFiltersSlice";
 import DatePicker from "react-datepicker";
 import {
@@ -30,15 +32,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
     showJobStatus = true,
     showSearch = true,
-    showClearButton = true,
+    showClearButtonAtStart = false,
+    showClearButtonAtEnd = false,
     showOnlyJobTitle = false,
-    interviewFeedbackStatus
+    interviewFeedbackStatus,
+    showInterviewFeedbackStatus = false,
+    showFromDateToDate = false,
 }) => {
     const dispatch = useDispatch();
 
     const [filteredItems, setFilteredItems] = useState([]);
     // 🔹 Redux state for filters
-    const { selectedOpt, searchText, hiringManagerId, jobStatus, placeHolder } = useSelector(
+    const { selectedOpt, searchText, hiringManagerId, jobStatus, placeHolder, startDate, endDate, interviewFeedbackStatusId } = useSelector(
         (state) => state.commonCustFilters
     );
 
@@ -95,7 +100,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     };
 
     const handleInterviewFeedbackStatusId = (value) => {
-          dispatch(setInterviewFeedbackStatusId(value));
+        dispatch(setInterviewFeedbackStatusId(value));
     }
     const searchOptionDropdown = async (option) => {
         if (selectedOpt !== "JobTitle") {
@@ -135,9 +140,9 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         ];
 
     const [interviewStatusId, setInterviewStatusId] = useState("");
-    const [interviewFeedbackStatusId, setInterviewFeedbackStatusId] = useState("");
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    // const [interviewFeedbackStatusId, setInterviewFeedbackStatusId] = useState("");
+    // const [startDate, setStartDate] = useState(null);
+    // const [endDate, setEndDate] = useState(null);
     const interviewStatus = useSelector((state) => state?.dropdownReducer?.interviewStatus || []);
     // const interviewFeedbackStatus = useSelector(
     //     (state) => state?.dropdownReducer?.interviewFeedbackStatus || []
@@ -150,6 +155,16 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                 startDate,
                 endDate,
             });
+    };
+
+    // 🔹 Handle start date change
+    const handleStartDateChange = (value) => {
+        dispatch(setStartDate(value));
+    };
+
+    // 🔹 Handle end date change
+    const handleEndDateChange = (value) => {
+        dispatch(setEndDate(value));
     };
 
     const onInterviewSearchClear = () => { };
@@ -165,6 +180,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                 {/* Hiring Manager */}
                                 <Col xs={12} sm={6} md={4} lg={2}>
                                     <Input
+                                        id="hiringManagerId"
                                         type="select"
                                         value={hiringManagerId}
                                         onChange={(e) =>
@@ -186,6 +202,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                 {showJobStatus && (
                                     <Col xs={12} sm={6} md={3} lg={2}>
                                         <Input
+                                            id="jobStatus"
                                             name="jobStatus"
                                             type="select"
                                             value={jobStatus}
@@ -200,7 +217,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                     </Col>
                                 )}
                                 {/* Clear Filters */}
-                                {showClearButton && (
+                                {/* {showClearButtonAtStart && (
                                     <Col xs={12} sm={12} md={2} lg={2} className="text-md-start text-left">
 
                                         <div className="filter-actions1">
@@ -213,71 +230,79 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                             </Button>
                                         </div>
 
-                                    </Col>)}
-                                <Col xs="12" sm="12" md="6" lg="2">
-                                    <Input
-                                        type="select"
-                                        title="Interview Status"
-                                        value={interviewFeedbackStatusId}
-                                        name="interviewFeedbackStatusId"
-                                        id="InterviewFeedbackStatusId"
-                                        placeholder="Interview Feedback Status"
-                                        onChange={(e) => {
-                                            handleInterviewFeedbackStatusId(e.target.value);
-                                        }}                      >
-                                        <option value={""}>Interview Feedback Status</option>
-                                        {interviewFeedbackStatus?.length > 0 ? (
-                                            interviewFeedbackStatus.map((data) => (
-                                                <option value={data.id} key={data.id}>
-                                                    {data.name}
-                                                </option>
-                                            ))
-                                        ) : null}
-                                    </Input>
-                                </Col>
-                                <Col xs="12" sm="12" md="6" lg="2">
-                                    <InputGroup>
-                                        <div className="input-group-text">
-                                            <FontAwesomeIcon icon={faCalendarAlt} />
-                                        </div>
-                                        <DatePicker
-                                            name="startDate"
-                                            id="startDate"
-                                            placeholderText="From"
-                                            className="form-control"
-                                            selected={startDate}
-                                            maxDate={endDate}
-                                            showMonthDropdown
-                                            showYearDropdown
+                                    </Col>)} */}
+                                {showInterviewFeedbackStatus && (
+                                    <Col xs="12" sm="12" md="6" lg="2">
+                                        <Input
+                                            type="select"
+                                            id="interviewFeedbackStatusId"
+                                            title="Interview Status"
+                                            value={interviewFeedbackStatusId}
+                                            name="interviewFeedbackStatusId"
+                                            placeholder="Interview Feedback Status"
+                                            onChange={(e) => {
+                                                handleInterviewFeedbackStatusId(e.target.value);
+                                            }}                      >
+                                            <option value={""}>Interview Feedback Status</option>
+                                            {interviewFeedbackStatus?.length > 0 ? (
+                                                interviewFeedbackStatus.map((data) => (
+                                                    <option value={data.id} key={data.id}>
+                                                        {data.name}
+                                                    </option>
+                                                ))
+                                            ) : null}
+                                        </Input>
+                                    </Col>
+                                )}
+                                {showFromDateToDate && (
+                                    <>
+                                        <Col xs="12" sm="12" md="6" lg="2">
+                                            <InputGroup>
+                                                <div className="input-group-text">
+                                                    <FontAwesomeIcon icon={faCalendarAlt} />
+                                                </div>
+                                                <DatePicker
+                                                    name="startDate"
+                                                    id="startDate"
+                                                    placeholderText="From"
+                                                    className="form-control"
+                                                    selected={startDate}
+                                                    maxDate={endDate}
+                                                    showMonthDropdown
+                                                    showYearDropdown
 
-                                            onChange={(date) => {
-                                                // handleDateChange("startDate", date);
-                                                setStartDate(date);
-                                            }}
-                                        />
-                                    </InputGroup>
-                                </Col>
-                                <Col xs="12" sm="12" md="6" lg="2">
-                                    <InputGroup >
-                                        <div className="input-group-text">
-                                            <FontAwesomeIcon icon={faCalendarAlt} />
-                                        </div>
-                                        <DatePicker
-                                            name="endDate"
-                                            id="endDate"
-                                            placeholderText="To"
-                                            className="form-control"
-                                            selected={endDate}
-                                            minDate={startDate}
-                                            showMonthDropdown
-                                            showYearDropdown
-                                            onChange={(date) => {
-                                                // handleDateChange("startDate", date);
-                                                setEndDate(date);
-                                            }}
-                                        />
-                                    </InputGroup>
-                                </Col>
+                                                    onChange={(date) => {
+                                                        // handleDateChange("startDate", date);
+                                                        setStartDate(date);
+                                                        handleStartDateChange(date);
+                                                    }}
+                                                />
+                                            </InputGroup>
+                                        </Col>
+                                        <Col xs="12" sm="12" md="6" lg="2">
+                                            <InputGroup >
+                                                <div className="input-group-text">
+                                                    <FontAwesomeIcon icon={faCalendarAlt} />
+                                                </div>
+                                                <DatePicker
+                                                    name="endDate"
+                                                    id="endDate"
+                                                    placeholderText="To"
+                                                    className="form-control"
+                                                    selected={endDate}
+                                                    minDate={startDate}
+                                                    showMonthDropdown
+                                                    showYearDropdown
+                                                    onChange={(date) => {
+                                                        handleEndDateChange(date);
+                                                        setEndDate(date);
+                                                    }}
+                                                />
+                                            </InputGroup>
+                                        </Col>
+                                    </>
+                                )}
+
                                 {/* Search */}
                                 <Col xs={12} sm={12} md={12} lg={4}>
                                     <Form onSubmit={handleSearch}>
@@ -333,20 +358,41 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                     ))}
                                                 </ul>
                                             )}
-                                            <Button
+                                            {/* <Button
                                                 color={"primary"}
-                                                className="input-group-text filter-search-btn"
+                                                className="input-group-text search-icon"
                                                 type="submit"
                                             >
-                                                S
+                                                <FontAwesomeIcon icon={faSearch} />
+                                                Search
                                             </Button>
                                             <Button
-                                                color="danger"
+                                                // color="danger"
                                                 className="input-group-text filter-search-btn"
+                                                type="button"
                                                 onClick={(e) => handleClearFilters(e)}
                                             >
-                                                X
-                                            </Button>
+                                                Clear
+                                            </Button> */}
+
+                                            {showSearch && (
+                                                <Button
+                                                    style={{ background: "rgb(47 71 155)" }}
+                                                    className="input-group-text search-icon"
+                                                    color="primary"
+                                                    type="submit"
+                                                >
+                                                    Search
+                                                </Button>)}
+                                            {showClearButtonAtEnd && (
+                                                <Button
+                                                    color="link"
+                                                    type="button"
+                                                    className="input-group-text filter-search-btn"
+                                                    onClick={handleClearFilters}
+                                                >
+                                                    Clear
+                                                </Button>)}
                                         </InputGroup>
                                     </Form>
                                 </Col>

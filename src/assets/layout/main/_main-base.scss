@@ -16,7 +16,8 @@
   }
 
   .app-main__inner {
-    padding: $grid-gutter-width $grid-gutter-width 0;
+    // padding: $grid-gutter-width $grid-gutter-width 0;
+    padding: 1rem 1rem 0;
     flex: 1;
 
     & > .RRT__container {

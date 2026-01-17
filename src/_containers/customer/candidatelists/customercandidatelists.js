@@ -44,6 +44,7 @@ import cx from "classnames";
 import moment from "moment";
 import { getHiringMangerList } from "_store";
 import NewPageTitle from "../../../_components/common/newpagetitle";
+import PageTitle from "../../../_components/common/pagetitle";
 import { CommonFilters } from "../../../_components/common/commonFilters";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
@@ -55,17 +56,19 @@ import {
   faSearch,
   faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
-
-import {
-  setSelectedOpt,
-  setSearchText,
-  setHiringManagerId,
-  setJobStatus,
-  setPlaceHolder,
-  clearFilters,
-} from "_store/commonCustFiltersSlice";
 import { ca, is } from "date-fns/locale";
-
+import { use } from "react";
+import {
+    setSelectedOpt,
+    setSearchText,
+    setHiringManagerId,
+    setJobStatus,
+    setPlaceHolder,
+    clearFilters,
+    setInterviewFeedbackStatusId,
+    setStartDate,
+    setEndDate
+} from "_store/commonCustFiltersSlice";
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
   const { jobPostedbyId } = useParams();
@@ -87,7 +90,7 @@ export default function CustomerCandidateLists(props) {
   // const [searchText, setSearchText] = useState("");
   // const [actionbyId, setActionbyId] = useState();
   // const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
-  const { searchText, hiringManagerId, interviewFeedbackStatusId } = useSelector(
+  const { searchText, hiringManagerId, interviewFeedbackStatusId, startDate, endDate } = useSelector(
     (state) => state.commonCustFilters
   );
 
@@ -100,12 +103,16 @@ export default function CustomerCandidateLists(props) {
   const dispatch = useDispatch();
   const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
 
-  let [startDate, setStartDate] = useState();
-  let [endDate, setEndDate] = useState();
+  let [startDate1, setStartDate1] = useState();
+  let [endDate1, setEndDate1] = useState();
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList.some(company => company.isstaffingfirm === true));
   const [offlineStatuses, setOfflineStatuses] = useState([]);
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
+  const [showInterviewFeedbackStatusFilter, setShowInterviewFeedbackStatusFilter] = useState(false);
+  const [showFromToDateFilter, setShowFromToDateFilter] = useState(false);
+  const [showSearch, setShowSearch] = useState(true);
+  const [showClearButtonAtEnd, setShowClearButtonAtEnd] = useState(true);
 
   const rejectDrpDwnList = useSelector(
     (state) => state.customerCandidateList.rejectDrpDwnList
@@ -186,6 +193,11 @@ export default function CustomerCandidateLists(props) {
 
   useEffect(() => {
     if (id) {
+      // setShowInterviewFeedbackStatusFilter(props.type === "scheduled" || activeTab === "scheduled" ? true : false);
+      // setShowFromToDateFilter(props.type === "scheduled" || activeTab === "scheduled" ? true : false);
+      setShowSearch(false);
+      setShowClearButtonAtEnd(false);
+      dispatch(setHiringManagerId(jobPostedbyId));
       setPageNo(1);
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, id);
@@ -258,13 +270,12 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, clearText);
+      if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1)
-      onGetCandidatesCount(id, clearText);
+    if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
   };
 
   const handlePageChange = (page) => {
@@ -273,6 +284,8 @@ export default function CustomerCandidateLists(props) {
   };
   const toggle = (activetab) => {
     clearInterviewFilters();
+    setShowInterviewFeedbackStatusFilter(activetab === "scheduled" ? true : false);
+    setShowFromToDateFilter(activetab === "scheduled" ? true : false);
     if (id) {
       //setSearchText("");
       setPageNo(1);
@@ -501,8 +514,8 @@ export default function CustomerCandidateLists(props) {
 
   const clearInterviewFilters = () => {
     setInterviewFeedbackStatusId1(0);
-    setStartDate(null);
-    setEndDate(null);
+    setStartDate1(null);
+    setEndDate1(null);
     setInterviewStatusId(0);
   };
 
@@ -563,7 +576,8 @@ export default function CustomerCandidateLists(props) {
 
 
 
-  const onSearchData = () => {
+  const onSearchData1 = () => {
+    let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
     let candObj = {
       pageNumber: pageNo,
       pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
@@ -575,10 +589,36 @@ export default function CustomerCandidateLists(props) {
       candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
       interviewScheduleDateStart: startDate ?
         moment(startDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
-      interviewScheduleDateEnd: endDate ? moment(endDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
+      interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
     };
     getInterviewListByFilters(candObj);
   };
+
+  const onSearchData = () => {
+    let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
+    let candObj = {
+      pageNumber: pageNo,
+      pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
+      customerRecommendedJobStatusId: returnStatusId(activeTab),
+      jobId: id || "",
+      searchText: searchText ? searchText : "",
+      actionbyId: hiringManagerId,
+      interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
+      candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
+      interviewScheduleDateStart: startDate ? moment(startDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
+      interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
+    };
+
+    if (activeTab === 'presented') {
+      dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
+      if (pageNo === 1) onGetCandidatesCount(id, searchText);
+      return
+    }
+
+    dispatch(customerCandidateListsActions.getCandidateLists(candObj));
+    if (pageNo === 1) onGetCandidatesCount(id, searchText);
+  };
+
   const onCandidateResume = async (candidateId, url) => {
     if (!url) {
       return dispatch(showSnackbar({
@@ -657,11 +697,10 @@ export default function CustomerCandidateLists(props) {
     }
   }
 
+
   return (
     <>
-
-
-      <NewPageTitle heading="Candidates" />
+      <PageTitle heading="Candidates" />
 
       <CommonFilters
         showJobStatus={false}
@@ -679,7 +718,10 @@ export default function CustomerCandidateLists(props) {
         // hiringManagerId={hiringManagerId}
         // setHiringMangerId={setHiringMangerId} 
         interviewFeedbackStatus={interviewFeedbackStatus}
-
+        showInterviewFeedbackStatus={showInterviewFeedbackStatusFilter}
+        showFromDateToDate={showFromToDateFilter}
+        showSearch={showSearch}
+        showClearButtonAtEnd={showClearButtonAtEnd}
       />
       <Row className="customercandidatelist">
         <div
@@ -1051,7 +1093,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div>
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1120,7 +1162,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
             <TabPane tabId="maybe">
               <div className="p-3 tab-info">
@@ -1137,7 +1179,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div>
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1205,7 +1247,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
             <TabPane tabId="applied">
               <div className="p-3 tab-info">
@@ -1222,7 +1264,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div>
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1291,7 +1333,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
             <TabPane tabId="presented">
               {/* <div className="p-3 tab-info">
@@ -1308,7 +1350,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div> */}
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1377,7 +1419,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
             <TabPane tabId="scheduled">
               <Card className="mb-3" style={{ display: 'none' }}>
@@ -1445,7 +1487,7 @@ export default function CustomerCandidateLists(props) {
 
                           onChange={(date) => {
                             // handleDateChange("startDate", date);
-                            setStartDate(date);
+                            setStartDate1(date);
                           }}
                         />
                       </InputGroup>
@@ -1466,7 +1508,7 @@ export default function CustomerCandidateLists(props) {
                           showYearDropdown
                           onChange={(date) => {
                             // handleDateChange("startDate", date);
-                            setEndDate(date);
+                            setEndDate1(date);
                           }}
                         />
                       </InputGroup>
@@ -1510,7 +1552,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div>
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1579,7 +1621,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
             <TabPane tabId="offers">
               <div className="p-3 tab-info">
@@ -1599,7 +1641,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div>
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1668,7 +1710,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
             <TabPane tabId="accepted">
               <div className="p-3 tab-info">
@@ -1686,7 +1728,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div>
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1755,7 +1797,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
             <TabPane tabId="rejected">
               <div className="p-3 tab-info">
@@ -1774,7 +1816,7 @@ export default function CustomerCandidateLists(props) {
                   </Col>
                 </Row>
               </div>
-              <p>
+              <div>
                 {loading ? (
                   <>
                     <Loader
@@ -1845,7 +1887,7 @@ export default function CustomerCandidateLists(props) {
                     )}
                   </>
                 )}
-              </p>
+              </div>
             </TabPane>
           </TabContent>
         </Col>
