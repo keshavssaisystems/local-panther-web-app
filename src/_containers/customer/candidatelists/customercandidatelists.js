@@ -59,15 +59,15 @@ import {
 import { ca, is } from "date-fns/locale";
 import { use } from "react";
 import {
-    setSelectedOpt,
-    setSearchText,
-    setHiringManagerId,
-    setJobStatus,
-    setPlaceHolder,
-    clearFilters,
-    setInterviewFeedbackStatusId,
-    setStartDate,
-    setEndDate
+  setSelectedOpt,
+  setSearchText,
+  setHiringManagerId,
+  setJobStatus,
+  setPlaceHolder,
+  clearFilters,
+  setInterviewFeedbackStatusId,
+  setStartDate,
+  setEndDate
 } from "_store/commonCustFiltersSlice";
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
@@ -197,7 +197,6 @@ export default function CustomerCandidateLists(props) {
       // setShowFromToDateFilter(props.type === "scheduled" || activeTab === "scheduled" ? true : false);
       setShowSearch(false);
       setShowClearButtonAtEnd(false);
-      dispatch(setHiringManagerId(jobPostedbyId));
       setPageNo(1);
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, id);
@@ -209,6 +208,7 @@ export default function CustomerCandidateLists(props) {
     let companyId = Number(localStorage.getItem("companyid"));
     dispatch(getHiringMangerList(companyId));
     if (id) {
+      dispatch(setHiringManagerId(jobPostedbyId));
       dispatch(custJobListActions.getJobDetail({ jobId: id }));
     }
     else {
@@ -749,7 +749,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("matched");
                   }}
                 >
-                  Matched{reportData?.Matched > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Matched}</span>)}
+                  Matched{reportData?.Matched >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Matched}</span>)}
                 </Button>
                 <Button
                   color="primary"
@@ -762,7 +762,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("maybe");
                   }}
                 >
-                  Maybe{reportData?.Maybe > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Maybe}</span>)}
+                  Maybe{reportData?.Maybe >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Maybe}</span>)}
                 </Button>
                 <Button
                   color="primary"
@@ -775,7 +775,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("liked");
                   }}
                 >
-                  Liked{reportData?.Like > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Like}</span>)}
+                  Liked{reportData?.Like >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Like}</span>)}
                 </Button>
 
                 <Button
@@ -789,7 +789,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("applied");
                   }}
                 >
-                  Applied{reportData?.Applied > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Applied}</span>)}
+                  Applied{reportData?.Applied >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Applied}</span>)}
                 </Button>
 
                 {isStaffingFirm === true && (<Button
@@ -803,7 +803,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("presented");
                   }}
                 >
-                  Presented{reportData?.Presented > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Presented}</span>)}
+                  Presented{reportData?.Presented >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Presented}</span>)}
                 </Button>
                 )}
 
@@ -818,7 +818,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("scheduled");
                   }}
                 >
-                  Interviews{reportData?.Scheduled > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Scheduled}</span>)}
+                  Interviews{reportData?.Scheduled >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Scheduled}</span>)}
                 </Button>
                 <Button
                   color="primary"
@@ -831,7 +831,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("offers");
                   }}
                 >
-                  Offer{reportData?.Offer > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Offer}</span>)}
+                  Offer{reportData?.Offer >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Offer}</span>)}
                 </Button>
                 <Button
                   color="primary"
@@ -844,7 +844,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("accepted");
                   }}
                 >
-                  Accepted{reportData?.Accept > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Accept}</span>)}
+                  Accepted{reportData?.Accept >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Accept}</span>)}
                 </Button>
                 <Button
                   color="primary"
@@ -857,7 +857,7 @@ export default function CustomerCandidateLists(props) {
                     toggle("rejected");
                   }}
                 >
-                  Declined{reportData?.Reject > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Reject}</span>)}
+                  Declined{reportData?.Reject >= 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Reject}</span>)}
                 </Button>
 
 

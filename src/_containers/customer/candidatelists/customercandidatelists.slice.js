@@ -650,7 +650,7 @@ function createExtraReducers() {
       builder
         .addCase(pending, (state) => {
           // state.loading = true;
-          //state.reportData = null;
+          state.reportData = null;
         })
         .addCase(fulfilled, (state, action) => {
           state.reportData = action?.payload?.data?.[0] ? action.payload.data[0] : null;
