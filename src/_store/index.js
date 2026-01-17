@@ -62,6 +62,7 @@ import { paymentReducer } from "_containers/payment/payment.slice";
 import { snackbarReducer } from "./snackbar.slice";
 
 import { hiringManagerReducer } from "./dropDownHiringManager.slice";
+import commonCustFiltersReducer from "./commonCustFiltersSlice";
 import { atsReducer } from "./ats.slice";
 import { atsgenericReducer } from "./atsgeneric.slice";
 
@@ -124,7 +125,7 @@ export * from "./dashboard.slice";
 export * from "./settings.slice";
 export * from "../_containers/payment/payment.slice";
 export * from "./snackbar.slice";
-
+export * from "./commonCustFiltersSlice"
 // export all customer slice fn
 export * from "_containers/customer/reports/customerreport.slice";
 export const store = configureStore({
@@ -189,6 +190,7 @@ export const store = configureStore({
     payment: paymentReducer,
     snackbar: snackbarReducer,
     hiringManager: hiringManagerReducer,
+    commonCustFilters: commonCustFiltersReducer,
     ats: atsReducer,
     atsgeneric: atsgenericReducer,
   },
