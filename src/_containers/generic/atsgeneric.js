@@ -8,7 +8,9 @@ import {
     Card,
     CardBody,
     FormGroup,
-    Input
+    Input,
+    Button
+
 } from "reactstrap";
 
 import { fetchATSGenericList } from "_store/atsgeneric.slice";
@@ -18,6 +20,10 @@ import "./atsgeneric.css"; // add this import
 import Loader from "react-loaders";
 import { useLocation } from "react-router-dom";
 import { param } from "jquery";
+
+//import AddUserModal from "./addusermodal";
+import AddUserModal from "_containers/customer/atscompanylist/addclient";
+
 const ATSGenericList = () => {
     console.log("ATS Hiring Contact List component rendered");
     let isCompanyAdmin = true;
@@ -53,6 +59,8 @@ const ATSGenericList = () => {
     };
     let entity = entityMap[path];
 
+    //add user
+    const [showAddUser, setShowAddUser] = useState(false);
 
     
     // pagination state
@@ -191,6 +199,18 @@ const ATSGenericList = () => {
                                      </FormGroup>
                                 </Col>
                                 <Col>
+                                     {path == "/ats/atscompany" && ( 
+                                        <Button 
+                                        style={{
+                                         background: "#2f479b",
+                                         borderColor: "#545cd8",
+                                        }}
+                                        className="input-group-text float-end mt-1"
+                                        color="primary" 
+                                        onClick={() => setShowAddUser(true)}
+                                        >
+                                         Add User 
+                                         </Button> )}
                                     <div
                                         className={cx(
                                             "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
@@ -247,6 +267,11 @@ const ATSGenericList = () => {
                     </Card>
                 </Col>
             </Row>
+            <AddUserModal 
+                isOpen={showAddUser}
+                onClose={() => setShowAddUser(false)}
+                //onSubmit={handleAddUserSubmit}
+            />
         </div>
     );
 };
