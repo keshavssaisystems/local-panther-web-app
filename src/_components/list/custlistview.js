@@ -2150,7 +2150,11 @@ export const CustCandidateListView = (props) => {
 
     const form = new FormData();
 
-    if (selectedRowData?.jobOfferDtos && selectedRowData?.jobOfferDtos?.length > 0) {
+    if (selectedRowData?.jobOfferDtos && selectedRowData?.jobOfferDtos?.length > 0
+      && selectedRowData?.jobOfferDtos[0].Salary === payVal &&
+      selectedRowData?.jobOfferDtos[0].Payperiodtype === payType &&
+      moment(selectedRowData?.jobOfferDtos[0].Startdate).format("YYYY-MM-DD") === moment(startDate).format("YYYY-MM-DD")
+    ) {
       form.append("Jobofferid", selectedRowData?.jobOfferDtos[0].jobofferid);
     }
     form.append("Candidaterecommendedjobid", selectedRowData.candidaterecommendedjobid);
