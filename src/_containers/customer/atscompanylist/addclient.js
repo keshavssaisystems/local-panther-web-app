@@ -19,8 +19,8 @@ import {
 } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 
-let url = `${process.env.REACT_APP_NEW_API_URL}`;
-console.log(url);
+
+
 const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
   const [form, setForm] = useState({
     atscompanyid: "",
@@ -54,14 +54,14 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
         newErrors.email = "Invalid email format";
       }
     }
-    if (!form.phonenumber || form.phonenumber.trim() === "") {
-      newErrors.phonenumber = "Phone number is required";
-    } else {
-      const phoneRegex = /^[0-9]{10}$/;
-      if (!phoneRegex.test(form.phonenumber)) {
-        newErrors.phonenumber = "Phone number must be 10 digits";
-      }
-    }
+    // if (!form.phonenumber || form.phonenumber.trim() === "") {
+    //   newErrors.phonenumber = "Phone number is required";
+    // } else {
+    //   const phoneRegex = /^[0-9]{10}$/;
+    //   if (!phoneRegex.test(form.phonenumber)) {
+    //     newErrors.phonenumber = "Phone number must be 10 digits";
+    //   }
+    // }
 
     return newErrors;
   };
@@ -82,6 +82,7 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
   };
 
   const handleSubmit = async () => {
+    let url = `${process.env.REACT_APP_NEW_API_URL}`;
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -112,12 +113,11 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
         },
       };
       const response = await axios.post(
-        `https://panther-api-prod.azurewebsites.net/api/V2/ATSCompany`,
+        `${url}/V2/ATSCompany`,
         body,
         config
       );
-      //const response = await axios.post(`${url}/api/V2/ATSCompany`, body, config);
-
+      
       console.log("API response:", response.data);
       if (onSuccess) onSuccess();
       handleClose();
