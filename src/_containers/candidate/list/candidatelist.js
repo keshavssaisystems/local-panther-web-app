@@ -931,6 +931,7 @@ export default function CandidateList(props) {
                                   reason
                                 )
                               }
+                              isclosed={data.isclosed}
                             />
                           );
                         })
