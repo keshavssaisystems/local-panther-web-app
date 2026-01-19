@@ -629,6 +629,22 @@ export const CustCandidateListView = (props) => {
             >
               <img src={customerIcons.list_schedule} alt="list reject"></img>
             </Button>
+            {row.jobOfferDtos &&
+              row.jobOfferDtos.length > 0 &&
+              !row.jobOfferDtos[0].isfinaloffer ? (
+              <Button
+                // outline
+                size="sm"
+                title="Re-extend offer"
+                onClick={() => onAcceptClick(row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+            ) : (
+              <></>
+            )}
           </ButtonGroup>)}
         </>)
     }
