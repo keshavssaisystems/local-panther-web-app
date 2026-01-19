@@ -34,7 +34,7 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
-  // handle input change
+  // handle input changes
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -54,15 +54,6 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
         newErrors.email = "Invalid email format";
       }
     }
-    // if (!form.phonenumber || form.phonenumber.trim() === "") {
-    //   newErrors.phonenumber = "Phone number is required";
-    // } else {
-    //   const phoneRegex = /^[0-9]{10}$/;
-    //   if (!phoneRegex.test(form.phonenumber)) {
-    //     newErrors.phonenumber = "Phone number must be 10 digits";
-    //   }
-    // }
-
     return newErrors;
   };
   const initialFormState = {
@@ -164,15 +155,6 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
     <Modal isOpen={isOpen} toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Add Client</ModalHeader>
       <ModalBody>
-        {/* <FormGroup>
-          <Label>ATS Company ID</Label>
-          <Input
-            name="atscompanyid"
-            value={form.atscompanyid}
-            onChange={handleChange}
-          />
-        </FormGroup> */}
-
         <FormGroup>
           <Label>ATS Type</Label>
           <Input
