@@ -44,7 +44,7 @@ import cx from "classnames";
 import moment from "moment";
 import { getHiringMangerList } from "_store";
 
-import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES,GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import DatePicker from "react-datepicker";
 import { set } from "lodash";

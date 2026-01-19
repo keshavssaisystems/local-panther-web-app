@@ -238,7 +238,7 @@ export const CustCandidateListView = (props) => {
   const handlePresentCandidate = async (type, candidaterecommendedjobid, row) => {
     if (row.ispresented === true) {
       dispatch(showSnackbar({
-        message: "Candidate is already presented",
+        message: "Candidate previously presented.",
         type: SNACKBAR_TYPES.WARNING,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,

@@ -342,7 +342,7 @@ export default function CandidateList(props) {
       if (res.payload.statusCode === 204) {
         // showSweetAlert({ title: res.payload.message, type: "success" });
         dispatch(showSnackbar({
-          message: res.payload.message,
+          message: successMessage,
           type: SNACKBAR_TYPES.SUCCESS,
           position: SNACKBAR_POSITION.TOP_CENTER,
           autoClose: true,
