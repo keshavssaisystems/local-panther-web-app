@@ -21,7 +21,7 @@ import { showSnackbar } from "_store/snackbar.slice";
 
 
 
-const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
+const AddClient = ({ isOpen, onClose, url, onSuccess }) => {
   const [form, setForm] = useState({
     atscompanyid: "",
     atstype: "",
@@ -53,6 +53,12 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
       if (!emailRegex.test(form.email)) {
         newErrors.email = "Invalid email format";
       }
+    }
+    if (form.phonenumber && form.phonenumber.trim() !== "") 
+    { const phoneRegex = /^[0-9]/; 
+      if (!phoneRegex.test(form.phonenumber)) { 
+        newErrors.phonenumber = "Phone number must be 10 digits"; 
+      } 
     }
     return newErrors;
   };
@@ -169,7 +175,7 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
         </FormGroup>
 
         <FormGroup>
-          <Label>Company Name</Label>
+          <Label>Company Name<span className="text-danger">*</span></Label>
           <Input
             name="companyname"
             value={form.companyname}
@@ -180,7 +186,7 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
         </FormGroup>
 
         <FormGroup>
-          <Label>Email</Label>
+          <Label>Email<span className="text-danger">*</span></Label>
           <Input
             type="email"
             name="email"
@@ -215,4 +221,4 @@ const AddUserModal = ({ isOpen, onClose, url, onSuccess }) => {
   );
 };
 
-export default AddUserModal;
+export default AddClient;

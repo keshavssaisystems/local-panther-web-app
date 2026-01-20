@@ -19,7 +19,7 @@ import cx from "classnames";
 import "./atsgeneric.css"; 
 import Loader from "react-loaders";
 import { useLocation } from "react-router-dom";
-import AddUserModal from "_containers/customer/atscompanylist/addusermodal";
+import AddClient from "_containers/customer/atscompanylist/addclient";
 
 const ATSGenericList = () => {
     console.log("ATS Hiring Contact List component rendered");
@@ -57,7 +57,7 @@ const ATSGenericList = () => {
     let entity = entityMap[path];
 
     //add user
-    const [showAddUser, setShowAddUser] = useState(false);
+    const [showAddClient, setShowAddClient] = useState(false);
 
     
     // pagination state
@@ -204,9 +204,9 @@ const ATSGenericList = () => {
                                         }}
                                         className="input-group-text float-end mt-1"
                                         color="primary" 
-                                        onClick={() => setShowAddUser(true)}
+                                        onClick={() => setShowAddClient(true)}
                                         >
-                                         Add User 
+                                         Add Client
                                          </Button> )}
                                     <div
                                         className={cx(
@@ -264,9 +264,9 @@ const ATSGenericList = () => {
                     </Card>
                 </Col>
             </Row>
-            <AddUserModal 
-                isOpen={showAddUser}
-                onClose={() => setShowAddUser(false)}
+            <AddClient 
+                isOpen={showAddClient}
+                onClose={() => setShowAddClient(false)}
             />
         </div>
     );
