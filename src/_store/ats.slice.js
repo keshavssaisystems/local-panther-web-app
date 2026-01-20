@@ -81,6 +81,17 @@ export const fetchATSCompanyList = createAsyncThunk(
     }
 );
 
+// New API for getting authorized ATS list
+export const getAuthorizedATSList = createAsyncThunk(
+    `${name}/getAuthorizedATSList`,
+    async (params = {}) => {
+        const { pagesize = 12, currentpage = 1 } = params;
+        const parameter = `@pagesize=${pagesize},@currentpage=${currentpage}`;
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_Authorized_ATS_List?parameter=${encodeURIComponent(parameter)}`;
+        return await fetchWrapper.get(TOKEN_END_POINT);
+    }
+);
+
 // Create the slice
 const atsSlice = createSlice({
     name,
@@ -169,6 +180,18 @@ const atsSlice = createSlice({
             })
             .addCase(fetchATSCompanyList.rejected, (state) => {
                 state.loader = false;
+            })
+            .addCase(getAuthorizedATSList.pending, (state) => {
+                state.loader = true;
+                state.atsauthorizationList = [];
+            })
+            .addCase(getAuthorizedATSList.fulfilled, (state, action) => {
+                console.log(action.payload);
+                state.atsauthorizationList = action.payload?.data?.data || [];
+                state.loader = false;
+            })
+            .addCase(getAuthorizedATSList.rejected, (state, action) => {
+                state.loader = false;
             });
     },
 });
@@ -177,6 +200,7 @@ const atsSlice = createSlice({
 export const atsActions = {
     ...atsSlice.actions,
     getCompanyATS,
+    getAuthorizedATSList,
     postAtsAuthorization,
     getATSList,
     deleteAtsAuthorization,

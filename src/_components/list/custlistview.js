@@ -239,7 +239,7 @@ export const CustCandidateListView = (props) => {
   const handlePresentCandidate = async (type, candidaterecommendedjobid, row) => {
     if (row.ispresented === true) {
       dispatch(showSnackbar({
-        message: "Candidate is already presented",
+        message: "Candidate previously presented.",
         type: SNACKBAR_TYPES.WARNING,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
@@ -629,6 +629,22 @@ export const CustCandidateListView = (props) => {
             >
               <img src={customerIcons.list_schedule} alt="list reject"></img>
             </Button>
+            {row.jobOfferDtos &&
+              row.jobOfferDtos.length > 0 &&
+              !row.jobOfferDtos[0].isfinaloffer ? (
+              <Button
+                // outline
+                size="sm"
+                title="Re-extend offer"
+                onClick={() => onAcceptClick(row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+            ) : (
+              <></>
+            )}
           </ButtonGroup>)}
         </>)
     }
@@ -891,8 +907,9 @@ export const CustCandidateListView = (props) => {
               cell: (row) =>
                 row?.jobOfferDtos?.length > 0 ? (
                   <>
-                    {row?.jobOfferDtos?.length === 2 && (
-                      <>
+                    {row?.jobOfferDtos?.length === 2 &&
+                      row?.jobOfferDtos[1]?.offerfilepath !== "" &&(
+                      <>                     
                         <img
                           src={previousOffer}
                           alt="list maybe"
@@ -902,10 +919,10 @@ export const CustCandidateListView = (props) => {
                           onClick={() =>
                             window.open(row?.jobOfferDtos[1]?.offerfilepath)
                           }
-                        ></img>
+                          ></img>
                       </>
                     )}
-                    {row?.isfinaloffer === true && (
+                    {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={finalOffer}
@@ -920,12 +937,12 @@ export const CustCandidateListView = (props) => {
                           onClick={() =>
                             window.open(row?.jobOfferDtos[0]?.offerfilepath)
                           }
-                        ></img>
+                          ></img>
                       </>
                     )}
                     {row?.jobOfferDtos?.length === 1 &&
-                      row?.isfinaloffer === false && (
-                        <>
+                      row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                      <>
                           <img
                             src={
                               props.type === "accepted"
@@ -947,8 +964,8 @@ export const CustCandidateListView = (props) => {
                         </>
                       )}
                     {row?.jobOfferDtos?.length === 2 &&
-                      row?.isfinaloffer === false && (
-                        <>
+                      row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                      <>
                           <img
                             src={
                               props.type === "accepted" ? finalOffer : newoffer
@@ -1225,9 +1242,8 @@ export const CustCandidateListView = (props) => {
                 cell: (row) =>
                   row?.jobOfferDtos?.length > 0 ? (
                     <>
-                      {row?.jobOfferDtos?.length === 2 && (
+                      {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
                         <>
-                          {row?.jobOfferDtos[1]?.offerfilepath && row?.jobOfferDtos[1]?.offerfilepath !== "" && (
                             <img
                               src={previousOffer}
                               alt="list maybe"
@@ -1238,12 +1254,10 @@ export const CustCandidateListView = (props) => {
                                 window.open(row?.jobOfferDtos[1]?.offerfilepath)
                               }
                             ></img>
-                          )}
                         </>
                       )}
-                      {row?.isfinaloffer === true && (
+                      {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                         <>
-                          {row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath !== "" && (
                             <img
                               src={finalOffer}
                               alt="list maybe"
@@ -1257,12 +1271,12 @@ export const CustCandidateListView = (props) => {
                               onClick={() =>
                                 window.open(row?.jobOfferDtos[0]?.offerfilepath)
                               }
-                            ></img>)}
+                            ></img>
                         </>
                       )}
                       {row?.jobOfferDtos?.length === 1 &&
-                        row?.isfinaloffer === false && (
-                          <> {row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath !== "" && (
+                        row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                          <> 
                             <img
                               src={
                                 props.type === "accepted"
@@ -1280,12 +1294,12 @@ export const CustCandidateListView = (props) => {
                               onClick={() =>
                                 window.open(row?.jobOfferDtos[0]?.offerfilepath)
                               }
-                            ></img>)}
+                            ></img>
                           </>
                         )}
                       {row?.jobOfferDtos?.length === 2 &&
-                        row?.isfinaloffer === false && (
-                          <> {row?.jobOfferDtos[0]?.offerfilepath && row?.jobOfferDtos[0]?.offerfilepath !== "" && (
+                        row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                          <> 
                             <img
                               src={
                                 props.type === "accepted" ? finalOffer : newoffer
@@ -1301,7 +1315,7 @@ export const CustCandidateListView = (props) => {
                               onClick={() =>
                                 window.open(row?.jobOfferDtos[0]?.offerfilepath)
                               }
-                            ></img>)}
+                            ></img>
                           </>
                         )}
                     </>
@@ -2142,7 +2156,11 @@ export const CustCandidateListView = (props) => {
 
     const form = new FormData();
 
-    if (selectedRowData?.jobOfferDtos && selectedRowData?.jobOfferDtos?.length > 0) {
+    if (selectedRowData?.jobOfferDtos && selectedRowData?.jobOfferDtos?.length > 0
+      && selectedRowData?.jobOfferDtos[0].Salary === payVal &&
+      selectedRowData?.jobOfferDtos[0].Payperiodtype === payType &&
+      moment(selectedRowData?.jobOfferDtos[0].Startdate).format("YYYY-MM-DD") === moment(startDate).format("YYYY-MM-DD")
+    ) {
       form.append("Jobofferid", selectedRowData?.jobOfferDtos[0].jobofferid);
     }
     form.append("Candidaterecommendedjobid", selectedRowData.candidaterecommendedjobid);

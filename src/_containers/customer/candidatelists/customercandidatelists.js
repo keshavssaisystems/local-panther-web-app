@@ -43,10 +43,11 @@ import { analytics } from "../../../firebase/index";
 import cx from "classnames";
 import moment from "moment";
 import { getHiringMangerList } from "_store";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES,GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import NewPageTitle from "../../../_components/common/newpagetitle";
 import PageTitle from "../../../_components/common/pagetitle";
 import { CommonFilters } from "../../../_components/common/commonFilters";
-import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import DatePicker from "react-datepicker";
 import { set } from "lodash";
@@ -335,7 +336,7 @@ export default function CustomerCandidateLists(props) {
         // });
 
         dispatch(showSnackbar({
-          message: res.payload.message || res.payload.status,
+          message:GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
           type: SNACKBAR_TYPES.ERROR,
           position: SNACKBAR_POSITION.TOP_CENTER,
           autoClose: true,
@@ -366,7 +367,7 @@ export default function CustomerCandidateLists(props) {
         //   type: "danger",
         // });
         dispatch(showSnackbar({
-          message: res.payload.message || res.payload.status,
+          message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
           type: SNACKBAR_TYPES.ERROR,
           position: SNACKBAR_POSITION.TOP_CENTER,
           autoClose: true,
@@ -438,7 +439,7 @@ export default function CustomerCandidateLists(props) {
       //   type: "danger",
       // });
       dispatch(showSnackbar({
-        message: res.payload.message || res.payload.status,
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
@@ -651,7 +652,7 @@ export default function CustomerCandidateLists(props) {
     } else {
 
       dispatch(showSnackbar({
-        message: res.payload.message || res.payload.status,
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
@@ -677,7 +678,7 @@ export default function CustomerCandidateLists(props) {
       onGetPageList(pageNo, props.type || activeTab, id);
     } else {
       dispatch(showSnackbar({
-        message: res.payload.message || res.payload.status,
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,

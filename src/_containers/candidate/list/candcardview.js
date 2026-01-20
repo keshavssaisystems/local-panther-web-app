@@ -42,6 +42,7 @@ export function CandCardView({
   customer,
   additionalData,
   onCandidateActions,
+  isclosed,
 }) {
   const [rejectReasonModal, setRejectReasonModal] = useState(false);
   let recommendedLevel =
@@ -271,53 +272,66 @@ export function CandCardView({
                 </Row>
 
                 <Row noGutters className="mt-2">
-                  <ButtonGroup className="card-btn-grp" size="sm">
-                    {/* <Button
-                      outline
-                      title="liked"
-                      className="btn-icon mb-1"
-                      color="primary"
-                      size="sm"
-                      onClick={() => onBtnClick("liked")}
-                    >
-                      Like <BsHandThumbsUp></BsHandThumbsUp>
-                    </Button> */}
+                  {isclosed === false ? (
+                    <ButtonGroup className="card-btn-grp" size="sm">
+                      {/* <Button
+                        outline
+                        title="liked"
+                        className="btn-icon mb-1"
+                        color="primary"
+                        size="sm"
+                        onClick={() => onBtnClick("liked")}
+                      >
+                        Like <BsHandThumbsUp></BsHandThumbsUp>
+                      </Button> */}
 
-   <Button
-                      outline
-                      title="Apply"
-                      className="btn-icon mb-1"
-                      color="primary"
-                      size="sm"
-                      onClick={() => onBtnClick("applied")}
-                    >
-                      Apply <BsCheckCircle />
-                    </Button>
-                    
-                    <Button
-                      outline
-                      title="Maybe"
-                      className="btn-icon mb-1"
-                      color="primary"
-                      size="sm"
-                      onClick={() => onBtnClick("maybe")}
-                    >
-                      Maybe <BsQuestionCircle></BsQuestionCircle>
-                    </Button>
+                      <Button
+                        outline
+                        title="Apply"
+                        className="btn-icon mb-1"
+                        color="primary"
+                        size="sm"
+                        onClick={() => onBtnClick("applied")}
+                      >
+                        Apply <BsCheckCircle />
+                      </Button>
+                      
+                      <Button
+                        outline
+                        title="Maybe"
+                        className="btn-icon mb-1"
+                        color="primary"
+                        size="sm"
+                        onClick={() => onBtnClick("maybe")}
+                      >
+                        Maybe <BsQuestionCircle></BsQuestionCircle>
+                      </Button>
 
-                    <Button
-                      outline
-                      title="Decline"
-                      className="btn-icon mb-1"
-                      color="primary"
-                      onClick={() => setRejectReasonModal(true)}
-                      size="sm"
-                    >
-                      Decline <BsXCircle></BsXCircle>
-                    </Button>
+                      <Button
+                        outline
+                        title="Decline"
+                        className="btn-icon mb-1"
+                        color="primary"
+                        onClick={() => setRejectReasonModal(true)}
+                        size="sm"
+                      >
+                        Decline <BsXCircle></BsXCircle>
+                      </Button>
 
-                 
-                  </ButtonGroup>
+                  
+                    </ButtonGroup>
+                   ) :  isclosed === true ?(
+                                  <Button
+                                  outline
+                                  title="Job Closed"
+                                  className="btn-icon lg-12"
+                                  color="danger"
+                                  size="lg"
+                                  disabled={true}
+                                >
+                                  <BsXCircle></BsXCircle> Job Closed
+                                </Button>
+                            ):null}
                 </Row>
               </Col>
             </Row>
