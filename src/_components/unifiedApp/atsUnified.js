@@ -11,6 +11,9 @@ import { atsActions } from "_store/ats.slice";
 import ConfirmModal from "_components/modal/confirmModal";
 import atsintegrationIcon from '../../assets/utils/images/ats-integration.png';
 import { FaCheck, FaExternalLinkAlt, FaArrowRight } from "react-icons/fa";
+import {
+  BsBoxArrowRight
+} from "react-icons/bs";
 
 // ATS descriptions mapping
 const ATS_DESCRIPTIONS = {
@@ -170,7 +173,7 @@ export default function AtsUnified() {
                     // Determine button properties based on isconnected
                     const buttonText = isConnected ? 'Disconnect Account' : 'Connect Account';
                     const buttonClass = isConnected ? 'disconnect' : 'connect';
-                    const ButtonIcon = isConnected ? FaArrowRight : FaExternalLinkAlt;
+                    const ButtonIcon = isConnected ? BsBoxArrowRight : FaExternalLinkAlt;
                     const buttonClickHandler = isConnected 
                         ? (e) => {
                             e.stopPropagation();
