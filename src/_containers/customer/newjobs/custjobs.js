@@ -131,7 +131,7 @@ export default function CustJobList() {
 
     if (res?.payload) {
       dispatch(showSnackbar({
-        message: "Job published successfully.",
+        message: "Success.",
         type: SNACKBAR_TYPES.SUCCESS,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
@@ -151,7 +151,7 @@ export default function CustJobList() {
     }
     else {
       dispatch(showSnackbar({
-        message: res?.error?.message || GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        message:GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,

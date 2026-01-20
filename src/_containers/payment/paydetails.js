@@ -33,7 +33,7 @@ import { history } from "_helpers";
 import { Link } from "react-router-dom";
 import debounce from "lodash/debounce";
 import "./payment.scss";
-import { SNACKBAR_TYPES, SNACKBAR_POSITION, CARD_MESSAGES } from "_constants/snackbarMessages";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CARD_MESSAGES, GENERAL_MESSAGES} from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 // import Squarepayment from "src/_containers/square-payment/squarepayment";
 export const PaymentDetails = ({
@@ -501,7 +501,7 @@ export const PaymentDetails = ({
 
     if (!response.payload) {
       dispatch(showSnackbar({
-        message: response.error.message,
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
         type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,

@@ -19,38 +19,38 @@ export const SNACKBAR_POSITION = {
 
 // Candidate Messages
 export const CANDIDATE_MESSAGES = {
-  CANDIDATE_STATUS_UPDATED_SUCCESS: 'Candidate status updated successfully!',
-  INTERVIEW_SCHEDULED_SUCCESSFULLY: 'Interview scheduled successfully!',
-  INTERVIEW_UPDATED_SUCCESS: 'Interview updated successfully!',
-  CANDIDATE_REJECTED_SUCCESS: 'Candidate rejected successfully!',
-  CANDIDATE_ACCEPTED_SUCCESS: 'Candidate accepted successfully!',
-  OFFER_UPLOADED_SUCCESS: 'Offer uploaded successfully!',
-  INTERVIEW_RESCHEDULED_SUCCESS: 'Interview rescheduled successfully!',
-  JOB_STATUS_UPDATED_SUCCESS: 'Job status updated successfully!',
-  RESUME_NOT_AVAILABLE: 'Candidate CV/Resume not available!'
+  CANDIDATE_STATUS_UPDATED_SUCCESS: 'Success.',
+  INTERVIEW_SCHEDULED_SUCCESSFULLY: 'Success.',
+  INTERVIEW_UPDATED_SUCCESS: 'Success.',
+  CANDIDATE_REJECTED_SUCCESS: 'Success.',
+  CANDIDATE_ACCEPTED_SUCCESS: 'Success.',
+  OFFER_UPLOADED_SUCCESS: 'Success.',
+  INTERVIEW_RESCHEDULED_SUCCESS: 'Success.',
+  JOB_STATUS_UPDATED_SUCCESS: 'Success.',
+  RESUME_NOT_AVAILABLE: 'Please upload your resume to continue.'
 };
 
 // Card Details
 export const CARD_MESSAGES = {
-  PLEASE_ENTER_VALID_CARD_DETAILS: 'Please enter valid card details!',
-  CARD_REMOVED_SUCCESS: 'Card removed successfully!',
-  CARD_UPDATED_SUCCESS: 'Card updated successfully!',
-  CARD_ACTION_FAILED: 'Card action failed!'
+  PLEASE_ENTER_VALID_CARD_DETAILS: 'Please enter valid card details. Please try again.',
+  CARD_REMOVED_SUCCESS: 'Success.',
+  CARD_UPDATED_SUCCESS: 'Success.',
+  CARD_ACTION_FAILED: 'Something went wrong. Please try again.'
 };
 
 // General Messages
 export const GENERAL_MESSAGES = {
-  PASSWORD_CHANGED_SUCCESS: 'Password changed successfully!',
+  PASSWORD_CHANGED_SUCCESS: 'Success.',
   PASSWORD_CHANGE_SUCCESS_TIMEOUT: 300,
   // SOMETHING_WENT_WRONG: 'Something went wrong!',
-  PUSH_NOTIFICATION_SETTINGS_UPDATED_SUCCESS: 'Push notification settings updated successfully!',
-  EMAIL_NOTIFICATION_SETTINGS_UPDATED_SUCCESS: 'Email notification settings updated successfully!',
-  DELETED_NOTIFICATION_SUCCESS: 'Deleted notification successfully!',
+  PUSH_NOTIFICATION_SETTINGS_UPDATED_SUCCESS: 'Success.',
+  EMAIL_NOTIFICATION_SETTINGS_UPDATED_SUCCESS: 'Success.',
+  DELETED_NOTIFICATION_SUCCESS: 'Success.',
   SOMETHING_WENT_WRONG: 'Something went wrong, please try again later',
   PASSWORD_RESET_EMAIL_SENT: 'Password has been sent to registered email ID',
-  USER_CREATED_SUCCESSFULLY: 'User created successfully!',
-  EMAIL_ID_ALREADY_EXISTS: 'Email id already exists!',
-  CANDIDATE_UPDATED_SUCCESSFULLY: 'Candidate updated successfully!',
-  PROFILE_DETAILS_UPDATED_SUCCESSFULLY: 'Profile details updated successfully!'
+  USER_CREATED_SUCCESSFULLY: 'Success.',
+  EMAIL_ID_ALREADY_EXISTS: 'This account already exists. Please sign in.',
+  CANDIDATE_UPDATED_SUCCESSFULLY: 'Success',
+  PROFILE_DETAILS_UPDATED_SUCCESSFULLY: 'Success'
 
 };
