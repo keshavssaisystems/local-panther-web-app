@@ -43,9 +43,9 @@ const ATSGenericList = () => {
     const endpoint = endpointMap[path];
     //for title
     const titleMap = {
-      "/ats/atscompany": "ATS Company List",
-      "/ats/atscontact": "ATS Hiring Manager List",
-      "/ats/atsassignee": "ATS Assignee List",
+      "/ats/atscompany": "Client List",
+      "/ats/atscontact": "Contact List",
+      "/ats/atsassignee": "Assignee List",
     };
     const title =  titleMap[path] || "ATS";
     //for entity
@@ -77,7 +77,7 @@ const ATSGenericList = () => {
         return Object.keys(sample).map((key) => {
             const width = headerWidths[key]; // setwidth from api
             return {
-                     name: key.replace(/([A-Z])/g, " $1")       // convert camelCase 
+                     name: key.replace(/([A-Z])/g, "$1")       // convert camelCase 
                         .replace(/_/g, " ")              // convert snake_case
                         .replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize words
                     selector: (row) => {
@@ -206,7 +206,7 @@ const ATSGenericList = () => {
                                         color="primary" 
                                         onClick={() => setShowAddClient(true)}
                                         >
-                                         Add Client
+                                          Add Client
                                          </Button> )}
                                     <div
                                         className={cx(
