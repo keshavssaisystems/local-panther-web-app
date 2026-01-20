@@ -13,7 +13,7 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 import SweetAlert from "react-bootstrap-sweetalert";
-
+import { BsXCircle } from "react-icons/bs";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { getTimezoneDateTime } from "_helpers/helper";
@@ -409,221 +409,233 @@ export const CandListView = (props) => {
   const columns = memoize((clickHandler) =>
     props.type === "interview"
       ? [
-        {
-          name: <span className="table-title">Job title</span>,
-          id: "Title",
-          cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
-          selector: (row) => row.jobtitle,
-          sortable: true,
-          width: "20%",
-        },
+          {
+            name: <span className="table-title">Job title</span>,
+            id: "Title",
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "20%",
+          },
 
-        {
-          name: <span className="table-title">Company</span>,
-          cell: (row) => (
-            <span title={row.companyname}>{row.companyname}</span>
-          ),
-          selector: (row) => row.companyname,
-          sortable: true,
-          width: "14%",
-        },
-        {
-          name: <span className="table-title">Location</span>,
-          cell: (row) => (
-            <span
-              title={
-                row.cityname && row.statename
-                  ? row.cityname + ", " + row.statename
-                  : ""
-              }
-            >
-              {row.cityname && row.statename
-                ? row.cityname + ", " + row.statename
-                : ""}
-            </span>
-          ),
-          selector: (row) =>
-            row.cityname && row.statename
-              ? row.cityname + ", " + row.statename
-              : "",
-          sortable: true,
-          width: "13%",
-        },
-        {
-          name: <span className="table-title">Pre-screen</span>,
-          cell: (row) =>
-            row.candidateprescreenstatus === "NA" ? (
-              "-"
-            ) : row.candidateprescreenstatus === "Pending" ? (
-              <Button
-                onClick={() => onPrescreenClick("pending", row)}
-                color="link"
-              >
-                <u>Pending</u>
-              </Button>
-            ) : (
-              <Button
-                onClick={() => onPrescreenClick("completed", row)}
-                color="link"
-              >
-                <u>Completed</u>
-              </Button>
+          {
+            name: <span className="table-title">Company</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
             ),
-          ignoreRowClick: true,
-          button: true,
-          width: "8%",
-        },
-        {
-          name: <span className="table-title">Proposed interview</span>,
-          cell: (row) => (
-            <span
-              title={
-                row?.scheduledInterviewDtos &&
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "14%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "13%",
+          },
+          {
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Proposed interview</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.scheduledInterviewDtos &&
                   row?.scheduledInterviewDtos?.length > 0
+                    ? getTimezoneDateTime(
+                        moment
+                          .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
+                          .format("MM/DD/YYYY") +
+                          (row?.scheduledInterviewDtos[0]?.starttime !== null
+                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                            : " 00:00:00")
+                      )
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
                   ? getTimezoneDateTime(
+                      moment
+                        .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
+                        .format("MM/DD/YYYY") +
+                        (row?.scheduledInterviewDtos[0]?.starttime !== null
+                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                          : " 00:00:00")
+                    )
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row?.scheduledInterviewDtos &&
+              row?.scheduledInterviewDtos?.length > 0
+                ? getTimezoneDateTime(
                     moment
                       .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
                       .format("MM/DD/YYYY") +
-                    (row?.scheduledInterviewDtos[0]?.starttime !== null
-                      ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                      : " 00:00:00")
+                      (row?.scheduledInterviewDtos[0]?.starttime !== null
+                        ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                        : " 00:00:00")
                   )
-                  : ""
-              }
-            >
-              {row?.scheduledInterviewDtos &&
-                row?.scheduledInterviewDtos?.length > 0
-                ? getTimezoneDateTime(
-                  moment
-                    .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
-                    .format("MM/DD/YYYY") +
-                  (row?.scheduledInterviewDtos[0]?.starttime !== null
-                    ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                    : " 00:00:00")
-                )
-                : ""}
-            </span>
-          ),
-          selector: (row) =>
-            row?.scheduledInterviewDtos &&
-              row?.scheduledInterviewDtos?.length > 0
-              ? getTimezoneDateTime(
-                moment
-                  .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
-                  .format("MM/DD/YYYY") +
-                (row?.scheduledInterviewDtos[0]?.starttime !== null
-                  ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                  : " 00:00:00")
-              )
-              : "",
-          sortable: true,
-          width: "17%",
-        },
-        {
-          name: <span className="table-title">Interest</span>,
-          cell: (row) => (
-            <div className="list-btn-group">{renderButtons(row)}</div>
-          ),
-          ignoreRowClick: true,
-          button: true,
-          width: "11%",
-        },
-        {
-          name: <span className="table-title">Interview status</span>,
-          cell: (row) => (
-            <span
-              title={
-                row?.scheduledInterviewDtos &&
+                : "",
+            sortable: true,
+            width: "17%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) =>
+              row?.isclosed === false ? (
+                <div className="list-btn-group">{renderButtons(row)}</div>
+              ) : row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />
+                  Job Closed
+                </Button>
+              ) : null,
+            ignoreRowClick: true,
+            button: true,
+            width: "11%",
+          },
+          {
+            name: <span className="table-title">Interview status</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.scheduledInterviewDtos &&
                   row?.scheduledInterviewDtos?.length > 0
-                  ? row?.scheduledInterviewDtos[0]?.isactive === true
-                    ? row?.scheduledInterviewDtos[0]?.interviewstatusid ===
-                      0 ||
-                      row?.scheduledInterviewDtos[0]?.interviewstatusid ===
-                      undefined
-                      ? row?.scheduledInterviewDtos[0]
-                        ?.isreschedulerequested === true
-                        ? "Requested for reschedule"
-                        : row?.scheduledInterviewDtos[0]?.isaccepted ===
-                          true &&
-                          row?.scheduledInterviewDtos[0]?.isrejected === false
+                    ? row?.scheduledInterviewDtos[0]?.isactive === true
+                      ? row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          0 ||
+                        row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          undefined
+                        ? row?.scheduledInterviewDtos[0]
+                            ?.isreschedulerequested === true
+                          ? "Requested for reschedule"
+                          : row?.scheduledInterviewDtos[0]?.isaccepted ===
+                              true &&
+                            row?.scheduledInterviewDtos[0]?.isrejected === false
                           ? "Accepted"
                           : row?.scheduledInterviewDtos[0]?.isrejected === true
-                            ? "Rejected"
-                            : "No response"
-                      : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
-                        1
+                          ? "Rejected"
+                          : "No response"
+                        : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          1
                         ? "Completed"
                         : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                           2
-                          ? "Not joined"
-                          : ""
-                    : "Cancelled"
-                  : ""
-              }
-            >
-              {row?.scheduledInterviewDtos &&
+                        ? "Not joined"
+                        : ""
+                      : "Cancelled"
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
                 row?.scheduledInterviewDtos?.length > 0
+                  ? row?.scheduledInterviewDtos[0]?.isactive === true
+                    ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
+                      row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                        undefined
+                      ? row?.scheduledInterviewDtos[0]
+                          ?.isreschedulerequested === true
+                        ? "Requested for reschedule"
+                        : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                          row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? "Accepted"
+                        : row?.scheduledInterviewDtos[0]?.isrejected === true
+                        ? "Rejected"
+                        : "No response"
+                      : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
+                      ? "Completed"
+                      : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
+                      ? "Not joined"
+                      : ""
+                    : "Cancelled"
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row?.scheduledInterviewDtos &&
+              row?.scheduledInterviewDtos?.length > 0
                 ? row?.scheduledInterviewDtos[0]?.isactive === true
                   ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
                     row?.scheduledInterviewDtos[0]?.interviewstatusid ===
-                    undefined
-                    ? row?.scheduledInterviewDtos[0]
-                      ?.isreschedulerequested === true
+                      undefined
+                    ? row?.scheduledInterviewDtos[0]?.isreschedulerequested ===
+                      true
                       ? "Requested for reschedule"
                       : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
                         row?.scheduledInterviewDtos[0]?.isrejected === false
-                        ? "Accepted"
-                        : row?.scheduledInterviewDtos[0]?.isrejected === true
-                          ? "Rejected"
-                          : "No response"
-                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
-                      ? "Completed"
-                      : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
-                        ? "Not joined"
-                        : ""
-                  : "Cancelled"
-                : ""}
-            </span>
-          ),
-          selector: (row) =>
-            row?.scheduledInterviewDtos &&
-              row?.scheduledInterviewDtos?.length > 0
-              ? row?.scheduledInterviewDtos[0]?.isactive === true
-                ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
-                  row?.scheduledInterviewDtos[0]?.interviewstatusid ===
-                  undefined
-                  ? row?.scheduledInterviewDtos[0]?.isreschedulerequested ===
-                    true
-                    ? "Requested for reschedule"
-                    : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                      row?.scheduledInterviewDtos[0]?.isrejected === false
                       ? "Accepted"
                       : row?.scheduledInterviewDtos[0]?.isrejected === true
-                        ? "Rejected"
-                        : "No response"
-                  : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
+                      ? "Rejected"
+                      : "No response"
+                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
                     ? "Completed"
                     : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
-                      ? "Not joined"
-                      : ""
-                : "Cancelled"
-              : "",
-          sortable: true,
-          width: "11%",
-        },
+                    ? "Not joined"
+                    : ""
+                  : "Cancelled"
+                : "",
+            sortable: true,
+            width: "11%",
+          },
 
-
-        {
-          name: <span className="table-title">Action</span>,
-          cell: (row) => <>{renderMenu(row)}</>,
-          ignoreRowClick: true,
-          allowOverflow: true,
-          button: true,
-          width: "6%",
-        },
-      ]
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "6%",
+          },
+        ]
       : props.type === "rejected"
-        ? [
+      ? [
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
@@ -673,8 +685,8 @@ export const CandListView = (props) => {
                   row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.salary === 0
-                      ? "-"
-                      : "$ " +
+                    ? "-"
+                    : "$ " +
                       new Intl.NumberFormat("en-US").format(
                         row?.jobOfferDtos[0]?.salary
                       )
@@ -683,13 +695,13 @@ export const CandListView = (props) => {
                 {row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.salary === 0
-                    ? "-"
-                    : "$ " +
+                  ? "-"
+                  : "$ " +
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
                     ) +
                     (row?.jobOfferDtos?.length > 0 &&
-                      row?.jobOfferDtos[0].payperiodtype !== null
+                    row?.jobOfferDtos[0].payperiodtype !== null
                       ? " - " + row?.jobOfferDtos[0].payperiodtype
                       : "")}
               </span>
@@ -698,8 +710,8 @@ export const CandListView = (props) => {
               row?.jobOfferDtos[0] === undefined
                 ? "-"
                 : row?.jobOfferDtos[0]?.salary === 0
-                  ? "-"
-                  : "$ " +
+                ? "-"
+                : "$ " +
                   new Intl.NumberFormat("en-US").format(
                     row?.jobOfferDtos[0]?.salary
                   ),
@@ -714,8 +726,8 @@ export const CandListView = (props) => {
                   row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
-                      ? "-"
-                      : moment
+                    ? "-"
+                    : moment
                         .utc(row?.jobOfferDtos[0]?.startdate)
                         .format("MM/DD/YYYY")
                 }
@@ -723,8 +735,8 @@ export const CandListView = (props) => {
                 {row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
-                    ? "-"
-                    : moment
+                  ? "-"
+                  : moment
                       .utc(row?.jobOfferDtos[0]?.startdate)
                       .format("MM/DD/YYYY")}
               </span>
@@ -733,8 +745,8 @@ export const CandListView = (props) => {
               row?.jobOfferDtos[0] === undefined
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
-                  ? "-"
-                  : moment
+                ? "-"
+                : moment
                     .utc(row?.jobOfferDtos[0]?.startdate)
                     .format("MM/DD/YYYY"),
             sortable: true,
@@ -745,7 +757,7 @@ export const CandListView = (props) => {
             cell: (row) =>
               row?.jobOfferDtos?.length > 0 ? (
                 <>
-                  {row?.jobOfferDtos?.length === 2 && (
+                  {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={previousOffer}
@@ -759,7 +771,7 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === true && (
+                  {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={finalOffer}
@@ -774,7 +786,7 @@ export const CandListView = (props) => {
                     </>
                   )}
                   {row?.jobOfferDtos?.length === 1 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={currentOffer}
@@ -789,7 +801,7 @@ export const CandListView = (props) => {
                       </>
                     )}
                   {row?.jobOfferDtos?.length === 2 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={newOffer}
@@ -821,21 +833,21 @@ export const CandListView = (props) => {
                     ? "Offer declined"
                     : row?.candidaterecommendedjobstatusid === 6 &&
                       row?.customerrecommendedjobstatusid !== 5
-                      ? "Declined by candidate"
-                      : row?.customerrecommendedjobstatusid === 6
-                        ? "Declined by customer"
-                        : "-"
+                    ? "Declined by candidate"
+                    : row?.customerrecommendedjobstatusid === 6
+                    ? "Declined by customer"
+                    : "-"
                 }
               >
                 {row?.customerrecommendedjobstatusid === 5 &&
-                  row?.candidaterecommendedjobstatusid === 6
+                row?.candidaterecommendedjobstatusid === 6
                   ? "Offer declined"
                   : row?.candidaterecommendedjobstatusid === 6 &&
                     row?.customerrecommendedjobstatusid !== 5
-                    ? "Declined by candidate"
-                    : row?.customerrecommendedjobstatusid === 6
-                      ? "Declined by customer"
-                      : "-"}
+                  ? "Declined by candidate"
+                  : row?.customerrecommendedjobstatusid === 6
+                  ? "Declined by customer"
+                  : "-"}
               </span>
             ),
             selector: (row) =>
@@ -853,9 +865,22 @@ export const CandListView = (props) => {
           },
           {
             name: <span className="table-title">Interest</span>,
-            cell: (row) => (
+            cell: (row) => 
+            row?.isclosed === false ? (
               <div className="list-btn-group">{renderButtons(row)}</div>
-            ),
+            ): row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />
+                  Job Closed
+                </Button>
+              ) : null,
             ignoreRowClick: true,
             button: true,
             width: "10%",
@@ -869,645 +894,697 @@ export const CandListView = (props) => {
             width: "8%",
           },
         ]
-        : props.type === "offers"
-          ? [
-            {
-              name: <span className="table-title">Title</span>,
-              id: "Title",
-              selector: (row) => row.jobtitle,
-              sortable: true,
-              width: "28%",
-            },
-            {
-              name: <span className="table-title">Employer</span>,
-              cell: (row) => (
-                <span title={row.companyname}>{row.companyname}</span>
-              ),
-              selector: (row) => row.companyname,
-              sortable: true,
-              width: "10%",
-            },
-            {
-              name: <span className="table-title">Location</span>,
-              selector: (row) =>
-                row.cityname && row.statename
-                  ? row.cityname + ", " + row.statename
-                  : "",
-              sortable: true,
-              width: "17%",
-            },
-            {
-              name: <span className="table-title">Offered salary</span>,
-              id: "pay",
-              cell: (row) => (
-                <span
-                  title={
-                    row?.jobOfferDtos === null
-                      ? "-"
-                      : row?.jobOfferDtos[0]?.salary === 0
-                        ? "-"
-                        : "$ " +
-                        new Intl.NumberFormat("en-US").format(
-                          row?.jobOfferDtos[0]?.salary
-                        )
-                  }
-                >
-                  {row?.jobOfferDtos === null
+      : props.type === "offers"
+      ? [
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "28%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "17%",
+          },
+          {
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
                     ? "-"
                     : row?.jobOfferDtos[0]?.salary === 0
-                      ? "-"
-                      : "$ " +
-                      new Intl.NumberFormat("en-US").format(
-                        row?.jobOfferDtos[0]?.salary
-                      ) +
-                      (row?.jobOfferDtos?.length > 0 &&
-                        row?.jobOfferDtos[0].payperiodtype !== null
-                        ? " - " + row?.jobOfferDtos[0].payperiodtype
-                        : "")}
-                </span>
-              ),
-              selector: (row) =>
-                row?.jobOfferDtos === null
-                  ? "-"
-                  : row?.jobOfferDtos[0]?.salary === 0
                     ? "-"
                     : "$ " +
+                      new Intl.NumberFormat("en-US").format(
+                        row?.jobOfferDtos[0]?.salary
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
-                    ),
-              sortable: true,
-              width: "10%",
-            },
-            {
-              name: <span className="table-title">Start date</span>,
-              cell: (row) => (
-                <span
-                  title={
-                    row?.jobOfferDtos === null
-                      ? "-"
-                      : row?.jobOfferDtos[0]?.startdate === null
-                        ? "-"
-                        : moment
-                          .utc(row?.jobOfferDtos[0]?.startdate)
-                          .format("MM/DD/YYYY")
-                  }
-                >
-                  {row?.jobOfferDtos === null
+                    ) +
+                    (row?.jobOfferDtos?.length > 0 &&
+                    row?.jobOfferDtos[0].payperiodtype !== null
+                      ? " - " + row?.jobOfferDtos[0].payperiodtype
+                      : "")}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
-                      ? "-"
-                      : moment
-                        .utc(row?.jobOfferDtos[0]?.startdate)
-                        .format("MM/DD/YYYY")}
-                </span>
-              ),
-              selector: (row) =>
-                row?.jobOfferDtos === null
-                  ? "-"
-                  : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
                     : moment
+                        .utc(row?.jobOfferDtos[0]?.startdate)
+                        .format("MM/DD/YYYY")
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : moment
                       .utc(row?.jobOfferDtos[0]?.startdate)
-                      .format("MM/DD/YYYY"),
-              sortable: true,
-              width: "10%",
-            },
-            {
-              name: <span className="table-title">Offer</span>,
-              cell: (row) =>
-                row?.jobOfferDtos?.length > 0 ? (
-                  <>
-                    {row?.jobOfferDtos?.length === 2 && (
+                      .format("MM/DD/YYYY")}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : moment
+                    .utc(row?.jobOfferDtos[0]?.startdate)
+                    .format("MM/DD/YYYY"),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Offer</span>,
+            cell: (row) =>
+              row?.jobOfferDtos?.length > 0 ? (
+                <>
+                  {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
+                    <>
+                      <img
+                        src={previousOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Previous Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                    <>
+                      <img
+                        src={finalOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Final Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
-                          src={previousOffer}
+                          src={currentOffer}
                           alt="list maybe"
-                          className={"icon-pointer me-2"}
+                          className={"icon-pointer"}
                           width={"20px"}
-                          title="Previous Offer - Click to view offer"
-                          onClick={() =>
-                            window.open(row?.jobOfferDtos[1]?.offerfilepath)
-                          }
-                        ></img>
-                      </>
-                    )}
-                    {row?.isfinaloffer === true && (
-                      <>
-                        <img
-                          src={finalOffer}
-                          alt="list maybe"
-                          className={"icon-pointer me-2"}
-                          width={"20px"}
-                          title="Final Offer - Click to view offer"
+                          title="New Offer - Click to view offer"
                           onClick={() =>
                             window.open(row?.jobOfferDtos[0]?.offerfilepath)
                           }
                         ></img>
                       </>
                     )}
-                    {row?.jobOfferDtos?.length === 1 &&
-                      row?.isfinaloffer === false && (
-                        <>
-                          <img
-                            src={currentOffer}
-                            alt="list maybe"
-                            className={"icon-pointer"}
-                            width={"20px"}
-                            title="New Offer - Click to view offer"
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                            }
-                          ></img>
-                        </>
-                      )}
-                    {row?.jobOfferDtos?.length === 2 &&
-                      row?.isfinaloffer === false && (
-                        <>
-                          <img
-                            src={newOffer}
-                            alt="list maybe"
-                            className={"icon-pointer"}
-                            width={"20px"}
-                            title="New Offer - Click to view offer"
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                            }
-                          ></img>
-                        </>
-                      )}
-                  </>
-                ) : (
-                  <> - </>
-                ),
-              ignoreRowClick: true,
-              button: true,
-              width: "7%",
-            },
-            {
-              name: <span className="table-title">Interest</span>,
-              cell: (row) => (
-                <div className="list-btn-group">{renderButtons(row)}</div>
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                </>
+              ) : (
+                <> - </>
               ),
-              ignoreRowClick: true,
-              button: true,
-              width: "13%",
-            },
-            {
-              name: <span className="table-title">Action</span>,
-              cell: (row) => <>{renderMenu(row)}</>,
-              ignoreRowClick: true,
-              allowOverflow: true,
-              button: true,
-              width: "5%",
-            },
-          ]
-          : props.type === "accepted"
-            ? [
-              {
-                name: <span className="table-title">Title</span>,
-                id: "Title",
-                cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
-                selector: (row) => row.jobtitle,
-                sortable: true,
-                width: "23%",
-              },
-              {
-                name: <span className="table-title">Employer</span>,
-                cell: (row) => (
-                  <span title={row.companyname}>{row.companyname}</span>
-                ),
-                selector: (row) => row.companyname,
-                sortable: true,
-                width: "10%",
-              },
-              {
-                name: <span className="table-title">Location</span>,
-                cell: (row) => (
-                  <span
-                    title={
-                      row.cityname && row.statename
-                        ? row.cityname + ", " + row.statename
-                        : ""
-                    }
-                  >
-                    {row.cityname && row.statename
-                      ? row.cityname + ", " + row.statename
-                      : ""}
-                  </span>
-                ),
-                selector: (row) =>
+            ignoreRowClick: true,
+            button: true,
+            width: "7%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => 
+            row?.isclosed === false ?(
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ): row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />
+                  Job Closed
+                </Button>
+              ) : null,
+            ignoreRowClick: true,
+            button: true,
+            width: "13%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "5%",
+          },
+        ]
+      : props.type === "accepted"
+      ? [
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "23%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            cell: (row) => (
+              <span
+                title={
                   row.cityname && row.statename
                     ? row.cityname + ", " + row.statename
-                    : "",
-                sortable: true,
-                width: "17%",
-              },
-              {
-                name: <span className="table-title">Offered salary</span>,
-                id: "pay",
-                cell: (row) => (
-                  <span
-                    title={
-                      row?.jobOfferDtos === null
-                        ? "-"
-                        : row?.jobOfferDtos[0]?.salary === 0
-                          ? "-"
-                          : "$ " +
-                          new Intl.NumberFormat("en-US").format(
-                            row?.jobOfferDtos[0]?.salary
-                          )
-                    }
-                  >
-                    {row?.jobOfferDtos === null
-                      ? "-"
-                      : row?.jobOfferDtos[0]?.salary === 0
-                        ? "-"
-                        : "$ " +
-                        new Intl.NumberFormat("en-US").format(
-                          row?.jobOfferDtos[0]?.salary
-                        ) +
-                        (row?.jobOfferDtos?.length > 0 &&
-                          row?.jobOfferDtos[0].payperiodtype !== null
-                          ? " - " + row?.jobOfferDtos[0].payperiodtype
-                          : "")}
-                  </span>
-                ),
-                selector: (row) =>
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "17%",
+          },
+          {
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
+            cell: (row) => (
+              <span
+                title={
                   row?.jobOfferDtos === null
                     ? "-"
                     : row?.jobOfferDtos[0]?.salary === 0
-                      ? "-"
-                      : "$ " +
+                    ? "-"
+                    : "$ " +
                       new Intl.NumberFormat("en-US").format(
                         row?.jobOfferDtos[0]?.salary
-                      ),
-                sortable: true,
-                width: "8%",
-              },
-              {
-                name: <span className="table-title">Start date</span>,
-                cell: (row) => (
-                  <span
-                    title={
-                      row?.jobOfferDtos === null
-                        ? "-"
-                        : row?.jobOfferDtos[0]?.startdate === null
-                          ? "-"
-                          : moment
-                            .utc(row?.jobOfferDtos[0]?.startdate)
-                            .format("MM/DD/YYYY")
-                    }
-                  >
-                    {row?.jobOfferDtos === null
-                      ? "-"
-                      : row?.jobOfferDtos[0]?.startdate === null
-                        ? "-"
-                        : moment
-                          .utc(row?.jobOfferDtos[0]?.startdate)
-                          .format("MM/DD/YYYY")}
-                  </span>
-                ),
-                selector: (row) =>
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
+                    new Intl.NumberFormat("en-US").format(
+                      row?.jobOfferDtos[0]?.salary
+                    ) +
+                    (row?.jobOfferDtos?.length > 0 &&
+                    row?.jobOfferDtos[0].payperiodtype !== null
+                      ? " - " + row?.jobOfferDtos[0].payperiodtype
+                      : "")}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
                   row?.jobOfferDtos === null
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
-                      ? "-"
-                      : moment
+                    ? "-"
+                    : moment
                         .utc(row?.jobOfferDtos[0]?.startdate)
-                        .format("MM/DD/YYYY"),
-                sortable: true,
-                width: "10%",
-              },
-              {
-                name: <span className="table-title">Accepted date</span>,
-                cell: (row) => (
-                  <span
-                    title={
-                      row?.candidateaccepteddatetime === null
-                        ? "-"
-                        : getTimezoneDateTime(
-                          row?.candidateaccepteddatetime,
-                          "MM/DD/YYYY"
-                        )
-                    }
-                  >
-                    {row?.candidateaccepteddatetime === null
-                      ? "-"
-                      : getTimezoneDateTime(
-                        row?.candidateaccepteddatetime,
-                        "MM/DD/YYYY"
-                      )}
-                  </span>
-                ),
-                selector: (row) =>
+                        .format("MM/DD/YYYY")
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : moment
+                      .utc(row?.jobOfferDtos[0]?.startdate)
+                      .format("MM/DD/YYYY")}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : moment
+                    .utc(row?.jobOfferDtos[0]?.startdate)
+                    .format("MM/DD/YYYY"),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Accepted date</span>,
+            cell: (row) => (
+              <span
+                title={
                   row?.candidateaccepteddatetime === null
                     ? "-"
                     : getTimezoneDateTime(
+                        row?.candidateaccepteddatetime,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.candidateaccepteddatetime === null
+                  ? "-"
+                  : getTimezoneDateTime(
                       row?.candidateaccepteddatetime,
                       "MM/DD/YYYY"
-                    ),
-                sortable: true,
-                width: "10%",
-              },
-              {
-                name: <span className="table-title">Offer</span>,
-                cell: (row) =>
-                  row?.jobOfferDtos?.length > 0 ? (
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.candidateaccepteddatetime === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.candidateaccepteddatetime,
+                    "MM/DD/YYYY"
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Offer</span>,
+            cell: (row) =>
+              row?.jobOfferDtos?.length > 0 ? (
+                <>
+                  {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
                     <>
-                      {row?.jobOfferDtos?.length === 2 && (
-                        <>
-                          <img
-                            src={previousOffer}
-                            alt="list maybe"
-                            className={"icon-pointer me-2"}
-                            width={"20px"}
-                            title="Previous Offer - Click to view offer"
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[1]?.offerfilepath)
-                            }
-                          ></img>
-                        </>
-                      )}
-                      {row?.isfinaloffer === true && (
-                        <>
-                          <img
-                            src={finalOffer}
-                            alt="list maybe"
-                            className={"icon-pointer me-2"}
-                            width={"20px"}
-                            title="Click to view accepted offer"
-                            onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                            }
-                          ></img>
-                        </>
-                      )}
-                      {row?.jobOfferDtos?.length === 1 &&
-                        row?.isfinaloffer === false && (
-                          <>
-                            <img
-                              src={finalOffer}
-                              alt="list maybe"
-                              className={"icon-pointer"}
-                              width={"20px"}
-                              title="Click to view accepted offer"
-                              onClick={() =>
-                                window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                              }
-                            ></img>
-                          </>
-                        )}
-                      {row?.jobOfferDtos?.length === 2 &&
-                        row?.isfinaloffer === false && (
-                          <>
-                            <img
-                              src={finalOffer}
-                              alt="list maybe"
-                              className={"icon-pointer"}
-                              width={"20px"}
-                              title="Click to view accepted offer"
-                              onClick={() =>
-                                window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                              }
-                            ></img>
-                          </>
-                        )}
+                      <img
+                        src={previousOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Previous Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                        }
+                      ></img>
                     </>
-                  ) : (
-                    <> - </>
-                  ),
-                ignoreRowClick: true,
-                button: true,
-                width: "8%",
-              },
-              {
-                name: <span className="table-title">Interest</span>,
-                cell: (row) => (
-                  <div className="list-btn-group">{renderButtons(row)}</div>
+                  )}
+                  {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                    <>
+                      <img
+                        src={finalOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Click to view accepted offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                      <>
+                        <img
+                          src={finalOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view accepted offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
+                      <>
+                        <img
+                          src={finalOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view accepted offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                </>
+              ) : (
+                <> - </>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => 
+              row?.isclosed === false ?(
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ): row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />
+                  Job Closed
+                </Button>
+              ) : null,
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "6%",
+          },
+        ]
+      : props.type === "maybe"
+      ? [
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "40%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "14%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
+            sortable: true,
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => 
+              row?.isclosed === false ?(
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ): row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />
+                  Job Closed
+                </Button>
+              ) : null,
+            ignoreRowClick: true,
+            button: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "8%",
+          },
+        ]
+      : [
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "25%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
+            sortable: true,
+            width: "8%",
+          },
+
+          {
+            name: <span className="table-title">Applied date</span>,
+            selector: (row) =>
+              getTimezoneDateTime(
+                moment(row?.candidateapplydatetime).format(
+                  "YYYY-MM-DD HH:MM:SS"
                 ),
-                ignoreRowClick: true,
-                button: true,
-                width: "8%",
-              },
-              {
-                name: <span className="table-title">Action</span>,
-                cell: (row) => <>{renderMenu(row)}</>,
-                ignoreRowClick: true,
-                allowOverflow: true,
-                button: true,
-                width: "6%",
-              },
-            ]
-            : props.type === "maybe"
-              ? [
-                {
-                  name: <span className="table-title">Title</span>,
-                  id: "Title",
-                  cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
-                  selector: (row) => row.jobtitle,
-                  sortable: true,
-                  width: "40%",
-                },
-                {
-                  name: <span className="table-title">Employer</span>,
-                  cell: (row) => (
-                    <span title={row.companyname}>{row.companyname}</span>
-                  ),
-                  selector: (row) => row.companyname,
-                  sortable: true,
-                  width: "14%",
-                },
-                {
-                  name: <span className="table-title">Location</span>,
-                  cell: (row) => (
-                    <span
-                      title={
-                        row.cityname && row.statename
-                          ? row.cityname + ", " + row.statename
-                          : ""
-                      }
-                    >
-                      {row.cityname && row.statename
-                        ? row.cityname + ", " + row.statename
-                        : ""}
-                    </span>
-                  ),
-                  selector: (row) =>
-                    row.cityname && row.statename
-                      ? row.cityname + ", " + row.statename
-                      : "",
-                  sortable: true,
-                  width: "15%",
-                },
+                "MM/DD/YYYY"
+              ),
 
-                {
-                  name: <span className="table-title">Experience</span>,
-                  cell: (row) => (
-                    <span
-                      title={
-                        row?.jobExperienceScheduleDtos &&
-                          row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                          ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                          : "-"
-                      }
-                    >
-                      {row?.jobExperienceScheduleDtos &&
-                        row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                        ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                        : "-"}
-                    </span>
-                  ),
-                  selector: (row) =>
-                    row?.jobExperienceScheduleDtos &&
-                      row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                      ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                      : "-",
-                  sortable: true,
-                  width: "8%",
-                },
-                {
-                  name: <span className="table-title">Interest</span>,
-                  cell: (row) => (
-                    <div className="list-btn-group">{renderButtons(row)}</div>
-                  ),
-                  ignoreRowClick: true,
-                  button: true,
-                  width: "15%",
-                },
-                {
-                  name: <span className="table-title">Action</span>,
-                  cell: (row) => <>{renderMenu(row)}</>,
-                  ignoreRowClick: true,
-                  allowOverflow: true,
-                  button: true,
-                  width: "8%",
-                },
-              ]
-              : [
-                {
-                  name: <span className="table-title">Title</span>,
-                  id: "Title",
-                  cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
-                  selector: (row) => row.jobtitle,
-                  sortable: true,
-                  width: "25%",
-                },
-                {
-                  name: <span className="table-title">Employer</span>,
-                  cell: (row) => (
-                    <span title={row.companyname}>{row.companyname}</span>
-                  ),
-                  selector: (row) => row.companyname,
-                  sortable: true,
-                  width: "10%",
-                },
-                {
-                  name: <span className="table-title">Location</span>,
-                  cell: (row) => (
-                    <span
-                      title={
-                        row.cityname && row.statename
-                          ? row.cityname + ", " + row.statename
-                          : ""
-                      }
-                    >
-                      {row.cityname && row.statename
-                        ? row.cityname + ", " + row.statename
-                        : ""}
-                    </span>
-                  ),
-                  selector: (row) =>
-                    row.cityname && row.statename
-                      ? row.cityname + ", " + row.statename
-                      : "",
-                  sortable: true,
-                  width: "15%",
-                },
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
 
-                {
-                  name: <span className="table-title">Experience</span>,
-                  cell: (row) => (
-                    <span
-                      title={
-                        row?.jobExperienceScheduleDtos &&
-                          row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                          ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                          : "-"
-                      }
-                    >
-                      {row?.jobExperienceScheduleDtos &&
-                        row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                        ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                        : "-"}
-                    </span>
-                  ),
-                  selector: (row) =>
-                    row?.jobExperienceScheduleDtos &&
-                      row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                      ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                      : "-",
-                  sortable: true,
-                  width: "8%",
-                },
+          {
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "9%",
+          },
 
-                {
-                  name: <span className="table-title">Applied date</span>,
-                  selector: (row) =>
-                    getTimezoneDateTime(
-                      moment(row?.candidateapplydatetime).format(
-                        "YYYY-MM-DD HH:MM:SS"
-                      ),
-                      "MM/DD/YYYY"
-                    ),
-
-                  ignoreRowClick: true,
-                  button: true,
-                  width: "10%",
-                },
-
-                {
-                  name: <span className="table-title">Pre-screen</span>,
-                  cell: (row) =>
-                    row.candidateprescreenstatus === "NA" ? (
-                      "-"
-                    ) : row.candidateprescreenstatus === "Pending" ? (
-                      <Button
-                        onClick={() => onPrescreenClick("pending", row)}
-                        color="link"
-                      >
-                        <u>Pending</u>
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => onPrescreenClick("completed", row)}
-                        color="link"
-                      >
-                        <u>Completed</u>
-                      </Button>
-                    ),
-                  ignoreRowClick: true,
-                  button: true,
-                  width: "9%",
-                },
-
-                {
-                  name: <span className="table-title">Interest</span>,
-                  cell: (row) => (
-                    <div className="list-btn-group">{renderButtons(row)}</div>
-                  ),
-                  ignoreRowClick: true,
-                  button: true,
-                  width: "15%",
-                },
-                {
-                  name: <span className="table-title">Action</span>,
-                  cell: (row) => <>{renderMenu(row)}</>,
-                  ignoreRowClick: true,
-                  allowOverflow: true,
-                  button: true,
-                  width: "8%",
-                },
-              ]
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => 
+              row?.isclosed === false ?(
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ): row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />
+                  Job Closed
+                </Button>
+              ) : null,
+            ignoreRowClick: true,
+            button: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "8%",
+          },
+        ]
   );
 
   const handleButtonClick = () => {

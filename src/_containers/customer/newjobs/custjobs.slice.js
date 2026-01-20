@@ -86,11 +86,21 @@ const custJobListSlice = createSlice({
       });
       state.jobList = modifiedJobList;
     },
+       // Added this to reset job list manually
+    clearJobList: (state) => {
+      state.jobList = [];
+      state.jobDetail = [];
+      state.totalRows = 0;
+      state.loading = false;
+      state.jdLoading = false;
+    },
   },
 
   extraReducers: {
     [getJobList.pending]: (state) => {
       state.loading = true;
+      state.jobList = [];
+      state.totalRows = 0;
     },
     [getJobList.fulfilled]: (state, action) => {
       state.loading = false;
@@ -115,7 +125,7 @@ const custJobListSlice = createSlice({
     },
   },
 });
-
+export const { clearJobList } = custJobListSlice.actions;
 // Export the actions and reducer
 export const custJobListActions = {
   ...custJobListSlice.actions,

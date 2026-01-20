@@ -79,11 +79,11 @@ export function JobList() {
         <Col md="12">
           <PageTitle heading="Open Jobs" icon={titlelogo} />
         </Col>
-        <JobFilter
+        {/* <JobFilter
           onFilter={(e) => onfliterData(e)}
           onSearch={(e) => onSearchData(e)}
           setPage={setPage}
-        />
+        /> */}
         <p className="mb-1 row-count">{JobList.totalRows} jobs</p>
         {JobList?.jobList?.length ? (
           <JobListing

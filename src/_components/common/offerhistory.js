@@ -50,7 +50,7 @@ export const OfferHistTable = (props) => {
 
   const returnOffer = (row, index) => {
     if (index === 0 && row?.isfinaloffer) {
-      return (
+      return row?.offerfilepath && row?.offerfilepath != "" && (
         <img
           src={finalOffer}
           alt="final offer"
@@ -61,7 +61,7 @@ export const OfferHistTable = (props) => {
         ></img>
       );
     } else if (index === 0 && props?.activeTab === "accepted") {
-      return (
+      return row?.offerfilepath && row?.offerfilepath != "" && (
         <img
           src={finalOffer}
           alt="final offer"
@@ -72,7 +72,7 @@ export const OfferHistTable = (props) => {
         ></img>
       );
     } else if (index === 0) {
-      return (
+      return row?.offerfilepath && row?.offerfilepath != "" && (
         <img
           src={currentOffer}
           alt="new offer"
@@ -83,7 +83,7 @@ export const OfferHistTable = (props) => {
         ></img>
       );
     } else {
-      return (
+      return row?.offerfilepath && row?.offerfilepath != "" && (
         <img
           src={previousOffer}
           alt="previous offer"
@@ -153,7 +153,7 @@ export const OfferHistTable = (props) => {
             data={props?.offerHistory}
             columns={columns(handleButtonClick)}
             persistTableHead
-            // pagination
+          // pagination
           />
         </Col>
       </Row>
