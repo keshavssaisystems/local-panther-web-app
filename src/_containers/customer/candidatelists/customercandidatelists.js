@@ -44,7 +44,7 @@ import cx from "classnames";
 import moment from "moment";
 import { getHiringMangerList } from "_store";
 
-import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES,GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import NewPageTitle from "../../../_components/common/newpagetitle";
 import PageTitle from "../../../_components/common/pagetitle";
 import { CommonFilters } from "../../../_components/common/commonFilters";
@@ -336,7 +336,7 @@ export default function CustomerCandidateLists(props) {
         // });
 
         dispatch(showSnackbar({
-          message:GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+          message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
           type: SNACKBAR_TYPES.ERROR,
           position: SNACKBAR_POSITION.TOP_CENTER,
           autoClose: true,
@@ -1388,6 +1388,7 @@ export default function CustomerCandidateLists(props) {
                           }
                           isStaffingFirm={isStaffingFirm}
                           offlineStatuses={offlineStatuses}
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
