@@ -707,7 +707,7 @@ export function App() {
                 <ATSGenericList isCompanyAdmin={true} entity="atscompany" />
               </PrivateRoute>
             }
-          />
+          /> 
           
            <Route
             path="/ats/atscontact"

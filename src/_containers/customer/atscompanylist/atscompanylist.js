@@ -8,7 +8,12 @@ import {
     Card,
     CardBody,
     FormGroup,
-    Input
+    Input,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+ 
 } from "reactstrap";
 import { atsActions } from "_store/ats.slice";
 import { fetchATSCompanyList } from "_store/ats.slice";
@@ -16,6 +21,7 @@ import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atscompanylist.css"; // add this import
 import Loader from "react-loaders";
+import AddClient from "./addclient";
 const ATSCompanyList = () => {
     console.log("ATSCompanyList component rendered");
     let isCompanyAdmin = true;
@@ -29,8 +35,8 @@ const ATSCompanyList = () => {
     console.log(data);
     const loading = useSelector((state) => state.ats?.loader || false);
 
-
-    
+    //add user
+    const [showAddUser, setShowAddUser] = useState(false);
 
     // pagination state
     const [currentPage, setCurrentPage] = useState(1); // 1-based
@@ -42,15 +48,17 @@ const ATSCompanyList = () => {
         setSearchData(text);
     };
    // fetch helper - requests server with paging params and updates local totalRows
-    const fetchData =async (page = 1, pageSize = perPage, status = 0, searchText = "") => {
+    const fetchData =async (page = 1, pageSize = perPage, status , searchText = "") => {
          try {
+               console.log(status);
                 const params = {
                 SearchText: searchText || "",
-                IsActive: status === 0 ? null : status,
+                IsActive: status ?? 3,
                 currentpage: page,
                 PageSize: pageSize,
                 };
                 const res = await dispatch(fetchATSCompanyList(params));
+                console.log(res);
                 const payload = res?.payload || {};
                 const total =
                 payload?.total ||
@@ -64,7 +72,7 @@ const ATSCompanyList = () => {
             catch (error) {
                     console.error("ATS Company list fetch failed", error);
             }
-};
+    };
 
     useEffect(() => {
         fetchData(1, perPage, statusFilter, searchData);
@@ -95,33 +103,39 @@ const ATSCompanyList = () => {
 
     let columns = [
     {
+        name: "ID",
+        selector: (row) => row.ID,
+        sortable: true
+    },
+    {
         name: "ATS Company ID",
-        selector: (row) => row.atscompanyid,
+        selector: (row) => row.ATS_Company_ID,
+        sortable: true
+    },
+    {
+        name: "ATS ",
+        selector: (row) => row.ATS || "-",
         sortable: true
     },
     {
         name: "Company Name",
-        selector: (row) => row.companyname,
+        selector: (row) => row.company_name,
+        sortable: true
+    },
+    
+    {
+        name: "Email",
+        selector: (row) => row.email || "-",
         sortable: true
     },
     {
-        name: "ATS Type",
-        selector: (row) => row.atstype || "-",
+        name: "Phone",
+        selector: (row) => row.phone_number || "-",
         sortable: true
     },
-    // {
-    //     name: "Email",
-    //     selector: (row) => row.email || "-",
-    //     sortable: true
-    // },
-    // {
-    //     name: "Phone",
-    //     selector: (row) => row.phonenumber || "-",
-    //     sortable: true
-    // },
     {
         name: "Status",
-        selector: (row) => row.isactive ? "Active" : "Inactive",
+        selector: (row) => row.is_active ? "Active" : "Inactive",
         sortable: true
     }
 ];
@@ -174,13 +188,22 @@ const ATSCompanyList = () => {
                                             defaultValue="Active"
                                             onChange={(e) => onStatusSelect(e.target.value)}
                                         >
-                                            <option value={0}>All status</option>
-                                            <option value={1}>Active</option>
-                                            <option value={2}>In-active</option>
+                                            <option value={Number(3)}>All status</option>
+                                            <option value={Number(1)}>Active</option>
+                                            <option value={Number(0)}>In-active</option>
                                         </Input>
                                     </FormGroup>
                                 </Col>
                                 <Col>
+                                    <Button
+                                      style={{
+                                                background: "#2f479b",
+                                                borderColor: "#545cd8",
+                                            }}
+                                            className="input-group-text float-end mt-1"
+                                            onClick={() => setShowAddUser(true)}
+                                     > Add User
+                                    </Button>
                                     <div
                                         className={cx(
                                             "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
@@ -235,6 +258,12 @@ const ATSCompanyList = () => {
                     </Card>
                 </Col>
             </Row>
+            <AddClient 
+                onClose={() => setShowAddUser(false)}
+                isOpen={showAddUser}
+                //onSubmit={handleAddUserSubmit}
+            />
+           
         </div>
     );
 };

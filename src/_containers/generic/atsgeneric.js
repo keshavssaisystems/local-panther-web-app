@@ -8,16 +8,19 @@ import {
     Card,
     CardBody,
     FormGroup,
-    Input
+    Input,
+    Button
+
 } from "reactstrap";
 
 import { fetchATSGenericList } from "_store/atsgeneric.slice";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
-import "./atsgeneric.css"; // add this import
+import "./atsgeneric.css"; 
 import Loader from "react-loaders";
 import { useLocation } from "react-router-dom";
-import { param } from "jquery";
+import AddClient from "_containers/customer/atscompanylist/addclient";
+
 const ATSGenericList = () => {
     console.log("ATS Hiring Contact List component rendered");
     let isCompanyAdmin = true;
@@ -53,6 +56,8 @@ const ATSGenericList = () => {
     };
     let entity = entityMap[path];
 
+    //add user
+    const [showAddClient, setShowAddClient] = useState(false);
 
     
     // pagination state
@@ -191,6 +196,18 @@ const ATSGenericList = () => {
                                      </FormGroup>
                                 </Col>
                                 <Col>
+                                     {path == "/ats/atscompany" && ( 
+                                        <Button 
+                                        style={{
+                                         background: "#2f479b",
+                                         borderColor: "#545cd8",
+                                        }}
+                                        className="input-group-text float-end mt-1"
+                                        color="primary" 
+                                        onClick={() => setShowAddClient(true)}
+                                        >
+                                         Add Client
+                                         </Button> )}
                                     <div
                                         className={cx(
                                             "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
@@ -247,6 +264,10 @@ const ATSGenericList = () => {
                     </Card>
                 </Col>
             </Row>
+            <AddClient 
+                isOpen={showAddClient}
+                onClose={() => setShowAddClient(false)}
+            />
         </div>
     );
 };
