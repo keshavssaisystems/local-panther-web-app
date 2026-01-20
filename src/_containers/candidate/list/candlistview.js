@@ -757,7 +757,7 @@ export const CandListView = (props) => {
             cell: (row) =>
               row?.jobOfferDtos?.length > 0 ? (
                 <>
-                  {row?.jobOfferDtos?.length === 2 && (
+                  {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={previousOffer}
@@ -771,7 +771,7 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === true && (
+                  {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={finalOffer}
@@ -786,7 +786,7 @@ export const CandListView = (props) => {
                     </>
                   )}
                   {row?.jobOfferDtos?.length === 1 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={currentOffer}
@@ -801,7 +801,7 @@ export const CandListView = (props) => {
                       </>
                     )}
                   {row?.jobOfferDtos?.length === 2 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={newOffer}
@@ -1002,7 +1002,7 @@ export const CandListView = (props) => {
             cell: (row) =>
               row?.jobOfferDtos?.length > 0 ? (
                 <>
-                  {row?.jobOfferDtos?.length === 2 && (
+                  {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={previousOffer}
@@ -1016,7 +1016,7 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === true && (
+                  {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={finalOffer}
@@ -1031,7 +1031,7 @@ export const CandListView = (props) => {
                     </>
                   )}
                   {row?.jobOfferDtos?.length === 1 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={currentOffer}
@@ -1046,7 +1046,7 @@ export const CandListView = (props) => {
                       </>
                     )}
                   {row?.jobOfferDtos?.length === 2 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={newOffer}
@@ -1252,7 +1252,7 @@ export const CandListView = (props) => {
             cell: (row) =>
               row?.jobOfferDtos?.length > 0 ? (
                 <>
-                  {row?.jobOfferDtos?.length === 2 && (
+                  {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={previousOffer}
@@ -1266,7 +1266,7 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === true && (
+                  {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                     <>
                       <img
                         src={finalOffer}
@@ -1281,7 +1281,7 @@ export const CandListView = (props) => {
                     </>
                   )}
                   {row?.jobOfferDtos?.length === 1 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={finalOffer}
@@ -1296,7 +1296,7 @@ export const CandListView = (props) => {
                       </>
                     )}
                   {row?.jobOfferDtos?.length === 2 &&
-                    row?.isfinaloffer === false && (
+                    row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={finalOffer}
