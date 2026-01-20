@@ -16,13 +16,10 @@ import {
 import { fetchATSGenericList } from "_store/atsgeneric.slice";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
-import "./atsgeneric.css"; // add this import
+import "./atsgeneric.css"; 
 import Loader from "react-loaders";
 import { useLocation } from "react-router-dom";
-import { param } from "jquery";
-
-//import AddUserModal from "./addusermodal";
-import AddUserModal from "_containers/customer/atscompanylist/addclient";
+import AddUserModal from "_containers/customer/atscompanylist/addusermodal";
 
 const ATSGenericList = () => {
     console.log("ATS Hiring Contact List component rendered");
@@ -270,7 +267,6 @@ const ATSGenericList = () => {
             <AddUserModal 
                 isOpen={showAddUser}
                 onClose={() => setShowAddUser(false)}
-                //onSubmit={handleAddUserSubmit}
             />
         </div>
     );

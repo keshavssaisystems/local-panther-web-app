@@ -700,23 +700,14 @@ export function App() {
               </PrivateRoute>
             }
           />
-          ATSCompanyList
            <Route
-            path="/ats/atscompanyy"
-            element={
-              <PrivateRoute>
-                <ATSCompanyList isCompanyAdmin={true} entity="atscompany" />
-              </PrivateRoute>
-            }
-          />
-           { <Route
             path="/ats/atscompany"
             element={
               <PrivateRoute>
                 <ATSGenericList isCompanyAdmin={true} entity="atscompany" />
               </PrivateRoute>
             }
-          /> }
+          /> 
           
            <Route
             path="/ats/atscontact"
