@@ -21,7 +21,7 @@ import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atscompanylist.css"; // add this import
 import Loader from "react-loaders";
-import AddUserModal from "./addclient"
+import AddClient from "./addclient";
 const ATSCompanyList = () => {
     console.log("ATSCompanyList component rendered");
     let isCompanyAdmin = true;
@@ -258,7 +258,7 @@ const ATSCompanyList = () => {
                     </Card>
                 </Col>
             </Row>
-            <AddUserModal 
+            <AddClient 
                 onClose={() => setShowAddUser(false)}
                 isOpen={showAddUser}
                 //onSubmit={handleAddUserSubmit}
