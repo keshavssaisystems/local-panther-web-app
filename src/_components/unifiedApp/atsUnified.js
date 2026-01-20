@@ -12,7 +12,7 @@ import ConfirmModal from "_components/modal/confirmModal";
 import atsintegrationIcon from '../../assets/utils/images/ats-integration.png';
 import { FaCheck, FaExternalLinkAlt, FaArrowRight } from "react-icons/fa";
 import {
-  BsBoxArrowRight
+    BsBoxArrowRight
 } from "react-icons/bs";
 
 // ATS descriptions mapping
@@ -49,6 +49,7 @@ export default function AtsUnified() {
     }, [dispatch]);
 
     useEffect(() => {
+        debugger;
         // Check if API response already has isconnected property (new API structure)
         // If configuredAtsList has items with isconnected, use it directly
         // Otherwise, merge with atstypeList (old logic)
@@ -81,7 +82,7 @@ export default function AtsUnified() {
     const getConfiguredAts = async () => {
         // Using new API: /api/V2/Get_Authorized_ATS_List
         await dispatch(atsActions.getAuthorizedATSList({ pagesize: 12, currentpage: 1 }));
-        
+
         // Old API kept for reference (commented out):
         // if (user && user.CompanyId) {
         //     await dispatch(atsActions.getCompanyATS({ companyId: user.CompanyId }));
@@ -89,17 +90,26 @@ export default function AtsUnified() {
     }
 
     const callUnifiedApp = (ats) => {
-        if (ats?.connectionid) {
+        debugger;
+        if (ats?.isConnected || ats?.isconnected) {
             return;
         }
-        if (configuredAtsList.length > 0) {
+        // // if (configuredAtsList.length > 0) {
+        // //     dispatch(showSnackbar({
+        // //         message: 'You can configure only one ATS at a time.',
+        // //         type: SNACKBAR_TYPES.INFO, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 2000, maxWidth: 500,
+        // //     }));
+        // //     return;
+        // // }
+        if (configuredAtsList.some(item => item.isconnected === 1)) {
             dispatch(showSnackbar({
                 message: 'You can configure only one ATS at a time.',
                 type: SNACKBAR_TYPES.INFO, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 2000, maxWidth: 500,
             }));
             return;
         }
-        const authUrl = createAuthLink(ats.atstype1?.toLowerCase());
+
+        const authUrl = createAuthLink(ats.atstype.toLowerCase());
         window.location.href = authUrl;
     }
 
@@ -133,11 +143,11 @@ export default function AtsUnified() {
 
     const getCreatedDate = (connectionData) => {
         if (!connectionData) return null;
-        const date = connectionData.createddate || 
-                     connectionData.createdDate ||
-                     connectionData.createddatetime ||
-                     connectionData.createdDateTime ||
-                     null;
+        const date = connectionData.createddate ||
+            connectionData.createdDate ||
+            connectionData.createddatetime ||
+            connectionData.createdDateTime ||
+            null;
         // Handle 0, null, undefined, empty string cases
         if (!date || date === 0 || date === '0' || date === '') return null;
         return date;
@@ -149,7 +159,7 @@ export default function AtsUnified() {
             <div className="ats-header">
                 <h2 className="ats-title">Applicant Tracking Systems</h2>
                 <p className="ats-description">
-                    Connect your favorite ATS to automatically sync candidate data and job postings. 
+                    Connect your favorite ATS to automatically sync candidate data and job postings.
                     We use secure OAuth2 to ensure your data stays protected.
                 </p>
             </div>
@@ -161,25 +171,25 @@ export default function AtsUnified() {
                     const atsName = ats.atstype || 'Unknown';
                     const logoUrl = ats.logourl || `https://api.unified.to/docs/images/${atsName.toLowerCase()}.png`;
                     const description = ats.description || getAtsDescription(atsName, null);
-                    
+
                     // Check isconnected property - handle 1/0 values (1 = true, 0 = false)
                     const isConnected = ats.isconnected === 1 || ats.isconnected === true;
-                    
+
                     // Use createddate directly from API
-                    const formattedCreatedDate = (ats.createddate && ats.createddate !== '0' && ats.createddate !== 0) 
-                        ? formatCreatedDate(ats.createddate) 
+                    const formattedCreatedDate = (ats.createddate && ats.createddate !== '0' && ats.createddate !== 0)
+                        ? formatCreatedDate(ats.createddate)
                         : null;
-                    
+
                     // Determine button properties based on isconnected
                     const buttonText = isConnected ? 'Disconnect Account' : 'Connect Account';
                     const buttonClass = isConnected ? 'disconnect' : 'connect';
                     const ButtonIcon = isConnected ? BsBoxArrowRight : FaExternalLinkAlt;
-                    const buttonClickHandler = isConnected 
+                    const buttonClickHandler = isConnected
                         ? (e) => {
                             e.stopPropagation();
                             e.preventDefault();
                             handleDeleteAts(ats.atsauthorizationid);
-                          }
+                        }
                         : () => callUnifiedApp(ats);
 
                     // Get first letter of ATS name for fallback
