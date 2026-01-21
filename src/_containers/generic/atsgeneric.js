@@ -267,6 +267,7 @@ const ATSGenericList = () => {
             <AddClient 
                 isOpen={showAddClient}
                 onClose={() => setShowAddClient(false)}
+                onSuccess={() => fetchData(currentPage, perPage, statusFilter, searchData)}
             />
         </div>
     );
