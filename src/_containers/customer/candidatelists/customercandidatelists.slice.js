@@ -120,11 +120,11 @@ function createExtraActions() {
             recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}${interviewStatusId ? "&interviewStatusId=" + interviewStatusId : ""}${interviewScheduleDateStart ? "&interviewScheduleDateStart=" + interviewScheduleDateStart : ""}${interviewScheduleDateEnd ? "&interviewScheduleDateEnd=" + interviewScheduleDateEnd : ""}`;
             break;
           case 3:
-            isCandidate = true;
+            isCandidate = false;
             recommendedStatus = `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
             break;
           case 5:
-            isCandidate = true;
+            isCandidate = false;
             recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
             break;
           case 7:
