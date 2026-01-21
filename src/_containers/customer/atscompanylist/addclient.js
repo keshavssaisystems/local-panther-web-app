@@ -114,9 +114,9 @@ const AddClient = ({ isOpen, onClose, url, onSuccess }) => {
         body,
         config
       );
-      
-      console.log("API response:", response.data);
-      if (onSuccess) onSuccess();
+      if (response.data?.statusCode === 200) {
+        onSuccess();
+      }
       handleClose();
       if (response.data?.statusCode === 200) {
         dispatch(
