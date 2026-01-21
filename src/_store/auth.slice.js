@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { history, fetchWrapper } from "_helpers";
 import jwtDecode from "jwt-decode";
+import { appLogout } from "./app.actions";
 // create slice name
 const name = "auth";
 
@@ -86,9 +87,19 @@ export const getShareJobDetails = createAsyncThunk(
 
 export const logoutThunk = createAsyncThunk(
   `${name}/logoutThunk`,
-  async (userLoginInfoId) => {
-    const LOGOUT_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/Logout/${userLoginInfoId}`;
-    return await fetchWrapper.put(LOGOUT_END_POINT);
+  async (userLoginInfoId, thunkAPI) => {
+    try {
+      const LOGOUT_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/Logout/${userLoginInfoId}`;
+      await fetchWrapper.put(LOGOUT_END_POINT);
+    } catch (error) {
+      // even if API fails, we still logout locally
+    }
+
+    // ✅ CLEAR redux store
+    thunkAPI.dispatch(appLogout());
+
+    // optional: return something
+    return true;
   }
 );
 
