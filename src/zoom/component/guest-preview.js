@@ -69,7 +69,7 @@ export const GuestPreview = (props) => {
   useEffect(() => {
     if (props?.interviewSessionAccessData && getValues("email") !== "") {
       if (props?.interviewSessionAccessData && props?.interviewSessionAccessData?.role?.toLowerCase() === "host"
-        && props?.interviewSessionAccessData?.requireLogin) {
+        && props?.interviewSessionAccessData?.requirelogin === true) {
         navigate("/login", {
           state: {
             redirect: location.pathname,
@@ -78,9 +78,16 @@ export const GuestPreview = (props) => {
         });
         return;
       }
-      else {
+      else if (props?.interviewSessionAccessData && props?.interviewSessionAccessData?.canjoin === true) {
         showSweetAlert({
           title: "The host hasn’t started the meeting yet. Please wait",
+          type: "error",
+        });
+        return;
+      }
+      else {
+        showSweetAlert({
+          title: "You’re not authorized to join this meeting.",
           type: "error",
         });
       }
