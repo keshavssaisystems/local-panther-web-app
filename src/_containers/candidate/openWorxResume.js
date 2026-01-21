@@ -353,7 +353,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                         {item.certificationname}
                                     </h6>
                                     <p className="small text-secondary mb-1">
-                                        {getDate(item)} {item.isexpired ? "(Expired)" : ""}
+                                        {getDate(item)} {item.isexpired === false ? "(Expired)" : ""}
                                     </p>
                                     {item.description && item.description !== "" ? (
                                         <><h6 className="small fw-medium text-dark mb-1">
