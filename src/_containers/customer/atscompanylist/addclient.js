@@ -115,10 +115,8 @@ const AddClient = ({ isOpen, onClose, url, onSuccess }) => {
         config
       );
       if (response.data?.statusCode === 200) {
-        onSuccess();
-      }
-      handleClose();
-      if (response.data?.statusCode === 200) {
+         onSuccess();
+         handleClose();
         dispatch(
           showSnackbar({
             message: response.data.message,
