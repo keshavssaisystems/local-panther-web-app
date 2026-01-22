@@ -240,7 +240,7 @@ export function Login() {
           })
         );
       }
-      console.log("Token Gen", token);
+      // console.log("Token Gen", token);
       // Send this token  to server ( db)
     } else {
       console.log("You denied for the notification");
@@ -315,9 +315,10 @@ export function Login() {
         localStorage.setItem("publicip", data.ip);
       }
       if (permission === "granted") {
+        let token = "";
         // Generate Token
         try {
-          const token = await messaging?.getToken({
+          token = await messaging?.getToken({
             vapidKey:
               "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
           });
