@@ -177,29 +177,33 @@ export function Login() {
     }
   }, [redirectUrl]);
 
-  function onSubmit(payload) {
-    firebasemessaging(payload);
-  }
-  const firebasemessaging = async (payload) => {
-    let permission = "denied";
+  const onSubmit = async (payload) => {
+    let permission = 'default';
     try {
+
       if ('Notification' in window) {
-        permission = await Notification?.requestPermission();
+        // MUST be synchronous to the click
+        if (Notification.permission === 'default') {
+          permission = await Notification.requestPermission();
+        } else {
+          permission = Notification.permission;
+        }
       }
     } catch (e) { console.log(e) }
-
-    let data = await getPublicIP();
-    if (data?.ip) {
-      localStorage.setItem("publicip", data.ip);
-    }
+    firebasemessaging(permission, payload);
+  }
+  const firebasemessaging = async (permission, payload) => {
     if (permission === "granted") {
       const registration = await navigator.serviceWorker.ready;
       // Generate Token
-      const token = await messaging?.getToken({
-        vapidKey: "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
-        serviceWorkerRegistration: registration,
-      });
-      payload.firebasetoken = token;
+      try {
+        const token = await messaging?.getToken({
+          vapidKey: "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+          serviceWorkerRegistration: registration,
+        });
+        payload.firebasetoken = token;
+      } catch { }
+
       let res = await dispatch(authActions.loginThunk(payload));
 
       if (res.payload && companyName) {
@@ -236,9 +240,9 @@ export function Login() {
           })
         );
       }
-      console.log("Token Gen", token);
+      // console.log("Token Gen", token);
       // Send this token  to server ( db)
-    } else if (permission === "denied") {
+    } else {
       console.log("You denied for the notification");
       let res = await dispatch(authActions.loginThunk(payload));
       if (res.payload && companyName) {
@@ -294,23 +298,34 @@ export function Login() {
     }
 
     if (!isModal) {
-      let permission = "denied";
+      let permission = 'default';
       try {
         if ('Notification' in window) {
-          permission = await Notification?.requestPermission();
+          // MUST be synchronous to the click
+          if (Notification.permission === 'default') {
+            permission = await Notification.requestPermission();
+          } else {
+            permission = Notification.permission;
+          }
         }
       } catch (e) { console.log(e) }
+
       let data = await getPublicIP();
       if (data?.ip) {
         localStorage.setItem("publicip", data.ip);
       }
       if (permission === "granted") {
+        let token = "";
         // Generate Token
-        const token = await messaging?.getToken({
-          vapidKey:
-            "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
-        });
-        payload.firebasetoken = token;
+        try {
+          token = await messaging?.getToken({
+            vapidKey:
+              "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+          });
+          payload.firebasetoken = token;
+
+        } catch { }
+
       } else if (permission === "denied") {
         console.log("You denied for the notification");
       }
