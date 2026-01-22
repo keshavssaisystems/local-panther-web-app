@@ -271,7 +271,7 @@ export default function ZoomVideoScreen(props) {
       );
       if (ind2 > -1) {
         showSweetAlert({
-          title: "Host denied permission for the meeting!!",
+          title: "Access denied. The host did not grant permission.",
           type: "error",
         });
       }
