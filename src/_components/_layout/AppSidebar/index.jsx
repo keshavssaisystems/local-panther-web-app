@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import "./appsidebar.scss";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
-
+import { useDispatch } from "react-redux";
 import sideBarIcons from "../../../assets/utils/sidebarimages";
+import { clearFiltersOnPageLoad } from "_store/commonCustFiltersSlice";
 
 export const AppSidebar = (props) => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const AppSidebar = (props) => {
   const menuDtoList = useSelector((x) => x?.auth?.menuList);
 
   const [menuItems, setMenuItems] = useState([]);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     if (menuDtoList) {
       const menuItems = menuDtoList?.map(
@@ -59,6 +60,7 @@ export const AppSidebar = (props) => {
     if (pathname.startsWith("/customer-candidate-")) {
       return "/candidate-list"; // This should match the itemId of your sidebar menu
     }
+    dispatch(clearFiltersOnPageLoad());
     return pathname;
   };
 
