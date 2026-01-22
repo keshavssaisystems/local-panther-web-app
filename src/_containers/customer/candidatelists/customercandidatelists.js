@@ -464,9 +464,9 @@ export default function CustomerCandidateLists(props) {
     if (id && jobPostedbyId) {
       navigate(`/candidate-list`);
     }
-    // else {
-    //   onSearchJob();
-    // }
+    else {
+      onSearchJob();
+    }
   }
 
   const searchCandidate = async () => {
@@ -698,6 +698,14 @@ export default function CustomerCandidateLists(props) {
     }
   }
 
+  const onClearFilters = async () => {
+    if (id && jobPostedbyId) {
+      navigate(`/candidate-list`);
+    }
+    else {
+      onSearchJob();
+    }
+  }
 
   return (
     <>
@@ -721,8 +729,9 @@ export default function CustomerCandidateLists(props) {
         interviewFeedbackStatus={interviewFeedbackStatus}
         showInterviewFeedbackStatus={showInterviewFeedbackStatusFilter}
         showFromDateToDate={showFromToDateFilter}
-        showSearch={showSearch}
-        showClearButtonAtEnd={showClearButtonAtEnd}
+        showSearch={true}
+        showClearButtonAtEnd={true}
+        onClearFilters={() => onClearFilters()}
       />
       <Row className="customercandidatelist">
         <div

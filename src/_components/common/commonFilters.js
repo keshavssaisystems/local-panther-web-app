@@ -38,6 +38,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     interviewFeedbackStatus,
     showInterviewFeedbackStatus = false,
     showFromDateToDate = false,
+    onClearFilters
 }) => {
     const dispatch = useDispatch();
 
@@ -90,7 +91,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     const handleClearFilters = (e) => {
         dispatch(clearFilters());
         e.preventDefault();
-        if (onSearchData) onSearchData();
+        if (onClearFilters) onClearFilters();
     };
 
     // 🔹 Submit (search)

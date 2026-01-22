@@ -14,7 +14,7 @@ import { NoDataFound } from "_components/common/nodatafound";
 import moment from "moment/moment";
 import { analytics } from "../../../firebase/index";
 import { CommonFilters } from "../../../_components/common/commonFilters";
-import { setJobStatus, setHiringManagerId } from "_store/commonCustFiltersSlice";
+import { setJobStatus, setHiringManagerId, setSearchText } from "_store/commonCustFiltersSlice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 
@@ -25,14 +25,16 @@ export default function CustJobList() {
   // const [searchText, setSearchText] = useState("");
   // const [jobStatus, setJobStatus] = useState("");
   // const [hiringManagerId, setHiringMangerId] = useState("");
-  const { selectedOpt, searchText, jobStatus, hiringManagerId } = useSelector(
-    (state) => state.commonCustFilters
-  );
+
+
+  const userId = localStorage.getItem("userId");
+  const companyId = localStorage.getItem("companyid");
+  const userDetails = JSON.parse(localStorage.getItem("userDetails"));
   const dispatch = useDispatch();
   const getCompanyDetails = async function () {
     await dispatch(
       createjobActions.getCustomerDetailsThunk(
-        JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+        userDetails?.InternalUserId
       )
     );
   };
@@ -50,15 +52,17 @@ export default function CustJobList() {
     current++;
   }
 
+  const { selectedOpt, searchText, jobStatus, hiringManagerId } = useSelector(
+    (state) => state.commonCustFilters
+  );
+
   useEffect(() => {
-    dispatch(createjobActions.getCustomerDetailsThunk(JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId));
+    dispatch(createjobActions.getCustomerDetailsThunk(userDetails?.InternalUserId));
     dispatch(dropdownActions.getCloseJobReasonListThunk());
   }, [dispatch])
 
   useEffect(() => {
     dispatch(custJobListActions.clearJobList());
-
-    const userId = localStorage.getItem("userId");
 
     // dispatch(dropdownActions.getCloseJobReasonListThunk());
     if (userId) {
@@ -66,14 +70,14 @@ export default function CustJobList() {
         pageSize: custListPageSize,
         pageNumber: 1,
         searchText: searchText ?? "",
-        companyId: localStorage.getItem("companyid"),
+        companyId: companyId,
         searchType: selectedOpt,
         jobStatus: jobStatus,
         hiringManagerId: hiringManagerId || userId,
       };
       dispatch(custJobListActions.getJobList(filterObj));
     }
-  }, [JSON.stringify({ dispatch, jobStatus, hiringManagerId })]);
+  }, [jobStatus, hiringManagerId]);
 
   // useEffect(() => {
   //   //setHiringMangerId(localStorage.getItem("userId"));
@@ -100,7 +104,7 @@ export default function CustJobList() {
       pageSize: custListPageSize,
       pageNumber: page,
       searchText: searchText ?? "",
-      companyId: localStorage.getItem("companyid"),
+      companyId: companyId,
       searchType: selectedOpt,
       jobStatus: jobStatus,
       hiringManagerId: hiringManagerId,
@@ -125,7 +129,7 @@ export default function CustJobList() {
   const publishNewJob = async function (event) {
     let jobId = event;
     let payload = {
-      currentUserId: localStorage.getItem("userId"),
+      currentUserId: userId,
     };
     let res = await dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
 
@@ -165,7 +169,7 @@ export default function CustJobList() {
     let jobId = event.jobId;
     let payload = {
       closedjobreasonid: event.closedjobreasonid,
-      currentUserId: localStorage.getItem("userId"),
+      currentUserId: userId,
     };
     dispatch(createjobActions.getCloseJobThunk({ jobId, payload }));
     dispatch(
