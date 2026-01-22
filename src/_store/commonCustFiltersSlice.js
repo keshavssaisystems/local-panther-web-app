@@ -1,6 +1,5 @@
 // _store/commonCustFiltersSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { set } from "lodash";
 
 const initialState = {
     selectedOpt: "JobTitle",
@@ -50,6 +49,14 @@ const commonCustFiltersSlice = createSlice({
             state.interviewFeedbackStatusId = "";
             state.startDate = null;
             state.endDate = null;
+        },
+        clearFiltersOnPageLoad: (state) => {
+            state.searchText = "";
+            state.jobStatus = "";
+            state.placeHolder = "Search job title";
+            state.interviewFeedbackStatusId = "";
+            state.startDate = null;
+            state.endDate = null;
         }
     }
 });
@@ -64,7 +71,8 @@ export const {
     setInterviewStatusId,
     setStartDate,
     setEndDate,
-    setInterviewFeedbackStatusId
+    setInterviewFeedbackStatusId,
+    clearFiltersOnPageLoad
 } = commonCustFiltersSlice.actions;
 
 export default commonCustFiltersSlice.reducer;
