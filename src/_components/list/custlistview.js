@@ -538,12 +538,22 @@ export const CustCandidateListView = (props) => {
               <Button
                 size="sm"
                 title="Schedule Interview"
-                onClick={() => onRescheduleInterview(row)}
+                onClick={() => onScheduleClick(row)}
                 className="btn-icon"
                 color="alternate"
               >
                 <img src={customerIcons.list_schedule} alt="list reject"></img>
               </Button>
+              {/* <Button
+                // outline
+                size="sm"
+                title="Schedule"
+                className="btn-icon"
+                color="alternate"
+                onClick={() => onScheduleClick(row)}
+              >
+                <img src={customerIcons.list_schedule} alt="list maybe"></img>
+              </Button> */}
               {/* <Button
                 size="sm"
                 title="Place"
