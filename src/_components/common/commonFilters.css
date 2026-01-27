@@ -1,0 +1,225 @@
+/* ...existing code... */
+
+/* Container */
+.filter-toolbar .card-body {
+  background: white;
+  border-radius: 0px;
+  border: 1px solid white;
+  padding: 12px 14px;
+}
+
+/* Outer layout */
+.filter-toolbar-inner {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Left label */
+.filter-label {
+  font-weight: 600;
+  color: #222;
+  font-size: 15px;
+  min-width: 88px;
+  flex: 0 0 auto;
+}
+
+/* Controls take remaining space */
+.filter-controls {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+/* Row inside controls */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Default input/select appearance */
+.filter-select,
+.search-dropdown,
+.filter-search-input,
+.filter-search-btn {
+  height: 44px;
+  min-height: 44px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #222;
+  background: #fff;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #dfe6f5;
+  box-shadow: none;
+}
+
+/* Make selects' text visible */
+.filter-select,
+.search-dropdown {
+  color: #222;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Search group layout */
+.filter-search-group1 {
+  display: flex;
+  gap: 0px;
+  align-items: center;
+}
+
+/* Make search input expand */
+.filter-search-input {
+  flex: 1 1 auto;
+  min-width: 160px;
+}
+
+/* Search button */
+.filter-search-btn {
+  min-width: 96px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Clear Filters area */
+.filter-actions1 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Clear Filters styling */
+.clear-filters {
+  color: #2d3a8c;
+  text-decoration: underline;
+  padding-left: 0;
+  font-size: 14px;
+}
+
+/* spacing for small column that holds clear filters */
+.filter-row > .text-md-start {
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive breakpoints */
+
+/* Mobile: stack all controls vertically */
+@media (max-width: 575.98px) {
+  .filter-toolbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-row {
+    gap: 10px;
+  }
+  .filter-label {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  .filter-row > [class*="col-"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .filter-search-group1 {
+    gap: 6px;
+  }
+}
+
+/* Tablet: two rows if needed, make search wider */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .filter-toolbar-inner {
+    align-items: center;
+  }
+  .filter-row > [class*="col-"] {
+    flex: 1 1 48%;
+    max-width: 48%;
+  }
+  /* Keep search full when needed */
+  .filter-row > [class*="col-"]:last-child {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .filter-search-input {
+    min-width: 240px;
+  }
+}
+
+/* Desktop: use fixed widths to match screenshot proportions */
+@media (min-width: 992px) {
+  .filter-row > [class*="col-"]:nth-child(1) { /* Hiring manager */
+    flex: 0 0 270px;
+    max-width: 270px;
+  }
+  .filter-row > [class*="col-"]:nth-child(2) { /* Job type */
+    flex: 0 0 220px;
+    max-width: 220px;
+  }
+  .filter-row > [class*="col-"]:nth-child(3) { /* Clear filters area */
+    flex: 0 0 150px;
+    max-width: 150px;
+  }
+  .filter-row > [class*="col-"]:nth-child(4) { /* Search */
+    flex: 1 1 auto;
+    max-width: calc(100% - 270px - 220px - 150px - 48px);
+  }
+  .filter-search-input {
+    min-width: 380px;
+  }
+}
+
+/* Visual polish */
+.filter-toolbar .card-body .filter-search-input::placeholder {
+  color: #9aa0a6;
+}
+
+/* Fix for select showing blank when a value exists:
+   ensure the option text color is inherited and not transparent */
+.filter-select option,
+.search-dropdown option {
+  color: #222;
+}
+
+/* ...existing code... */
+/* Ensure desktop search input matches Hiring Manager width (270px) */
+@media (min-width: 992px) {
+  .filter-search-input {
+    flex: 0 0 270px;
+    max-width: 270px;
+    min-width: 270px;
+  }
+
+  /* keep the select and button compact and prevent overflow */
+  .filter-search-group1 .search-dropdown {
+    flex: 0 0 120px;
+    max-width: 120px;
+  }
+  .filter-search-group1 .filter-search-btn {
+    flex: 0 0 96px;
+    max-width: 96px;
+  }
+
+  /* Make sure the whole search group aligns and doesn't stretch the column */
+  .filter-row > [class*="col-"]:nth-child(4) .filter-search-group1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+}
+
+/* on tablets keep input a bit smaller but consistent */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .filter-search-input {
+    flex: 0 0 220px;
+    max-width: 220px;
+    min-width: 160px;
+  }
+}

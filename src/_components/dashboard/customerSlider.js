@@ -74,7 +74,7 @@ export function CustomerSlider({ data }) {
     if (mode === "video") {
       if (isBefore(data)) {
         dispatch(showSnackbar({
-          message: "You can join the interview before 15 minutes of the scheduled time.",
+          message: "You can join the interview 15 minutes before the scheduled time.",
           type: SNACKBAR_TYPES.WARNING,
           position: SNACKBAR_POSITION.TOP_CENTER,
           autoClose: true,

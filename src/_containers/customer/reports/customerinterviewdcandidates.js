@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Input,
@@ -48,7 +48,8 @@ import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import "./customerreport.scss";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { analytics } from "../../../firebase/index";
-
+import AsyncSelect from "react-select/async";
+import debounce from "lodash/debounce";
 export function CustomerReportInterviewedCandidates() {
   const dispatch = useDispatch();
 
@@ -62,7 +63,7 @@ export function CustomerReportInterviewedCandidates() {
   const [showJDModal, setShowJDModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
-
+  const [jobSelected, setJobSelected] = useState(null);
   const interviewedCandidateList = useSelector(
     (state) => state?.customerReportReducer?.interviewedCandidateList
   );
@@ -87,13 +88,13 @@ export function CustomerReportInterviewedCandidates() {
           Title: data.jobtitle,
           "Interviewed date": data.scheduledate
             ? getTimezoneDateTime(
-                moment(
-                  moment(data.scheduledate).format("YYYY-MM-DD") +
-                    " " +
-                    data.starttime
-                ).format("MM/DD/YYYY hh:mm a"),
-                "MM/DD/YYYY hh:mm a"
-              )
+              moment(
+                moment(data.scheduledate).format("YYYY-MM-DD") +
+                " " +
+                data.starttime
+              ).format("MM/DD/YYYY hh:mm a"),
+              "MM/DD/YYYY hh:mm a"
+            )
             : "",
           Interviewers: data.intervieweremailids,
           "Interview mode": data.format,
@@ -146,12 +147,48 @@ export function CustomerReportInterviewedCandidates() {
     });
   };
 
+
+  const debouncedFetch = React.useMemo(
+    () =>
+      debounce((inputValue, callback) => {
+        dispatch(getJobDropdown(inputValue)).then((res) => {
+          const data = res?.payload?.data || [];
+          const options = data.map((j) => ({
+            label: j.jobtitle || j.name,
+            value: j.jobid || j.id,
+            jobid: j.jobid || j.id,
+          }));
+          callback(options);
+        });
+      }, 300),
+    [dispatch]
+  );
+
+  const loadJobOptions = (inputValue) =>
+    new Promise((resolve) => debouncedFetch(inputValue, resolve));
+
+  const custJobSelectStyles = {
+    menuPortal: (base) => ({ ...base, zIndex: 9999, borderRadius: 0 }),
+    menu: (base) => ({ ...base, borderRadius: 0 }),
+    menuList: (base) => ({ ...base, borderRadius: 0 }),
+    control: (base, state) => ({
+      ...base,
+      minHeight: "38px",
+      height: "38px",
+      boxShadow: state.isFocused ? base.boxShadow : "none",
+      borderRadius: 0,
+    }),
+    valueContainer: (base) => ({ ...base, height: "38px", padding: "0 8px" }),
+    input: (base) => ({ ...base, margin: 0, padding: 0 }),
+    indicatorsContainer: (base) => ({ ...base, height: "38px" }),
+  };
   const onSubmitClear = () => {
     setFilter({});
     setStartDate(null);
     setEndDate(null);
     setCandidateId("");
     setJobId("");
+    setJobSelected(null);
     onGetCustReportIVDCandList({});
   };
 
@@ -239,13 +276,13 @@ export function CustomerReportInterviewedCandidates() {
           title={
             row.scheduledate
               ? getTimezoneDateTime(
-                  moment(
-                    moment(row.scheduledate).format("YYYY-MM-DD") +
-                      " " +
-                      row.starttime
-                  ).format("MM/DD/YYYY hh:mm a"),
-                  "MM/DD/YYYY hh:mm a"
-                )
+                moment(
+                  moment(row.scheduledate).format("YYYY-MM-DD") +
+                  " " +
+                  row.starttime
+                ).format("MM/DD/YYYY hh:mm a"),
+                "MM/DD/YYYY hh:mm a"
+              )
               : ""
           }
         >
@@ -255,13 +292,13 @@ export function CustomerReportInterviewedCandidates() {
           >
             {row.scheduledate
               ? getTimezoneDateTime(
-                  moment(
-                    moment(row.scheduledate).format("YYYY-MM-DD") +
-                      " " +
-                      row.starttime
-                  ).format("MM/DD/YYYY hh:mm a"),
-                  "MM/DD/YYYY hh:mm a"
-                )
+                moment(
+                  moment(row.scheduledate).format("YYYY-MM-DD") +
+                  " " +
+                  row.starttime
+                ).format("MM/DD/YYYY hh:mm a"),
+                "MM/DD/YYYY hh:mm a"
+              )
               : ""}
           </Button>
         </span>
@@ -270,13 +307,13 @@ export function CustomerReportInterviewedCandidates() {
       selector: (row) =>
         row.scheduledate
           ? getTimezoneDateTime(
-              moment(
-                moment(row.scheduledate).format("YYYY-MM-DD") +
-                  " " +
-                  row.starttime
-              ).format("MM/DD/YYYY hh:mm a"),
-              "MM/DD/YYYY hh:mm a"
-            )
+            moment(
+              moment(row.scheduledate).format("YYYY-MM-DD") +
+              " " +
+              row.starttime
+            ).format("MM/DD/YYYY hh:mm a"),
+            "MM/DD/YYYY hh:mm a"
+          )
           : "",
       minWidth: "200px",
     },
@@ -400,28 +437,28 @@ export function CustomerReportInterviewedCandidates() {
                 </Col>
                 <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
-                    <Input
-                      type="select"
-                      value={jobId}
-                      name="jobid"
-                      id="jobid"
-                      placeholder="Job Id"
-                      onChange={(e) => {
-                        handleChange("jobid", e.target.value);
-                        setJobId(e.target.value);
+                    <AsyncSelect
+                      cacheOptions
+                      defaultOptions={(jobDropDownList || []).map((j) => ({
+                        label: j.jobtitle,
+                        value: j.jobid,
+                        jobid: j.jobid,
+                      }))}
+                      loadOptions={loadJobOptions}
+                      className="cust-job-autosuggest"
+                      classNamePrefix="react-select"
+                      placeholder="Search job"
+                      onChange={(selected) => {
+                        handleChange("jobid", selected ? selected.jobid : null);
+                        setJobId(selected ? selected.jobid : null);
+                        setJobSelected(selected);
                       }}
-                    >
-                      <option value={""}>Select a job</option>
-                      {jobDropDownList?.length > 0 ? (
-                        jobDropDownList.map((data) => (
-                          <option value={data.jobid} key={data.jobid}>
-                            {data.jobtitle}
-                          </option>
-                        ))
-                      ) : (
-                        <></>
-                      )}
-                    </Input>
+                      value={jobSelected}
+                      menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+                      menuPosition="fixed"
+                      menuPlacement="auto"
+                      styles={custJobSelectStyles}
+                    />
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="4" sm="12" sx="12">

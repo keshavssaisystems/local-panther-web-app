@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -34,8 +34,13 @@ import { getPublicIP, detectInputType } from "_helpers/helper";
 import { VerifyEmailPhoneOTPModal } from "_components/modal/verifyEmailPhoneOTP";
 
 import "./login.scss";
+import { use } from "react";
 export function Login() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const emailFromState = location.state?.email || "";
+  const redirectUrl = location.state?.redirect || "/";
+
 
   const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
@@ -88,7 +93,10 @@ export function Login() {
       return;
     }
     if (authUser) {
-      if (authUser) {
+      if (redirectUrl) {
+        history.navigate(redirectUrl);
+      }
+      else if (authUser) {
         history.navigate("/");
       } else {
         setError(true);
@@ -151,33 +159,51 @@ export function Login() {
   };
 
   // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState, getValues } = useForm(formOptions);
+  const { register, handleSubmit, formState, getValues, setValue } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
-  function onSubmit(payload) {
-    firebasemessaging(payload);
-  }
-  const firebasemessaging = async (payload) => {
-    let permission = "denied";
+  useEffect(() => {
+    if (emailFromState) {
+      setValue("email", emailFromState); // ✅ prefill
+    }
+  }, [emailFromState, setValue]);
+
+  useEffect(() => {
+    if (redirectUrl) {
+      // history.location = { state: redirectUrl };
+      // history.push("/login", {
+      //   redirect: "/video-screen/340-923-13692"
+      // });
+    }
+  }, [redirectUrl]);
+
+  const onSubmit = async (payload) => {
+    let permission = 'default';
     try {
+
       if ('Notification' in window) {
-        permission = await Notification?.requestPermission();
+        // MUST be synchronous to the click
+        if (Notification.permission === 'default') {
+          permission = await Notification.requestPermission();
+        } else {
+          permission = Notification.permission;
+        }
       }
     } catch (e) { console.log(e) }
-
-    let data = await getPublicIP();
-    if (data?.ip) {
-      localStorage.setItem("publicip", data.ip);
-    }
+    firebasemessaging(permission, payload);
+  }
+  const firebasemessaging = async (permission, payload) => {
     if (permission === "granted") {
       const registration = await navigator.serviceWorker.ready;
       // Generate Token
-      const token = await messaging?.getToken({
-        vapidKey:
-          "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
-        serviceWorkerRegistration: registration,
-      });
-      payload.firebasetoken = token;
+      try {
+        const token = await messaging?.getToken({
+          vapidKey: "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+          serviceWorkerRegistration: registration,
+        });
+        payload.firebasetoken = token;
+      } catch { }
+
       let res = await dispatch(authActions.loginThunk(payload));
 
       if (res.payload && companyName) {
@@ -214,9 +240,9 @@ export function Login() {
           })
         );
       }
-      console.log("Token Gen", token);
+      // console.log("Token Gen", token);
       // Send this token  to server ( db)
-    } else if (permission === "denied") {
+    } else {
       console.log("You denied for the notification");
       let res = await dispatch(authActions.loginThunk(payload));
       if (res.payload && companyName) {
@@ -272,23 +298,34 @@ export function Login() {
     }
 
     if (!isModal) {
-      let permission = "denied";
+      let permission = 'default';
       try {
         if ('Notification' in window) {
-          permission = await Notification?.requestPermission();
+          // MUST be synchronous to the click
+          if (Notification.permission === 'default') {
+            permission = await Notification.requestPermission();
+          } else {
+            permission = Notification.permission;
+          }
         }
       } catch (e) { console.log(e) }
+
       let data = await getPublicIP();
       if (data?.ip) {
         localStorage.setItem("publicip", data.ip);
       }
       if (permission === "granted") {
+        let token = "";
         // Generate Token
-        const token = await messaging?.getToken({
-          vapidKey:
-            "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
-        });
-        payload.firebasetoken = token;
+        try {
+          token = await messaging?.getToken({
+            vapidKey:
+              "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+          });
+          payload.firebasetoken = token;
+
+        } catch { }
+
       } else if (permission === "denied") {
         console.log("You denied for the notification");
       }
@@ -436,7 +473,7 @@ export function Login() {
                     {!reload && (
                       <img
                         src={
-                          localStorage.getItem("logo") && localStorage.getItem("logo")!=="undefined"
+                          localStorage.getItem("logo") && localStorage.getItem("logo") !== "undefined"
                             ? localStorage.getItem("logo")
                             : logo
                         }

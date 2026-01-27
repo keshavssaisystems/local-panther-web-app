@@ -11,7 +11,9 @@ import {
   Button,
   ButtonGroup,
   UncontrolledTooltip,
+  Input,
 } from "reactstrap";
+import { BsXCircle } from "react-icons/bs";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
@@ -37,7 +39,8 @@ import axios from "axios";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { is } from "date-fns/locale";
-
+import { OfflineInterviewModal } from "_components/scheduleInterview/offlineInterviewModal";
+import { OfflineOffer } from "_components/modal/offlineOffer";
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -52,6 +55,8 @@ export const CustCandidateListView = (props) => {
   const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
   const [offerUploadLoading, setOfferUploadLoading] = useState(false);
   const [isStaffingFirm, setIsStaffingFirm] = useState(props.isStaffingFirm);
+  const [showOfflineInterviewModal, setShowOfflineInterviewModal] = useState(false);
+  const [offlineInterviewLoading, setOfflineInterviewLoading] = useState(false);
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -234,7 +239,7 @@ export const CustCandidateListView = (props) => {
   const handlePresentCandidate = async (type, candidaterecommendedjobid, row) => {
     if (row.ispresented === true) {
       dispatch(showSnackbar({
-        message: "Candidate is already presented",
+        message: "Candidate previously presented.",
         type: SNACKBAR_TYPES.WARNING,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
@@ -523,56 +528,125 @@ export const CustCandidateListView = (props) => {
           ) : (
             <></>
           )}
-          {/* <Button
-            // outline
-            size="sm"
-            title="Make offer"
-            onClick={() => onAcceptClick(row)}
-            className="btn-icon"
-            color="success"
-          >
-            <img src={customerIcons.list_accept} alt="list accept"></img>
-          </Button> */}
-
-          {/* <Button
-            // outline
-            size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onActionClick("like", candidaterecommendedjobid)}
-          >
-            <img src={customerIcons.list_liked} alt="list liked"></img>
-          </Button> */}
-
-          {/* <Button
-            // outline
-            size="sm"
-            title="maybe"
-            className=" btn-icon"
-            color="warning"
-            onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
-          >
-            <img src={customerIcons.list_maybe} alt="list maybe"></img>
-          </Button> */}
         </ButtonGroup>
       );
-    }
-    else if (props.type === "presented") {
+    } else if (props.type === "presented") {
       return (
-        <ButtonGroup>
-          <Button
-            // outline
-            size="sm"
-            title="Place"
-            onClick={() => onPlacedClick("candidatePlaced", candidaterecommendedjobid, row)}
-            className="btn-icon"
-            color="success"
-          >
-            <img src={customerIcons.list_accept} alt="list place"></img>
-          </Button>
-        </ButtonGroup>
-      );
+        <>
+          {row?.staffingfirmstatus === "Presented" && (
+            (<ButtonGroup>
+              <Button
+                size="sm"
+                title="Schedule Interview"
+                onClick={() => onRescheduleInterview(row)}
+                className="btn-icon"
+                color="alternate"
+              >
+                <img src={customerIcons.list_schedule} alt="list reject"></img>
+              </Button>
+              {/* <Button
+                size="sm"
+                title="Place"
+                onClick={() => onPlacedClick("candidatePlaced", candidaterecommendedjobid, row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list place"></img>
+              </Button> */}
+              <Button
+                // outline
+                size="sm"
+                title="Make offer"
+                onClick={() => onAcceptClick(row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+              <Button
+                size="sm"
+                title="Decline candidate"
+                onClick={() => onRejectClick(candidaterecommendedjobid)}
+                className="btn-icon"
+                color="danger"
+              >
+                <img src={customerIcons.list_reject} alt="list reject"></img>
+              </Button>
+            </ButtonGroup>))}
+
+          {(row?.staffingfirmstatus === "Interview Scheduled" || row?.staffingfirmstatus === "Interview Completed") && (
+            <ButtonGroup>
+              {/* <Button
+                size="sm"
+                title="Place"
+                onClick={() => onPlacedClick("candidatePlaced", candidaterecommendedjobid, row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list place"></img>
+              </Button> */}
+              <Button
+                // outline
+                size="sm"
+                title="Make offer"
+                onClick={() => onAcceptClick(row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+              <Button
+                size="sm"
+                title="Decline candidate"
+                onClick={() => onRejectClick(candidaterecommendedjobid)}
+                className="btn-icon"
+                color="danger"
+              >
+                <img src={customerIcons.list_reject} alt="list reject"></img>
+              </Button>
+            </ButtonGroup>)}
+
+          {(row?.staffingfirmstatus === "Offer Out" || row?.staffingfirmstatus === "Accepted") && (<ButtonGroup>
+
+            <Button
+              size="sm"
+              title="Decline candidate"
+              onClick={() => onRejectClick(candidaterecommendedjobid)}
+              className="btn-icon"
+              color="danger"
+            >
+              <img src={customerIcons.list_reject} alt="list reject"></img>
+            </Button>
+          </ButtonGroup>)}
+          {row?.staffingfirmstatus === "Declined" && (<ButtonGroup>
+
+            <Button
+              size="sm"
+              title="Reschedule Interview"
+              onClick={() => onRescheduleInterview(row)}
+              className="btn-icon"
+              color="alternate"
+            >
+              <img src={customerIcons.list_schedule} alt="list reject"></img>
+            </Button>
+            {row.jobOfferDtos &&
+              row.jobOfferDtos.length > 0 &&
+              !row.jobOfferDtos[0].isfinaloffer ? (
+              <Button
+                // outline
+                size="sm"
+                title="Re-extend offer"
+                onClick={() => onAcceptClick(row)}
+                className="btn-icon"
+                color="success"
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+            ) : (
+              <></>
+            )}
+          </ButtonGroup>)}
+        </>)
     }
   };
 
@@ -615,9 +689,17 @@ export const CustCandidateListView = (props) => {
               <span>Candidate CV</span>
             </DropdownItem>) : (<></>)}
 
+            {/* { ? (
+              <DropdownItem onClick={() => onShowOHModal(row)}>
+                <i className="dropdown-icon lnr-layers"></i>
+                <span>Offer history</span>
+              </DropdownItem>
+            ) : (<></>)} */}
+
             {props.type === "offers" ||
               props.type === "accepted" ||
-              props.type === "rejected" ? (
+              props.type === "rejected" ||
+              (isStaffingFirm && props.type === "presented" && row?.jobOfferDtos && row?.jobOfferDtos?.length > 0) ? (
               <DropdownItem onClick={() => onShowOHModal(row)}>
                 <i className="dropdown-icon lnr-layers"></i>
                 <span>Offer history</span>
@@ -682,11 +764,22 @@ export const CustCandidateListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">
-                <ButtonGroup>
-                  {renderButtons(row.candidaterecommendedjobid, row)}
-                </ButtonGroup>
-              </div>
+              row?.isclosed === false ? (
+                <div className="list-btn-group">
+                  <ButtonGroup>
+                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  </ButtonGroup>
+                </div>) : row?.isclosed === true ? (
+                  <Button
+                    outline
+                    title="Job Closed"
+                    className="btn-icon lg-12"
+                    color="danger"
+                    size="lg"
+                    disabled={true}
+                  >
+                    <BsXCircle />Job Closed
+                  </Button>) : null
             ),
             ignoreRowClick: true,
             button: true,
@@ -822,21 +915,22 @@ export const CustCandidateListView = (props) => {
               cell: (row) =>
                 row?.jobOfferDtos?.length > 0 ? (
                   <>
-                    {row?.jobOfferDtos?.length === 2 && (
-                      <>
-                        <img
-                          src={previousOffer}
-                          alt="list maybe"
-                          className={"icon-pointer me-2"}
-                          width={"20px"}
-                          title="Previous Offer - Click to view offer"
-                          onClick={() =>
-                            window.open(row?.jobOfferDtos[1]?.offerfilepath)
-                          }
-                        ></img>
-                      </>
-                    )}
-                    {row?.isfinaloffer === true && (
+                    {row?.jobOfferDtos?.length === 2 &&
+                      row?.jobOfferDtos[1]?.offerfilepath !== "" && (
+                        <>
+                          <img
+                            src={previousOffer}
+                            alt="list maybe"
+                            className={"icon-pointer me-2"}
+                            width={"20px"}
+                            title="Previous Offer - Click to view offer"
+                            onClick={() =>
+                              window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                            }
+                          ></img>
+                        </>
+                      )}
+                    {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                       <>
                         <img
                           src={finalOffer}
@@ -855,7 +949,7 @@ export const CustCandidateListView = (props) => {
                       </>
                     )}
                     {row?.jobOfferDtos?.length === 1 &&
-                      row?.isfinaloffer === false && (
+                      row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                         <>
                           <img
                             src={
@@ -878,7 +972,7 @@ export const CustCandidateListView = (props) => {
                         </>
                       )}
                     {row?.jobOfferDtos?.length === 2 &&
-                      row?.isfinaloffer === false && (
+                      row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                         <>
                           <img
                             src={
@@ -988,15 +1082,27 @@ export const CustCandidateListView = (props) => {
             {
               name: <span className="table-title">Interest</span>,
               cell: (row) => (
-                <div className="list-btn-group">
-                  <ButtonGroup>
-                    {renderButtons(row.candidaterecommendedjobid, row)}
-                  </ButtonGroup>
-                </div>
+                row?.isclosed === false ? (
+                  <div className="list-btn-group">
+                    <ButtonGroup>
+                      {renderButtons(row.candidaterecommendedjobid, row)}
+                    </ButtonGroup>
+                  </div>) : row?.isclosed === true ? (
+                    <Button
+                      outline
+                      title="Job Closed"
+                      className="btn-icon lg-12"
+                      color="danger"
+                      size="lg"
+                      disabled={true}
+                    >
+                      <BsXCircle />Job Closed
+                    </Button>) : null
               ),
               ignoreRowClick: true,
               button: true,
-              maxWidth: "8%"
+              maxWidth: "10%",
+              minWidth: "10%",
             },
 
             {
@@ -1114,7 +1220,7 @@ export const CustCandidateListView = (props) => {
                         ? "-"
                         : row?.jobOfferDtos[0]?.startdate === null
                           ? "-"
-                          : moment(row?.jobOfferDtos[0]?.startdate).format(
+                          : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                             "MM/DD/YYYY"
                           )
                     }
@@ -1123,7 +1229,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                         ? "-"
-                        : moment(row?.jobOfferDtos[0]?.startdate).format(
+                        : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                           "MM/DD/YYYY"
                         )}
                   </span>
@@ -1133,7 +1239,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : moment(row?.jobOfferDtos[0]?.startdate).format(
+                      : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                         "MM/DD/YYYY"
                       ),
                 sortable: true,
@@ -1144,7 +1250,7 @@ export const CustCandidateListView = (props) => {
                 cell: (row) =>
                   row?.jobOfferDtos?.length > 0 ? (
                     <>
-                      {row?.jobOfferDtos?.length === 2 && (
+                      {row?.jobOfferDtos?.length === 2 && row?.jobOfferDtos[1]?.offerfilepath !== '' && (
                         <>
                           <img
                             src={previousOffer}
@@ -1158,7 +1264,7 @@ export const CustCandidateListView = (props) => {
                           ></img>
                         </>
                       )}
-                      {row?.isfinaloffer === true && (
+                      {row?.isfinaloffer === true && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                         <>
                           <img
                             src={finalOffer}
@@ -1177,7 +1283,7 @@ export const CustCandidateListView = (props) => {
                         </>
                       )}
                       {row?.jobOfferDtos?.length === 1 &&
-                        row?.isfinaloffer === false && (
+                        row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                           <>
                             <img
                               src={
@@ -1200,7 +1306,7 @@ export const CustCandidateListView = (props) => {
                           </>
                         )}
                       {row?.jobOfferDtos?.length === 2 &&
-                        row?.isfinaloffer === false && (
+                        row?.isfinaloffer === false && row?.jobOfferDtos[0]?.offerfilepath !== '' && (
                           <>
                             <img
                               src={
@@ -1237,16 +1343,29 @@ export const CustCandidateListView = (props) => {
               },
               {
                 name: <span className="table-title">Interest</span>,
-                cell: (row) => (
-                  <div className="list-btn-group">
-                    <ButtonGroup>
-                      {renderButtons(row.candidaterecommendedjobid, row)}
-                    </ButtonGroup>
-                  </div>
-                ),
+                cell: (row) =>
+                  row?.isclosed === false ? (
+                    <div className="list-btn-group">
+                      <ButtonGroup>
+                        {renderButtons(row.candidaterecommendedjobid, row)}
+                      </ButtonGroup>
+                    </div>) : row?.isclosed === true ?
+                    (
+                      <Button
+                        outline
+                        title="Job Closed"
+                        className="btn-icon lg-12"
+                        color="danger"
+                        size="lg"
+                        disabled={true}
+                      >
+                        <BsXCircle />Job Closed
+                      </Button>
+                    ) : null,
                 ignoreRowClick: true,
                 button: true,
-                maxWidth: "10%",
+                minWidth: "10%",
+                maxWidth: "10%"
               },
 
               {
@@ -1284,7 +1403,7 @@ export const CustCandidateListView = (props) => {
                 selector: (row) => row.clientcompanyname,
                 sortable: true,
                 wrap: true,
-                width: "15%",
+                width: "14%",
               }],
               {
                 name: <span className="table-title">Job title</span>,
@@ -1294,34 +1413,69 @@ export const CustCandidateListView = (props) => {
                 width: "20%",
               },
               {
-                name: <span className="table-title">{"Presented Date"}</span>,
-                cell: (row) => <span title={moment(row?.customerpresenteddatetime).format("YYYY-MM-DD")}>{moment(row?.customerpresenteddatetime).format("YYYY-MM-DD")}</span>,
-                selector: (row) => moment(row?.customerpresenteddatetime).format("YYYY-MM-DD"),
+                name: <span className="table-title">{"Presented date"}</span>,
+                cell: (row) => <span title={moment(row?.customerpresenteddatetime).format("MM/DD/YYYY")}>{moment(row?.customerpresenteddatetime).format("MM/DD/YYYY")}</span>,
+                selector: (row) => moment(row?.customerpresenteddatetime).format("MM/DD/YYYY"),
                 sortable: true,
-                width: "15%",
+                width: "13%",
               },
               {
-                name: <span className="table-title">{"Current Status"}</span>,
-                cell: (row) => <span title={row.staffingfirmstatus}>{row.staffingfirmstatus}</span>,
+                name: <span className="table-title">{"Current status"}</span>,
+                cell: (row) =>
+                  <Input
+                    type="select"
+                    title="Current Status"
+                    value={row.staffingfirmstatus}
+                    name="CurrentStatus"
+                    id={crypto.randomUUID()}
+                    className="no-border-select"
+                    disabled={row?.isclosed === true}
+                    onChange={(e) => {
+                      updateCurrentStatus(e.target.value, row);
+                      //   resetPageURL();
+                    }}
+                  >
+                    {props?.offlineStatuses?.length > 0 ? (
+                      props?.offlineStatuses?.map((data) => (
+                        <option value={data.name} key={data.id}>
+                          {data.name}
+                        </option>
+                      ))
+                    ) : null
+                    }
+                  </Input >
+
+                ,
                 selector: (row) => row.staffingfirmstatus,
                 sortable: true,
-                width: "15%",
+                width: "18%",
               },
               {
                 name: <span className="table-title">Interest</span>,
                 cell: (row) => (
-                  <div className="list-btn-group">
-                    {/* {row?.customerrecommendedjobstatusid !== 5 && (
+                  row?.isclosed === false ? (
+                    <div className="list-btn-group">
+                      {/* {row?.customerrecommendedjobstatusid !== 5 && (
                       <ButtonGroup>
                       {renderButtons(row.candidaterecommendedjobid, row)}
                     </ButtonGroup>
                   )} */}
 
-                    <ButtonGroup>
-                      {renderButtons(row.candidaterecommendedjobid, row)}
-                    </ButtonGroup>
+                      <ButtonGroup>
+                        {renderButtons(row.candidaterecommendedjobid, row)}
+                      </ButtonGroup>
 
-                  </div>
+                    </div>) : row?.isclosed === true ? (
+                      <Button
+                        outline
+                        title="Job Closed"
+                        className="btn-icon lg-12"
+                        color="danger"
+                        size="lg"
+                        disabled={true}
+                      >
+                        <BsXCircle />Job Closed
+                      </Button>) : null
                 ),
                 ignoreRowClick: true,
                 button: true,
@@ -1440,11 +1594,22 @@ export const CustCandidateListView = (props) => {
                 {
                   name: <span className="table-title">Interest</span>,
                   cell: (row) => (
-                    <div className="list-btn-group">
-                      <ButtonGroup>
-                        {renderButtons(row.candidaterecommendedjobid, row)}
-                      </ButtonGroup>
-                    </div>
+                    row?.isclosed === false ? (
+                      <div className="list-btn-group">
+                        <ButtonGroup>
+                          {renderButtons(row.candidaterecommendedjobid, row)}
+                        </ButtonGroup>
+                      </div>) : row?.isclosed === true ? (
+                        <Button
+                          outline
+                          title="Job Closed"
+                          className="btn-icon lg-12"
+                          color="danger"
+                          size="lg"
+                          disabled={true}
+                        >
+                          <BsXCircle />Job Closed
+                        </Button>) : null
                   ),
                   ignoreRowClick: true,
                   button: true,
@@ -1772,13 +1937,25 @@ export const CustCandidateListView = (props) => {
         {
           name: <span className="table-title">Interest</span>,
           cell: (row) => (
-            <div className="list-btn-group">
-              {renderButtons(row.candidaterecommendedjobid, row)}
-            </div>
+            row?.isclosed === false ? (
+              <div className="list-btn-group">
+                {renderButtons(row.candidaterecommendedjobid, row)}
+              </div>) : row?.isclosed === true ? (
+                <Button
+                  outline
+                  title="Job Closed"
+                  className="btn-icon lg-12"
+                  color="danger"
+                  size="lg"
+                  disabled={true}
+                >
+                  <BsXCircle />Job Closed
+                </Button>) : null
           ),
           ignoreRowClick: true,
           button: true,
-          //width: "10%",
+          width: "10%",
+
         },
         {
           name: <span className="table-title">Action</span>,
@@ -1899,10 +2076,8 @@ export const CustCandidateListView = (props) => {
     form.append("Isfinaloffer", finaloffer);
     form.append("Salary", pay);
     form.append("Payperiodtype", payType);
-    form.append(
-      "Startdate",
-      moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
-    );
+    // form.append("Startdate", moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    form.append("Startdate", moment(startdate).format("YYYY-MM-DD"));
     if (selectedTemplate && generatedHtml) {
       form.append("Offerlettertemplateid", selectedTemplate);
       form.append("Offerlettertemplatefinaltext", generatedHtml);
@@ -1953,6 +2128,130 @@ export const CustCandidateListView = (props) => {
   const onOfferUploading = (data) => {
     setOfferUploadLoading(data);
   };
+
+  const [currentStatus, setCurrentStatus] = useState("");
+  const [showOfflineOfferModal, setShowOfflineOfferModal] = useState(false);
+
+  const updateCurrentStatus = async (status, row) => {
+    setCurrentStatus(status);
+    if (status === "Declined") {
+      setCurrCRJId(row.candidaterecommendedjobid);
+      setShowReModal(true);
+      return;
+    }
+    else if (status === "Interview Scheduled" || status === "Interview Completed") {
+      setSelectedRowData(row);
+      setShowOfflineInterviewModal(true);
+      return;
+    }
+    else if (status === "Offer Out" || status === "Accepted") {
+      setSelectedRowData(row);
+      setShowOfflineOfferModal(true);
+      return;
+    }
+
+  };
+
+  const onUploadOfferOffline = (payType, payVal, startDate, offerDate) => {
+    setOfferUploadLoading(true);
+    const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const form = new FormData();
+
+    if (selectedRowData?.jobOfferDtos && selectedRowData?.jobOfferDtos?.length > 0
+      && selectedRowData?.jobOfferDtos[0].Salary === payVal &&
+      selectedRowData?.jobOfferDtos[0].Payperiodtype === payType &&
+      moment(selectedRowData?.jobOfferDtos[0].Startdate).format("YYYY-MM-DD") === moment(startDate).format("YYYY-MM-DD")
+    ) {
+      form.append("Jobofferid", selectedRowData?.jobOfferDtos[0].jobofferid);
+    }
+    form.append("Candidaterecommendedjobid", selectedRowData.candidaterecommendedjobid);
+    form.append("CurrentUserId", JSON.parse(localStorage.getItem("userDetails")).UserId);
+    form.append("Salary", payVal);
+    form.append("Payperiodtype", payType);
+    // form.append("Startdate", moment(startDate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    form.append("Startdate", moment(startDate).format("YYYY-MM-DD"));
+    if (currentStatus === "Accepted") {
+      form.append("Iscandidateaccepted", true);
+    } else {
+      form.append("Iscandidateaccepted", false);
+    }
+    // form.append("Offerdate", moment(offerDate).tz("Etc/UTC").format("YYYY-MM-DD"));
+    axios.post(`${process.env.REACT_APP_MAIN_API_URL}/api/JobOffer/MakeJobOfferOffline`, form, config)
+      .then((result) => {
+        setOfferUploadLoading(false);
+        if (result.data.statusCode === 200) {
+          setShowUploadOfferModal(false);
+          dispatch(showSnackbar({
+            message: result.data.message,
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+          setShowOfflineOfferModal(false);
+          props.updateList();
+        } else {
+          dispatch(showSnackbar({
+            message: result.data.message || result.data.status,
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+        }
+      })
+      .catch((error) => {
+        dispatch(showSnackbar({
+          message: "An error occurred while updating the offer.",
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+      });
+  };
+
+  const postScheduledInterviewOffline = async function (formData) {
+    setOfflineInterviewLoading(true);
+    let res = await dispatch(
+      customerCandidateListsActions.postScheduleInterviewOffline(formData)
+    );
+    if (res.payload?.statusCode === 201) {
+      setOfflineInterviewLoading(false);
+      setShowSchdIntSModal(false);
+      props.updateList();
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.INTERVIEW_SCHEDULED_SUCCESSFULLY,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+    } else {
+      setOfflineInterviewLoading(false);
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  };
+
 
   return (
     <>
@@ -2096,7 +2395,39 @@ export const CustCandidateListView = (props) => {
           <></>
         )}
       </>
-
+      <>
+        {" "}
+        {showOfflineInterviewModal ? (
+          <OfflineInterviewModal
+            type={currentStatus}
+            candidateData={selectedRowData}
+            durationOptions={props.durationOptions}
+            postData={(e) => {
+              postScheduledInterviewOffline(e);
+            }}
+            isOpen={showOfflineInterviewModal}
+            onClose={() => setShowOfflineInterviewModal(false)}
+            loading={offlineInterviewLoading}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showOfflineOfferModal ? (
+          <OfflineOffer
+            isOpen={showOfflineOfferModal}
+            onClose={() => setShowOfflineOfferModal(false)}
+            onUploadOfferOffline={(payType, payVal, startDate, offerDate) => onUploadOfferOffline(payType, payVal, startDate, offerDate)}
+            loading={offerUploadLoading}
+            updateLoading={(data) => onOfferUploading(data)}
+            data={selectedRowData}
+            currentStatus={currentStatus}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 };

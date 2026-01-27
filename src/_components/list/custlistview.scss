@@ -41,6 +41,17 @@
     background-color: #2f479b !important;
   }
 }
+
 .popover-height {
   overflow: visible !important;
+}
+
+.no-border-select {
+  border: none;
+  outline: none;
+  /* Removes the border/outline when the element is focused/clicked */
+  /* Add other desired styles, e.g., padding, background-color, font, etc. */
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  cursor: pointer
 }

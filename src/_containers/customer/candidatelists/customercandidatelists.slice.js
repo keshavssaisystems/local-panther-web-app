@@ -54,7 +54,8 @@ function createExtraActions() {
     getReportBySP: getCandidateCardCount(), // New action for fetching report
     getPresentedCandidateLists: getPresentedCandidateLists(),
     putPresentCandidate: putPresentCandidate(),
-    putCandidatePlaced: putCandidatePlaced()
+    putCandidatePlaced: putCandidatePlaced(),
+    postScheduleInterviewOffline: postScheduleInterviewOffline(),
 
   };
 
@@ -355,6 +356,14 @@ function createExtraActions() {
         )
     );
   }
+
+  function postScheduleInterviewOffline() {
+    return createAsyncThunk(
+      `${name}/postScheduleInterviewOffline`,
+      async (payload) =>
+        await fetchWrapper.post(`${newUrl}/ScheduledInterview/ScheduledInterviewOffline`, payload)
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -378,6 +387,7 @@ function createExtraReducers() {
     getPresentedCandidateLists();
     putPresentCandidate();
     putCandidatePlaced();
+    postScheduleInterviewOffline();
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -639,15 +649,15 @@ function createExtraReducers() {
       let { pending, fulfilled, rejected } = extraActions.getReportBySP;
       builder
         .addCase(pending, (state) => {
-          state.loading = true;
-          //state.reportData = null;
+          // state.loading = true;
+          state.reportData = null;
         })
         .addCase(fulfilled, (state, action) => {
           state.reportData = action?.payload?.data?.[0] ? action.payload.data[0] : null;
-          state.loading = false;
+          // state.loading = false;
         })
         .addCase(rejected, (state, action) => {
-          state.loading = false;
+          // state.loading = false;
           state.reportData = null;
         });
     }
@@ -714,6 +724,20 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           //no action
+        });
+    }
+
+    function postScheduleInterviewOffline() {
+      let { pending, fulfilled, rejected } = extraActions.postScheduleInterviewOffline;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+        })
+        .addCase(fulfilled, (state, action) => {
+           state.loading = false;
+        })
+        .addCase(rejected, (state, action) => {
+           state.loading = false;
         });
     }
   };

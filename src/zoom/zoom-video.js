@@ -3,7 +3,7 @@ import uitoolkit from "@zoom/videosdk-ui-toolkit";
 import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authActions, scheduleInterviewActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
@@ -54,6 +54,7 @@ export default function ZoomVideoScreen(props) {
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [hostLeave, setIsHostLeave] = useState(false);
+  const sessionInterviewAccessData = useSelector(state => state.auth?.interviewSessionAccess);
   console.log(participantData);
   let urlParams = rest["*"] ? rest["*"] : "";
   let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
@@ -270,7 +271,7 @@ export default function ZoomVideoScreen(props) {
       );
       if (ind2 > -1) {
         showSweetAlert({
-          title: "Host denied permission for the meeting!!",
+          title: "Access denied. The host did not grant permission.",
           type: "error",
         });
       }
@@ -466,6 +467,14 @@ export default function ZoomVideoScreen(props) {
     localStorage.setItem("zoomusersList" + urlParams, JSON.stringify(data));
     setIsHostLeave(true);
   };
+  const checkSessionAccess = async (payload) => {
+    let response = await dispatch(
+      authActions.postInterviewSessionAccess({
+        email: payload.email,
+        sessionid: urlParams,
+      })
+    );
+  };
 
   return (
     <>
@@ -491,6 +500,8 @@ export default function ZoomVideoScreen(props) {
           fbUsersData={fbUsersData}
           database={database}
           showSweetAlert={(data) => showSweetAlert(data)}
+          checkSessionAccess={(data) => checkSessionAccess(data)}
+          interviewSessionAccessData={sessionInterviewAccessData}
         >
           {" "}
         </GuestPreview>

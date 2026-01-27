@@ -374,7 +374,7 @@
 
   .app-page-title {
     padding: math.div($grid-gutter-width, 2);
-    margin: (-(math.div($grid-gutter-width, 2))) (-(math.div($grid-gutter-width, 2))) $grid-gutter-width;
+    //margin: (-(math.div($grid-gutter-width, 2))) (-(math.div($grid-gutter-width, 2))) $grid-gutter-width;
   }
 
   .body-tabs.body-tabs-layout {
@@ -384,7 +384,7 @@
   }
 
   .app-main .app-main__inner>.RRT__container>.RRT__panel {
-    margin-top: math.div($grid-gutter-width, 2);
+    //margin-top: math.div($grid-gutter-width, 2);
   }
 
   .popover,

@@ -9,7 +9,7 @@ import {
   Button,
 } from "reactstrap";
 import { ProfilePDF } from "_containers/candidate/profilePDF";
-
+import { OpenWorXResume } from "_containers/candidate/openWorxResume";
 export const BuildCVModal = (props) => {
   const profilePDFRef = useRef();
 
@@ -25,11 +25,12 @@ export const BuildCVModal = (props) => {
       className="modal-reject-align "
       isOpen={props.isOpen}
       backdrop="fade"
-      size="lg"
+      size="xl"
     >
       <ModalHeader toggle={() => props.onClose()}></ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
-        <ProfilePDF hideDownLoad={true} ref={profilePDFRef} />
+        {/* <ProfilePDF hideDownLoad={true} ref={profilePDFRef} /> */}
+        <OpenWorXResume hideDownLoad={true} ref={profilePDFRef} />
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={handleDownloadPDF}>

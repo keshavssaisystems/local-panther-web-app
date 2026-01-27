@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions, scheduleInterviewActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -17,6 +17,11 @@ import {
   Label,
   InputGroup,
   InputGroupText,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Input,
 } from "reactstrap";
 
 import { database } from "../../firebase/index";
@@ -30,9 +35,15 @@ export const GuestPreview = (props) => {
     description: "",
   });
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [emailForPassword, setEmailForPassword] = useState("");
+  const [password, setPassword] = useState("");
+
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Your full name is required."),
@@ -53,6 +64,36 @@ export const GuestPreview = (props) => {
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState, getValues } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
+
+
+  useEffect(() => {
+    if (props?.interviewSessionAccessData && getValues("email") !== "") {
+      if (props?.interviewSessionAccessData && props?.interviewSessionAccessData?.role?.toLowerCase() === "host"
+        && props?.interviewSessionAccessData?.requirelogin === true) {
+        navigate("/login", {
+          state: {
+            redirect: location.pathname,
+            email: getValues("email")
+          }
+        });
+        return;
+      }
+      else if (props?.interviewSessionAccessData && props?.interviewSessionAccessData?.canjoin === true) {
+        showSweetAlert({
+          title: "The host hasn’t started the meeting yet. Please wait",
+          type: "error",
+        });
+        return;
+      }
+      else {
+        showSweetAlert({
+          title: "You’re not authorized to join this meeting.",
+          type: "error",
+        });
+      }
+    }
+
+  }, [props.interviewSessionAccessData]);
 
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
@@ -79,6 +120,10 @@ export const GuestPreview = (props) => {
     }
   };
 
+  const submitAsGuestUser = () => {
+    const values = getValues();
+    props.submitGuestUserData({ email: values?.email, name: values?.name });
+  }
   function onSubmit(payload) {
     if (props?.fbUsersData?.length > 0) {
       let ind = props.fbUsersData.findIndex(
@@ -98,23 +143,60 @@ export const GuestPreview = (props) => {
       } else {
         if (ind2 > -1) {
           props.showSweetAlert({
-            title: "Host denied permission for the meeting!!",
+            title: "Access denied. The host did not grant permission.",
             type: "error",
           });
         } else {
-          showSweetAlert({
-            title: "You are not authorized person to join this meeting!",
-            type: "error",
-          });
+
+          props.checkSessionAccess(payload);
+          // showSweetAlert({
+          //   title: "You’re not authorized to join this meeting.",
+          //   type: "error",
+          // });
         }
       }
-    } else {
+    }
+    else {
+      // Open password modal instead of showing error
+      // setEmailForPassword(payload.email);
+      // setShowPasswordModal(true);
+      // setPassword("");
+      props.checkSessionAccess(payload);
+    }
+    // else {
+    //   showSweetAlert({
+    //     title: "The host hasn’t started the meeting yet. Please wait",
+    //     type: "error",
+    //   });
+    // }
+  }
+  const handlePasswordSubmit = () => {
+    if (password.trim() === "") {
       showSweetAlert({
-        title: "Host hasn't started meeting yet please wait for few more time!",
+        title: "Please enter a password",
         type: "error",
       });
+      return;
     }
-  }
+
+    // Add your password validation logic here
+    // For now, this is a placeholder - replace with actual API call or validation
+    console.log("Password submitted for email:", emailForPassword, "Password:", password);
+
+    // If password is valid:
+    // props.submitGuestUserData({ email: emailForPassword, name: getValues("name"), password });
+    // setShowPasswordModal(false);
+    // setPassword("");
+
+    // For demo - show error
+    showSweetAlert({
+      title: "Invalid password",
+      type: "error",
+    });
+    setPassword("");
+  };
+
+
 
   return (
     <div className="guest-cont">
@@ -187,6 +269,41 @@ export const GuestPreview = (props) => {
         />
         {showAlert.description}
       </>
+      <Modal isOpen={showPasswordModal} toggle={() => setShowPasswordModal(false)}>
+        <ModalHeader toggle={() => setShowPasswordModal(false)}>
+          Enter Password
+        </ModalHeader>
+        <ModalBody>
+          <p>Please enter the password for <strong>{emailForPassword}</strong></p>
+          <FormGroup>
+            <Label for="password">Password</Label>
+            <Input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handlePasswordSubmit();
+                }
+              }}
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={() => setShowPasswordModal(false)}>
+            Cancel
+          </Button>
+          <Button color="primary" onClick={handlePasswordSubmit}>
+            Submit
+          </Button>
+          {/* <Button color="primary" onClick={submitAsGuestUser}>
+            Join as Guest
+          </Button> */}
+        </ModalFooter>
+      </Modal>
     </div>
   );
 };

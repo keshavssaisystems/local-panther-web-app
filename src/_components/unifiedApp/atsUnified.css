@@ -1,3 +1,296 @@
+/* Main Container */
+.ats-unified-container {
+    padding: 16px;
+    max-width: 1400px;
+    margin: 0px 10px 0px 10px;
+}
+
+/* Header Section */
+.ats-header {
+    margin-bottom: 20px;
+}
+
+.ats-title {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+}
+
+.ats-description {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+    /* max-width: 800px; */
+    font-family: 'Capitana', sans-serif;
+}
+
+/* ATS Grid */
+.ats-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+}
+
+@media (min-width: 640px) {
+    .ats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .ats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ATS Card */
+.ats-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+}
+
+.ats-card:hover {
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
+    border-color: #1976d2;    
+    border: 2px solid var(--Link, #2B80FD);
+    box-shadow: 0px 4px 10px 0px #038FFE40;
+}
+
+/* Card Top Row - Logo and Status Badge/Created Date */
+.ats-card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+
+.ats-card-right-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+/* Card Logo */
+.ats-card-logo {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 8px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.ats-logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.ats-logo-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1976d2;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+/* Card Content */
+.ats-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ats-card-name {
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    color: #1a1a1a;
+    margin: 0 0 8px 0 !important;
+    line-height: 1.3 !important;
+    font-family: 'Capitana', sans-serif;
+}
+
+/* Status Badge */
+.ats-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-align: right;
+    font-family: 'Capitana', sans-serif;
+}
+
+.ats-status-badge.connected {
+    background-color: #D1FAE5;
+    color: #14BD66;
+}
+
+.ats-status-badge.not-setup {
+    background-color: #e0e0e0;
+    color: #616161;
+}
+
+.status-check-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #14BD66;
+    flex-shrink: 0;
+}
+
+.status-icon {
+    font-size: 9px;
+    color: #ffffff;
+    line-height: 1;
+}
+
+/* Created Date */
+.ats-created-date {
+    font-size: 13px;
+    color: #666;
+    font-weight: 400;
+    text-align: right;
+    margin: 0;
+}
+
+/* Card Description */
+.ats-card-description {
+    font-size: 13px;
+    color: #2F2E2E;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+    flex: 1;
+    font-family: 'Capitana', sans-serif;
+    font-weight: 400 !important;
+}
+
+/* Action Button */
+.ats-action-button {
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    margin-top: auto;
+    font-family: 'Capitana', sans-serif;
+}
+
+.ats-action-button.connect {
+    background-color: #2F479B;
+    color: #ffffff;
+}
+
+.ats-action-button.connect:hover {
+    background-color: #E0F1FF;
+    color: #2F479B;
+}
+
+.ats-action-button.disconnect {
+    background-color: #fce4ec;
+    color: #D92550;
+}
+
+.ats-action-button.disconnect:hover {
+    background-color: #c2185b;
+    color: #ffffff;
+}
+
+.ats-action-button.disconnect .button-icon {
+    color: #c2185b;
+}
+
+.ats-action-button.disconnect:hover .button-icon {
+    color: #ffffff;
+}
+
+.ats-action-button.connect .button-icon {
+    color: #ffffff;
+}
+
+.ats-action-button.connect:hover .button-icon {
+    color: #2F479B;
+}
+
+.button-icon {
+    font-size: 12px;
+}
+
+.ats-action-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Empty State */
+.ats-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .ats-unified-container {
+        padding: 16px;
+    }
+
+    .ats-title {
+        font-size: 24px;
+    }
+
+    .ats-description {
+        font-size: 14px;
+    }
+
+    .ats-card {
+        padding: 20px;
+    }
+
+    .ats-card-name {
+        font-size: 18px;
+    }
+}
+
+/* Legacy unified styles (keeping for backward compatibility if needed) */
 .unified .unified_vendors {
     grid-auto-rows: 1fr;
     grid-template-columns: repeat(1, 1fr);
@@ -42,11 +335,7 @@
 }
 
 .unified .unified_vendor:hover {
-    /* box-shadow: rgba(67, 90, 111, 0.3) 0px 0px 1px, rgba(67, 90, 111, 0.47) 0px 2px 4px -2px; */
-    /* transform: translateY(-2px); */
-    /* outline: 0; */
     background-color: rgb(230, 232, 240);
-    /* border: 1px solid rgb(51, 102, 255); */
 }
 
 .unified .unified_vendor img.unified_image {
@@ -141,50 +430,8 @@
 
 .unified .unified_menu .unified_button:hover,
 .unified .unified_menu .unified_button.active {
-    /* border-bottom: 1px solid rgb(51, 102, 255); */
     color: rgb(51, 102, 255);
 }
-
-/* dark mode */
-.body--dark .unified .unified_vendor,
-.dark-mode .unified .unified_vendor,
-.dark-theme .unified .unified_vendor,
-.dark .unified .unified_vendor {
-    background-color: rgb(51, 51, 51);
-    border: 1px solid rgb(51, 51, 51);
-    color: rgb(255, 255, 255);
-}
-
-.body--dark .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span,
-.dark-mode .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span,
-.dark-theme .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span,
-.dark .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span {
-    background-color: rgb(156, 156, 156);
-    color: #222;
-}
-
-.body--dark .unified .unified_menu .unified_button,
-.dark-mode .unified .unified_menu .unified_button,
-.dark-theme .unified .unified_menu .unified_button,
-.dark .unified .unified_menu .unified_button {
-    color: rgb(222, 222, 222);
-}
-
-/* @media (prefers-color-scheme: dark) {
-    .unified .unified_menu .unified_button {
-        color: rgb(222, 222, 222);
-    }
-    .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span {
-        background-color: rgb(156, 156, 156);
-        color: #222;
-    }
-    .unified .unified_vendor {
-        background-color: rgb(51, 51, 51);
-        border: 1px solid rgb(51, 51, 51);
-        color: rgb(255, 255, 255);
-    }
-} */
-
 
 .removeBtn {
     position: absolute;
@@ -201,6 +448,7 @@
     z-index: 2;
     transition: color 0.2s;
 }
+
 .removeBtn:hover {
     color: #b71c1c;
 }

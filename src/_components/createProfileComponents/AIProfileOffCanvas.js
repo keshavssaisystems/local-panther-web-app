@@ -283,7 +283,7 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
 
         if (!isValidQualification(updatedData?.QualificationList)) {
             dispatch(showSnackbar({
-                message: "Qaulification data is not valid",
+                message: "Qaulification data invalid",
                 type: SNACKBAR_TYPES.WARNING,
                 position: SNACKBAR_POSITION.TOP_CENTER,
                 autoClose: true,

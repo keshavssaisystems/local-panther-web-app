@@ -53,6 +53,45 @@ export const fetchCustomerCandidates = createAsyncThunk(
     }
 );
 
+export const fetchATSCompanyList = createAsyncThunk(
+    `${name}/fetchATSCompanyList`,
+    async (params) => {
+
+        const {SearchText = "",IsActive = null,currentpage = 1,PageSize = 10} = params;
+
+        //parameter string as api
+        let parameterParts = [];
+
+        if (SearchText) {
+            parameterParts.push(`@SearchText='${SearchText}'`);
+        }
+
+        if (IsActive !== null && IsActive !== undefined) {
+            parameterParts.push(`@IsActive=${IsActive}`);
+        }
+
+        parameterParts.push(`@currentpage=${currentpage}`);
+        parameterParts.push(`@PageSize=${PageSize}`);
+
+        const parameter = parameterParts.join(",");
+
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_ATS_Company_List?parameter=${encodeURIComponent(parameter)}`;
+
+        return await fetchWrapper.get(TOKEN_END_POINT);
+    }
+);
+
+// New API for getting authorized ATS list
+export const getAuthorizedATSList = createAsyncThunk(
+    `${name}/getAuthorizedATSList`,
+    async (params = {}) => {
+        const { pagesize = 12, currentpage = 1 } = params;
+        const parameter = `@pagesize=${pagesize},@currentpage=${currentpage}`;
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_Authorized_ATS_List?parameter=${encodeURIComponent(parameter)}`;
+        return await fetchWrapper.get(TOKEN_END_POINT);
+    }
+);
+
 // Create the slice
 const atsSlice = createSlice({
     name,
@@ -124,6 +163,36 @@ const atsSlice = createSlice({
             .addCase(fetchCustomerCandidates.rejected, (state, action) => {
                 state.loader = false;
             })
+            .addCase(fetchATSCompanyList.pending, (state) => {
+                state.loader = true;
+                state.companyList = [];
+            })
+            .addCase(fetchATSCompanyList.fulfilled, (state, action) => {
+                state.loader = false;
+                // sp response
+                if (action?.payload?.data?.data) {
+                    state.companyList = action?.payload?.data?.data;
+                    state.totalrows = action.payload.data?.totalRows || 0;
+                } else {
+                    state.companyList = [];
+                    state.totalrows = 0;
+                }
+            })
+            .addCase(fetchATSCompanyList.rejected, (state) => {
+                state.loader = false;
+            })
+            .addCase(getAuthorizedATSList.pending, (state) => {
+                state.loader = true;
+                state.atsauthorizationList = [];
+            })
+            .addCase(getAuthorizedATSList.fulfilled, (state, action) => {
+                console.log(action.payload);
+                state.atsauthorizationList = action.payload?.data?.data || [];
+                state.loader = false;
+            })
+            .addCase(getAuthorizedATSList.rejected, (state, action) => {
+                state.loader = false;
+            });
     },
 });
 
@@ -131,10 +200,12 @@ const atsSlice = createSlice({
 export const atsActions = {
     ...atsSlice.actions,
     getCompanyATS,
+    getAuthorizedATSList,
     postAtsAuthorization,
     getATSList,
     deleteAtsAuthorization,
     fetchCustomerCandidates,
+    fetchATSCompanyList,
 };
 
 export const atsReducer = atsSlice.reducer;

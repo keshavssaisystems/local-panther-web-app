@@ -52,9 +52,9 @@ $app-header-logo-bg: rgba(0, 0, 0, .03);
   .main-card {
     box-shadow: 0 0 0 0 transparent !important;
 
-    & > .card-body {
+    &>.card-body {
 
-      & > .card-title {
+      &>.card-title {
         text-transform: none;
         font-size: $font-size-lg;
         font-weight: normal;
