@@ -655,7 +655,7 @@ export function UpdateScheduleInterviewModal({
                       placeholder="Add hiring managers or other interviewers - enter emails seperated by comma"
                     />
                   </FormGroup>
-                  <FormGroup>
+                  <FormGroup  style={{ display: 'none' }}>
                     <Label for="phoneNo" className="fw-semi-bold">
                       Get text reminder for interviews
                     </Label>
