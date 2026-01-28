@@ -475,7 +475,7 @@ export function ScheduleInterviewModal({
                   placeholder="Add hiring managers or other interviewers - enter emails seperated by comma"
                 />
               </FormGroup>
-              <Row>
+              <Row style={{ display: 'none' }}>
                 <Col md={4}>
                   <FormGroup>
                     <Label for="phoneNo" className="fw-semi-bold">

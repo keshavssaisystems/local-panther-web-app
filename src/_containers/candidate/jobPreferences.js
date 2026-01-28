@@ -375,7 +375,7 @@ export function JobPreferences(props) {
     getDistance();
   }, []);
 
-  useEffect(() => {    
+  useEffect(() => {
     loadData();
   }, [props?.isCompleteProfile, profileData]);
 
@@ -585,9 +585,10 @@ export function JobPreferences(props) {
     } else if (check === "employmenteligibility") {
       new_data[0].employmenteligibility = !new_data[0].employmenteligibility;
     } else if (check === "locationCP") {
-      setSelectedLocationCP(data);
       new_data[0].stateid = data.stateid;
       new_data[0].cityid = data.cityid;
+      if ((data?.stateid && data.stateid) !== 0 || (data?.cityid && data?.cityid !== 0))
+        setSelectedLocationCP(data);
     }
 
     setFormData(new_data);
@@ -694,6 +695,11 @@ export function JobPreferences(props) {
       return;
     }
 
+    if (props.isCompleteProfile) {
+      if (new_data[0].stateid === undefined || new_data[0].stateid === 0 || new_data[0].cityid === undefined || new_data[0].cityid === 0) {
+        return;
+      }
+    }
     let response;
 
     let data = preferenceDetails.map((rest) => {
@@ -767,6 +773,9 @@ export function JobPreferences(props) {
       closeModal();
 
       if (props.isCompleteProfile) {
+        if (new_data[0].stateid === 0 || new_data[0].cityid === 0) {
+          return;
+        }
         let payload = {
           candidateid: localStorage.getItem("admcandid")
             ? localStorage.getItem("admcandid")
