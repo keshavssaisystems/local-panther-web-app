@@ -254,12 +254,12 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             {isCompanyAdmin && (
               <>
                 {row.billingdetailstatus ? (
-                  <Button color="link" onClick={() => onViewBilling(row)}>
-                    <span style={{ textDecoration: "underline" }}>View</span>
+                  <Button color="link" onClick={() => onViewBilling(row)} title="View Payment Details">
+                    <span style={{ textDecoration: "underline" }}>Payment Details</span>
                   </Button>
                 ) : (
-                  <Button color="link" onClick={() => onAddBilling(row)}>
-                    <span style={{ textDecoration: "underline" }}>Add</span>
+                  <Button color="link" onClick={() => onAddBilling(row)} title="Add Payment Details">
+                    <span style={{ textDecoration: "underline" }}>Payment Details</span>
                   </Button>
                 )}
               </>
