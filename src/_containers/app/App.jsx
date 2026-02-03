@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
 
-import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
-import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
+
+
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
@@ -21,7 +21,7 @@ import { CandidateUnderConstruction } from "_containers/candidate/common/candida
 // Admin
 
 import { messaging, analytics } from "../../firebase/index";
-import { ChatInterface } from "_containers/common/chats/chatInterface";
+
 import { ToastContainer, toast } from "react-toastify";
 import { Row, Button } from "reactstrap";
 import { candidateDashboardActions, getProfileActions } from "_store";
@@ -36,12 +36,17 @@ import GetAppPopup from "_components/common/GetAppPopup";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import SuccessPage from "_components/unifiedApp/unifiedSuccess";
+const CreateJobWizard = React.lazy(() => import("_containers/customer/createJob/createJobWizard").then(m => ({ default: m.CreateJobWizard })));
 
+const ScheduleInterview = React.lazy(() =>
+  import("_containers/customer/scheduleInterview/scheduleInterview").then(m => ({ default: m.ScheduleInterview }))
+);
 const ShareJobDetails = React.lazy(() => import("_containers/sharejob/sharejob").then(m => ({ default: m.ShareJobDetails })));
 const Notifications = React.lazy(() => import("_containers/notifications/notifications").then(m => ({ default: m.Notifications })));
-const AtsUnified = React.lazy(() => import("_components/unifiedApp/atsUnified").then(m => ({ default: m.AtsUnified })));
-const ATSCandidateList = React.lazy(() => import("_containers/customer/atscustomercandidatelist/atscandidatelist").then(m => ({ default: m.ATSCandidateList })));
-const ATSGenericList = React.lazy(() => import("_containers/generic/atsgeneric").then(m => ({ default: m.ATSGenericList })));
+const AtsUnified = React.lazy(() => import("_components/unifiedApp/atsUnified"));
+const ATSCandidateList = React.lazy(() => import("_containers/customer/atscustomercandidatelist/atscandidatelist"));
+const ATSGenericList = React.lazy(() => import("_containers/generic/atsgeneric"));
+const ChatInterface = React.lazy(() => import("_containers/common/chats/chatInterface").then(m => ({ default: m.ChatInterface })));
 
 const CandidateSchedules = React.lazy(() => import("_containers/candidate/calendar/candidateSchedules").then(m => ({ default: m.CandidateSchedules }))
 );

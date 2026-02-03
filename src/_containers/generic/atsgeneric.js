@@ -21,7 +21,7 @@ import Loader from "react-loaders";
 import { useLocation } from "react-router-dom";
 import AddClient from "_containers/customer/atscompanylist/addclient";
 
-const ATSGenericList = () => {
+function ATSGenericList() {
     console.log("ATS Hiring Contact List component rendered");
     let isCompanyAdmin = true;
 
