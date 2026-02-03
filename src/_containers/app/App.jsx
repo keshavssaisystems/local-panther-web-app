@@ -16,11 +16,11 @@ import { AppFooter } from "_components/_layout/AppFooter";
 
 import "./app.scss";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
-import { CandidateProfile } from "_containers/candidate/candidateProfile";
+
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
 // Admin
 
-import { messaging, analytics } from "../../firebase/index";
+// import { messaging, analytics } from "../../firebase/index";
 
 import { ToastContainer, toast } from "react-toastify";
 import { Row, Button } from "reactstrap";
@@ -37,7 +37,7 @@ import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/Unsubscrib
 import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import SuccessPage from "_components/unifiedApp/unifiedSuccess";
 const CreateJobWizard = React.lazy(() => import("_containers/customer/createJob/createJobWizard").then(m => ({ default: m.CreateJobWizard })));
-
+const CandidateProfile = React.lazy(() => import("_containers/candidate/candidateProfile").then(m => ({ default: m.CandidateProfile })));
 const ScheduleInterview = React.lazy(() =>
   import("_containers/customer/scheduleInterview/scheduleInterview").then(m => ({ default: m.ScheduleInterview }))
 );
@@ -168,51 +168,64 @@ export function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
+      setupMessaging();
       updatePushNotifications();
+      setupAnalytics();
+    }
+  }, [authUser]);
+
+  function isOnProfilePage() {
+    return window.location.pathname.includes("/profile");
+  }
+
+  const showToast = (payload, isProfilePage) => {
+    toast(<Row>
+      <p>
+        <b>{payload.notification.title}</b>
+      </p>
+      <p>{payload.notification.body}</p>
+      {payload?.data?.type === "Resume_Notification" && isProfilePage ? (
+        <p>
+          Updated resume data available
+          <Button color="link" onClick={() => { window.location.reload(); }} >REFRESH </Button>
+        </p>
+      ) : (
+        <></>
+      )}
+    </Row>,
+      {
+        position: "bottom-right",
+        autoClose: 10000,
+      }
+    );
+  }
+  const refreshCandidateProfile = () => {
+    dispatch(
+      getProfileActions.getCandidate(
+        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+      )
+    );
+  }
+
+  const setupMessaging = () => {
+    import("../../firebase/index").then(({ messaging }) => {
       messaging?.onMessage((payload) => {
-        let isProfilePage = window.location.pathname.indexOf("/profile") !== -1;
-        toast(
-          <Row>
-            <p>
-              <b>{payload.notification.title}</b>
-            </p>
-            <p>{payload.notification.body}</p>
-            {payload?.data?.type === "Resume_Notification" && isProfilePage ? (
-              <p>
-                Updated resume data available
-                <Button
-                  color="link"
-                  onClick={() => {
-                    window.location.reload();
-                  }}
-                >
-                  REFRESH
-                </Button>
-              </p>
-            ) : (
-              <></>
-            )}
-          </Row>,
-          {
-            position: "bottom-right",
-            autoClose: 10000,
-          }
-        );
+        const isProfilePage = isOnProfilePage();
+        showToast(payload, isProfilePage);
         if (isProfilePage) {
-          dispatch(
-            getProfileActions.getCandidate(
-              JSON.parse(localStorage.getItem("userDetails")).InternalUserId
-            )
-          );
+          refreshCandidateProfile();
         }
         updatePushNotifications();
       });
-    }
-  }, [authUser]);
+    });
+  }
+
 
   const updatePushNotifications = () => {
     dispatch(candidateDashboardActions.getAlerts());
   };
+
+
   // init custom history object to allow navigation from
   // anywhere in the react app (inside or outside components)
   history.navigate = useNavigate();
@@ -233,14 +246,17 @@ export function App() {
     }
   }, [location]);
 
-  useEffect(() => {
-    if (analytics) {
+  const setupAnalytics = async () => {
+    import("../../firebase/index").then(({ analytics }) => {
       analytics.logEvent("page_visit", {
         page_title: "home page",
         page_location: window.location.pathname,
         page_path: window.location.pathname,
       });
-    }
+    });
+  };
+
+  useEffect(() => {
     getPublicIpAdd();
     if (isMobile() || isTablet()) {
       setShowGetAppPopup(true);
