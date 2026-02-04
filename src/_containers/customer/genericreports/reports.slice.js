@@ -5,21 +5,6 @@ import jwtDecode from "jwt-decode";
 const name="genericreports"
 
 
-// export const postAtsAuthorization = createAsyncThunk(
-//     `${name}/postAtsAuthorization`,
-//     async (data) => {
-//         const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Atsauthorization`;
-//         return await fetchWrapper.post(TOKEN_END_POINT, data);
-//     }
-// );
-
-// export const deleteAtsAuthorization = createAsyncThunk(
-//     `${name}/deleteAtsAuthorization`,
-//     async (id) => {
-//         const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Atsauthorization/${id}`;
-//         return await fetchWrapper.delete(TOKEN_END_POINT);
-//     }
-// );
 export const fetchReportList = createAsyncThunk(
     `${name}/fetchReportList`,
         async ({ endpoint, params }) => {
@@ -45,15 +30,14 @@ export const fetchReportList = createAsyncThunk(
         //     parameterParts.push(`@IsActive=${IsActive}`);
         // }
 
-        // add optional report filters if supplied (use lowercase param names to match existing reports)
       //  if (startdate) {
-           // parameterParts.push(`@startdate='${startdate}'`);
+            //parameterParts.push(`@startdate='${startdate}'`);
            parameterParts.push(`@startdate=''`);
        // }
         if (enddate) {
             parameterParts.push(`@enddate='${enddate}'`);
         }
-        if (subsidiaryid) {
+        if (subsidiaryid) { 
             // numeric or string subsidiary id
             parameterParts.push(`@subsidiaryid=${subsidiaryid}`);
         }
@@ -94,33 +78,27 @@ const reportsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-                    // .addCase(postAtsAuthorization.pending, (state, { payload }) => {
-                    //     state.loader = true;
-                    // })
-                    // .addCase(postAtsAuthorization.fulfilled, (state, { payload }) => {
-                    //     state.loader = false;
-                    //     //state.atsauthorizationList = [...state.atsauthorizationList, payload];
-                    // })
-                    // .addCase(postAtsAuthorization.rejected, (state, action) => {
-                    //     state.loader = false;
-                    // })
+                    
                     .addCase(fetchReportList.pending, (state) => {
                         
                                     state.loader = true;
-                                    state.reportsdata = [];
-                                    state.header=[];
+                                   // state.reportsdata = [];
+                                  //  state.header=[];
+                                  //  state.pageTitle="";
                                     
                     })     
                     .addCase(fetchReportList.fulfilled, (state, action) => {
                                    
                                     state.loader = false;
-                                    // sp response
+                                    
                                    // console.log('Report payload:', action?.payload);
                                     if (action?.payload?.data) {
                                         state.reportsdata = action?.payload?.data?.data|| [];
 
-                                     //   console.log('Report data:', state.reportsdata); //here data is coming 
+                                     //   console.log('Report data:', state.reportsdata); 
                                         state.header=action?.payload?.data?.columnMetadata;
+                                        state.pagetitle=action?.payload?.data?.pageTitle;
+                                        
                                         state.totalrows = action?.payload?.data?.totalRows || 0;
                                     } else {
                                         
@@ -137,8 +115,6 @@ const reportsSlice = createSlice({
 
 export const reportsActions ={
     ...reportsSlice.actions,
-   // postAtsAuthorization,
-   // deleteAtsAuthorization,
     fetchReportList,
 
 };

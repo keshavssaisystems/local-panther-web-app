@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import AsyncSelect from "react-select/async";
-import debounce from "lodash/debounce";
+
 import {
     Row,
     Col,
@@ -25,12 +25,11 @@ import cx from "classnames";
 import "./reports.css"; 
 import Loader from "react-loaders";
 import { useLocation } from "react-router-dom";
-import AddClient from "_containers/customer/atscompanylist/addclient";
 import { reportsReducer } from "_containers/customer/genericreports/reports.slice";
 import { fetchReportList } from "_containers/customer/genericreports/reports.slice";
 
 const ReportsList = () => {
-    console.log("ATS Hiring Contact List component rendered");
+    
     let isCompanyAdmin = true;
 
     const icon = "mdi mdi-account-multiple-outline";
@@ -39,49 +38,38 @@ const ReportsList = () => {
     const path = location.pathname.toLowerCase();
 
     //for path  
-    const endpointMap = { "/report/customer-jobs/10": "Report10Jobs", 
-                          "/ats/atscontact": "Get_ATS_HiringManagerContact_List", 
-                          "/ats/atsassignee": "Get_ATS_EmployeeAssignedUsers_List",
+    const endpointMap = { "/report/customer-jobs/10": "Report10Jobs",
                         };
     const endpoint = endpointMap[path];
 
     const dispatch = useDispatch();
-    // read candidates and loading directly from redux so component re-renders when data arrives
     
     const data = useSelector((state) => state.reportsReducer.reportsdata|| []);
     
     const header = useSelector((state) => state.reportsReducer?.header|| {});
+    const pagetitle = useSelector((state) => state.reportsReducer?.pagetitle);
    
-    const loading = useSelector((state) => state.reportsdata?.loader || false);
+    const loading = useSelector((state) => state.reportsReducer?.loader || false);
+
+    const totalRows = useSelector((state) => state.reportsReducer?.totalrows || 0);
+    
    // const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
     //const { customerList = [] } = useSelector( (state) => state.adminReportReducer);
 
     
+    const title =  pagetitle || "Report";
     
-    //for title
-    const titleMap = {  
-      "/ats/atscompany": "Client List",
-      "/ats/atscontact": "Contact List",
-      "/ats/atsassignee": "Assignee List",
-    };
-    const title =  titleMap[path] || "ATS";
-    //for entity
     const entityMap = {
-      "ats/atscompany": "atscompany",
-      "ats/atscontact": "atscontact",
-      "ats/atsassignee":"atsassignee",
+      
     };
     let entity = entityMap[path];
 
     //add user
     const [showAddClient, setShowAddClient] = useState(false);
-
-    
     
     // pagination state
     const [currentPage, setCurrentPage] = useState(1); 
     const [perPage, setPerPage] = useState(10);
-    const totalRows = useSelector((state) => state.reportsdata?.totalrows || 0);
     const [searchData, setSearchData] = useState("");
     const [statusFilter, setStatusFilter] = useState(3);
     const [startDate, setStartDate] = useState(null);
@@ -102,49 +90,16 @@ const ReportsList = () => {
         setSearchData(text);
     };
 
-    // Load candidate and job dropdowns on component mount
+    
     useEffect(() => {
-        // Load candidates - adjust this based on your actual API
-        // This is a placeholder; replace with your actual candidate fetch action
+        
         setCandidateDropDownList([]);
         setJobDropDownList([]);
     }, []);
 
-    // const debouncedFetchJobs = React.useMemo(
-    //     () =>
-    //         debounce((inputValue, callback) => {
-    //             // Replace with actual job dropdown fetch based on your API
-    //             // Example: dispatch(getJobDropdown(inputValue)).then((res) => {
-    //             const data = jobDropDownList || [];
-    //             const options = data.map((j) => ({
-    //                 label: j.jobtitle || j.name,
-    //                 value: j.jobid || j.id,
-    //                 jobid: j.jobid || j.id,
-    //             }));
-    //             callback(options);
-    //         }, 300),
-    //     [jobDropDownList]
-    // );
+    
 
-    // const loadJobOptions = (inputValue) =>
-    //     new Promise((resolve) => debouncedFetchJobs(inputValue, resolve));
-
-    // const custJobSelectStyles = {
-    //     menuPortal: (base) => ({ ...base, zIndex: 9999, borderRadius: 0 }),
-    //     menu: (base) => ({ ...base, borderRadius: 0 }),
-    //     menuList: (base) => ({ ...base, borderRadius: 0 }),
-    //     control: (base, state) => ({
-    //         ...base,
-    //         minHeight: "38px",
-    //         height: "38px",
-    //         boxShadow: state.isFocused ? base.boxShadow : "none",
-    //         borderRadius: 0,
-    //     }),
-    //     valueContainer: (base) => ({ ...base, height: "38px", padding: "0 8px" }),
-    //     input: (base) => ({ ...base, margin: 0, padding: 0 }),
-    //     indicatorsContainer: (base) => ({ ...base, height: "38px" }),
-    // };
-    //for binding dropdown  subsidiary
+   
     
     //for subsidiary dropdown
     const subsidiaryOptions = React.useMemo(() => {
@@ -171,31 +126,46 @@ const ReportsList = () => {
         });
         return map;
     }, [header]);
-    const generateColumns = (rows,headerWidths={}) => {
-        if (!rows || rows.length === 0) return [];
+  
+    
+    const generateColumns = (columnMetadata = []) => {
+            if (!Array.isArray(columnMetadata)) return [];
 
-        const sample = rows[0]; // take first row keys
+            return columnMetadata
+                // backend decides visibility
+                .filter(col => col.isvisible === 1)
+                .map(col => {
+                // special handling for row number
+                if (col.key === "rownumber") {
+                    return {
+                    name: col.label.replace(/_/g, " ").toUpperCase(),
+                    width: col.width,
+                    sortable: false,
+                    cell: (row, index) => index + 1,
+                    };
+        }
 
-        return Object.keys(sample).map((key) => {
-            const width = headerWidths[key]; // setwidth from api
-            return {
-                     name: key.replace(/([A-Z])/g, "$1")       // convert camelCase 
-                        .replace(/_/g, " ")              // convert snake_case
-                        .replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize words
-                    selector: (row) => {
-                        if (key === "isactive") {
-                            return row[key] ? "Active" : "Inactive";
-                        }
-                        return row[key] ?? "-";
-                    },
-                    
-                     wrap :true,
-                     sortable: true ,
-                     width: width ? `${width}%` : "auto"
+        return {
+            name: col.label.replace(/_/g, " ").toUpperCase(),
+            selector: row => {
+            if (col.key === "isactive") {
+                return row[col.key] ? "Active" : "Inactive";
             }
+            return row[col.key] ?? "-";
+            },
+            width: col.width,
+            wrap: true,
+            sortable: true,
+        };
         });
-    };  
-     const dynamicColumns = generateColumns(data,headerWidthMap);
+    };
+
+const columns = React.useMemo(
+  () => generateColumns(header),
+  [header]
+);
+
+
    // fetch helper - requests server with paging params and updates local totalRows
     const fetchData =async (page = 1, pageSize = perPage, statusFilter, searchText = "", startDateParam = null, endDateParam = null, subsidiaryParam = null, candidateParam = null, jobParam = null, recommStatusParam = null) => {
          try {
@@ -215,7 +185,7 @@ const ReportsList = () => {
                 
             } 
             catch (error) {
-                    console.error("ATS Hiring Contact list fetch failed", error);
+                    console.error("list fetch failed", error);
             }
 };
 
@@ -266,6 +236,36 @@ const ReportsList = () => {
             },
         },
     };
+    const handleSearch = () => {
+    setCurrentPage(1);
+        fetchData(
+            1,
+            perPage,
+            statusFilter,
+            searchData,
+            startDate ? moment(startDate).format("YYYY-MM-DD") : null,
+            endDate ? moment(endDate).format("YYYY-MM-DD") : null,
+            subsidiaryId || null,
+            candidateId || null,
+            jobId || null,
+            recommStatusId || null
+        );
+    };
+    const handleClear = () => {
+        
+        setSearchData("");
+        setStatusFilter(3);
+        setStartDate(null);
+        setEndDate(null);
+        setSubsidiaryId("");
+        setCandidateId("");
+        setJobId(null);
+        setRecommStatusId(null);
+        setCurrentPage(1);
+
+        fetchData(1, perPage, 3, "", null, null, null, null, null, null);
+    };
+
     return (
         <div>
             <Row>
@@ -520,7 +520,7 @@ const ReportsList = () => {
                                                     className="me-4"
                                                     color="primary"
                                                     type="button"
-                                                    //onClick={() => onSubmitHandler()}
+                                                     onClick={handleSearch}                                               
                                                   >
                                                     <FontAwesomeIcon icon={faSearch} /> Search
                                                   </Button>
@@ -528,24 +528,12 @@ const ReportsList = () => {
                                                     // style={{ background: "rgb(47 71 155)" }}
                                                     color="link"
                                                     type="button"
-                                                    //onClick={() => onSubmitClear()}
+                                                    onClick={handleClear}
                                                   >
                                                     Clear
                                                   </Button>
                                                 </Col>
                                 <Col lg="12" md="2" sm="10" sx="12">
-                                     {path == "/ats/atscompany" && ( 
-                                        <Button 
-                                        style={{
-                                         background: "#2f479b",
-                                         borderColor: "#545cd8",
-                                        }}
-                                        className="input-group-text float-end mt-1"
-                                        color="primary" 
-                                        onClick={() => setShowAddClient(true)}
-                                        >
-                                          Add Client
-                                         </Button> )}
                                     <div
                                         className={cx(
                                             "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
@@ -584,7 +572,7 @@ const ReportsList = () => {
                                     
                                     <DataTable
                                         data={data}
-                                        columns={dynamicColumns}
+                                        columns={columns}
                                         pagination
                                         paginationServer
                                         paginationTotalRows={totalRows}
@@ -602,11 +590,7 @@ const ReportsList = () => {
                     </Card>
                 </Col>
             </Row>
-            <AddClient 
-                isOpen={showAddClient}
-                onClose={() => setShowAddClient(false)}
-                onSuccess={() => fetchData(currentPage, perPage, statusFilter, searchData)}
-            />
+            
         </div>
     );
 };
