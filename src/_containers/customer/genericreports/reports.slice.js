@@ -10,32 +10,32 @@ export const fetchReportList = createAsyncThunk(
         async ({ endpoint, params }) => {
             const {
                 SearchText = "",
-              //  IsActive,
+                IsActive,
                 currentpage = 1,
                 PageSize = 10,
-                startdate,
-                enddate,
+                startDate,
+                endDate,
                 subsidiaryid,
                 candidateid,
                 jobid,
             } = params;
-
+        console.log("slicestartdate",startDate)
+        console.log("sliceendDate",endDate)
         let parameterParts = [];
       
         if (SearchText) {
             parameterParts.push(`@SearchText='${SearchText}'`);
         }
+            console.log("IsActive",IsActive)
+         if (IsActive !== null && IsActive !== undefined && IsActive !== 3) {
+              parameterParts.push(`@IsActive=${IsActive}`);
+         }
 
-        // if (IsActive !== null && IsActive !== undefined) {
-        //     parameterParts.push(`@IsActive=${IsActive}`);
-        // }
-
-      //  if (startdate) {
-            //parameterParts.push(`@startdate='${startdate}'`);
-           parameterParts.push(`@startdate=''`);
-       // }
-        if (enddate) {
-            parameterParts.push(`@enddate='${enddate}'`);
+        if (startDate) {
+            parameterParts.push(`@startdate='${startDate}'`);
+        }
+        if (endDate) {
+            parameterParts.push(`@enddate='${endDate}'`);
         }
         if (subsidiaryid) { 
             // numeric or string subsidiary id
@@ -70,6 +70,7 @@ const reportsSlice = createSlice({
         // initialize state from local storage to enable user to stay logged in
        // atsauthorizationList: [],
         reportsList: [],
+        filters:{},
         error: null,
         loader: false,
         totalrows: 0,
@@ -98,6 +99,7 @@ const reportsSlice = createSlice({
                                      //   console.log('Report data:', state.reportsdata); 
                                         state.header=action?.payload?.data?.columnMetadata;
                                         state.pagetitle=action?.payload?.data?.pageTitle;
+                                        state.filters=action?.payload?.data?.search || {};
                                         
                                         state.totalrows = action?.payload?.data?.totalRows || 0;
                                     } else {

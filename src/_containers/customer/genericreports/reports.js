@@ -7,6 +7,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import AsyncSelect from "react-select/async";
+import titlelogo from "../../../assets/utils/images/candidate.svg";
+import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
+import { exportToExcel } from "react-json-to-excel";
+
 
 import {
     Row,
@@ -15,6 +19,11 @@ import {
     CardBody,
     FormGroup,
     Input,
+    CardHeader,
+    UncontrolledButtonDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
     Button
 
 } from "reactstrap";
@@ -27,6 +36,7 @@ import Loader from "react-loaders";
 import { useLocation } from "react-router-dom";
 import { reportsReducer } from "_containers/customer/genericreports/reports.slice";
 import { fetchReportList } from "_containers/customer/genericreports/reports.slice";
+import { set } from "lodash";
 
 const ReportsList = () => {
     
@@ -39,6 +49,7 @@ const ReportsList = () => {
 
     //for path  
     const endpointMap = { "/report/customer-jobs/10": "Report10Jobs",
+                          "/report/customer-scheduled-interviews/11":"Report11ScheduledInterviews",
                         };
     const endpoint = endpointMap[path];
 
@@ -48,6 +59,8 @@ const ReportsList = () => {
     
     const header = useSelector((state) => state.reportsReducer?.header|| {});
     const pagetitle = useSelector((state) => state.reportsReducer?.pagetitle);
+    const filter=useSelector((state) => state.reportsReducer?.filters|| {});
+    
    
     const loading = useSelector((state) => state.reportsReducer?.loader || false);
 
@@ -64,9 +77,6 @@ const ReportsList = () => {
     };
     let entity = entityMap[path];
 
-    //add user
-    const [showAddClient, setShowAddClient] = useState(false);
-    
     // pagination state
     const [currentPage, setCurrentPage] = useState(1); 
     const [perPage, setPerPage] = useState(10);
@@ -91,14 +101,81 @@ const ReportsList = () => {
     };
 
     
-    useEffect(() => {
+    // useEffect(() => {
         
-        setCandidateDropDownList([]);
-        setJobDropDownList([]);
-    }, []);
+    //     setCandidateDropDownList([]);
+    //     setJobDropDownList([]);
+    // }, []);
 
-    
+    //excel
+    const exportColumns = React.useMemo(() => {
+        if (!Array.isArray(header)) return [];
+        return header.filter((col) => col.isexport === 1);
+    }, [header]);
 
+    const excelData = React.useMemo(() => {
+  if (!data || data.length === 0) return [];
+
+  const filteredData = data.map((row, index) => {
+    const obj = {};
+
+    exportColumns.forEach((col) => {
+      if (col.key === "rownumber") {
+        obj[col.label] = index + 1;
+      } else if (col.key === "isactive") {
+        obj[col.label] = row[col.key] ? "Active" : "Inactive";
+      } else {
+        obj[col.label] = row[col.key] ?? "";
+      }
+    });
+
+    return obj;
+  });
+
+  return [
+    {
+      sheetName: title || "Report",
+      details: filteredData,
+    },
+  ];
+}, [data, exportColumns, title]);
+
+
+    //for candidate dropdown
+    const candidateOptions = React.useMemo(() => {
+    const map = new Map();
+
+    data.forEach((item) => {
+        const id = item.candidateid || item.id;
+        const name =
+        item.candidatename ||
+        (item.firstname && item.lastname
+            ? item.firstname + " " + item.lastname
+            : null);
+
+        if (id && name && !map.has(id)) {
+        map.set(id, { id, name });
+        }
+    });
+
+    return Array.from(map.values());
+    }, [data]);
+
+    //for job dropdown
+    const jobOptions = React.useMemo(() => {
+    const map = new Map();
+
+    data.forEach((item) => {
+        if (item.jobid && !map.has(item.jobid)) {
+        map.set(item.jobid, {
+            jobid: item.jobid,
+            jobtitle: item.jobtitle,
+        });
+        }
+    });
+
+    return Array.from(map.values());
+    }, [data]);
    
     
     //for subsidiary dropdown
@@ -138,7 +215,7 @@ const ReportsList = () => {
                 // special handling for row number
                 if (col.key === "rownumber") {
                     return {
-                    name: col.label.replace(/_/g, " ").toUpperCase(),
+                    name: col.label, //.replace(/_/g, " ").toUpperCase()
                     width: col.width,
                     sortable: false,
                     cell: (row, index) => index + 1,
@@ -146,7 +223,7 @@ const ReportsList = () => {
         }
 
         return {
-            name: col.label.replace(/_/g, " ").toUpperCase(),
+            name: col.label, //.replace(/_/g, " ").toUpperCase()
             selector: row => {
             if (col.key === "isactive") {
                 return row[col.key] ? "Active" : "Inactive";
@@ -157,13 +234,14 @@ const ReportsList = () => {
             wrap: true,
             sortable: true,
         };
+        
         });
     };
 
-const columns = React.useMemo(
-  () => generateColumns(header),
-  [header]
-);
+    const columns = React.useMemo(
+    () => generateColumns(header),
+    [header]
+    );
 
 
    // fetch helper - requests server with paging params and updates local totalRows
@@ -181,6 +259,7 @@ const columns = React.useMemo(
                jobid: jobParam || null,
                customerrecommendedjobstatusid: recommStatusParam || null,
                };
+               
                await dispatch(fetchReportList({endpoint,params}));
                 
             } 
@@ -226,18 +305,10 @@ const columns = React.useMemo(
         fetchData(currentPage, perPage, statusFilter, "", null, null, null, null, null, null);
     };
     
-    const customStyles = {
-        headCells: {
-            style: {
-                color: "#2F479B",
-                fontFamily: "Capitana",
-                fontSize: "16px",
-                fontWeight: "400",
-            },
-        },
-    };
     const handleSearch = () => {
-    setCurrentPage(1);
+        console.log("START DATE:", startDate);
+        console.log("END DATE:", jobId);
+    setCurrentPage(1)
         fetchData(
             1,
             perPage,
@@ -260,6 +331,7 @@ const columns = React.useMemo(
         setSubsidiaryId("");
         setCandidateId("");
         setJobId(null);
+        setJobSelected(null);
         setRecommStatusId(null);
         setCurrentPage(1);
 
@@ -272,12 +344,38 @@ const columns = React.useMemo(
                 <Col md="12">
                     <PageTitle
                         heading={entity === "roles" ? "Menu Mapping" : title}
-                    // icon={icon}
+                    icon={titlelogo}
                     />
                 </Col>
 
                 <Col md="12">
                     <Card className="mb-3">
+                       <CardHeader className="card-header-tab">
+                            <div className="card-header-title font-size-lg text-capitalize fw-normal">
+                            Filter by
+                            </div>
+
+                            <div className="btn-actions-pane-right actions-icon-btn">
+                            <UncontrolledButtonDropdown>
+                                <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                                <i className="pe-7s-menu btn-icon-wrapper" />
+                                </DropdownToggle>
+
+                                <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
+                                <DropdownItem header>Download report</DropdownItem>
+
+                                <DropdownItem
+                                    onClick={() =>
+                                        exportToExcel(excelData, `${title || "Report"}_Export`, true)
+                                    }
+                                    >
+                                    <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                                    <span>Excel</span>
+                                </DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledButtonDropdown>
+                            </div>
+                        </CardHeader>
                         <CardBody>
                             {loading && (
                                 <div className="overlay-loader">
@@ -289,13 +387,8 @@ const columns = React.useMemo(
                             )}
                             <Row className="mb-3">
 
-                                <Col
-                                    xxl={isCompanyAdmin ? 3 : 2}
-                                    xl={isCompanyAdmin ? 3 : 2}
-                                    md={isCompanyAdmin ? 4 : 3}
-                                    lg={isCompanyAdmin ? 3 : 2}
-                                    sm={12}
-                                    xs={12}
+                               {filter.statusFilter==1 &&(
+                                <Col lg="2" md="4" sm="12" xs="12"
                                 >
                                     <FormGroup>
                                         <Input
@@ -309,9 +402,9 @@ const columns = React.useMemo(
                                             <option value={0}>In-active</option>
                                         </Input>
                                      </FormGroup>
-                                </Col>
+                                </Col>)}
                                 
-                                <Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
+                                {filter.subsidary===1 &&(<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
                                     <FormGroup>
                                         <Input
                                             type="select"
@@ -329,64 +422,47 @@ const columns = React.useMemo(
                                         ))} 
                                         </Input>
                                     </FormGroup>
-                                </Col>
-                                {/* <Col lg="2" md="4" sm="12" xs="12">
+                                </Col>)}
+                                {filter.candidate===1 &&( <Col lg="2" md="4" sm="12" xs="12">
                                     <FormGroup>
                                         <Input
                                             type="select"
                                             value={candidateId}
                                             name="candidateid"
                                             id="candidateid"
-                                            placeholder="Candidate Id"
-                                            onChange={(e) => {
-                                                setCandidateId(e.target.value);
-                                            }}
-                                        >
+                                            onChange={(e) => setCandidateId(e.target.value)}
+                                            >
                                             <option value={""}>Select a candidate</option>
-                                            {candidateDropDownList?.length > 0 ? (
-                                                candidateDropDownList.map((data) => (
-                                                    <option
-                                                        value={data.id ? data.id : data.candidateid}
-                                                        key={data.id ? data.id : data.candidateid}
-                                                    >
-                                                        {data.name
-                                                            ? data.name
-                                                            : data.firstname + " " + data.lastname}
-                                                    </option>
-                                                ))
-                                            ) : (
-                                                <></>
-                                            )}
+
+                                            {candidateOptions.map((c) => (
+                                                <option key={c.id} value={c.id}>
+                                                {c.name}
+                                                </option>
+                                            ))}
                                         </Input>
                                     </FormGroup>
-                                </Col> */}
-                                {/* <Col lg="2" md="4" sm="12" xs="12">
+                                </Col> )}
+                                {filter.job===1 &&(<Col lg="2" md="4" sm="12" xs="12">
                                     <FormGroup>
                                         <AsyncSelect
                                             cacheOptions
-                                            defaultOptions={(jobDropDownList || []).map((j) => ({
+                                            defaultOptions={jobOptions.map((j) => ({
                                                 label: j.jobtitle,
                                                 value: j.jobid,
                                                 jobid: j.jobid,
                                             }))}
-                                            loadOptions={loadJobOptions}
-                                            className="cust-job-autosuggest"
-                                            classNamePrefix="react-select"
-                                            placeholder="Search job"
+                                            placeholder="Select job"
                                             onChange={(selected) => {
                                                 setJobId(selected ? selected.jobid : null);
                                                 setJobSelected(selected);
                                             }}
                                             value={jobSelected}
-                                            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                                            menuPosition="fixed"
-                                            menuPlacement="auto"
-                                            styles={custJobSelectStyles}
                                         />
+
                                     </FormGroup>
-                                </Col> */}
+                                </Col> )}
                                  {/* Hiring Manager Matched Candidate List by Job Report */}
-                                {/* <Col lg="2" md="4" sm="12" sx="12">
+                                {filter.matched===1 &&(<Col lg="2" md="4" sm="12" sx="12">
                                     <FormGroup>
                                         <Input
                                                       type="select"
@@ -414,7 +490,7 @@ const columns = React.useMemo(
                                                       )}
                                         </Input>
                                     </FormGroup>
-                                </Col> */}
+                                </Col> )}
                                 {/*  */}
                                 {/* <Col lg="2" md="4" sm="12" sx="12">
                                                   <FormGroup>
