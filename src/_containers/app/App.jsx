@@ -90,6 +90,7 @@ import AtsUnified from "_components/unifiedApp/atsUnified";
 import ATSCandidateList from "_containers/customer/atscustomercandidatelist/atscandidatelist";
 import ATSCompanyList from "_containers/customer/atscompanylist/atscompanylist";
 import ATSGenericList from "_containers/generic/atsgeneric"
+import ReportsList from "_containers/customer/genericreports/reports"
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
 const AIJobOffCanvas = React.lazy(() =>
@@ -543,11 +544,20 @@ export function App() {
             }
             key={5}
           />
-          <Route
+          {/* <Route
             path="/report/customer-jobs/:id"
             element={
               <PrivateRoute>
                 <CustomerReportJobList />
+              </PrivateRoute>
+            }
+            key={6}
+          /> */}
+          <Route
+            path="/report/customer-jobs/:id"
+            element={
+              <PrivateRoute>
+                <ReportsList />
               </PrivateRoute>
             }
             key={6}
