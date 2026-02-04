@@ -147,12 +147,7 @@ export const GuestPreview = (props) => {
             type: "error",
           });
         } else {
-
-          props.checkSessionAccess(payload);
-          // showSweetAlert({
-          //   title: "You’re not authorized to join this meeting.",
-          //   type: "error",
-          // });
+          props.checkSessionAccess(payload);         
         }
       }
     }
