@@ -5,6 +5,62 @@ import { appLogout } from "./app.actions";
 // create slice name
 const name = "auth";
 
+// Helper function to handle login success
+const handleLoginSuccess = (state, data) => {
+  const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
+  state.menuList = menuDtoList;
+  state.user = data;
+  state.token = token;
+
+  const companyLogo = data.appConfigurationDtoList?.filter(d => d?.appconfigurationkey === "CompanyLogo") || "";
+  const defLogo = data.appConfigurationDtoList?.filter(d => d?.appconfigurationkey === "DefaultLogo") || "";
+  const cmpLogo = data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
+
+  localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
+  localStorage.setItem("token", token);
+  localStorage.setItem("refreshToken", refreshToken);
+  const decodedData = jwtDecode(token);
+  localStorage.setItem("userId", decodedData.UserId);
+  localStorage.setItem("profileImage", decodedData.Profilephotopath);
+  localStorage.setItem("userLoginInfoId", userLoginInfoId);
+  localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
+  state.userroleid = parseInt(decodedData.UserroleId);
+  localStorage.setItem("userDetails", JSON.stringify(decodedData));
+  localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
+  localStorage.setItem("logo", decodedData?.role?.toLowerCase() === "candidate" ? "" : cmpLogo?.length > 0 ? cmpLogo
+    : companyLogo?.length > 0 ? companyLogo[0]?.appconfigurationvalue : defLogo?.length > 0 ? defLogo[0]?.appconfigurationvalue : "");
+  localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
+  if (decodedData?.UserroleId === "2") { localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin); }
+  localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
+  // get return url from location state or default to home page
+  const { from } = history.location.state || { from: { pathname: "/" }, };
+
+  if (companyList && companyList.length > 0) {
+    localStorage.setItem("companyList", JSON.stringify(companyList));
+  }
+  state.loader = false;
+  history.navigate(from);
+}
+
+const handleLogoutSuccess = (state) => {
+  state.user = {};
+  state.token = null;
+  state.loader = false;
+  let logo = localStorage.getItem("logo");
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToekn");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userDetails");
+  localStorage.removeItem("userroleid");
+  localStorage.removeItem("pushnotification");
+  localStorage.removeItem("userLoginInfoId");
+  localStorage.removeItem("emailnotification");
+  localStorage.clear();
+  localStorage.setItem("logo", logo);
+  history.navigate("/login");
+}
+
 // login thunk
 export const loginThunk = createAsyncThunk(
   `${name}/loginThunk`,
@@ -207,82 +263,7 @@ const authSlice = createSlice({
       state.loader = true;
     },
     [loginThunk.fulfilled]: (state, { payload: { data = {} } = {} }) => {
-      const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
-      state.menuList = menuDtoList;
-      state.user = data;
-      state.token = token;
-      let companyLogo = data.appConfigurationDtoList.filter((d) => {
-        return d?.appconfigurationkey === "CompanyLogo";
-      });
-      let defLogo = data.appConfigurationDtoList.filter((d) => {
-        return d?.appconfigurationkey === "DefaultLogo";
-      });
-      let cmpLogo =
-        data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
-      localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
-      localStorage.setItem("token", token);
-      localStorage.setItem("refreshToken", refreshToken);
-      const decodedData = jwtDecode(token);
-      localStorage.setItem("userId", decodedData.UserId);
-      localStorage.setItem("profileImage", decodedData.Profilephotopath);
-      localStorage.setItem("userLoginInfoId", userLoginInfoId);
-      // localStorage.setItem(
-      //   "userroleid",
-      //   decodedData.role.toLowerCase() === "admin"
-      //     ? 1
-      //     : decodedData.role.toLowerCase() === "employer" ||
-      //       decodedData.role.toLowerCase() === "hiring manager"
-      //     ? 2
-      //     : 3
-      // );
-      // state.userroleid =
-      //   decodedData.role.toLowerCase() === "admin"
-      //     ? 1
-      //     : decodedData.role.toLowerCase() === "employer" ||
-      //       decodedData.role.toLowerCase() === "hiring manager"
-      //       ? 2
-      //       : 3;
-      // console.log("decodedData", decodedData);
-      localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
-      state.userroleid = parseInt(decodedData.UserroleId);
-      localStorage.setItem("userDetails", JSON.stringify(decodedData));
-      localStorage.setItem(
-        "pushnotification",
-        decodedData?.Pushnotification?.toLowerCase() === "true"
-      );
-      localStorage.setItem(
-        "logo",
-        decodedData?.role?.toLowerCase() === "candidate"
-          ? ""
-          : cmpLogo?.length > 0
-            ? cmpLogo
-            : companyLogo?.length > 0
-              ? companyLogo[0]?.appconfigurationvalue
-              : defLogo?.length > 0
-                ? defLogo[0]?.appconfigurationvalue
-                : ""
-      );
-      localStorage.setItem(
-        "emailnotification",
-        decodedData?.Emailnotification?.toLowerCase() === "true"
-      );
-      if (decodedData?.UserroleId === "2") {
-        localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
-      }
-      localStorage.setItem(
-        "emailnotification",
-        decodedData?.Emailnotification?.toLowerCase() === "true"
-      );
-      // get return url from location state or default to home page
-      const { from } = history.location.state || {
-        from: { pathname: "/" },
-      };
-
-      if (companyList && companyList.length > 0) {
-        localStorage.setItem("companyList", JSON.stringify(companyList));
-      }
-      state.loader = false;
-      history.navigate(from);
+      handleLoginSuccess(state, data);
     },
     [loginThunk.rejected]: (state, action) => {
       state.error = action.error;
@@ -451,22 +432,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     [logoutThunk.fulfilled]: (state, { payload = {} }) => {
-      state.user = {};
-      state.token = null;
-      state.loader = false;
-      let logo = localStorage.getItem("logo");
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToekn");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("userDetails");
-      localStorage.removeItem("userroleid");
-      localStorage.removeItem("pushnotification");
-      localStorage.removeItem("userLoginInfoId");
-      localStorage.removeItem("emailnotification");
-      localStorage.clear();
-      localStorage.setItem("logo", logo);
-      history.navigate("/login");
+      handleLogoutSuccess(state);
     },
     [logoutThunk.rejected]: (state, action) => {
       // do nothing
@@ -485,80 +451,7 @@ const authSlice = createSlice({
     },
     [loginWithOTP.fulfilled]: (state, { payload: { data = {} } = {} }) => {
       if (data?.token) {
-        const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
-        state.menuList = menuDtoList;
-        state.user = data;
-        state.token = token;
-        let companyLogo = data.appConfigurationDtoList.filter((d) => {
-          return d?.appconfigurationkey === "CompanyLogo";
-        });
-        let defLogo = data.appConfigurationDtoList.filter((d) => {
-          return d?.appconfigurationkey === "DefaultLogo";
-        });
-        let cmpLogo =
-          data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
-        localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
-        localStorage.setItem("token", token);
-        localStorage.setItem("refreshToken", refreshToken);
-        const decodedData = jwtDecode(token);
-        localStorage.setItem("userId", decodedData.UserId);
-        localStorage.setItem("profileImage", decodedData.Profilephotopath);
-        localStorage.setItem("userLoginInfoId", userLoginInfoId);
-        // localStorage.setItem(
-        //   "userroleid",
-        //   decodedData.role.toLowerCase() === "admin"
-        //     ? 1
-        //     : decodedData.role.toLowerCase() === "employer" ||
-        //       decodedData.role.toLowerCase() === "hiring manager"
-        //       ? 2
-        //       : 3
-        // );
-        // state.userroleid =
-        //   decodedData.role.toLowerCase() === "admin"
-        //     ? 1
-        //     : decodedData.role.toLowerCase() === "employer" ||
-        //       decodedData.role.toLowerCase() === "hiring manager"
-        //       ? 2
-        //       : 3;
-        localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
-        state.userroleid = parseInt(decodedData.UserroleId);
-        localStorage.setItem("userDetails", JSON.stringify(decodedData));
-        localStorage.setItem(
-          "pushnotification",
-          decodedData?.Pushnotification?.toLowerCase() === "true"
-        );
-        localStorage.setItem(
-          "logo",
-          decodedData?.role?.toLowerCase() === "candidate"
-            ? ""
-            : cmpLogo?.length > 0
-              ? cmpLogo
-              : companyLogo?.length > 0
-                ? companyLogo[0]?.appconfigurationvalue
-                : defLogo?.length > 0
-                  ? defLogo[0]?.appconfigurationvalue
-                  : ""
-        );
-        localStorage.setItem(
-          "emailnotification",
-          decodedData?.Emailnotification?.toLowerCase() === "true"
-        );
-        if (decodedData?.UserroleId === "2") {
-          localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
-        }
-        localStorage.setItem(
-          "emailnotification",
-          decodedData?.Emailnotification?.toLowerCase() === "true"
-        );
-        // get return url from location state or default to home page
-        const { from } = history.location.state || {
-          from: { pathname: "/" },
-        };
-        if (companyList && companyList.length > 0) {
-          localStorage.setItem("companyList", JSON.stringify(companyList));
-        }
-        state.loader = false;
-        history.navigate(from);
+        handleLoginSuccess(state, data);
       }
     },
     [loginWithOTP.rejected]: (state, action) => {
