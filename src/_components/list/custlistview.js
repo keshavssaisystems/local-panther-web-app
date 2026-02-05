@@ -950,7 +950,7 @@ export const CustCandidateListView = (props) => {
                             width={"20px"}
                             title="Previous Offer - Click to view offer"
                             onClick={() =>
-                              window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                              onOpenDocumentModal(row?.jobOfferDtos[1]?.offerfilepath)
                             }
                           ></img>
                         </>
@@ -968,7 +968,7 @@ export const CustCandidateListView = (props) => {
                               : "Final Offer - Click to view offer"
                           }
                           onClick={() =>
-                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                            onOpenDocumentModal(row?.jobOfferDtos[0]?.offerfilepath)
                           }
                         ></img>
                       </>
@@ -991,7 +991,7 @@ export const CustCandidateListView = (props) => {
                                 : "New Offer - Click to view offer"
                             }
                             onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                              onOpenDocumentModal(row?.jobOfferDtos[0]?.offerfilepath)
                             }
                           ></img>
                         </>
@@ -1012,7 +1012,7 @@ export const CustCandidateListView = (props) => {
                                 : "New Offer - Click to view offer"
                             }
                             onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                              onOpenDocumentModal(row?.jobOfferDtos[0]?.offerfilepath)
                             }
                           ></img>
                         </>
