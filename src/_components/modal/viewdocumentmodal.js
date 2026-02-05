@@ -1,0 +1,87 @@
+
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Button,
+} from "reactstrap";
+
+export const ViewDocumentModal = (props) => {
+  const [pdfUrl, setPdfUrl] = useState("");
+  const [documentType, setDocumentType] = useState("");
+  const onDocumentOpen = async () => {
+    const response = await fetch(props.url);
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    setPdfUrl(url);
+  }
+
+  const downloadDocument = async (url) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = url.split("/").pop();
+    link.click();
+  };
+
+  useEffect(() => {
+    const run = async () => {
+      if (getFileType(props.url) === "unknown") {
+        await downloadDocument(props.url);
+        props.onClose()
+        return;
+      }
+      if (props.isOpen) {
+        onDocumentOpen();
+      }
+    };
+
+    run();
+  }, [props.isOpen]);
+
+
+
+  const getFileType = (url) => {
+    let documentType = "";
+    if (!url) return null;
+
+    const lower = url.toLowerCase();
+
+    if (lower.endsWith(".pdf")) documentType = "pdf";
+    else if (lower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) documentType = "image";
+    else documentType = "unknown";
+    setDocumentType(documentType);
+    return documentType;
+  }
+
+  return (<Modal isOpen={props.isOpen} toggle={() => props.onClose()} size="lg" className="modal-reject-align ">
+    <ModalHeader toggle={() => props.onClose()}></ModalHeader>
+
+    <ModalBody style={{ height: "80vh" }}>
+      {pdfUrl && documentType === "pdf" && (
+        <iframe
+          src={pdfUrl}
+          title="document"
+          width="100%"
+          height="100%"
+          style={{ border: "none" }}
+        ></iframe>
+      )}
+      {
+        documentType === "image" && (<img src={pdfUrl} alt="document" style={{ width: "100%", height: "100%" }} />)
+      }
+    </ModalBody>
+    <ModalFooter>
+      <Button color="primary" onClick={() => props.onClose()}>
+        Close
+      </Button>
+    </ModalFooter>
+  </Modal>);
+};
