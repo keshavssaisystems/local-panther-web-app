@@ -41,6 +41,7 @@ import { showSnackbar } from "_store/snackbar.slice";
 import { is } from "date-fns/locale";
 import { OfflineInterviewModal } from "_components/scheduleInterview/offlineInterviewModal";
 import { OfflineOffer } from "_components/modal/offlineOffer";
+import { ViewDocumentModal } from "_components/modal/viewdocumentmodal";
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -57,6 +58,8 @@ export const CustCandidateListView = (props) => {
   const [isStaffingFirm, setIsStaffingFirm] = useState(props.isStaffingFirm);
   const [showOfflineInterviewModal, setShowOfflineInterviewModal] = useState(false);
   const [offlineInterviewLoading, setOfflineInterviewLoading] = useState(false);
+  const [openDocumentModal, setOpenDocumentModal] = useState(false);
+  const [documentUrl, setDocumentUrl] = useState("");
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -1281,7 +1284,7 @@ export const CustCandidateListView = (props) => {
                             width={"20px"}
                             title="Previous Offer - Click to view offer"
                             onClick={() =>
-                              window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                              onOpenDocumentModal(row?.jobOfferDtos[1]?.offerfilepath)
                             }
                           ></img>
                         </>
@@ -1299,7 +1302,7 @@ export const CustCandidateListView = (props) => {
                                 : "Final Offer - Click to view offer"
                             }
                             onClick={() =>
-                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                              onOpenDocumentModal(row?.jobOfferDtos[0]?.offerfilepath)
                             }
                           ></img>
                         </>
@@ -1322,7 +1325,7 @@ export const CustCandidateListView = (props) => {
                                   : "New Offer - Click to view offer"
                               }
                               onClick={() =>
-                                window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                                onOpenDocumentModal(row?.jobOfferDtos[0]?.offerfilepath)
                               }
                             ></img>
                           </>
@@ -1343,7 +1346,7 @@ export const CustCandidateListView = (props) => {
                                   : "New Offer - Click to view offer"
                               }
                               onClick={() =>
-                                window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                                onOpenDocumentModal(row?.jobOfferDtos[0]?.offerfilepath)
                               }
                             ></img>
                           </>
@@ -2274,6 +2277,15 @@ export const CustCandidateListView = (props) => {
     }
   };
 
+  const onOpenDocumentModal = (url) => {
+    if (!url || url === "") {
+      setDocumentUrl(url);
+      setOpenDocumentModal(false);
+      return;
+    }
+    setDocumentUrl(url);
+    setOpenDocumentModal(true);
+  }
 
   return (
     <>
@@ -2450,6 +2462,7 @@ export const CustCandidateListView = (props) => {
           <></>
         )}
       </>
+      <ViewDocumentModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)} url={documentUrl} />
     </>
   );
 };
