@@ -10,6 +10,7 @@ import AsyncSelect from "react-select/async";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
 import { exportToExcel } from "react-json-to-excel";
+import debounce from "lodash/debounce";
 
 
 import {
@@ -108,37 +109,57 @@ const ReportsList = () => {
     // }, []);
 
     //excel
+    // const debouncedFetch = React.useMemo(
+    // () =>
+    //     debounce((inputValue, callback) => {
+    //     dispatch(getJobDropdown(inputValue)).then((res) => {
+    //         const jobs = res?.payload?.data || [];
+    //         callback(
+    //         jobs.map((j) => ({
+    //             label: j.jobtitle,
+    //             value: j.jobid,
+    //             jobid: j.jobid,
+    //         }))
+    //         );
+    //     });
+    //     }, 300),
+    // [dispatch]
+    // );
+
+    // const loadJobOptions = (inputValue) =>
+    // new Promise((resolve) => debouncedFetch(inputValue, resolve));
+
     const exportColumns = React.useMemo(() => {
         if (!Array.isArray(header)) return [];
         return header.filter((col) => col.isexport === 1);
     }, [header]);
 
     const excelData = React.useMemo(() => {
-  if (!data || data.length === 0) return [];
+        if (!data || data.length === 0) return [];
 
-  const filteredData = data.map((row, index) => {
-    const obj = {};
+        const filteredData = data.map((row, index) => {
+            const obj = {};
 
-    exportColumns.forEach((col) => {
-      if (col.key === "rownumber") {
-        obj[col.label] = index + 1;
-      } else if (col.key === "isactive") {
-        obj[col.label] = row[col.key] ? "Active" : "Inactive";
-      } else {
-        obj[col.label] = row[col.key] ?? "";
-      }
-    });
+            exportColumns.forEach((col) => {
+            if (col.key === "rownumber") {
+                obj[col.label] = index + 1;
+            } else if (col.key === "isactive") {
+                obj[col.label] = row[col.key] ? "Active" : "Inactive";
+            } else {
+                obj[col.label] = row[col.key] ?? "";
+            }
+            });
 
-    return obj;
-  });
+            return obj;
+        });
 
-  return [
-    {
-      sheetName: title || "Report",
-      details: filteredData,
-    },
-  ];
-}, [data, exportColumns, title]);
+        return [
+            {
+            sheetName: title || "Report",
+            details: filteredData,
+            },
+        ];
+    }, [data, exportColumns, title]);
 
 
     //for candidate dropdown
@@ -163,18 +184,18 @@ const ReportsList = () => {
 
     //for job dropdown
     const jobOptions = React.useMemo(() => {
-    const map = new Map();
+        const map = new Map();
 
-    data.forEach((item) => {
-        if (item.jobid && !map.has(item.jobid)) {
-        map.set(item.jobid, {
-            jobid: item.jobid,
-            jobtitle: item.jobtitle,
+        data.forEach((item) => {
+            if (item.jobid && !map.has(item.jobid)) {
+            map.set(item.jobid, {
+                jobid: item.jobid,
+                jobtitle: item.jobtitle,
+            });
+            }
         });
-        }
-    });
 
-    return Array.from(map.values());
+        return Array.from(map.values());
     }, [data]);
    
     
@@ -208,32 +229,41 @@ const ReportsList = () => {
     const generateColumns = (columnMetadata = []) => {
             if (!Array.isArray(columnMetadata)) return [];
 
+            const getDisplayValue = (col, row) => {
+                if (col.key === "isactive") {
+                    return row[col.key] ? "Active" : "Inactive";
+                }
+                if (col.key === "createddate" && row[col.key]) {
+                    return moment(row[col.key]).format("MM/DD/YYYY");
+                }
+                return row[col.key] ?? "-";
+            };
+
             return columnMetadata
                 // backend decides visibility
-                .filter(col => col.isvisible === 1)
+                .filter(col => col.isvisible === 1 )
                 .map(col => {
                 // special handling for row number
                 if (col.key === "rownumber") {
                     return {
-                    name: col.label, //.replace(/_/g, " ").toUpperCase()
+                    name: <span className="table-title">{col.label}</span>,
                     width: col.width,
                     sortable: false,
-                    cell: (row, index) => index + 1,
+                    cell: (row, index) => <span className="table-cell" title={index + 1}>{index + 1}</span>,
                     };
-        }
+                }
 
-        return {
-            name: col.label, //.replace(/_/g, " ").toUpperCase()
-            selector: row => {
-            if (col.key === "isactive") {
-                return row[col.key] ? "Active" : "Inactive";
-            }
-            return row[col.key] ?? "-";
-            },
-            width: col.width,
-            wrap: true,
-            sortable: true,
-        };
+            return {
+                name: <span className="table-title">{col.label}</span>,
+                selector: row => getDisplayValue(col, row),
+                cell: (row) => {
+                    const value = getDisplayValue(col, row);
+                    return <span className="table-cell" title={value}>{value}</span>;
+                },
+                minWidth: col.width,
+                wrap: true,
+                sortable: true,
+            };
         
         });
     };
@@ -387,7 +417,7 @@ const ReportsList = () => {
                             )}
                             <Row className="mb-3">
 
-                               {filter.statusFilter==1 &&(
+                               {filter.statusFilter!=1 &&(
                                 <Col lg="2" md="4" sm="12" xs="12"
                                 >
                                     <FormGroup>
@@ -451,12 +481,18 @@ const ReportsList = () => {
                                                 value: j.jobid,
                                                 jobid: j.jobid,
                                             }))}
+                                            //loadOptions={loadJobOptions}
                                             placeholder="Select job"
                                             onChange={(selected) => {
                                                 setJobId(selected ? selected.jobid : null);
                                                 setJobSelected(selected);
                                             }}
                                             value={jobSelected}
+                                            menuPortalTarget={document.body}
+                                            menuPosition="fixed"
+                                            styles={{
+                                                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                                            }}
                                         />
 
                                     </FormGroup>
@@ -609,7 +645,7 @@ const ReportsList = () => {
                                                     Clear
                                                   </Button>
                                                 </Col>
-                                <Col lg="12" md="2" sm="10" sx="12">
+                                {/* <Col lg="12" md="2" sm="10" sx="12">
                                     <div
                                         className={cx(
                                             "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
@@ -639,14 +675,14 @@ const ReportsList = () => {
                                             </button>
                                         </div>
                                     </div>
-                                </Col>
+                                </Col> */}
                             </Row>
 
                             {/* wrap table to enable horizontal scrolling */}
                             <div className="table-scroll-wrapper">
-                                <div className="table-inner">
+                                <div className="table-inner cust-rep-list-view">
                                     
-                                    <DataTable
+                                    <DataTable 
                                         data={data}
                                         columns={columns}
                                         pagination

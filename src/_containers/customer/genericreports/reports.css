@@ -12,7 +12,9 @@
 }
 
 /* make react-data-table table obey min-width (class names from rdt) */
-.cust-rep-list-view .rdt_Table,
+.cust-rep-list-view .rdt_Table {
+  width: 100%;
+}
 .cust-rep-list-view .rdt_TableWrapper {
   min-width: 1100px;
 }
@@ -27,4 +29,47 @@
 .table-scroll-wrapper::-webkit-scrollbar-thumb{
   background: rgba(0,0,0,0.12);
   border-radius: 6px;
+}
+
+.cust-rep-list-view {
+  .table-title {
+    font-family: capitana, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #212529 !important;
+  }
+
+  .table-cell {
+    font-style: capitana, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 1; /* how many lines you wanna restrict */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    .btn {
+      text-align: justify;
+      text-decoration: underline !important;
+    }
+  }
+
+  .menu-ellipses {
+    .btn {
+      color: #2f2e2e;
+    }
+
+    .dropdown-menu .dropdown-item {
+      font-family: capitana, sans-serif !important;
+      font-size: 16px !important;
+      font-weight: 400 !important;
+      color: #212529 !important;
+    }
+  }
+
+  .btn-primary,
+  .btn-outline-primary .btn-primary:hover,
+  .btn-outline-primary:hover {
+    background-color: #2f479b !important;
+  }
 }
