@@ -109,7 +109,6 @@ export default function CustomerCandidateLists(props) {
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList.some(company => company.isstaffingfirm === true));
   const [offlineStatuses, setOfflineStatuses] = useState([]);
-  const jobList = useSelector((state) => state.customerCandidateList.jobLists);
   const [showInterviewFeedbackStatusFilter, setShowInterviewFeedbackStatusFilter] = useState(false);
   const [showFromToDateFilter, setShowFromToDateFilter] = useState(false);
   const [showSearch, setShowSearch] = useState(true);
@@ -139,7 +138,7 @@ export default function CustomerCandidateLists(props) {
     (state) => state.customerCandidateList.custOfferHistory
   );
   // const filteredItems = useSelector((state) => state.dropdown.jobsDropdownList);
-  const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
+  // const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
   const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const [interviewStatus, setInterviewStatus] = useState([]);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
@@ -157,10 +156,9 @@ export default function CustomerCandidateLists(props) {
   // }, [hiringManagerDownList]);
 
   useEffect(() => {
-    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
-    dispatch(scheduleInterviewActions.getDurationThunk());
+    // dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
@@ -207,7 +205,7 @@ export default function CustomerCandidateLists(props) {
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
-    dispatch(getHiringMangerList(companyId));
+    // dispatch(getHiringMangerList(companyId));
     if (id) {
       dispatch(setHiringManagerId(jobPostedbyId));
       dispatch(custJobListActions.getJobDetail({ jobId: id }));
