@@ -279,6 +279,18 @@ export function ResumeDetails(props) {
     }
   };
 
+  const downloadDocument = async (url) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = url.split("/").pop();
+    link.click();
+
+    URL.revokeObjectURL(blobUrl);
+  };
 
   return (
     <div>
@@ -316,22 +328,6 @@ export function ResumeDetails(props) {
           </CardHeader>
           <CardBody className="scroll-area-md">
             <TabContent activeTab={activeTab}>
-              {/* <TabPane tabId="1">
-                 <p>
-                   <BsDownload />
-                   <a
-                     href={resumeTemplate?.[0]?.name}
-                     download="Resume_Template.docx"
-                     className="card-p-text-black"
-                     style={{ color: "#2F479B", marginLeft: "2px" }}
-                   >
-                     Click here{" "}
-                   </a>
-                   <Label className="card-p-text-black">
-                     to download standard template
-                   </Label>
-                 </p>
-               </TabPane> */}
               <TabPane tabId="1">
                 {resumeDetails?.resumepath ? (
                   <div className="mb-2">
@@ -340,9 +336,10 @@ export function ResumeDetails(props) {
                       <div className="float-end">
                         <a
                           target="blank"
-                          href={resumeDetails?.resumepath}
+                          // href={resumeDetails?.resumepath}
                           download={fileName}
                           className="me-3"
+                          onClick={() => downloadDocument(resumeDetails?.resumepath)}
                         >
                           <BsDownload />
                         </a>
