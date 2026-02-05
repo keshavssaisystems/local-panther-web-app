@@ -124,8 +124,20 @@ export const CustCandidateListView = (props) => {
         )
       );
       if (res.payload.statusCode === 200) {
-        setSelectedIDData(res?.payload?.data?.scheduledInterviewList[0]);
-        setShowIDModal(true);
+        if (res?.payload?.data?.scheduledInterviewList?.length > 0) {
+          setSelectedIDData(res?.payload?.data?.scheduledInterviewList[0]);
+          setShowIDModal(true);
+        }
+        else {
+          dispatch(showSnackbar({
+            message: "Interview details not found.",
+            type: SNACKBAR_TYPES.WARNING,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+        }
       } else {
         //do nothing
       }
