@@ -269,12 +269,12 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
+      if (pageNo === 1) onGetCandidatesCount(id, clearText);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
+    if (pageNo === 1) onGetCandidatesCount(id, clearText);
   };
 
   const handlePageChange = (page) => {
@@ -282,9 +282,10 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(page, props.type || activeTab, id);
   };
   const toggle = (activetab) => {
+    const isScheduleTab = activetab === "scheduled";
     clearInterviewFilters();
-    setShowInterviewFeedbackStatusFilter(activetab === "scheduled" ? true : false);
-    setShowFromToDateFilter(activetab === "scheduled" ? true : false);
+    setShowInterviewFeedbackStatusFilter(isScheduleTab);
+    setShowFromToDateFilter(isScheduleTab);
     if (id) {
       //setSearchText("");
       setPageNo(1);
@@ -610,12 +611,12 @@ export default function CustomerCandidateLists(props) {
 
     if (activeTab === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, searchText);
+      if (pageNo === 1) onGetCandidatesCount(id, false);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, searchText);
+    if (pageNo === 1) onGetCandidatesCount(id, false);
   };
 
   const onCandidateResume = async (candidateId, url) => {
@@ -701,7 +702,7 @@ export default function CustomerCandidateLists(props) {
       navigate(`/candidate-list`);
     }
     else {
-      onSearchJob();
+      onClearSearch();
     }
   }
 
