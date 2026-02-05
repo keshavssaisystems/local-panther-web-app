@@ -128,7 +128,7 @@ const AdminCalendar = React.lazy(() =>
 );
 
 const UploadData = React.lazy(() =>
-  import("_containers/admin/uploadData"));
+  import("_containers/admin/uploadData").then(m => ({ default: m.UploadData })));
 
 const OpenJobs = React.lazy(() => import("_containers/admin").then(m => ({ default: m.OpenJobs })));
 const NewCandidate = React.lazy(() => import("_containers/admin").then(m => ({ default: m.NewCandidate })));
