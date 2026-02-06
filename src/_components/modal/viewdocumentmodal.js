@@ -1,113 +1,80 @@
-import React, { useEffect, useState, useRef } from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Button,
-} from "reactstrap";
+import React, { useEffect, useState } from "react";
+import { Modal, ModalBody, ModalFooter, ModalHeader, Button } from "reactstrap";
 
-export const ViewDocumentModal = (props) => {
-  const [pdfUrl, setPdfUrl] = useState(null);
-  const [documentType, setDocumentType] = useState(null);
-  const objectUrlRef = useRef(null);
-  const isMountedRef = useRef(false);
+export const ViewDocumentModal = ({ isOpen, url, onClose }) => {
+  const [blobUrl, setBlobUrl] = useState("");
+  const [documentType, setDocumentType] = useState("");
 
-  const getFileType = (url) => {
-    if (!url) return "unknown";
+  useEffect(() => {
+    if (!isOpen || !url) return;
 
-    const lower = url.toLowerCase();
-    if (lower.endsWith(".pdf")) return "pdf";
-    if (lower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) return "image";
-    return "unknown";
-  };
-
-  const downloadDocument = async (url) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = url.split("/").pop();
-    link.click();
-
-    URL.revokeObjectURL(blobUrl);
-  };
-
-  const loadDocument = async () => {
-    try {
-      const response = await fetch(props.url);
+    const loadDocument = async () => {
+      const response = await fetch(url);
       const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
 
-      if (!isMountedRef.current) {
-        URL.revokeObjectURL(blobUrl);
+      const contentType = response.headers.get("content-type");
+      const type = getFileTypeFromResponse(contentType);
+
+      const objectUrl = URL.createObjectURL(blob);
+
+      if (type === "unknown") {
+        // fallback → download
+        downloadBlob(objectUrl, url);
+        onClose();
         return;
       }
 
-      objectUrlRef.current = blobUrl;
-      setPdfUrl(blobUrl);
-    } catch (e) {
-      // optional logging
-    }
-  };
-
-  useEffect(() => {
-    isMountedRef.current = true;
-
-    if (!props.isOpen || !props.url) return;
-
-    const type = getFileType(props.url);
-    setDocumentType(type);
-
-    if (type === "unknown") {
-      downloadDocument(props.url).finally(() => {
-        if (isMountedRef.current) props.onClose();
-      });
-      return;
-    }
+      setDocumentType(type);
+      setBlobUrl(objectUrl);
+    };
 
     loadDocument();
 
     return () => {
-      isMountedRef.current = false;
-
-      if (objectUrlRef.current) {
-        URL.revokeObjectURL(objectUrlRef.current);
-        objectUrlRef.current = null;
-      }
-
-      setPdfUrl(null);
-      setDocumentType(null);
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
     };
-  }, [props.isOpen, props.url]);
+  }, [isOpen, url]);
+
+  const getFileTypeFromResponse = (contentType) => {
+    if (!contentType) return "unknown";
+    if (contentType.includes("pdf")) return "pdf";
+    if (contentType.startsWith("image/")) return "image";
+    return "unknown";
+  };
+
+  const downloadBlob = (blobUrl, originalUrl) => {
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = originalUrl.split("/").pop() || "document";
+    link.click();
+  };
 
   return (
-    <Modal isOpen={props.isOpen} toggle={props.onClose} size="lg">
-      <ModalHeader toggle={props.onClose} />
+    <Modal isOpen={isOpen} toggle={onClose} size="lg">
+      <ModalHeader toggle={onClose}></ModalHeader>
+
       <ModalBody style={{ height: "80vh" }}>
-        {pdfUrl && documentType === "pdf" && (
+        {documentType === "pdf" && (
           <iframe
-            src={pdfUrl}
+            src={blobUrl}
             title="document"
             width="100%"
             height="100%"
             style={{ border: "none" }}
           />
         )}
-        {pdfUrl && documentType === "image" && (
+
+        {documentType === "image" && (
           <img
-            src={pdfUrl}
+            src={blobUrl}
             alt="document"
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         )}
       </ModalBody>
+
       <ModalFooter>
-        <Button color="primary" onClick={props.onClose}>
-          Close
-        </Button>
+        <Button color="primary" onClick={onClose}>Close</Button>
       </ModalFooter>
     </Modal>
   );
