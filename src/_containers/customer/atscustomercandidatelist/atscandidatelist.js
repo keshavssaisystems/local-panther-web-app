@@ -15,7 +15,7 @@ import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atscandidatelist.css"; // add this import
 import Loader from "react-loaders";
-const ATSCandidateList = () => {
+function ATSCandidateList() {
     let isCompanyAdmin = true;
     let entity = "candidates";
     const title = "Candidate List";

@@ -109,7 +109,6 @@ export default function CustomerCandidateLists(props) {
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList.some(company => company.isstaffingfirm === true));
   const [offlineStatuses, setOfflineStatuses] = useState([]);
-  const jobList = useSelector((state) => state.customerCandidateList.jobLists);
   const [showInterviewFeedbackStatusFilter, setShowInterviewFeedbackStatusFilter] = useState(false);
   const [showFromToDateFilter, setShowFromToDateFilter] = useState(false);
   const [showSearch, setShowSearch] = useState(true);
@@ -139,7 +138,7 @@ export default function CustomerCandidateLists(props) {
     (state) => state.customerCandidateList.custOfferHistory
   );
   // const filteredItems = useSelector((state) => state.dropdown.jobsDropdownList);
-  const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
+  // const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
   const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const [interviewStatus, setInterviewStatus] = useState([]);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
@@ -157,10 +156,9 @@ export default function CustomerCandidateLists(props) {
   // }, [hiringManagerDownList]);
 
   useEffect(() => {
-    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
-    dispatch(scheduleInterviewActions.getDurationThunk());
+    // dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
@@ -207,7 +205,7 @@ export default function CustomerCandidateLists(props) {
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
-    dispatch(getHiringMangerList(companyId));
+    // dispatch(getHiringMangerList(companyId));
     if (id) {
       dispatch(setHiringManagerId(jobPostedbyId));
       dispatch(custJobListActions.getJobDetail({ jobId: id }));
@@ -271,12 +269,12 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
+      if (pageNo === 1) onGetCandidatesCount(id, clearText);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
+    if (pageNo === 1) onGetCandidatesCount(id, clearText);
   };
 
   const handlePageChange = (page) => {
@@ -284,9 +282,10 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(page, props.type || activeTab, id);
   };
   const toggle = (activetab) => {
+    const isScheduleTab = activetab === "scheduled";
     clearInterviewFilters();
-    setShowInterviewFeedbackStatusFilter(activetab === "scheduled" ? true : false);
-    setShowFromToDateFilter(activetab === "scheduled" ? true : false);
+    setShowInterviewFeedbackStatusFilter(isScheduleTab);
+    setShowFromToDateFilter(isScheduleTab);
     if (id) {
       //setSearchText("");
       setPageNo(1);
@@ -612,12 +611,12 @@ export default function CustomerCandidateLists(props) {
 
     if (activeTab === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, searchText);
+      if (pageNo === 1) onGetCandidatesCount(id, false);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, searchText);
+    if (pageNo === 1) onGetCandidatesCount(id, false);
   };
 
   const onCandidateResume = async (candidateId, url) => {
@@ -703,7 +702,7 @@ export default function CustomerCandidateLists(props) {
       navigate(`/candidate-list`);
     }
     else {
-      onSearchJob();
+      onClearSearch();
     }
   }
 

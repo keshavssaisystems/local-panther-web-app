@@ -7,20 +7,78 @@ export const fetchWrapper = {
   delete: request("DELETE"),
 };
 
+const memoryCache = {};
+const inflightRequests = {};
+const EXCLUDED_DROPDOWN_KEYS = [
+  'userListByCompany',
+  'ScheduledCandidatesForCustomer',
+  'ScheduledCandidateListByUserId',
+];
+
+function isCacheableDropdown(url) {
+  if (!url.includes('/api/Common/GetCommonDropdown?searchText=')) {
+    return false;
+  }
+
+  return !EXCLUDED_DROPDOWN_KEYS.some(key =>
+    url.includes(`searchText=${key}`)
+  );
+}
+
 function request(method) {
-  return (url, body) => {
+  return async (url, body) => {
+    const shouldCache = isCacheableDropdown(url);
+    const cacheKey = url;
+    const cacheTtl = 300000; // 5 minutes
+
+    if (shouldCache) {
+      const cached = memoryCache[cacheKey];
+      if (cached && Date.now() - cached.timestamp < cacheTtl) {
+        return cached.data;
+      }
+
+      if (inflightRequests[cacheKey]) {
+        return inflightRequests[cacheKey];
+      }
+
+      inflightRequests[cacheKey] = (async () => {
+        const requestOptions = {
+          method,
+          headers: authHeader(url),
+        };
+
+        if (body) {
+          requestOptions.headers["Content-Type"] = "application/json";
+          requestOptions.body = JSON.stringify(body);
+        }
+
+        try {
+          const data = await fetch(url, requestOptions).then(handleResponse);
+          memoryCache[cacheKey] = { data, timestamp: Date.now() };
+          return data;
+        } finally {
+          delete inflightRequests[cacheKey];
+        }
+      })();
+
+      return inflightRequests[cacheKey];
+    }
+
+    // Non-cacheable (dynamic) dropdowns
     const requestOptions = {
       method,
       headers: authHeader(url),
     };
+
     if (body) {
       requestOptions.headers["Content-Type"] = "application/json";
-
       requestOptions.body = JSON.stringify(body);
     }
+
     return fetch(url, requestOptions).then(handleResponse);
   };
 }
+
 
 // helper functions
 
