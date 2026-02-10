@@ -38,6 +38,16 @@ import { useLocation } from "react-router-dom";
 import { reportsReducer } from "_containers/customer/genericreports/reports.slice";
 import { fetchReportList } from "_containers/customer/genericreports/reports.slice";
 import { set } from "lodash";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import {
+  getCustReportJobDetail,
+} from "../reports/customerreport.slice";
+import { getProfileActions } from "_store";
+import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
+import {
+  getCustReportSchdIntvDetail,
+} from "../reports/customerreport.slice";
 
 const ReportsList = () => {
     
@@ -67,6 +77,9 @@ const ReportsList = () => {
 
     const totalRows = useSelector((state) => state.reportsReducer?.totalrows || 0);
     
+    const jobDetail = useSelector((state) => state?.customerReportReducer?.jobDetail);
+    const scheduleInterviewDetail = useSelector((state) => state?.customerReportReducer?.scheduleInterviewDetail);
+    
    // const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
     //const { customerList = [] } = useSelector( (state) => state.adminReportReducer);
 
@@ -93,22 +106,17 @@ const ReportsList = () => {
     const [candidateDropDownList, setCandidateDropDownList] = useState([]);
     const [jobDropDownList, setJobDropDownList] = useState([]);
     const [recommendedJobStatusList, setRecommendedJobStatusList] = useState([]);
-    let [hiringmanagerId, setHiringMangerId] = useState();
+    let   [hiringmanagerId, setHiringMangerId] = useState();
     const [roleId, setRoleId] = useState();
     const [customerId, setCustomerId] = useState("");
+    const [showJDModal, setShowJDModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [showIDModal, setShowIDModal] = useState(false);
     
     const setSearchText = (text) => {
         setSearchData(text);
     };
 
-    
-    // useEffect(() => {
-        
-    //     setCandidateDropDownList([]);
-    //     setJobDropDownList([]);
-    // }, []);
-
-    //excel
     // const debouncedFetch = React.useMemo(
     // () =>
     //     debounce((inputValue, callback) => {
@@ -126,9 +134,26 @@ const ReportsList = () => {
     // [dispatch]
     // );
 
-    // const loadJobOptions = (inputValue) =>
-    // new Promise((resolve) => debouncedFetch(inputValue, resolve));
-
+    const loadJobOptions = (inputValue) =>
+    new Promise((resolve) => {
+        if (!inputValue) {
+            resolve(jobOptions.map((j) => ({
+                label: j.jobtitle,
+                value: j.jobid,
+                jobid: j.jobid,
+            })));
+            return;
+        }
+        const filtered = jobOptions.filter(j =>
+            j.jobtitle.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        resolve(filtered.map((j) => ({
+            label: j.jobtitle,
+            value: j.jobid,
+            jobid: j.jobid,
+        })));
+    });
+    //excel
     const exportColumns = React.useMemo(() => {
         if (!Array.isArray(header)) return [];
         return header.filter((col) => col.isexport === 1);
@@ -243,27 +268,54 @@ const ReportsList = () => {
                 // backend decides visibility
                 .filter(col => col.isvisible === 1 )
                 .map(col => {
-                // special handling for row number
-                if (col.key === "rownumber") {
-                    return {
+                return {
                     name: <span className="table-title">{col.label}</span>,
-                    width: col.width,
-                    sortable: false,
-                    cell: (row, index) => <span className="table-cell" title={index + 1}>{index + 1}</span>,
-                    };
-                }
-
-            return {
-                name: <span className="table-title">{col.label}</span>,
-                selector: row => getDisplayValue(col, row),
-                cell: (row) => {
-                    const value = getDisplayValue(col, row);
-                    return <span className="table-cell" title={value}>{value}</span>;
-                },
-                minWidth: col.width,
-                wrap: true,
-                sortable: true,
-            };
+                    selector: row => getDisplayValue(col, row),
+                    cell: (row) => {
+                        const value = getDisplayValue(col, row);
+                        if (col.key === "jobtitle") {
+                            return (
+                                <span className="table-cell" title={value}>
+                                    <Button
+                                        className="no-padding"
+                                        color="link"
+                                        onClick={() => openJobDetails(row.jobid)}
+                                    >
+                                        {value}
+                                    </Button>
+                                </span>
+                            );
+                        } else if (col.key === "candidatename") {
+                            return (
+                                <span className="table-cell" title={value}>
+                                    <Button
+                                        color="link"
+                                        onClick={() => onCandidateClick(row.candidateid)}
+                                    >
+                                        {" "}
+                                        {value}
+                                    </Button>
+                                </span>
+                            );
+                        } else if (col.key === "scheduledate") {
+                            return (
+                                <span className="table-cell" title={value}>
+                                    <Button
+                                        color="link"
+                                        onClick={() => onInterviewDetailClick(row.scheduleinterviewid)}
+                                    >
+                                        {value}
+                                    </Button>
+                                </span>
+                            );
+                        } else {
+                            return <span className="table-cell" title={value}>{value}</span>;
+                        }
+                    },
+                    minWidth: col.width,
+                    wrap: true,
+                    sortable: true,
+                };
         
         });
     };
@@ -368,8 +420,35 @@ const ReportsList = () => {
         fetchData(1, perPage, 3, "", null, null, null, null, null, null);
     };
 
+    const openJobDetails = async (jobId) => {
+        let res = await dispatch(getCustReportJobDetail(jobId));
+
+        if (res?.payload?.statusCode === 200) {
+            setShowJDModal(true);
+        }
+    };
+
+    const onCandidateClick = async (candidateId) => {
+        const response = await dispatch(
+            getProfileActions.getCandidate(candidateId)
+        );
+        if (response?.payload) {
+            setShowProfileModal(true);
+        }
+    };
+
+    const onInterviewDetailClick = async (interviewdetailid) => {
+        const response = await dispatch(
+            getCustReportSchdIntvDetail(interviewdetailid)
+        );
+        if (response?.payload) {
+            setShowIDModal(true);
+        }
+    };
+
     return (
-        <div>
+        <>
+            <div>
             <Row>
                 <Col md="12">
                     <PageTitle
@@ -481,7 +560,7 @@ const ReportsList = () => {
                                                 value: j.jobid,
                                                 jobid: j.jobid,
                                             }))}
-                                            //loadOptions={loadJobOptions}
+                                            loadOptions={loadJobOptions}
                                             placeholder="Select job"
                                             onChange={(selected) => {
                                                 setJobId(selected ? selected.jobid : null);
@@ -498,7 +577,7 @@ const ReportsList = () => {
                                     </FormGroup>
                                 </Col> )}
                                  {/* Hiring Manager Matched Candidate List by Job Report */}
-                                {filter.matched===1 &&(<Col lg="2" md="4" sm="12" sx="12">
+                                {filter.matched==1 &&(<Col lg="2" md="4" sm="12" sx="12">
                                     <FormGroup>
                                         <Input
                                                       type="select"
@@ -704,6 +783,29 @@ const ReportsList = () => {
             </Row>
             
         </div>
+        {showJDModal && jobDetail?.length > 0 ? (
+            <CustJobDetailModal
+                isOpen={showJDModal}
+                data={jobDetail}
+                onClose={() => setShowJDModal(false)}
+                isAdmin={true}
+            />
+        ) : null}
+        {showProfileModal ? (
+            <BuildCVModal
+                isOpen={showProfileModal}
+                onClose={() => setShowProfileModal(false)}
+            />
+        ) : null}
+        {showIDModal && scheduleInterviewDetail?.length > 0 ? (
+            <InterViewDetailModal
+                data={scheduleInterviewDetail[0]}
+                isOpen={showIDModal}
+                onClose={() => setShowIDModal(false)}
+                isAdmin={true}
+            />
+        ) : null}
+        </>
     );
 };
 
