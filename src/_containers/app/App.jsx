@@ -566,18 +566,10 @@ export function App() {
             path="/report/customer-scheduled-interviews/:id"
             element={
               <PrivateRoute>
-                <ReportsList />
-              </PrivateRoute>
-            }
-          />
-          {/* <Route
-            path="/report/customer-scheduled-interviews/:id"
-            element={
-              <PrivateRoute>
                 <CustomerReportScheduledInterviews />
               </PrivateRoute>
             }
-          /> */}
+          /> 
           <Route
             path="/report/customer-interviewed-candidates/:id"
             element={

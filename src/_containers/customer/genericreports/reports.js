@@ -11,8 +11,6 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
 import { exportToExcel } from "react-json-to-excel";
 import debounce from "lodash/debounce";
-
-
 import {
     Row,
     Col,
@@ -28,8 +26,6 @@ import {
     Button
 
 } from "reactstrap";
-
-
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./reports.css"; 
@@ -95,7 +91,6 @@ const ReportsList = () => {
     const [currentPage, setCurrentPage] = useState(1); 
     const [perPage, setPerPage] = useState(10);
     const [searchData, setSearchData] = useState("");
-    const [statusFilter, setStatusFilter] = useState(3);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [subsidiaryId, setSubsidiaryId] = useState("");
@@ -239,17 +234,6 @@ const ReportsList = () => {
 
     return Array.from(map.values());
     }, [data]);
-    //for set header width from array to object
-    const headerWidthMap = React.useMemo(() => {
-    if (!Array.isArray(header)) return {};
-
-        const map = {};
-        header.forEach((h) => {
-            map[h.key] = h.width;
-        });
-        return map;
-    }, [header]);
-  
     
     const generateColumns = (columnMetadata = []) => {
             if (!Array.isArray(columnMetadata)) return [];
@@ -327,11 +311,10 @@ const ReportsList = () => {
 
 
    // fetch helper - requests server with paging params and updates local totalRows
-    const fetchData =async (page = 1, pageSize = perPage, statusFilter, searchText = "", startDateParam = null, endDateParam = null, subsidiaryParam = null, candidateParam = null, jobParam = null, recommStatusParam = null) => {
+    const fetchData =async (page = 1, pageSize = perPage, searchText = "", startDateParam = null, endDateParam = null, subsidiaryParam = null, candidateParam = null, jobParam = null, recommStatusParam = null) => {
          try {
             const params = {    
                SearchText: searchText || "",
-               IsActive: statusFilter ?? 3,
                currentpage: page,
                PageSize: pageSize,
                startDate: startDateParam || null,
@@ -352,7 +335,6 @@ const ReportsList = () => {
 
     useEffect(() => {
          setSearchData("");
-         setStatusFilter(3);
          setCurrentPage(1);
          fetchData(1, perPage);
     
@@ -360,33 +342,15 @@ const ReportsList = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        fetchData(page, perPage, statusFilter, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
+        fetchData(page, perPage, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
     };
 
     const handlePerRowsChange = (newPerPage, page) => {
         setPerPage(newPerPage);
         setCurrentPage(page);
-        fetchData(page, newPerPage, statusFilter, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
+        fetchData(page, newPerPage, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
     };
 
-    const onStatusSelect = (status) => {
-        const newStatus = Number(status);
-        setStatusFilter(newStatus);
-        fetchData(currentPage, perPage, newStatus, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
-    };
-
-    const onClearSearch = () => {
-        setSearchData("");
-        setStartDate(null);
-        setEndDate(null);
-        setSubsidiaryId("");
-        setCandidateId("");
-        setJobId(null);
-        setJobSelected(null);
-        setRecommStatusId("");
-        fetchData(currentPage, perPage, statusFilter, "", null, null, null, null, null, null);
-    };
-    
     const handleSearch = () => {
         console.log("START DATE:", startDate);
         console.log("END DATE:", jobId);
@@ -394,7 +358,6 @@ const ReportsList = () => {
         fetchData(
             1,
             perPage,
-            statusFilter,
             searchData,
             startDate ? moment(startDate).format("YYYY-MM-DD") : null,
             endDate ? moment(endDate).format("YYYY-MM-DD") : null,
@@ -407,7 +370,6 @@ const ReportsList = () => {
     const handleClear = () => {
         
         setSearchData("");
-        setStatusFilter(3);
         setStartDate(null);
         setEndDate(null);
         setSubsidiaryId("");
@@ -417,7 +379,7 @@ const ReportsList = () => {
         setRecommStatusId(null);
         setCurrentPage(1);
 
-        fetchData(1, perPage, 3, "", null, null, null, null, null, null);
+        fetchData(1, perPage, "", null, null, null, null, null, null);
     };
 
     const openJobDetails = async (jobId) => {
@@ -496,23 +458,6 @@ const ReportsList = () => {
                             )}
                             <Row className="mb-3">
 
-                               {filter.statusFilter!=1 &&(
-                                <Col lg="2" md="4" sm="12" xs="12"
-                                >
-                                    <FormGroup>
-                                        <Input
-                                            type="select"
-                                            name="status"
-                                            value={statusFilter}
-                                            onChange={(e) => onStatusSelect(e.target.value)}
-                                        >
-                                            <option value={3}>All status</option>
-                                            <option value={1}>Active</option>
-                                            <option value={0}>In-active</option>
-                                        </Input>
-                                     </FormGroup>
-                                </Col>)}
-                                
                                 {filter.subsidary===1 &&(<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
                                     <FormGroup>
                                         <Input
@@ -576,7 +521,7 @@ const ReportsList = () => {
 
                                     </FormGroup>
                                 </Col> )}
-                                 {/* Hiring Manager Matched Candidate List by Job Report */}
+                                {/* Hiring Manager Matched Candidate List by Job Report */}
                                 {filter.matched==1 &&(<Col lg="2" md="4" sm="12" sx="12">
                                     <FormGroup>
                                         <Input
@@ -723,38 +668,8 @@ const ReportsList = () => {
                                                   >
                                                     Clear
                                                   </Button>
-                                                </Col>
-                                {/* <Col lg="12" md="2" sm="10" sx="12">
-                                    <div
-                                        className={cx(
-                                            "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-                                            {
-                                                active: true,
-                                            }
-                                        )}
-                                    >
-                                        <div className="input-holder float-end">
-                                            <input
-                                                type="text"
-                                                className="search-input search-placeholder"
-                                                id="search-input"
-                                                value={searchData}
-                                                onInput={(evt) => setSearchText(evt.target.value)}
-                                                placeholder="Search.."
-                                            />
-                                            <button
-                                                className="btn-close"
-                                                onClick={(evt) => onClearSearch()}
-                                            />
-                                            <button
-                                                onClick={(evt) => fetchData(currentPage, perPage, statusFilter, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null)}
-                                                className="search-icon"
-                                            >
-                                                <span />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </Col> */}
+                                </Col>
+                                
                             </Row>
 
                             {/* wrap table to enable horizontal scrolling */}

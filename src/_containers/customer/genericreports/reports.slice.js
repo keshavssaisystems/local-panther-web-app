@@ -1,16 +1,14 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit"
 import { history, fetchWrapper } from "_helpers";
-import jwtDecode from "jwt-decode";
+
 
 const name="genericreports"
-
 
 export const fetchReportList = createAsyncThunk(
     `${name}/fetchReportList`,
         async ({ endpoint, params }) => {
             const {
                 SearchText = "",
-                IsActive,
                 currentpage = 1,
                 PageSize = 10,
                 startDate,
@@ -26,11 +24,7 @@ export const fetchReportList = createAsyncThunk(
         if (SearchText) {
             parameterParts.push(`@SearchText='${SearchText}'`);
         }
-            console.log("IsActive",IsActive)
-         if (IsActive !== null && IsActive !== undefined && IsActive !== 3) {
-              parameterParts.push(`@IsActive=${IsActive}`);
-         }
-
+          
         if (startDate) {
             parameterParts.push(`@startdate='${startDate}'`);
         }
@@ -38,15 +32,12 @@ export const fetchReportList = createAsyncThunk(
             parameterParts.push(`@enddate='${endDate}'`);
         }
         if (subsidiaryid) { 
-            // numeric or string subsidiary id
             parameterParts.push(`@subsidiaryid=${subsidiaryid}`);
         }
         if (candidateid) {
-            // numeric or string candidate id
             parameterParts.push(`@candidateid=${candidateid}`);
         }
         if (jobid) {
-            // numeric or string job id
             parameterParts.push(`@jobid=${jobid}`);
         }
         
@@ -67,8 +58,6 @@ export const fetchReportList = createAsyncThunk(
 const reportsSlice = createSlice({
     name,
      initialState: {
-        // initialize state from local storage to enable user to stay logged in
-       // atsauthorizationList: [],
         reportsList: [],
         filters:{},
         error: null,
@@ -81,22 +70,13 @@ const reportsSlice = createSlice({
         builder
                     
                     .addCase(fetchReportList.pending, (state) => {
-                        
                                     state.loader = true;
-                                   // state.reportsdata = [];
-                                  //  state.header=[];
-                                  //  state.pageTitle="";
-                                    
                     })     
                     .addCase(fetchReportList.fulfilled, (state, action) => {
                                    
                                     state.loader = false;
-                                    
-                                   // console.log('Report payload:', action?.payload);
                                     if (action?.payload?.data) {
                                         state.reportsdata = action?.payload?.data?.data|| [];
-
-                                     //   console.log('Report data:', state.reportsdata); 
                                         state.header=action?.payload?.data?.columnMetadata;
                                         state.pagetitle=action?.payload?.data?.pageTitle;
                                         state.filters=action?.payload?.data?.search || {};
