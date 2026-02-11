@@ -3,15 +3,13 @@ import { fetchWrapper } from "_helpers";
 
 // create slice name
 const name = "profileCompletion";
-export const profileCompletionActions = {
-  updateProfileThunk
-};
+
 
 export const updateProfileThunk = createAsyncThunk(
   `${name}/updateProfileThunk`,
   async ({ id, payload }) => {
 
-    const SKILL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateSkill/UpdateCandidateSkill/${id}/${userId}`;
+    const SKILL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateSkill/UpdateCandidateSkill/${id}`;
     return await fetchWrapper.put(SKILL_END_POINT, payload);
   }
 );
@@ -33,5 +31,7 @@ const profileCompletionSlice = createSlice({
   },
 });
 
-
+export const profileCompletionActions = {
+  updateProfileThunk
+};
 export const profileCompletionReducer = profileCompletionSlice.reducer;

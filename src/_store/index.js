@@ -63,7 +63,7 @@ export * from "./snackbar.slice";
 export * from "./commonCustFiltersSlice"
 // export all customer slice fn
 export * from "_containers/customer/reports/customerreport.slice";
-export * from "./profileCompletion"
+export * from "./profileCompletion.slice"
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
