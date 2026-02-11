@@ -7,7 +7,6 @@ import {
   ModalFooter,
   Button,
   Input,
-  Form,
   FormGroup,
   Label,
   Row,
@@ -19,31 +18,15 @@ import {
 import { FiPlus, FiTrash2, FiCheck } from 'react-icons/fi';
 import { FaRobot } from "react-icons/fa";
 import Select from 'react-select';
-import { profileCompletionActions } from '_store';
 import './ProfileCompletionChatbot.scss';
 import {
   dropdownActions,
-  getSkillsFilter,
-  getJobTitleActions,
-  educationActions,
-  getProfileActions,
-  ProficiencyActions,
-  genderActions,
-  ethnicityActions,
-  certificationTypeActions,
-  workScheduleActions,
-  jobTypeActions,
-  shiftActions,
-  getpayPeriodActions,
-  experienceLevelActions,
-  resumeTemplateActions,
   studyFieldActions,
-  profileSkillsActions,
   getLocationFilter,
   yearActions,
-  monthActions
+  monthActions,
+  profileCompletionActions
 } from "_store";
-
 import AsyncSelect from "react-select/async";
 import debounce from "lodash/debounce";
 const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId }) => {
@@ -328,9 +311,11 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
 
   // Handle Complete
   const handleComplete = () => {
-    dispatch(profileCompletionActions.updateProfile({
+    let requestPayload = getPayload();
+
+    dispatch(profileCompletionActions.updateProfileThunk({
       candidateId,
-      data: formData
+      data: requestPayload
     }))
       .then(() => {
         setIsComplete(true);
@@ -339,6 +324,35 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
         console.error('Profile update error:', error);
         setErrors({ submit: 'Failed to update profile. Please try again.' });
       });
+  };
+
+  const getPayload = () => {
+    const payload = { ...formData };
+    let requestPayload = {
+      "educationList": payload.education.map(edu => ({
+        candidateeducationid: 0,
+        fieldofstudy: edu.fieldOfStudy,
+        fieldofstudyid: edu.fieldofstudyid,
+        levelofeducation: edu.levelOfEducation,
+        levelofeducationid: edu.levelofeducationid,
+        school: edu.school,
+        cityid: edu.cityid,
+        countryid: edu.countryid,
+        stateid: edu.stateid
+      })),
+      "qualificationList": payload.experience.map(exp => ({
+        candidatequalificationid: 0,
+        startdate: exp.fromMonth && exp.fromYear ? `${exp.fromYear}-${months.find(m => m.value === exp.fromMonth)?.id}-01` : null,
+        enddate: exp.currentlyWorking ? null : (exp.toMonth && exp.toYear ? `${exp.toYear}-${months.find(m => m.value === exp.toMonth)?.id}-01` : null),
+        company: exp.company,
+        iscurrentlyworking: exp.currentlyWorking,
+        jobtitle: exp.jobTitle,
+        jobdescription: exp.jobDescription
+      })),
+      "skillsList": payload.skills
+    };
+
+    return requestPayload;
   };
 
   // Initialize education/experience arrays if empty
