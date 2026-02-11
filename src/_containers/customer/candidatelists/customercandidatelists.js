@@ -158,7 +158,7 @@ export default function CustomerCandidateLists(props) {
   useEffect(() => {
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
-    // dispatch(scheduleInterviewActions.getDurationThunk());
+    dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
