@@ -91,7 +91,23 @@ export const getAuthorizedATSList = createAsyncThunk(
         return await fetchWrapper.get(TOKEN_END_POINT);
     }
 );
-
+export const getAtsCandidateAssignedDetail = createAsyncThunk(
+    `${name}/getAtsCandidateAssignedDetail`,
+    async (atscandidateid) => {
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ATSCandidateDetail/GetAtsCandidateDetail/${atscandidateid}`;
+        console.log("API Endpoint:", TOKEN_END_POINT); 
+        return await fetchWrapper.get(TOKEN_END_POINT);
+    }
+);
+    export  const updateAtsCandidateDetails = createAsyncThunk(
+        `${name}/updateAtsCandidateDetails`,
+        async (payload) => {
+            debugger
+            console.log("Payload for Update:", payload);
+            const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ATSCandidateDetail/UpdateAtsCandidateDetails/`;
+            return await fetchWrapper.put(TOKEN_END_POINT, payload);
+        }
+    );
 // Create the slice
 const atsSlice = createSlice({
     name,
@@ -99,6 +115,8 @@ const atsSlice = createSlice({
         // initialize state from local storage to enable user to stay logged in
         atsauthorizationList: [],
         atstypeList: [],
+        getAtsCandidateAssignedDetail: [],
+        AtsCandidateAssignedDetail: [],
         error: null,
         loader: false,
         totalrows: 0,
@@ -192,6 +210,37 @@ const atsSlice = createSlice({
             })
             .addCase(getAuthorizedATSList.rejected, (state, action) => {
                 state.loader = false;
+            })
+            .addCase(getAtsCandidateAssignedDetail.pending, (state) => {
+                state.loader = true;
+                state.AtsCandidateAssignedDetail = [];
+            })
+            .addCase(getAtsCandidateAssignedDetail.fulfilled, (state, action) => {
+                state.loader = false;
+                // sp response
+                if (action?.payload?.data?.data) {
+                    state.AtsCandidateAssignedDetail = action?.payload?.data?.data;
+                    state.totalrows = action.payload.data?.totalRows || 0;
+                } else {
+                    state.AtsCandidateAssignedDetail = [];
+                    state.totalrows = 0;
+                }
+            })
+            .addCase(getAtsCandidateAssignedDetail.rejected, (state) => {
+                state.loader = false;
+            })
+            .addCase(updateAtsCandidateDetails.pending, (state) => {
+                state.AtsCandidateAssignedDetail = [];
+                state.loader = true;
+
+            })
+            .addCase(updateAtsCandidateDetails.fulfilled, (state, action) => {
+                    state.loader = false;
+                    state.AtsCandidateAssignedDetail = action.payload?.data || [];
+                 
+            })
+            .addCase(updateAtsCandidateDetails.rejected, (state) => {
+                state.loader = false;
             });
     },
 });
@@ -206,6 +255,9 @@ export const atsActions = {
     deleteAtsAuthorization,
     fetchCustomerCandidates,
     fetchATSCompanyList,
+    getAtsCandidateAssignedDetail,
+    updateAtsCandidateDetails,
+
 };
 
 export const atsReducer = atsSlice.reducer;

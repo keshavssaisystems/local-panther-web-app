@@ -8,13 +8,15 @@ import {
     Card,
     CardBody,
     FormGroup,
-    Input
+    Input,
+    Button
 } from "reactstrap";
 import { atsActions } from "_store/ats.slice";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atscandidatelist.css"; // add this import
 import Loader from "react-loaders";
+import AssigneeAtsCandidate from "./AssigneeAtsCandidate";
 function ATSCandidateList() {
     let isCompanyAdmin = true;
     let entity = "candidates";
@@ -170,6 +172,18 @@ function ATSCandidateList() {
             },
         },
     };
+    const [openBDModal, setOpenBDModal] = useState(false);
+    const [atsCandidateId, setAtsCandidateId] = useState(null);
+
+    const updateAssignedDetail = (row) => {
+        setAtsCandidateId(row);
+        setOpenBDModal(true);
+    };
+    const onCloseBDModal = () => {
+        setOpenBDModal(false);
+        // getCustomerDetails(pageSize, pageNo);
+        setAtsCandidateId(null);
+    };
     return (
         <div>
             <Row>
@@ -178,6 +192,18 @@ function ATSCandidateList() {
                         heading={entity === "roles" ? "Menu Mapping" : title}
                     // icon={icon}
                     />
+                </Col>
+                <Col md="12" className="mb-3">
+                    {/* <Button
+                     className="no-padding"
+                     color="link"
+                    // onClick={()=> openAssignedModal()}
+                    >
+                        Assigned
+                    </Button> */}
+                    <Button color="link" onClick={() => updateAssignedDetail(26640)}>
+                                  <span style={{ textDecoration: "underline" }}>Add</span>
+                                </Button>
                 </Col>
 
                 <Col md="12">
@@ -265,6 +291,17 @@ function ATSCandidateList() {
                                         onChangePage={handlePageChange}
                                         onChangeRowsPerPage={handlePerRowsChange}
                                     />
+                                    
+                                    {openBDModal ? (
+                                            <AssigneeAtsCandidate
+                                              isOpen={openBDModal}
+                                              atsCandidateId={26640}
+                                              onClose={() => onCloseBDModal()}
+                                              //isAdmin={true}
+                                            />
+                                          ) : (
+                                            <></>
+                                          )}
                                 </div>
                             </div>
                         </CardBody>
