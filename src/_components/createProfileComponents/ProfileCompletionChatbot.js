@@ -64,16 +64,6 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     { value: 1, label: 'USA' }
   ];
 
-  const cities = {
-    California: [
-      { value: 'Santa Susana', label: 'Santa Susana' },
-      { value: 'Los Angeles', label: 'Los Angeles' },
-      { value: 'San Francisco', label: 'San Francisco' }
-    ],
-    // Add more cities for other states
-  };
-  const currentYear = new Date().getFullYear();
-
   const steps = [
     { key: 'welcome', title: 'Welcome', required: false },
     { key: 'skills', title: 'Skills', required: true },
@@ -837,8 +827,6 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
         return null;
     }
   };
-
-
 
   const loadOptionsDeb = useCallback(
     debounce((inputValue, callback) => {
