@@ -26,9 +26,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { Row, Button } from "reactstrap";
 import { candidateDashboardActions, getProfileActions } from "_store";
 import { useDispatch } from "react-redux";
-// import ProfileChatbot from "_components/createProfileComponents/ProfileChatbot";
 
-// import ProfileCompletionChatbot from "_components/createProfileComponents/ProfileCompletionChatbot";
+
 
 import { Payment } from "_containers/payment/payment";
 import { getPublicIP } from "_helpers/helper";
@@ -168,7 +167,6 @@ export function App() {
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showGetAppPopup, setShowGetAppPopup] = useState(false);
-  const [showProfileChatbot, setShowProfileChatbot] = useState(false);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -277,30 +275,6 @@ export function App() {
       localStorage.setItem("publicip", data.ip);
     }
   };
-
-  // After login: fetch candidate profile and trigger chatbot when incomplete
-  useEffect(() => {
-    const triggerProfileChatbot = async () => {
-      if (!authUser) return;
-      try {
-        const userDetails = JSON.parse(localStorage.getItem("userDetails")) || {};
-        const candidateId = userDetails.UserId;
-        if (!candidateId) return;
-        const res = await dispatch(getProfileActions.getCandidate(candidateId));
-        const profile = res?.payload || {};
-        const missingSkills = !(profile?.candidateSkillDtos && profile.candidateSkillDtos.length);
-        const missingEducation = !(profile?.candidateEducationDtos && profile.candidateEducationDtos.length);
-        const missingQualifications = !(profile?.candidateQualificationsDtos && profile.candidateQualificationsDtos.length);
-        if (missingSkills || missingEducation || missingQualifications) {
-          setShowProfileChatbot(true);
-        }
-      } catch (err) {
-        // ignore errors
-      }
-    };
-
-    triggerProfileChatbot();
-  }, [authUser, dispatch]);
 
   const adminRoutes = () => {
     return (
@@ -944,9 +918,6 @@ export function App() {
                 onCloseSidebar={() => onCloseSidebar()}
               />
             )}
-            {/* {showProfileChatbot && (
-              <ProfileCompletionChatbot isOpen={showProfileChatbot} onClose={() => setShowProfileChatbot(false)} />
-            )} */}
             {!authUser && hideSidebar && !isExcludedPath && (
               <AppHeader
                 unAuth={true}
