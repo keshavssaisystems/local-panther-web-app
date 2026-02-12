@@ -158,6 +158,9 @@ const CandidateDashboard = React.lazy(() =>
 const AIProfileOffCanvas = React.lazy(() =>
   import("_components/createProfileComponents/AIProfileOffCanvas")
 );
+const ReportsList = React.lazy(() =>
+  import ("_containers/customer/genericreports/reports")
+);
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -569,15 +572,6 @@ export function App() {
           key={5}
         />
         <Route
-          path="/report/customer-jobs/:id"
-          element={
-            <PrivateRoute>
-              <CustomerReportJobList />
-            </PrivateRoute>
-          }
-          key={6}
-        />
-        <Route
           path="/report/customer-scheduled-interviews/:id"
           element={
             <PrivateRoute>
@@ -742,6 +736,15 @@ export function App() {
             </PrivateRoute>
           }
         />
+        <Route
+            path="/report/customer-jobs/:id"
+            element={
+              <PrivateRoute>
+                <ReportsList />
+              </PrivateRoute>
+            }
+            key={6}
+/>
       </>
     );
   }
