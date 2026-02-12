@@ -52,7 +52,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
   const [cityList, setCityList] = useState([]);
   const [months, setMonths] = useState([]);
   const [years, setYears] = useState([]);
-
+  console.log(candidateId);
   useEffect(() => {
     if (studyFieldOption?.length > 0) {
       setFieldOfStudyOptions(studyFieldOption);
@@ -309,18 +309,22 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
         countryid: edu.countryid,
         stateid: edu.stateid
       })),
-      "qualificationList": payload.experience.map(exp => ({
-        candidatequalificationid: 0,
-        startdate: exp.fromMonth && exp.fromYear ?
-          convertDateToYYYMMDD({ month: exp.fromMonth, year: exp.fromYear }) : null,
-        enddate: exp.currentlyWorking ? null : (exp.toMonth && exp.toYear ?
-          convertDateToYYYMMDD({ month: exp.toMonth, year: exp.toYear })
-          : null),
-        company: exp.company || '',
-        iscurrentlyworking: exp.currentlyWorking,
-        jobtitle: exp.jobTitle,
-        jobdescription: exp.jobDescription
-      })),
+      "qualificationList": payload.experience.map(exp => {
+        const endDate = exp.currentlyWorking ? null : (exp.toMonth && exp.toYear ?
+          new Date(`${exp.toMonth} 1, ${exp.toYear}`)
+          : null);
+
+        return {
+          candidatequalificationid: 0,
+          startdate: exp.fromMonth && exp.fromYear ?
+            new Date(`${exp.fromMonth} 1, ${exp.fromYear}`) : null,
+          enddate: endDate,
+          company: exp.company || '',
+          iscurrentlyworking: exp.currentlyWorking,
+          jobtitle: exp.jobTitle,
+          jobdescription: exp.jobDescription
+        };
+      }),
       "skillsList": payload.skills
     };
 
@@ -599,100 +603,104 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                 </Button>
               </div>
             )}
-
-            <FormGroup>
-              <Label>Job title</Label>
-              <Input
-                type="text"
-                value={exp.jobTitle}
-                onChange={(e) => updateExperienceEntry(exp.id, 'jobTitle', e.target.value)}
-                placeholder="Enter job title"
-                invalid={!!errors[`experience_${index}_title`]}
-              />
-              {errors[`experience_${index}_title`] && (
-                <div className="text-danger small mt-1">{errors[`experience_${index}_title`]}</div>
-              )}
-            </FormGroup>
-
-            <FormGroup check className="mb-3">
-              <Label check>
-                <Input
-                  type="checkbox"
-                  checked={exp.currentlyWorking}
-                  onChange={(e) => updateExperienceEntry(exp.id, 'currentlyWorking', e.target.checked)}
-                />
-                Currently working
-              </Label>
-            </FormGroup>
-
-            <Row>
-              <Col md={6}>
+            {formData.experience.length - 1 === index && (
+              <>
                 <FormGroup>
-                  <Label>From</Label>
-                  <Row>
-                    <Col xs={6}>
-                      <Select
-                        options={months}
-                        value={months.find(m => m.value === exp.fromMonth)}
-                        onChange={(option) => updateExperienceEntry(exp.id, 'fromMonth', option.value)}
-                        placeholder="Select month"
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <Select
-                        options={years}
-                        value={years.find(y => y.label === exp.fromYear)}
-                        onChange={(option) => updateExperienceEntry(exp.id, 'fromYear', option.label)}
-                        placeholder="Select year"
-                      />
-                    </Col>
-                  </Row>
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup>
-                  <Label>To</Label>
-                  <Row>
-                    <Col xs={6}>
-                      <Select
-                        options={months}
-                        value={months.find(m => m.value === exp.toMonth)}
-                        onChange={(option) => updateExperienceEntry(exp.id, 'toMonth', option.value)}
-                        placeholder="Select month"
-                        isDisabled={exp.currentlyWorking}
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <Select
-                        options={years}
-                        value={years.find(y => y.label === exp.toYear)}
-                        onChange={(option) => updateExperienceEntry(exp.id, 'toYear', option.label)}
-                        placeholder="Select year"
-                        isDisabled={exp.currentlyWorking}
-                      />
-                    </Col>
-                  </Row>
-                  {errors[`experience_${index}_to`] && (
-                    <div className="text-danger small mt-1">{errors[`experience_${index}_to`]}</div>
+                  <Label>Job title</Label>
+                  <Input
+                    type="text"
+                    value={exp.jobTitle}
+                    onChange={(e) => updateExperienceEntry(exp.id, 'jobTitle', e.target.value)}
+                    placeholder="Enter job title"
+                    invalid={!!errors[`experience_${index}_title`]}
+                  />
+                  {errors[`experience_${index}_title`] && (
+                    <div className="text-danger small mt-1">{errors[`experience_${index}_title`]}</div>
                   )}
                 </FormGroup>
-              </Col>
-            </Row>
 
-            <FormGroup>
-              <Label>Job description</Label>
-              <Input
-                type="textarea"
-                rows="4"
-                value={exp.jobDescription}
-                onChange={(e) => updateExperienceEntry(exp.id, 'jobDescription', e.target.value)}
-                placeholder="Enter job description"
-                invalid={!!errors[`experience_${index}_desc`]}
-              />
-              {errors[`experience_${index}_desc`] && (
-                <div className="text-danger small mt-1">{errors[`experience_${index}_desc`]}</div>
-              )}
-            </FormGroup>
+                <FormGroup check className="mb-3">
+                  <Label check>
+                    <Input
+                      type="checkbox"
+                      checked={exp.currentlyWorking}
+                      onChange={(e) => updateExperienceEntry(exp.id, 'currentlyWorking', e.target.checked)}
+                    />
+                    Currently working
+                  </Label>
+                </FormGroup>
+
+                <Row>
+                  <Col md={6}>
+                    <FormGroup>
+                      <Label>From</Label>
+                      <Row>
+                        <Col xs={6}>
+                          <Select
+                            options={months}
+                            value={months.find(m => m.label === exp.fromMonth)}
+                            onChange={(option) => updateExperienceEntry(exp.id, 'fromMonth', option.label)}
+                            placeholder="Select month"
+                          />
+                        </Col>
+                        <Col xs={6}>
+                          <Select
+                            options={years}
+                            value={years.find(y => y.label === exp.fromYear)}
+                            onChange={(option) => updateExperienceEntry(exp.id, 'fromYear', option.label)}
+                            placeholder="Select year"
+                          />
+                        </Col>
+                      </Row>
+                    </FormGroup>
+                  </Col>
+                  <Col md={6}>
+                    <FormGroup>
+                      <Label>To</Label>
+                      <Row>
+                        <Col xs={6}>
+                          <Select
+                            options={months}
+                            value={months.find(m => m.label === exp.toMonth)}
+                            onChange={(option) => updateExperienceEntry(exp.id, 'toMonth', option.label)}
+                            placeholder="Select month"
+                            isDisabled={exp.currentlyWorking}
+                          />
+                        </Col>
+                        <Col xs={6}>
+                          <Select
+                            options={years}
+                            value={years.find(y => y.label === exp.toYear)}
+                            onChange={(option) => updateExperienceEntry(exp.id, 'toYear', option.label)}
+                            placeholder="Select year"
+                            isDisabled={exp.currentlyWorking}
+                          />
+                        </Col>
+                      </Row>
+                      {errors[`experience_${index}_to`] && (
+                        <div className="text-danger small mt-1">{errors[`experience_${index}_to`]}</div>
+                      )}
+                    </FormGroup>
+                  </Col>
+                </Row>
+
+                <FormGroup>
+                  <Label>Job description</Label>
+                  <Input
+                    type="textarea"
+                    rows="4"
+                    value={exp.jobDescription}
+                    onChange={(e) => updateExperienceEntry(exp.id, 'jobDescription', e.target.value)}
+                    placeholder="Enter job description"
+                    invalid={!!errors[`experience_${index}_desc`]}
+                  />
+                  {errors[`experience_${index}_desc`] && (
+                    <div className="text-danger small mt-1">{errors[`experience_${index}_desc`]}</div>
+                  )}
+                </FormGroup>
+              </>
+            )}
+
           </CardBody>
         </Card>
       ))}
