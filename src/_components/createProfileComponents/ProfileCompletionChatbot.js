@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 import {
   Modal,
   ModalHeader,
@@ -29,6 +30,7 @@ import {
 } from "_store";
 import AsyncSelect from "react-select/async";
 import debounce from "lodash/debounce";
+import { convertDateToYYYMMDD } from '_helpers/helper';
 const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId }) => {
   const dispatch = useDispatch();
 
@@ -53,13 +55,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
 
   useEffect(() => {
     if (studyFieldOption?.length > 0) {
-      const newFieldOfStudyOptions = studyFieldOption.map(({ id: value, ...rest }) => {
-        return {
-          value: `${value}`,
-          label: `${rest.label}`,
-        };
-      });
-      setFieldOfStudyOptions(newFieldOfStudyOptions);
+      setFieldOfStudyOptions(studyFieldOption);
     }
   }, [studyFieldOption]);
 
@@ -77,12 +73,9 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     // Add more cities for other states
   };
   const currentYear = new Date().getFullYear();
-  // const years = Array.from({ length: 50 }, (_, i) => ({
-  //   value: (currentYear - i).toString(),
-  //   label: (currentYear - i).toString()
-  // }));
 
   const steps = [
+    { key: 'welcome', title: 'Welcome', required: false },
     { key: 'skills', title: 'Skills', required: true },
     { key: 'education', title: 'Education', required: true },
     { key: 'experience', title: 'Experience', required: true },
@@ -91,7 +84,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
 
   // Filter steps based on missing fields
   const requiredSteps = steps.filter(step =>
-    missingFields.includes(step.key) || step.key === 'review'
+    missingFields.includes(step.key) || step.key === 'review' || step.key === 'welcome'
   );
 
   const currentStepData = requiredSteps[currentStep];
@@ -106,11 +99,12 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     console.log("monthList in useEffect:", monthList);
     const monthOptions = monthList?.map(({ id: value, ...rest }) => {
       return {
-        value: `${rest.name}`,
+        value: `${value}`,
         label: `${rest.name}`,
         id: rest.id
       };
     });
+    console.log(monthOptions);
     setMonths(monthOptions);
 
   }, [dispatch, monthList, yearList, levelOfEducationOption, studyFieldOption]);
@@ -126,24 +120,10 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     setEducationLevels(newEducationLevels);
   }, [levelOfEducationOption]);
 
-  // useEffect(() => {
-
-  //   console.log("monthList in useEffect:", monthList);
-  //   const monthOptions = monthList?.map(({ id: value, ...rest }) => {
-  //     return {
-  //       value: `${rest.name}`,
-  //       label: `${rest.name}`,
-  //       id: rest.id
-  //     };
-  //   });
-  //   setMonths(monthOptions);
-  // }, [monthList])
-
-
   useEffect(() => {
     const yearOptions = yearList?.map(({ id: value, ...rest }) => {
       return {
-        value: `${value}`,
+        value: `${rest.id}`,
         label: `${rest.name}`,
         id: rest.id
       };
@@ -314,8 +294,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     let requestPayload = getPayload();
 
     dispatch(profileCompletionActions.updateProfileThunk({
-      candidateId,
-      data: requestPayload
+      payload: requestPayload
     }))
       .then(() => {
         setIsComplete(true);
@@ -342,9 +321,12 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       })),
       "qualificationList": payload.experience.map(exp => ({
         candidatequalificationid: 0,
-        startdate: exp.fromMonth && exp.fromYear ? `${exp.fromYear}-${months.find(m => m.value === exp.fromMonth)?.id}-01` : null,
-        enddate: exp.currentlyWorking ? null : (exp.toMonth && exp.toYear ? `${exp.toYear}-${months.find(m => m.value === exp.toMonth)?.id}-01` : null),
-        company: exp.company,
+        startdate: exp.fromMonth && exp.fromYear ?
+          convertDateToYYYMMDD({ month: exp.fromMonth, year: exp.fromYear }) : null,
+        enddate: exp.currentlyWorking ? null : (exp.toMonth && exp.toYear ?
+          convertDateToYYYMMDD({ month: exp.toMonth, year: exp.toYear })
+          : null),
+        company: exp.company || '',
         iscurrentlyworking: exp.currentlyWorking,
         jobtitle: exp.jobTitle,
         jobdescription: exp.jobDescription
@@ -384,6 +366,31 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     setIsComplete(false);
     onClose();
   };
+
+  // Render Welcome Step
+  const renderWelcomeStep = () => (
+    <div className="step-content review-content">
+      <div className="step-header">
+        <h4>Welcome</h4>
+        <p className="text-muted">
+          Welcome to your OpenWorX Profile Assistant! We're here to guide you through completing your profile for optimal AI job matching.
+        </p>
+
+        <p className="text-muted">
+          To complete your profile, we need the following mandatory details: <br />
+          <ul>
+            {missingFields.includes('skills') && (<li>Skills</li>)}
+            {missingFields.includes('education') && (<li>Education</li>)}
+            {missingFields.includes('experience') && (<li>Experience</li>)}
+          </ul>
+        </p>
+
+        <p className="text-muted">
+          Ready to start filling them out?
+        </p>
+      </div>
+    </div>
+  );
 
   // Render Skills Step
   const renderSkillsStep = () => (
@@ -644,8 +651,8 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                     <Col xs={6}>
                       <Select
                         options={years}
-                        value={years.find(y => y.value === exp.fromYear)}
-                        onChange={(option) => updateExperienceEntry(exp.id, 'fromYear', option.value)}
+                        value={years.find(y => y.label === exp.fromYear)}
+                        onChange={(option) => updateExperienceEntry(exp.id, 'fromYear', option.label)}
                         placeholder="Select year"
                       />
                     </Col>
@@ -668,8 +675,8 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                     <Col xs={6}>
                       <Select
                         options={years}
-                        value={years.find(y => y.value === exp.toYear)}
-                        onChange={(option) => updateExperienceEntry(exp.id, 'toYear', option.value)}
+                        value={years.find(y => y.label === exp.toYear)}
+                        onChange={(option) => updateExperienceEntry(exp.id, 'toYear', option.label)}
                         placeholder="Select year"
                         isDisabled={exp.currentlyWorking}
                       />
@@ -733,50 +740,56 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
           summary of your updates.
         </p>
       </div>
-
-      <div className="review-section">
+      {missingFields.includes('skills') && (<div className="review-section">
         <h6 className="text-primary mb-3">Skills</h6>
         <Card className="mb-3">
           <CardBody>
             <p className="mb-0">{formData.skills}</p>
           </CardBody>
         </Card>
-      </div>
+      </div>)}
 
-      <div className="review-section">
-        <h6 className="text-primary mb-3">Education ({formData.education.length} Entry)</h6>
-        {formData.education.map((edu, index) => (
-          <Card key={edu.id} className="mb-3">
-            <CardBody>
-              <div className="font-weight-bold mb-1">{edu.levelOfEducation}</div>
-              <div className="text-muted small">
-                {edu.school}, {edu.city}, {edu.state}
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
+      {missingFields.includes('education') && (
+        <div className="review-section">
+          <h6 className="text-primary mb-3">Education ({formData.education.length} Entry)</h6>
+          {formData.education.map((edu, index) => (
+            <Card key={edu.id} className="mb-3">
+              <CardBody>
+                <div className="font-weight-bold mb-1">{edu.levelOfEducation}</div>
+                <div className="text-muted small">
+                  {edu.school}, {edu.city}, {edu.state}
+                </div>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
+      )}
+      {missingFields.includes('experience') && (
+        <div className="review-section">
+          <h6 className="text-primary mb-3">Experience ({formData.experience.length} Entry)</h6>
+          {formData.experience.map((exp, index) => (
+            <Card key={exp.id} className="mb-3">
+              <CardBody>
+                <div className="font-weight-bold mb-1">{exp.jobTitle}</div>
+                <div className="text-muted small mb-2">
+                  {exp.fromMonth} {exp.fromYear} to {exp.currentlyWorking ? 'Present' : `${exp.toMonth} ${exp.toYear}`}
+                  {exp.fromMonth && exp.fromYear && exp.toMonth && exp.toYear && !exp.currentlyWorking && (
+                    ` (${calculateDuration(exp.fromMonth, exp.fromYear, exp.toMonth, exp.toYear)})`
+                  )}
+                </div>
+                <div className="small">
+                  {exp.jobDescription}...{' '}
+                  <span className="text-primary">More...</span>
+                </div>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
 
-      <div className="review-section">
-        <h6 className="text-primary mb-3">Experience ({formData.experience.length} Entry)</h6>
-        {formData.experience.map((exp, index) => (
-          <Card key={exp.id} className="mb-3">
-            <CardBody>
-              <div className="font-weight-bold mb-1">{exp.jobTitle}</div>
-              <div className="text-muted small mb-2">
-                {exp.fromMonth} {exp.fromYear} to {exp.currentlyWorking ? 'Present' : `${exp.toMonth} ${exp.toYear}`}
-                {exp.fromMonth && exp.fromYear && exp.toMonth && exp.toYear && !exp.currentlyWorking && (
-                  ` (${calculateDuration(exp.fromMonth, exp.fromYear, exp.toMonth, exp.toYear)})`
-                )}
-              </div>
-              <div className="small">
-                {exp.jobDescription}...{' '}
-                <span className="text-primary">More...</span>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
+      )}
+
+
+
 
       {errors.submit && <Alert color="danger">{errors.submit}</Alert>}
     </div>
@@ -810,6 +823,8 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     }
 
     switch (currentStepData?.key) {
+      case 'welcome':
+        return renderWelcomeStep();
       case 'skills':
         return renderSkillsStep();
       case 'education':
@@ -906,6 +921,13 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       )}
     </Modal>
   );
+};
+
+ProfileCompletionChatbot.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  missingFields: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onClose: PropTypes.func.isRequired,
+  candidateId: PropTypes.number.isRequired
 };
 
 export default ProfileCompletionChatbot;
