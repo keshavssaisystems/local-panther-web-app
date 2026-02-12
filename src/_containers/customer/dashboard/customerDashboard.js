@@ -196,6 +196,27 @@ export default function CustomerDashboard() {
       path: "/job-list",
     },
     {
+      title: "Matched candidates",
+      count: dashboardCounts.matchedcandidatereviewpendingcount,
+      className: "danger",
+      icon: custDashIcons.matchedpending,
+      path: "/candidate-list",
+    },
+    {
+      title: "Liked candidates",
+      count: dashboardCounts.newcandidatelikedcount,
+      className: "success",
+      icon: custDashIcons.liked,
+      path: `/customer-candidate-liked/0/${userId}`,
+    },
+    {
+      title: "Applied candidates",
+      count: dashboardCounts.appliedcount,
+      className: "danger",
+      icon: custDashIcons.applied,
+      path: `customer-candidate-applied/0/${userId}`,
+    },
+    {
       title: "Upcoming interview",
       count: dashboardCounts.upcominginterviewcount,
       className: "info",
@@ -208,29 +229,7 @@ export default function CustomerDashboard() {
       className: "danger",
       icon: custDashIcons.offer,
       path: `customer-candidate-offers/0/${userId}`,
-    },
-    {
-      title: "Liked candidates",
-      count: dashboardCounts.newcandidatelikedcount,
-      className: "success",
-      icon: custDashIcons.liked,
-      path: `/customer-candidate-liked/0/${userId}`,
-    },
-    {
-      title: "Matched candidate pending to review",
-      count: dashboardCounts.matchedcandidatereviewpendingcount,
-      className: "danger",
-      icon: custDashIcons.matchedpending,
-      path: "/candidate-list",
-    },
-
-    {
-      title: "Applied candidates",
-      count: dashboardCounts.appliedcount,
-      className: "danger",
-      icon: custDashIcons.applied,
-      path: `customer-candidate-applied/0/${userId}`,
-    },
+    }
   ];
 
   const callUnifiedApp = () => {
