@@ -31,6 +31,8 @@ import {
 import AsyncSelect from "react-select/async";
 import debounce from "lodash/debounce";
 import { convertDateToYYYMMDD } from '_helpers/helper';
+import { SNACKBAR_TYPES, SNACKBAR_POSITION } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId }) => {
   const dispatch = useDispatch();
 
@@ -282,23 +284,42 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
   // Handle Complete
   const handleComplete = () => {
     let requestPayload = getPayload();
-
-    dispatch(profileCompletionActions.updateProfileThunk({
-      payload: requestPayload
-    }))
-      .then(() => {
-        setIsComplete(true);
-      })
-      .catch(error => {
-        console.error('Profile update error:', error);
-        setErrors({ submit: 'Failed to update profile. Please try again.' });
-      });
-  };
+    if (requestPayload && (requestPayload?.educationList && requestPayload.educationList.length > 0) ||
+      (requestPayload.qualificationList && requestPayload.qualificationList.length > 0) ||
+      (requestPayload.skillsList && requestPayload.skillsList !== '')) {
+      dispatch(profileCompletionActions.updateProfileThunk({
+        payload: requestPayload
+      }))
+        .then(() => {
+          setIsComplete(true);
+        })
+        .catch(error => {
+          console.error('Profile update error:', error);
+          setErrors({ submit: 'Failed to update profile. Please try again.' });
+        });
+    } else {
+      dispatch(showSnackbar({
+        message: "No valid data to update. Please provide at least one skill, education, or experience entry.",
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
 
   const getPayload = () => {
     const payload = { ...formData };
-    let requestPayload = {
-      "educationList": payload.education.map(edu => ({
+
+    const educationList = payload.education
+      .filter(edu =>
+        edu.fieldofstudyid &&
+        edu.fieldofstudyid !== 0 &&
+        edu.levelofeducationid &&
+        edu.levelofeducationid !== 0
+      )
+      .map(edu => ({
         candidateeducationid: 0,
         fieldofstudy: edu.fieldOfStudy,
         fieldofstudyid: edu.fieldofstudyid,
@@ -308,28 +329,41 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
         cityid: edu.cityid,
         countryid: edu.countryid,
         stateid: edu.stateid
-      })),
-      "qualificationList": payload.experience.map(exp => {
-        const endDate = exp.currentlyWorking ? null : (exp.toMonth && exp.toYear ?
-          new Date(`${exp.toMonth} 1, ${exp.toYear}`)
-          : null);
+      }));
+
+
+    const qualificationList = payload.experience
+      .filter(exp =>
+        exp.jobTitle &&
+        exp.fromMonth &&
+        exp.fromYear
+      )
+      .map(exp => {
+        const startDate = new Date(`${exp.fromMonth} 1, ${exp.fromYear}`);
+        const endDate = exp.currentlyWorking
+          ? null
+          : (exp.toMonth && exp.toYear
+            ? new Date(`${exp.toMonth} 1, ${exp.toYear}`)
+            : null);
 
         return {
           candidatequalificationid: 0,
-          startdate: exp.fromMonth && exp.fromYear ?
-            new Date(`${exp.fromMonth} 1, ${exp.fromYear}`) : null,
+          startdate: startDate,
           enddate: endDate,
           company: exp.company || '',
           iscurrentlyworking: exp.currentlyWorking,
           jobtitle: exp.jobTitle,
           jobdescription: exp.jobDescription
         };
-      }),
-      "skillsList": payload.skills
-    };
+      });
 
-    return requestPayload;
+    return {
+      educationList,
+      qualificationList,
+      skillsList: payload.skills
+    };
   };
+
 
   // Initialize education/experience arrays if empty
   useEffect(() => {
