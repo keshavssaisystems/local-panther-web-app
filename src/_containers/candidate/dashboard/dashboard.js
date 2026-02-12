@@ -26,17 +26,17 @@ import { JobPreferences } from "../jobPreferences";
 import { history } from "_helpers";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
+import ProfileCompletionChatbot from "_components/createProfileComponents/ProfileCompletionChatbot";
+import { profileCompletionActions } from "_store";
 export default function CandidateDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [showJobPreferModal, setShowJobPreferModal] = useState(false);
   const [prefUpdated, setPrefUpdated] = useState(false);
-  let candidateId = JSON.parse(
-    localStorage.getItem("userDetails")
-  ).InternalUserId;
+  let candidateId = JSON.parse(localStorage.getItem("userDetails")).InternalUserId;
   let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
+  const [missingFields, setMissingFields] = useState([]);
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -52,7 +52,7 @@ export default function CandidateDashboard() {
     description: "",
     id: "",
   });
-
+  const [showProfileChatbot, setShowProfileChatbot] = useState(false);
   useEffect(() => {
     if (
       localStorage.getItem("companyreferrallogid") &&
@@ -244,6 +244,19 @@ export default function CandidateDashboard() {
         setShowProfilePrompt(true);
       }
     }
+
+
+    let fields = [];
+    if (counts.skills === false) {
+      fields.push("skills");
+    }
+    if (counts.qualifications === false) {
+      fields.push("experience");
+    }
+    if (counts.education === false) {
+      fields.push("education");
+    }
+    setMissingFields(fields);
   }, [counts]);
 
   const closeJobPreferModal = function () {
@@ -319,57 +332,24 @@ export default function CandidateDashboard() {
                 show={showProfilePrompt}
                 onConfirm={() => {
                   setShowProfilePrompt(false);
+                  setShowProfileChatbot(true);
                   // loadProfileData();
-                  navigate("/profile");
+                  // navigate("/profile");
                 }}
                 onCancel={() => {
                   setShowProfilePrompt(false);
                 }}
                 cancelBtnText={"Remind me later"}
-                confirmBtnText="Update"
+                confirmBtnText="Complete Profile"
                 showCancel
                 customIcon={infoIcon}
               >
                 <p className="candidate-profile-prompt">
-                  “Enhance your experience and find the best job matches by
-                  updating your{" "}
-                  {counts.skills === false && (
-                    <span className="candidate-profile-prompt-bold">
-                      Skills,
-                    </span>
-                  )}
-                  {counts.qualifications === false && (
-                    <span className="candidate-profile-prompt-bold">
-                      {" "}
-                      Qualification details,
-                    </span>
-                  )}
-                  {counts.education === false && (
-                    <span className="candidate-profile-prompt-bold">
-                      {" "}
-                      Education details,
-                    </span>
-                  )}
-                  {/* {counts.certifications === false && (
-                <span className="candidate-profile-prompt-bold">
-                  {" "}
-                  Certifications,
-                </span>
-              )} */}
-                  {counts.employmentEligiblity === false ||
-                    (counts.employmentEligiblity === 0 && (
-                      <span className="candidate-profile-prompt-bold">
-                        {" "}
-                        Employment eligibility,
-                      </span>
-                    ))}
-                  {counts.jobPreference === false && (
-                    <span className="candidate-profile-prompt-bold">
-                      {" "}
-                      Job preferences,
-                    </span>
-                  )}{" "}
-                  to your profile.”
+                  “Action Required: Your profile is incomplete. Click {" "}
+                  <span className="candidate-profile-prompt-bold">
+                    "Complete Profile"
+                  </span>
+                  {" "} to maximize job matching potential.”
                 </p>
               </SweetAlert>
             </div>
@@ -397,6 +377,9 @@ export default function CandidateDashboard() {
           </Row>
         )}
       </>
+      {showProfileChatbot && (
+        <ProfileCompletionChatbot isOpen={showProfileChatbot} onClose={() => setShowProfileChatbot(false)} missingFields={missingFields} />
+      )}
     </>
   );
 }
