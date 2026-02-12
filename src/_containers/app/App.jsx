@@ -745,6 +745,15 @@ export function App() {
             }
             key={6}
         />
+<Route
+            path="/report/for/:id"
+            element={
+              <PrivateRoute>
+                <ReportsList />
+              </PrivateRoute>
+            }
+            key={6}
+        />
       </>
     );
   }

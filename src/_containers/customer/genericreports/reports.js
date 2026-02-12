@@ -44,21 +44,22 @@ import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import {
   getCustReportSchdIntvDetail,
 } from "../reports/customerreport.slice";
+import { useParams } from "react-router-dom";
 
 const ReportsList = () => {
     
     let isCompanyAdmin = true;
-
+    const { id } = useParams();
     const icon = "mdi mdi-account-multiple-outline";
 
     const location = useLocation(); 
     const path = location.pathname.toLowerCase();
 
     //for path  
-    const endpointMap = { "/report/customer-jobs/10": "Report10Jobs",
+    const endpointMap = { "/report/customer-jobs/10": id,
                           "/report/customer-scheduled-interviews/11":"Report11ScheduledInterviews",
                         };
-    const endpoint = endpointMap[path];
+    const endpoint = id;
 
     const dispatch = useDispatch();
     
