@@ -27,6 +27,7 @@ function ATSCandidateList() {
     // read candidates and loading directly from redux so component re-renders when data arrives
     const data = useSelector((state) => state.ats?.candidates || []);
     const loading = useSelector((state) => state.ats?.loader || false);
+    console.log("Data in component:", data);
 
     // pagination state
     const [currentPage, setCurrentPage] = useState(1); // 1-based
@@ -99,13 +100,13 @@ function ATSCandidateList() {
         {
             name: "ATS ID",
             id: "atsid",
-            selector: (row) => row.ATSCandidateDetailJson[0]?.atsid,
+            selector: (row) => row.atsid,
             sortable: true,
         },
         {
             name: "ATS type",
             id: "atstype",
-            selector: (row) => row.ATSCandidateDetailJson[0]?.atstype,
+            selector: (row) => row.atstype,
             sortable: true,
         },
         {
@@ -136,12 +137,12 @@ function ATSCandidateList() {
             name: "Address",
             id: "address",
             cell: (row) => (
-                <span className="table-cell" title={removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-")}>
-                    {removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-")}
+                <span className="table-cell" title={removeCommas(row.address ? row.address + ", " + row?.cityname + ", " + row?.statename + ", " + (row.zipcode || "") : "-")}>
+                    {removeCommas(row.address ? row.address + ", " + row?.cityname + ", " + row?.statename + ", " + (row.zipcode || "") : "-")}
                 </span>
             ),
             selector: (row) =>
-                removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-"),
+                removeCommas(row.address ? row.address + ", " + row?.cityname + ", " + row?.statename + ", " + (row.zipcode || "") : "-"),
             sortable: true,
         }
 
