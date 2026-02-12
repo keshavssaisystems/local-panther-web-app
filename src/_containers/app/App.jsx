@@ -744,7 +744,7 @@ export function App() {
               </PrivateRoute>
             }
             key={6}
-/>
+        />
       </>
     );
   }
