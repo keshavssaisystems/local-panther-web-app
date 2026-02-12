@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { Row, Col } from "reactstrap";
 import moment from "moment";
@@ -7,7 +7,11 @@ import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import "./offerhistory.scss";
+import { ViewDocumentModal } from "_components/modal/viewdocumentmodal";
 export const OfferHistTable = (props) => {
+  const [openDocumentModal, setOpenDocumentModal] = useState(false);
+  const [documentUrl, setDocumentUrl] = useState("");
+
   const returnStatus = (row, index) => {
     if (index === 0 && row?.isfinaloffer) {
       return (
@@ -49,39 +53,30 @@ export const OfferHistTable = (props) => {
   };
 
   const returnOffer = (row, index) => {
-    if (index === 0 && row?.isfinaloffer) {
-      return row?.offerfilepath && row?.offerfilepath != "" && (
-        <img
-          src={finalOffer}
-          alt="final offer"
-          className={"icon-pointer me-2"}
-          width={"20px"}
-          title="Final Offer - Click to view offer"
-          onClick={() => window.open(row?.offerfilepath)}
-        ></img>
-      );
-    } else if (index === 0 && props?.activeTab === "accepted") {
-      return row?.offerfilepath && row?.offerfilepath != "" && (
-        <img
-          src={finalOffer}
-          alt="final offer"
-          className={"icon-pointer me-2"}
-          width={"20px"}
-          title="Final Offer - Click to view offer"
-          onClick={() => window.open(row?.offerfilepath)}
-        ></img>
-      );
-    } else if (index === 0) {
-      return row?.offerfilepath && row?.offerfilepath != "" && (
-        <img
-          src={currentOffer}
-          alt="new offer"
-          className={"icon-pointer"}
-          width={"20px"}
-          title="New Offer - Click to view offer"
-          onClick={() => window.open(row?.offerfilepath)}
-        ></img>
-      );
+    if (index === 0) {
+      if (row?.isfinaloffer || props?.activeTab === "accepted") {
+        return row?.offerfilepath && row?.offerfilepath != "" && (
+          <img
+            src={finalOffer}
+            alt="final offer"
+            className={"icon-pointer me-2"}
+            width={"20px"}
+            title="Final Offer - Click to view offer"
+            onClick={() => onOpenDocumentModal(row?.offerfilepath)}
+          ></img>
+        );
+      } else {
+        return row?.offerfilepath && row?.offerfilepath != "" && (
+          <img
+            src={currentOffer}
+            alt="new offer"
+            className={"icon-pointer"}
+            width={"20px"}
+            title="New Offer - Click to view offer"
+            onClick={() => onOpenDocumentModal(row?.offerfilepath)}
+          ></img>
+        );
+      }
     } else {
       return row?.offerfilepath && row?.offerfilepath != "" && (
         <img
@@ -90,7 +85,7 @@ export const OfferHistTable = (props) => {
           className={"icon-pointer me-2"}
           width={"20px"}
           title="Previous Offer - Click to view offer"
-          onClick={() => window.open(row?.offerfilepath)}
+          onClick={() => onOpenDocumentModal(row?.offerfilepath)}
         ></img>
       );
     }
@@ -144,6 +139,18 @@ export const OfferHistTable = (props) => {
   const handleRowClick = (data) => {
     console.log(data);
   };
+
+  const onOpenDocumentModal = (url) => {
+    if (!url || url === "") {
+      setDocumentUrl(url);
+      setOpenDocumentModal(false);
+      return;
+    }
+    setDocumentUrl(url);
+    setOpenDocumentModal(true);
+  }
+
+
   return (
     <div className="hist-cont">
       <Row>
@@ -157,6 +164,8 @@ export const OfferHistTable = (props) => {
           />
         </Col>
       </Row>
+      <ViewDocumentModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)}
+        url={documentUrl} />
     </div>
   );
 };

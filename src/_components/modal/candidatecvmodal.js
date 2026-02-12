@@ -1,19 +1,15 @@
-import { get } from "lodash";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
-  Row,
-  Col,
   Button,
 } from "reactstrap";
 
 export const CandidateCVModal = (props) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [documentType, setDocumentType] = useState("");
-  const [documentOpenModal, setDocumentOpenModal] = useState(false);
   const onCandidateResume = async () => {
     const response = await fetch(props.url);
 
@@ -88,32 +84,4 @@ export const CandidateCVModal = (props) => {
       </Button>
     </ModalFooter>
   </Modal>);
-
-  // return (
-  //   <Modal
-  //     toggle={() => props.onClose()}
-  //     className="modal-reject-align "
-  //     isOpen={props.isOpen}
-  //     backdrop="fade"
-  //     size="xl"
-  //   >
-  //     <ModalHeader toggle={() => props.onClose()}></ModalHeader>
-  //     <ModalBody style={{ maxHeight: "100%"}}> 
-  //       {pdfUrl && (
-  //         <iframe
-  //           src={pdfUrl}
-  //           title="document"
-  //           width="100%"
-  //           height="100%"
-  //           style={{ border: "none" }}
-  //         ></iframe>
-  //       )}
-  //     </ModalBody>
-  //     <ModalFooter>
-  //       <Button color="primary" onClick={() => props.onClose()}>
-  //         Close
-  //       </Button>
-  //     </ModalFooter>
-  //   </Modal>
-  // );
 };
