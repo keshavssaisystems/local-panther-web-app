@@ -67,6 +67,7 @@ import { hiringManagerReducer } from "./dropDownHiringManager.slice";
 import commonCustFiltersReducer from "./commonCustFiltersSlice";
 import { atsReducer } from "./ats.slice";
 import { atsgenericReducer } from "./atsgeneric.slice";
+import { reportsReducer } from "_containers/customer/genericreports/reports.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -200,7 +201,9 @@ const appReducer = combineReducers({
     hiringManager: hiringManagerReducer,
     commonCustFilters: commonCustFiltersReducer,
     ats: atsReducer,
-    atsgeneric: atsgenericReducer
+    atsgeneric: atsgenericReducer,
+    reportsReducer : reportsReducer,
+    
 });
 
 export const rootReducer = (state, action) => {
