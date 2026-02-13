@@ -705,7 +705,7 @@ export const CustCandidateListView = (props) => {
             ) : (
               <></>
             )}
-            <DropdownItem onClick={() => props.onBuildResume(candidateid)}>
+            <DropdownItem onClick={() => props.onBuildResume(candidateid, row?.scorejson, row?.jobtitle ? row?.jobtitle : "")}>
               <i className="dropdown-icon lnr-layers"></i>
               <span>OpenWorX CV</span>
             </DropdownItem>

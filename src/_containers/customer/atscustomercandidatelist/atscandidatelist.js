@@ -8,13 +8,15 @@ import {
     Card,
     CardBody,
     FormGroup,
-    Input
+    Input,
+    Button
 } from "reactstrap";
 import { atsActions } from "_store/ats.slice";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atscandidatelist.css"; // add this import
 import Loader from "react-loaders";
+import AssigneeAtsCandidate from "./AssigneeAtsCandidate";
 function ATSCandidateList() {
     let isCompanyAdmin = true;
     let entity = "candidates";
@@ -22,7 +24,7 @@ function ATSCandidateList() {
     const icon = "mdi mdi-account-multiple-outline";
 
     const dispatch = useDispatch();
-    // read candidates and loading directly from redux so component re-renders when data arrives
+    
     const data = useSelector((state) => state.ats?.candidates || []);
     const loading = useSelector((state) => state.ats?.loader || false);
 
@@ -35,12 +37,11 @@ function ATSCandidateList() {
     const setSearchText = (text) => {
         setSearchData(text);
     };
-    // fetch helper - requests server with paging params and updates local totalRows
+    
     const fetchData = async (page = 1, pageSize = perPage, status, searchText) => {
         try {
             const params = { pageNumber: page, pageSize: pageSize, status: status || 0, searchText: searchText || "" };
             const res = await dispatch(atsActions.fetchCustomerCandidates(params));
-            // try to derive total rows from common response shapes
             const payload = res?.payload || {};
             const total =
                 payload?.total ||
@@ -48,21 +49,17 @@ function ATSCandidateList() {
                 payload?.totalCount ||
                 payload?.data?.total ||
                 payload?.data?.totalRecords ||
-                // fallback to length of returned array
                 (Array.isArray(payload?.data) ? payload.data.length : data.length);
 
             // setTotalRows(Number(total) || 0);
-            console.log("Total rows:", data);
         } catch (err) {
-            // keep silent; loading/error handled by slice
-            // setTotalRows((prev) => prev);
+           
         }
     };
 
     useEffect(() => {
         // initial load
         fetchData(currentPage, perPage);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
     const handlePageChange = (page) => {
@@ -97,13 +94,13 @@ function ATSCandidateList() {
         {
             name: "ATS ID",
             id: "atsid",
-            selector: (row) => row.ATSCandidateDetailJson[0]?.atsid,
+            selector: (row) => row.atsid,
             sortable: true,
         },
         {
             name: "ATS type",
             id: "atstype",
-            selector: (row) => row.ATSCandidateDetailJson[0]?.atstype,
+            selector: (row) => row.atstype,
             sortable: true,
         },
         {
@@ -126,22 +123,43 @@ function ATSCandidateList() {
         {
             name: "Phone number",
             id: "phonenumber",
-            selector: (row) =>
-                row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
+            selector: (row) => {
+                const raw = row.phone_number ?? row.phonenumber ?? row.phoneNumber ?? null;
+                return raw ? USPhoneNumber(raw) : "-";
+            },
             sortable: true,
         },
         {
             name: "Address",
             id: "address",
             cell: (row) => (
-                <span className="table-cell" title={removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-")}>
-                    {removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-")}
+                <span className="table-cell" title={removeCommas(row.address ? row.address + ", " + row?.cityname + ", " + row?.statename + ", " + (row.zipcode || "") : "-")}>
+                    {removeCommas(row.address ? row.address + ", " + row?.cityname + ", " + row?.statename + ", " + (row.zipcode || "") : "-")}
                 </span>
             ),
             selector: (row) =>
-                removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-"),
+                removeCommas(row.address ? row.address + ", " + row?.cityname + ", " + row?.statename + ", " + (row.zipcode || "") : "-"),
             sortable: true,
-        }
+        },
+        {
+            name: "Assignee Status",
+            cell: (row) => (
+                <span className="table-cell" >
+                <Button
+                    className="no-padding"
+                    color="link"
+                    onClick={() => updateAssignedDetail(row.atscandidateid,row.isassigned,row.assignedcompanyid,row.assignedcompanyname
+                                                        ,row.assignmentstartdate,row.assignmentenddate)}
+                >
+                    {row.isassigned == 1 ? "Assigned" : "Not assigned"}
+                </Button>
+                </span>
+            ),
+            sortable: true,
+            selector: (row) => row.isassigned,
+            //minWidth: "400px",
+        },
+
 
     ];
 
@@ -149,17 +167,6 @@ function ATSCandidateList() {
         // return data.replace(/(,)+/g, ",").replace(/^,|,$/g, "");
         return input.replace(/(,\s*)+/g, ", ").replace(/^, |, $/g, "").trim();
     }
-    const getCity = (cityObj) => {
-        if (!cityObj) return "";
-        const city = JSON.parse(cityObj);
-        return city.cityname || "";
-    }
-    const getState = (stateObj) => {
-        if (!stateObj) return "";
-        const state = JSON.parse(stateObj);
-        return state.statename || "";
-    }
-
     const customStyles = {
         headCells: {
             style: {
@@ -170,6 +177,26 @@ function ATSCandidateList() {
             },
         },
     };
+    const [openBDModal, setOpenBDModal] = useState(false);
+    const [atsCandidateId, setAtsCandidateId] = useState(null);
+    const[isAssigned,setIsAssigned]=useState(false);
+    const[assignedCompanyId,setAssignedCompanyId]=useState(null);
+    const[assignmentStartDate,setAssignmentStartDate]=useState(null);
+    const[assignmentEndDate,setAssignmentEndDate]=useState(null);
+    const[assignedCompanyName,setAssignedCompanyName]=useState(null);   
+    const updateAssignedDetail = (atsCandidateId,isAssigned,assignedCompanyId,assignedCompanyName,assignmentStartDate,assignmentEndDate) => {
+        setAtsCandidateId(atsCandidateId); 
+        setIsAssigned(isAssigned);
+        setAssignedCompanyId(assignedCompanyId);  
+        setAssignedCompanyName(assignedCompanyName);  
+        setAssignmentStartDate(assignmentStartDate);
+        setAssignmentEndDate(assignmentEndDate);
+        setOpenBDModal(true);
+    };
+    const onCloseBDModal = () => {
+        setOpenBDModal(false);
+        setAtsCandidateId(null);
+    };
     return (
         <div>
             <Row>
@@ -179,7 +206,6 @@ function ATSCandidateList() {
                     // icon={icon}
                     />
                 </Col>
-
                 <Col md="12">
                     <Card className="mb-3">
                         <CardBody>
@@ -265,6 +291,22 @@ function ATSCandidateList() {
                                         onChangePage={handlePageChange}
                                         onChangeRowsPerPage={handlePerRowsChange}
                                     />
+                                    
+                                    {openBDModal ? (
+                                            <AssigneeAtsCandidate
+                                              isOpen={openBDModal}
+                                              atsCandidateId={atsCandidateId}
+                                              isAssigned={isAssigned}
+                                              assignedCompanyId={assignedCompanyId}
+                                              assignedCompanyName={assignedCompanyName}
+                                              assignmentStartDate={assignmentStartDate}
+                                              assignmentEndDate={assignmentEndDate}
+                                              onClose={() => onCloseBDModal()}
+                                              //isAdmin={true}
+                                            />
+                                          ) : (
+                                            <></>
+                                          )}
                                 </div>
                             </div>
                         </CardBody>
