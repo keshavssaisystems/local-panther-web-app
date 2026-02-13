@@ -30,7 +30,7 @@ export const BuildCVModal = (props) => {
       <ModalHeader toggle={() => props.onClose()}></ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
         {/* <ProfilePDF hideDownLoad={true} ref={profilePDFRef} /> */}
-        <OpenWorXResume hideDownLoad={true} ref={profilePDFRef} />
+        <OpenWorXResume hideDownLoad={true} ref={profilePDFRef} scoreJson={props?.scoreJson} jobTitle={props?.jobTitle} />
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={handleDownloadPDF}>
