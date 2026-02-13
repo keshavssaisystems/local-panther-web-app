@@ -265,7 +265,8 @@ export const CandidateCardView = (props) => {
   const onBuildResume = () => {
     if (props?.data?.recommendedationCandidateShortList?.length > 0) {
       props.onBuildResume(
-        props?.data?.recommendedationCandidateShortList[0].candidateid
+        props?.data?.recommendedationCandidateShortList[0].candidateid,
+        props?.data?.scorejson?.replace(/'/g, '"').replace(/candidate"s/g, "candidate's")
       );
     }
   };

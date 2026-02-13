@@ -403,10 +403,13 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(pageNo, props.type || activeTab, id);
   };
 
-  const onBuildResumeClick = async (candidateId) => {
+  const [scoreJson, setScoreJson] = useState(null);
+  const onBuildResumeClick = async (candidateId, scorejson) => {
+    setScoreJson(scorejson);
     let response = await dispatch(getProfileActions.getCandidate(candidateId));
     if (response?.payload) {
       setShowProfileModal(true);
+
     }
   };
 
@@ -1043,8 +1046,8 @@ export default function CustomerCandidateLists(props) {
                                 }
                                 updateList={() => onUpdateList()}
                                 durationOptions={durationOptions}
-                                onBuildResume={(candidateId) =>
-                                  onBuildResumeClick(candidateId)
+                                onBuildResume={(candidateId, scorejson) =>
+                                  onBuildResumeClick(candidateId, scorejson)
                                 }
                                 onCandidateResume={(candidateId, url) =>
                                   onCandidateResume(candidateId, url)
@@ -1918,6 +1921,7 @@ export default function CustomerCandidateLists(props) {
             <BuildCVModal
               isOpen={showProfileModal}
               onClose={() => setShowProfileModal(false)}
+              scorejson={scoreJson}
             />
           </>
         ) : (
