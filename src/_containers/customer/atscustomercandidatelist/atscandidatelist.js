@@ -24,10 +24,9 @@ function ATSCandidateList() {
     const icon = "mdi mdi-account-multiple-outline";
 
     const dispatch = useDispatch();
-    // read candidates and loading directly from redux so component re-renders when data arrives
+    
     const data = useSelector((state) => state.ats?.candidates || []);
     const loading = useSelector((state) => state.ats?.loader || false);
-    console.log("Data in component:", data);
 
     // pagination state
     const [currentPage, setCurrentPage] = useState(1); // 1-based
@@ -38,12 +37,11 @@ function ATSCandidateList() {
     const setSearchText = (text) => {
         setSearchData(text);
     };
-    // fetch helper - requests server with paging params and updates local totalRows
+    
     const fetchData = async (page = 1, pageSize = perPage, status, searchText) => {
         try {
             const params = { pageNumber: page, pageSize: pageSize, status: status || 0, searchText: searchText || "" };
             const res = await dispatch(atsActions.fetchCustomerCandidates(params));
-            // try to derive total rows from common response shapes
             const payload = res?.payload || {};
             const total =
                 payload?.total ||
@@ -51,21 +49,17 @@ function ATSCandidateList() {
                 payload?.totalCount ||
                 payload?.data?.total ||
                 payload?.data?.totalRecords ||
-                // fallback to length of returned array
                 (Array.isArray(payload?.data) ? payload.data.length : data.length);
 
             // setTotalRows(Number(total) || 0);
-            console.log("Total rows:", data);
         } catch (err) {
-            // keep silent; loading/error handled by slice
-            // setTotalRows((prev) => prev);
+           
         }
     };
 
     useEffect(() => {
         // initial load
         fetchData(currentPage, perPage);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
     const handlePageChange = (page) => {
@@ -129,8 +123,10 @@ function ATSCandidateList() {
         {
             name: "Phone number",
             id: "phonenumber",
-            selector: (row) =>
-                row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
+            selector: (row) => {
+                const raw = row.phone_number ?? row.phonenumber ?? row.phoneNumber ?? null;
+                return raw ? USPhoneNumber(raw) : "-";
+            },
             sortable: true,
         },
         {
@@ -144,7 +140,26 @@ function ATSCandidateList() {
             selector: (row) =>
                 removeCommas(row.address ? row.address + ", " + row?.cityname + ", " + row?.statename + ", " + (row.zipcode || "") : "-"),
             sortable: true,
-        }
+        },
+        {
+            name: "Assignee Status",
+            cell: (row) => (
+                <span className="table-cell" >
+                <Button
+                    className="no-padding"
+                    color="link"
+                    onClick={() => updateAssignedDetail(row.atscandidateid,row.isassigned,row.assignedcompanyid,row.assignedcompanyname
+                                                        ,row.assignmentstartdate,row.assignmentenddate)}
+                >
+                    {row.isassigned == 1 ? "Assigned" : "Not assigned"}
+                </Button>
+                </span>
+            ),
+            sortable: true,
+            selector: (row) => row.isassigned,
+            //minWidth: "400px",
+        },
+
 
     ];
 
@@ -152,17 +167,6 @@ function ATSCandidateList() {
         // return data.replace(/(,)+/g, ",").replace(/^,|,$/g, "");
         return input.replace(/(,\s*)+/g, ", ").replace(/^, |, $/g, "").trim();
     }
-    const getCity = (cityObj) => {
-        if (!cityObj) return "";
-        const city = JSON.parse(cityObj);
-        return city.cityname || "";
-    }
-    const getState = (stateObj) => {
-        if (!stateObj) return "";
-        const state = JSON.parse(stateObj);
-        return state.statename || "";
-    }
-
     const customStyles = {
         headCells: {
             style: {
@@ -175,14 +179,22 @@ function ATSCandidateList() {
     };
     const [openBDModal, setOpenBDModal] = useState(false);
     const [atsCandidateId, setAtsCandidateId] = useState(null);
-
-    const updateAssignedDetail = (row) => {
-        setAtsCandidateId(row);
+    const[isAssigned,setIsAssigned]=useState(false);
+    const[assignedCompanyId,setAssignedCompanyId]=useState(null);
+    const[assignmentStartDate,setAssignmentStartDate]=useState(null);
+    const[assignmentEndDate,setAssignmentEndDate]=useState(null);
+    const[assignedCompanyName,setAssignedCompanyName]=useState(null);   
+    const updateAssignedDetail = (atsCandidateId,isAssigned,assignedCompanyId,assignedCompanyName,assignmentStartDate,assignmentEndDate) => {
+        setAtsCandidateId(atsCandidateId); 
+        setIsAssigned(isAssigned);
+        setAssignedCompanyId(assignedCompanyId);  
+        setAssignedCompanyName(assignedCompanyName);  
+        setAssignmentStartDate(assignmentStartDate);
+        setAssignmentEndDate(assignmentEndDate);
         setOpenBDModal(true);
     };
     const onCloseBDModal = () => {
         setOpenBDModal(false);
-        // getCustomerDetails(pageSize, pageNo);
         setAtsCandidateId(null);
     };
     return (
@@ -194,19 +206,6 @@ function ATSCandidateList() {
                     // icon={icon}
                     />
                 </Col>
-                <Col md="12" className="mb-3">
-                    {/* <Button
-                     className="no-padding"
-                     color="link"
-                    // onClick={()=> openAssignedModal()}
-                    >
-                        Assigned
-                    </Button> */}
-                    <Button color="link" onClick={() => updateAssignedDetail(26640)}>
-                                  <span style={{ textDecoration: "underline" }}>Add</span>
-                                </Button>
-                </Col>
-
                 <Col md="12">
                     <Card className="mb-3">
                         <CardBody>
@@ -296,7 +295,12 @@ function ATSCandidateList() {
                                     {openBDModal ? (
                                             <AssigneeAtsCandidate
                                               isOpen={openBDModal}
-                                              atsCandidateId={26640}
+                                              atsCandidateId={atsCandidateId}
+                                              isAssigned={isAssigned}
+                                              assignedCompanyId={assignedCompanyId}
+                                              assignedCompanyName={assignedCompanyName}
+                                              assignmentStartDate={assignmentStartDate}
+                                              assignmentEndDate={assignmentEndDate}
                                               onClose={() => onCloseBDModal()}
                                               //isAdmin={true}
                                             />
