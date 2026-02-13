@@ -488,7 +488,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                     </section>
                 ) : (<> </>)}
 
-                {props?.scoreJson && (
+                {props?.scoreJson && userRoleId !== "3" && (
                     <div className="print-area">
                         <FairMatchReport scorejson={props?.scoreJson} />
                     </div>
