@@ -3,11 +3,6 @@
     padding: 5px;
 }
 
-.section-title {
-    font-size: 26px;
-    color: #222;
-}
-
 .overall-header {
     padding: 1rem 1.5rem;
     border-radius: 10px;
@@ -16,7 +11,7 @@
 }
 
 .overall-score {
-    font-size: 44px;
+    font-size: 40px;
     font-weight: 700;
 }
 
@@ -26,8 +21,7 @@
 }
 
 .match-percent {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 600;   
 }
 
 .progress-wrapper {
@@ -44,7 +38,6 @@
 }
 
 .match-description {
-    font-size: 14px;
     color: #666;
     line-height: 1.5;
     margin: 0;

@@ -236,10 +236,12 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                             </span>
                         )}
                     </h1>)}
-                    <p className="h5 text-secondary">
-                        {getCandidateJobRole()}
-                    </p>
-
+                    {(userRoleId !== "3" && (
+                        < p className="h5 text-secondary">
+                            {/* {getCandidateJobRole()} */}
+                            {props?.jobTitle ? props?.jobTitle : ''}
+                        </p>
+                    ))}
                     <Row className="gx-4 gy-2 text-secondary text-sm">
                         <Col xs="auto" className="d-flex align-items-center gap-1">
                             <BsGeoAltFill className="accent-color" size={18} />

@@ -145,6 +145,8 @@ export default function CustomerCandidateLists(props) {
   const [candidateDocumentUrl, setCandidateDocumentUrl] = useState("");
   const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
   const reportData = useSelector((state) => state.customerCandidateList.reportData);
+  const [scoreJson, setScoreJson] = useState(null);
+  const [jobTitle, setJobTitle] = useState(null);
   // // // Set default actionbyId after hiringManagerDownList is loaded
   // useEffect(() => {
   //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
@@ -403,9 +405,9 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(pageNo, props.type || activeTab, id);
   };
 
-  const [scoreJson, setScoreJson] = useState(null);
-  const onBuildResumeClick = async (candidateId, scorejson) => {
-    setScoreJson(scorejson);
+  const onBuildResumeClick = async (candidateId, scoreJson, jobTitle) => {
+    setScoreJson(scoreJson);
+    setJobTitle(jobTitle);
     let response = await dispatch(getProfileActions.getCandidate(candidateId));
     if (response?.payload) {
       setShowProfileModal(true);
@@ -1046,8 +1048,8 @@ export default function CustomerCandidateLists(props) {
                                 }
                                 updateList={() => onUpdateList()}
                                 durationOptions={durationOptions}
-                                onBuildResume={(candidateId, scorejson) =>
-                                  onBuildResumeClick(candidateId, scorejson)
+                                onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                                  onBuildResumeClick(candidateId, scoreJson, jobTitle)
                                 }
                                 onCandidateResume={(candidateId, url) =>
                                   onCandidateResume(candidateId, url)
@@ -1131,8 +1133,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1217,8 +1219,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
@@ -1302,8 +1304,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1388,8 +1390,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
@@ -1591,8 +1593,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1680,8 +1682,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1767,8 +1769,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1855,8 +1857,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           showActionInterestColumns={true}
@@ -1921,7 +1923,8 @@ export default function CustomerCandidateLists(props) {
             <BuildCVModal
               isOpen={showProfileModal}
               onClose={() => setShowProfileModal(false)}
-              scorejson={scoreJson}
+              scoreJson={scoreJson}
+              jobTitle={jobTitle}
             />
           </>
         ) : (
