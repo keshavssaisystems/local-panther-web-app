@@ -9,8 +9,8 @@
 }
 
 .overall-header {
-    padding: 15px 20px;
-    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
     background: linear-gradient(90deg, #038FFE, #2b6cb0);
     color: white !important;
 }
