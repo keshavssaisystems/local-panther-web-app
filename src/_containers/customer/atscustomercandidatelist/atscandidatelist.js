@@ -197,6 +197,10 @@ function ATSCandidateList() {
         setOpenBDModal(false);
         setAtsCandidateId(null);
     };
+    const handleRefreshData = () => {
+        fetchData(currentPage, perPage, statusFilter, searchData);
+    };
+
     return (
         <div>
             <Row>
@@ -302,6 +306,8 @@ function ATSCandidateList() {
                                               assignmentStartDate={assignmentStartDate}
                                               assignmentEndDate={assignmentEndDate}
                                               onClose={() => onCloseBDModal()}
+                                              onRefresh={handleRefreshData}
+                                              
                                               //isAdmin={true}
                                             />
                                           ) : (
