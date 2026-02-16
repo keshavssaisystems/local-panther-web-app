@@ -297,14 +297,17 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
 
   // Handle Skip
   const handleSkip = () => {
-    // if (requiredSteps.length - 2) {
-    //   validateStep();
-    // }
+    const nextStep = requiredSteps[currentStep + 1];
+    const isGoingToReview = nextStep?.key === "review";
+    if (isGoingToReview && !validateStep()) {
+      return;
+    }
     if (currentStep < requiredSteps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(prev => prev + 1);
       setErrors({});
     }
   };
+
 
   // Handle Complete
   const handleComplete = () => {
