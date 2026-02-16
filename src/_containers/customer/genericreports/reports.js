@@ -36,16 +36,15 @@ import { fetchReportList } from "_containers/customer/genericreports/reports.sli
 import { set } from "lodash";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import {
-  getCustReportJobDetail,
+    getCustReportSchdIntvDetail,
+    getRecommendedJobStatus,
+    getCustReportJobDetail,
 } from "../reports/customerreport.slice";
 import { getProfileActions } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
-import {
-  getCustReportSchdIntvDetail,
-} from "../reports/customerreport.slice";
 import { useParams } from "react-router-dom";
-
+import { fi } from "date-fns/locale";
 const ReportsList = () => {
     
     let isCompanyAdmin = true;
@@ -67,7 +66,7 @@ const ReportsList = () => {
     
     const header = useSelector((state) => state.reportsReducer?.header|| {});
     const pagetitle = useSelector((state) => state.reportsReducer?.pagetitle);
-    const filter=useSelector((state) => state.reportsReducer?.filters|| {});
+    var filter=useSelector((state) => state.reportsReducer?.filters|| {});
     
    
     const loading = useSelector((state) => state.reportsReducer?.loader || false);
@@ -108,6 +107,8 @@ const ReportsList = () => {
     const [showJDModal, setShowJDModal] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [showIDModal, setShowIDModal] = useState(false);
+    const [jobStatus, setJobStatus] = useState("");
+    const [statusFilter, setStatusFilter] = useState(null);
     
     const setSearchText = (text) => {
         setSearchData(text);
@@ -310,23 +311,24 @@ const ReportsList = () => {
     [header]
     );
 
-
    // fetch helper - requests server with paging params and updates local totalRows
-    const fetchData =async (page = 1, pageSize = perPage, searchText = "", startDateParam = null, endDateParam = null, subsidiaryParam = null, candidateParam = null, jobParam = null, recommStatusParam = null) => {
+    const fetchData =async () => {
          try {
-            const params = {    
-               SearchText: searchText || "",
-               currentpage: page,
-               PageSize: pageSize,
-               startDate: startDateParam || null,
-               endDate: endDateParam || null,
-               subsidiaryid: subsidiaryParam || null,
-               candidateid: candidateParam || null,
-               jobid: jobParam || null,
-               customerrecommendedjobstatusid: recommStatusParam || null,
-               };
-               
-               await dispatch(fetchReportList({endpoint,params}));
+
+            let parameterParts = []
+            parameterParts.push(`@currentpage=${currentPage || 1}`);
+            parameterParts.push(`@PageSize=${perPage || 10}`);
+            filter.searchData === 1 && searchData !== '' && parameterParts.push(`@SearchText='${searchData || ""}'`);
+            filter.startDate === 1 && startDate !== null && parameterParts.push(`@startdate='${startDate ? moment(startDate).format("YYYY-MM-DD") : null}'`);
+            filter.endDate === 1 && endDate !== null && parameterParts.push(`@enddate='${endDate ? moment(endDate).format("YYYY-MM-DD") : null}'`);
+            filter.candidate === 1 && parameterParts.push(`@candidateid=${candidateId || null}`);
+            filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId || null}`);
+            filter.job === 1 && parameterParts.push(`@jobid=${jobId || null}`);
+            filter.jobStatus === 1 && parameterParts.push(`@jobStatus=${jobStatus || null}`);
+            filter.currentStatus === 1 && statusFilter !== 'All status' && parameterParts.push(`@isactive=${statusFilter}`);   
+            filter.recommendedStatus === 1 && (recommStatusId !== null || recommStatusId !== '' ) && parameterParts.push(`@recommendedjobstatusid=${recommStatusId || null}`);
+            const params = parameterParts.join(",");
+            await dispatch(fetchReportList({endpoint,params}));
                 
             } 
             catch (error) {
@@ -337,36 +339,26 @@ const ReportsList = () => {
     useEffect(() => {
          setSearchData("");
          setCurrentPage(1);
-         fetchData(1, perPage);
+         setStatusFilter(null);
+         fetchData();
     
     },[path]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        fetchData(page, perPage, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
+         fetchData();
+        // fetchData(page, perPage, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
     };
 
     const handlePerRowsChange = (newPerPage, page) => {
         setPerPage(newPerPage);
         setCurrentPage(page);
-        fetchData(page, newPerPage, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
+         fetchData();
+        // fetchData(page, newPerPage, searchData, startDate ? moment(startDate).format("YYYY-MM-DD") : null, endDate ? moment(endDate).format("YYYY-MM-DD") : null, subsidiaryId || null, candidateId || null, jobId || null, recommStatusId || null);
     };
 
     const handleSearch = () => {
-        console.log("START DATE:", startDate);
-        console.log("END DATE:", jobId);
-    setCurrentPage(1)
-        fetchData(
-            1,
-            perPage,
-            searchData,
-            startDate ? moment(startDate).format("YYYY-MM-DD") : null,
-            endDate ? moment(endDate).format("YYYY-MM-DD") : null,
-            subsidiaryId || null,
-            candidateId || null,
-            jobId || null,
-            recommStatusId || null
-        );
+        fetchData();
     };
     const handleClear = () => {
         
@@ -407,6 +399,10 @@ const ReportsList = () => {
         if (response?.payload) {
             setShowIDModal(true);
         }
+    };
+    const onStatusSelect = (status) => {
+        setStatusFilter(status);
+        // fetchData();
     };
 
     return (
@@ -497,6 +493,20 @@ const ReportsList = () => {
                                         </Input>
                                     </FormGroup>
                                 </Col> )}
+                                {filter.currentStatus===1 &&( <Col lg="2" md="4" sm="12" xs="12">
+                                    <FormGroup>
+                                        <Input
+                                            type="select"
+                                            name="status"
+                                            value={statusFilter}
+                                            onChange={(e) => onStatusSelect(e.target.value)}
+                                        >
+                                            <option value={null}>All status</option>
+                                            <option value={'1'}>Active</option>
+                                            <option value={'0'}>In-active</option>
+                                        </Input>
+                                        </FormGroup>
+                                </Col> )}
                                 {filter.job===1 &&(<Col lg="2" md="4" sm="12" xs="12">
                                     <FormGroup>
                                         <AsyncSelect
@@ -523,35 +533,51 @@ const ReportsList = () => {
                                     </FormGroup>
                                 </Col> )}
                                 {/* Hiring Manager Matched Candidate List by Job Report */}
-                                {filter.matched==1 &&(<Col lg="2" md="4" sm="12" sx="12">
+                                {filter.recommendedStatus==1 &&(<Col lg="2" md="4" sm="12" sx="12">
                                     <FormGroup>
                                         <Input
-                                                      type="select"
-                                                      value={recommStatusId}
-                                                      name="customerrecommendedjobstatusid"
-                                                      id="customerrecommendedjobstatusid"
-                                                      placeholder="Recommended Status Id"
-                                                    //   onChange={(e) => {
-                                                    //     handleChange(
-                                                    //       "customerrecommendedjobstatusid",
-                                                    //       e.target.value 
-                                                    //     );
-                                                    //     setRecommStatusId(e.target.value);
-                                                    //   }}
-                                                    >
-                                                      <option value={""}>Matched</option>
-                                                      {recommendedJobStatusList?.length > 0 ? (
-                                                        recommendedJobStatusList.map((data) => (
-                                                          <option value={data.id} key={data.id}>
-                                                            {data.name}
-                                                          </option>
-                                                        ))
-                                                      ) : (
-                                                        <></>
-                                                      )}
+                                            type="select"
+                                            value={recommStatusId}
+                                            name="customerrecommendedjobstatusid"
+                                            id="customerrecommendedjobstatusid"
+                                            placeholder="Recommended Status Id"
+                                            title="Recommended Status Id"
+                                            onChange={(e) => {
+                                                setRecommStatusId(e.target.value);
+                                            }}
+                                        >
+                                            <option value={""}>Matched</option>
+                                            {recommendedJobStatusList?.length > 0 ? (
+                                            recommendedJobStatusList.map((data) => (
+                                                <option value={data.id} key={data.id}>
+                                                {data.name}
+                                                </option>
+                                            ))
+                                            ) : (
+                                            <></>
+                                            )}
                                         </Input>
                                     </FormGroup>
                                 </Col> )}
+                                {filter.jobStatus==1 &&(
+                                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                                    <FormGroup>
+                                    <Input
+                                        name="jobStatus"
+                                        type="select"
+                                        value={jobStatus}
+                                        onChange={(e) =>
+                                        setJobStatus(e.target.value)
+                                        }
+                                    >
+                                        <option value={""}>All jobs</option>
+                                        <option value={"Publish"}>Publish jobs</option>
+                                        <option value={"Draft"}>Draft jobs</option>
+                                        <option value={"Closed"}>Closed jobs</option>
+                                    </Input>
+                                    </FormGroup>
+                                </Col>
+                                )}
                                 {/*  */}
                                 {/* <Col lg="2" md="4" sm="12" sx="12">
                                                   <FormGroup>
@@ -606,7 +632,7 @@ const ReportsList = () => {
                                                       </Input>
                                                     </FormGroup>
                                                   </Col> : <></>} */}
-                                <Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
+                                {filter.startDate==1 &&(<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
                                     <FormGroup>
                                         <div className="input-group">
                                             <div className="input-group-text">
@@ -628,7 +654,8 @@ const ReportsList = () => {
                                         </div>
                                     </FormGroup>
                                 </Col>
-                                <Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
+                                )}
+                                {filter.endDate==1 &&(<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
                                     <FormGroup>
                                         <div className="input-group">
                                             <div className="input-group-text">
@@ -649,28 +676,30 @@ const ReportsList = () => {
                                             />
                                         </div>
                                     </FormGroup>
-                                </Col>
+                                </Col>)}
                                 {/* search and clear*/}
                                 <Col lg="3" md="4" sm="12" sx="12">
-                                                  <Button
-                                                    style={{ background: "rgb(47 71 155)" }}
-                                                    className="me-4"
-                                                    color="primary"
-                                                    type="button"
-                                                     onClick={handleSearch}                                               
-                                                  >
-                                                    <FontAwesomeIcon icon={faSearch} /> Search
-                                                  </Button>
-                                                  <Button
-                                                    // style={{ background: "rgb(47 71 155)" }}
-                                                    color="link"
-                                                    type="button"
-                                                    onClick={handleClear}
-                                                  >
-                                                    Clear
-                                                  </Button>
+                                    <Button
+                                        style={{ background: "rgb(47 71 155)" }}
+                                        className="me-4"
+                                        color="primary"
+                                        type="button"
+                                        onClick={handleSearch}                                               
+                                    >
+                                        <FontAwesomeIcon icon={faSearch} /> Search
+                                    </Button>
+                                    <Button
+                                        // style={{ background: "rgb(47 71 155)" }}
+                                        color="link"
+                                        type="button"
+                                        onClick={handleClear}
+                                    >
+                                        Clear
+                                    </Button>
                                 </Col>
+
                                 
+
                             </Row>
 
                             {/* wrap table to enable horizontal scrolling */}
