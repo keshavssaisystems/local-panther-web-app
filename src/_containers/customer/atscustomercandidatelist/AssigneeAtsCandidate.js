@@ -20,11 +20,9 @@ import { showSnackbar } from "_store/snackbar.slice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION } from "_constants/snackbarMessages";
 
 
-function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,assignedCompanyName, assignmentStartDate, assignmentEndDate, isOpen, onClose }) {
-    console.log("id", atsCandidateId, isAssigned, assignedCompanyId, assignmentStartDate, assignmentEndDate);
+function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,assignedCompanyName, assignmentStartDate, assignmentEndDate, isOpen, onClose, onRefresh }) {
     const dispatch = useDispatch();
-    const loader = useSelector((state) => state.ats?.loader);
-
+    
     const [formData, setFormData] = useState({
         clientCompany: null,
         assignmentStartDate: "",
@@ -115,7 +113,7 @@ function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,a
         }));
     };
 
-    const handleSaveAssignment = (e) => {
+    const handleSaveAssignment = async (e) => {
         e.preventDefault();
         const payload = {
             atscandidateid: atsCandidateId,
@@ -131,7 +129,10 @@ function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,a
         };
 
         try {
-            const res = dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            await  dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            if (onRefresh && typeof onRefresh === "function") {
+                onRefresh();
+            }
             onClose();
             dispatch(showSnackbar({
                 message: "Assignment Updated",
@@ -154,7 +155,7 @@ function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,a
         }
     };
 
-    const handleRemoveAssignment = (e) => {
+    const handleRemoveAssignment = async(e) => {
         e.preventDefault();
         const payload = {
             atscandidateid: atsCandidateId,
@@ -166,7 +167,10 @@ function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,a
         };
 
         try {
-            const res = dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            await dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            if (onRefresh && typeof onRefresh === "function") {
+              onRefresh();
+            }
             onClose();
              dispatch(showSnackbar({
                 message: "Assignment Removed",
