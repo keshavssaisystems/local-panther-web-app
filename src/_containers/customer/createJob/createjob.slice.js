@@ -156,6 +156,7 @@ const createjobSlice = createSlice({
         "companyid",
         state.customerDetails?.companyid ? state.customerDetails?.companyid : ""
       );
+      localStorage.setItem("atsEnableStatus",state.customerDetails?.isatsenable ? state.customerDetails?.isatsenable : false);
       state.loading = false;
     },
     [getCustomerDetailsThunk.rejected]: (state, action) => {
