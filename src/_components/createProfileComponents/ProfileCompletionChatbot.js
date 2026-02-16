@@ -125,6 +125,10 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
 
   // Add Education Entry
   const addEducationEntry = () => {
+    if (formData?.education?.length !== 0 && validateEducationEntry().length === 0) {
+      validateStep();
+      return;
+    }
     setFormData(prev => ({
       ...prev,
       education: [
@@ -167,6 +171,10 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
 
   // Add Experience Entry
   const addExperienceEntry = () => {
+    if (formData?.experience?.length !== 0 && validateExperienceEntry().length === 0) {
+      validateStep();
+      return;
+    }
     setFormData(prev => ({
       ...prev,
       experience: [
@@ -242,10 +250,24 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
           if (!exp.jobDescription) {
             newErrors[`experience_${index}_desc`] = 'Job description is required';
           }
+          if (!exp.fromMonth || !exp.fromYear) {
+            newErrors[`experience_${index}_from`] = 'Start date is required';
+          }
+
           if (!exp.currentlyWorking && (!exp.toMonth || !exp.toYear)) {
             newErrors[`experience_${index}_to`] = 'End date is required';
           }
+
         });
+      }
+    }
+
+    if (currentStepData.key === 'review') {
+      const requestPayload = getPayload();
+      if ((requestPayload?.educationList && requestPayload?.educationList?.length > 0) ||
+        (requestPayload?.qualificationList && requestPayload?.qualificationList?.length > 0) ||
+        (requestPayload?.skillsList && requestPayload?.skillsList !== '')) {
+        // newErrors[`experience_${index}_to`] = 'End date is required';
       }
     }
 
@@ -275,11 +297,17 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
 
   // Handle Skip
   const handleSkip = () => {
+    const nextStep = requiredSteps[currentStep + 1];
+    const isGoingToReview = nextStep?.key === "review";
+    if (isGoingToReview && !validateStep()) {
+      return;
+    }
     if (currentStep < requiredSteps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(prev => prev + 1);
       setErrors({});
     }
   };
+
 
   // Handle Complete
   const handleComplete = () => {
@@ -401,7 +429,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       <div className="step-header">
         <h4>Welcome</h4>
         <p className="text-muted">
-          Welcome to your OpenWorX Profile Assistant! We're here to guide you through completing your profile for optimal AI job matching.
+          Welcome to your OpenWorX Profile Assistant! We're here to guide you through completing your profile for optimal job matching.
         </p>
 
         <p className="text-muted">
@@ -486,7 +514,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
             {formData.education.length - 1 === index && (
               <>
                 <FormGroup>
-                  <Label>Level of education</Label>
+                  <Label>Level of education <span className="text-danger">*</span></Label>
                   <Select
                     options={educationLevels}
                     value={educationLevels.find(opt => opt.value === edu.levelofeducationid)}
@@ -503,7 +531,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                 </FormGroup>
 
                 <FormGroup>
-                  <Label>Field of study</Label>
+                  <Label>Field of study<span className="text-danger">*</span></Label>
                   <Select
                     options={fieldOfStudyOptions}
                     value={fieldOfStudyOptions.find(opt => opt.value === edu.fieldofstudyid)}
@@ -520,7 +548,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                 </FormGroup>
 
                 <FormGroup>
-                  <Label>School</Label>
+                  <Label>School<span className="text-danger">*</span></Label>
                   <Input
                     type="text"
                     value={edu.school}
@@ -640,7 +668,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
             {formData.experience.length - 1 === index && (
               <>
                 <FormGroup>
-                  <Label>Job title</Label>
+                  <Label>Job title <span className="text-danger">*</span></Label>
                   <Input
                     type="text"
                     value={exp.jobTitle}
@@ -667,7 +695,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                 <Row>
                   <Col md={6}>
                     <FormGroup>
-                      <Label>From</Label>
+                      <Label>From<span className="text-danger">*</span></Label>
                       <Row>
                         <Col xs={6}>
                           <Select
@@ -686,11 +714,16 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                           />
                         </Col>
                       </Row>
+                      {errors[`experience_${index}_from`] && (
+                        <div className="text-danger small mt-1">{errors[`experience_${index}_from`]}</div>
+                      )}
                     </FormGroup>
                   </Col>
                   <Col md={6}>
                     <FormGroup>
-                      <Label>To</Label>
+                      <Label>To
+                        {exp.currentlyWorking === true ? '' : <span className="text-danger">*</span>}
+                      </Label>
                       <Row>
                         <Col xs={6}>
                           <Select
@@ -719,10 +752,10 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                 </Row>
 
                 <FormGroup>
-                  <Label>Job description</Label>
+                  <Label>Job description<span className="text-danger">*</span></Label>
                   <Input
                     type="textarea"
-                    rows="4"
+                    rows="3"
                     value={exp.jobDescription}
                     onChange={(e) => updateExperienceEntry(exp.id, 'jobDescription', e.target.value)}
                     placeholder="Enter job description"
@@ -762,6 +795,28 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
     return `${months} months`;
   };
 
+  // validate education entries to ensure only complete entries are sent in review and payload
+  const validateEducationEntry = () => {
+    const payload = { ...formData };
+
+    return payload?.education?.filter(edu =>
+      edu.fieldofstudyid &&
+      edu.fieldofstudyid !== 0 &&
+      edu.levelofeducationid &&
+      edu.levelofeducationid !== 0
+    )
+  }
+
+  const validateExperienceEntry = () => {
+    const payload = { ...formData };
+    return payload?.experience?.filter(exp =>
+      exp.jobTitle &&
+      exp.fromMonth &&
+      exp.fromYear &&
+      exp.jobDescription
+    )
+  }
+
   // Render Review Step
   const renderReviewStep = () => (
     <div className="step-content review-content">
@@ -772,7 +827,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
           summary of your updates.
         </p>
       </div>
-      {missingFields.includes('skills') && (<div className="review-section">
+      {missingFields.includes('skills') && formData?.skills && formData.skills.trim() !== '' && (<div className="review-section">
         <h6 className="text-primary mb-3">Skills</h6>
         <Card className="mb-3">
           <CardBody>
@@ -781,7 +836,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
         </Card>
       </div>)}
 
-      {missingFields.includes('education') && (
+      {missingFields.includes('education') && validateEducationEntry().length > 0 && (
         <div className="review-section">
           <h6 className="text-primary mb-3">Education ({formData.education.length} Entry)</h6>
           {formData.education.map((edu, index) => (
@@ -796,7 +851,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
           ))}
         </div>
       )}
-      {missingFields.includes('experience') && (
+      {missingFields.includes('experience') && validateExperienceEntry().length > 0 && (
         <div className="review-section">
           <h6 className="text-primary mb-3">Experience ({formData.experience.length} Entry)</h6>
           {formData.experience.map((exp, index) => (
@@ -928,9 +983,9 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
               onClick={handleSkip}
               className="skip-btn"
             >
-              Skip for now
+              {currentStep !== 0 && currentStep < requiredSteps.length - 1 && "Skip for now"}
             </Button>
-            <div className="action-buttons">
+            < div className="action-buttons">
               <Button
                 color="secondary"
                 onClick={handleBack}
@@ -948,8 +1003,9 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
             </div>
           </div>
         </ModalFooter>
-      )}
-    </Modal>
+      )
+      }
+    </Modal >
   );
 };
 
