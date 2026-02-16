@@ -366,10 +366,49 @@ export const CandidateCardView = (props) => {
                     </span>
                   </Col>
                   <Col md="11" lg="11">
-                    <b>Work Experience</b>
+                    <div 
+                    style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "space-between", 
+                      gap: "8px" 
+                      }}>
+                      <div 
+                      style={{ 
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px" }}>
+                        <b>Work Experience</b>
+                      </div>
+
+                      {localStorage.getItem("atsEnableStatus") === "true" && props?.data?.isatscandidate === false && (
+                        <div
+                          style={{
+                            backgroundColor: "#FED7AA",
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "fit-content",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#C2410C",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Non‑ATS
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     <p>{returnWorkExperince()}</p>
                   </Col>
-                </Row>
+                 
+                  </Row>
               </p>
             </Col>
 
