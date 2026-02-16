@@ -102,8 +102,6 @@ export const getAtsCandidateAssignedDetail = createAsyncThunk(
     export  const updateAtsCandidateDetails = createAsyncThunk(
         `${name}/updateAtsCandidateDetails`,
         async (payload) => {
-            debugger
-            console.log("Payload for Update:", payload);
             const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ATSCandidateDetail/UpdateAtsCandidateDetails/`;
             return await fetchWrapper.put(TOKEN_END_POINT, payload);
         }
