@@ -73,7 +73,6 @@ export function PersonalInformation(props) {
   const [originalMobileNumber, setOriginalMobileNumber] = useState("");
   const [isOtpVerified, setIsOtpVerified] = useState(true);
   const [otpSentId, setOtpSentId] = useState(null);
-  const [isPhoneNumberModified, setIsPhoneNumberModified] = useState(false);
   const [initialPhoneVerified, setInitialPhoneVerified] = useState(false);
 
   useEffect(() => {
@@ -182,11 +181,10 @@ export function PersonalInformation(props) {
       isactive: true,
       userid: 0,
       currentUserId: 0,
-      isphoneverified: selectedCandidate?.personalInfo?.isphoneverified || false,
+      isphoneverified: true,
     };
     setGetResponse(data);
-    setInitialPhoneVerified(selectedCandidate?.personalInfo?.isphoneverified || false);
-    setIsPhoneNumberModified(false);
+    setInitialPhoneVerified(true);
     setIsOtpVerified(true);
     let countryData = data?.country;
 
@@ -681,10 +679,8 @@ export function PersonalInformation(props) {
       }
       // Check if phone number has been changed from original
       if (data !== personalInfo_temp?.phonenumber) {
-        setIsPhoneNumberModified(true);
         setIsOtpVerified(false);
       } else {
-        setIsPhoneNumberModified(false);
         setIsOtpVerified(initialPhoneVerified);
       }
     } else if (check === "zip") {
@@ -873,7 +869,7 @@ export function PersonalInformation(props) {
 
       setOtpLoading(false);
 
-      if (response.payload?.statusCode === 204) {
+      if (response.payload?.message === "Phone Number updated successfully") {
         setOtpModalOpen(false);
         setIsOtpVerified(true);
         dispatch(showSnackbar({
@@ -885,11 +881,15 @@ export function PersonalInformation(props) {
         }));
 
         return { success: true };
+      } else {
+        dispatch(showSnackbar({
+          message: response.payload?.message || "Invalid or expired OTP",
+          type: SNACKBAR_TYPES.ERROR,
+        }));
+        return { success: false, message: "Invalid or expired OTP" };
       }
 
-      return { success: false, message: "Invalid or expired OTP" };
-
-    } catch {
+    } catch (error) {
       setOtpLoading(false);
       return { success: false, message: "Verification failed" };
     }
@@ -1247,7 +1247,7 @@ export function PersonalInformation(props) {
                               : ""
                               }`}
                           />
-                          {isOtpVerified && !isPhoneNumberModified ? (
+                          {isOtpVerified ? (
                             <div className="btn btn-success" style={{ pointerEvents: "none" }}>
                               <i className="fa fa-check-circle"></i> Verified
                             </div>

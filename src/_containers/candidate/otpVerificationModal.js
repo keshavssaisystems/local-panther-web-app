@@ -5,7 +5,9 @@ import {
   ModalHeader,
   ModalBody,
   Button,
-  Input
+  Input,
+  Form,
+  FormGroup
 } from "reactstrap";
 import "./otpVerificationModal.css";
 const OTP_EXPIRY_SECONDS = 120;   // 2 minutes
@@ -19,7 +21,8 @@ const OtpVerificationModal = ({
   onResend,
   loading
 }) => {
-
+  const type = mobileNumber ? "mobile" : "email";
+  const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [secondsLeft, setSecondsLeft] = useState(OTP_EXPIRY_SECONDS);
@@ -91,6 +94,58 @@ const OtpVerificationModal = ({
   /* Render                             */
   /* ---------------------------------- */
 
+  const [saveOTP, setSaveOTP] = useState([]);
+  const handleInputChange = (check, e, index) => {
+    let new_data = [...saveOTP];
+    let otp_new = { ...otp };
+    if (check === "mobile") {
+      new_data[index] = e;
+
+      setSaveOTP(new_data);
+      otp_new = new_data.join("");
+      setOtp(otp_new);
+      if (e !== "") {
+        // Automatically focus on the next input field
+        const nextInput = document.getElementById(`mobile-${index + 1}`);
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+
+      if (e === "") {
+        const prevInput = document.getElementById(`mobile-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
+        }
+      }
+      if (otp_new.length === 6) {
+       onVerify(otp_new);
+      }
+    }
+  };
+
+  const handlePaste = (e, check) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").trim().slice(0, 6);
+    if (!/^\d+$/.test(pasteData)) return;
+
+    const pasted = pasteData.split("");
+    if (check === "mobile") {
+      let new_data = [...saveOTP];
+      let otp_new = { ...otp };
+      pasted.map((digit, i) => {
+        new_data[i] = digit;
+        document.getElementById(`mobile-${i}`).value = digit;
+      });
+      setSaveOTP(new_data);
+      otp_new = new_data.join("");
+      setOtp(otp_new);
+      if (otp_new.length === 6) {
+        onVerify(otp_new);
+      }
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -111,31 +166,45 @@ const OtpVerificationModal = ({
         <p className="fw-bold mb-3">
           {mobileNumber}
         </p>
-
-        <Input
-          type="text"
-          maxLength={6}
-          value={otp}
-          onChange={(e) => {
-            const val = e.target.value.replace(/\D/g, "");
-            setOtp(val);
-          }}
-          placeholder="Enter OTP"
-          className="text-center fs-5"
-        />
-
+        <Form>
+          <div className="d-flex justify-content-center align-items-center">
+            {otpLength?.map((item, index) => (
+              <FormGroup className="m-2">
+                <Input
+                  type="text"
+                  name="otp"
+                  id={
+                    type === "mobile" ? `mobile-${index}` : `email-${index}`
+                  }
+                  maxLength="1"
+                  style={{ fontSize: "24px" }}
+                  className="form-control placeholder-name text-center"
+                  onInput={(e) =>
+                    handleInputChange(
+                      type === "mobile" ? "mobile" : "email",
+                      e.target.value,
+                      index
+                    )
+                  }
+                  onPaste={(e) =>
+                    handlePaste(e, type === "mobile" ? "mobile" : "email")
+                  }
+                />
+              </FormGroup>
+            ))}
+          </div>
+        </Form>
         {error && (
           <div className="text-danger mt-2 small">
             {error}
           </div>
         )}
 
-        <div className="mt-3 small text-muted">
+        {/* <div className="mt-3 small text-muted">
           OTP expires in {formatTime(secondsLeft)}
-        </div>
+        </div> */}
 
         <div className="d-flex justify-content-between align-items-center mt-4">
-
           {resendCountdown === 0 ? (
             <Button
               color="link"
