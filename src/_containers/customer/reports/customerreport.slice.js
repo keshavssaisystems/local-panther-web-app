@@ -139,6 +139,18 @@ export const getCandidateDropdown = createAsyncThunk(
   }
 );
 
+// get candidate dropdown list (supports search)
+export const getCandidateSearchDropdown = createAsyncThunk(
+  `${name}/getCandidateSearchDropdown`,
+  async (search = "") => {
+    const base = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=candidateSearch`;
+    const GET_CANDIDATE_DROPDOWN_END_POINT = search
+      ? `${base}&searchBy=${encodeURIComponent(search)}`
+      : `${base}`;
+    return await fetchWrapper.get(GET_CANDIDATE_DROPDOWN_END_POINT);
+  }
+);
+
 // get candidate Recommended Job Status list
 export const getRecommendedJobStatus = createAsyncThunk(
   `${name}/getRecommendedJobStatus`,
@@ -322,6 +334,16 @@ const customerReportSlice = createSlice({
     [getCandidateDropdown.fulfilled]: (state, action) => {
       state.candidateDropDownList = action?.payload?.data;
     },
+
+    [getCandidateSearchDropdown.fulfilled]: (state, action) => {
+      // normalize to consistent shape used by selectors
+      state.candidateDropDownList =
+        action?.payload?.data?.map((item) => ({
+          candidatename: item.name || item.candidatename || "",
+          candidateid: item.id || item.candidateid,
+        })) || [];
+    },
+
     [getCandidateDropdown.rejected]: (state, action) => { },
 
     // job dropdown list
@@ -415,6 +437,7 @@ export const customerReportActions = {
   getCustReportMatchedCandList,
   getCustReporCandStatList,
   getCandidateDropdown,
+  getCandidateSearchDropdown,
   getJobDropdown,
   getRecommendedJobStatus,
   getScheduledCandidatesForCustomerDropdown,
