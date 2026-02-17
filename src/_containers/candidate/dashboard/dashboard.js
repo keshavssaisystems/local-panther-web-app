@@ -332,9 +332,12 @@ export default function CandidateDashboard() {
                 show={showProfilePrompt}
                 onConfirm={() => {
                   setShowProfilePrompt(false);
-                  setShowProfileChatbot(true);
-                  // loadProfileData();
-                  // navigate("/profile");
+                  if (counts.employmentEligiblity === 0 ||
+                    counts.jobPreference === false) {
+                    navigate("/profile");
+                  } else {
+                    setShowProfileChatbot(true);
+                  }
                 }}
                 onCancel={() => {
                   setShowProfilePrompt(false);
