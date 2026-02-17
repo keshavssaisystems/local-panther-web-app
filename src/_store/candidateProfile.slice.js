@@ -19,7 +19,8 @@ const addSkillAction = addSkillsActions();
 
 const qualificationDeleteActions = deleteQualificationActions();
 const qualificationRemoveReducer = deleteQualificationReducer();
-
+const sendOTPforVerificationAction = sendOTPforVerificationActions();
+const sendOTPforVerificationReducer = sendOTPforVerificationReducers();
 const slice = createSlice({
   name,
   initialState,
@@ -29,6 +30,7 @@ const slice = createSlice({
   resumeDeleteReducer,
   addSkillReducer,
   qualificationRemoveReducer,
+  sendOTPforVerificationReducer,
 });
 
 const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}`;
@@ -42,6 +44,7 @@ export const profileActions = {
   ...deleteResumeActions,
   ...addSkillAction,
   ...qualificationDeleteActions,
+  ...sendOTPforVerificationAction,
 };
 export const profileReducer = slice.reducer;
 
@@ -160,7 +163,7 @@ function addResumeReducer() {
         .addCase(pending, (state) => {
           state.error = null;
         })
-        .addCase(fulfilled, (state, payload) => {})
+        .addCase(fulfilled, (state, payload) => { })
         .addCase(rejected, (state, action) => {
           state.error = action.error;
         });
@@ -197,7 +200,7 @@ function updateResumeReducer() {
         .addCase(pending, (state) => {
           state.error = null;
         })
-        .addCase(fulfilled, (state, payload) => {})
+        .addCase(fulfilled, (state, payload) => { })
         .addCase(rejected, (state, action) => {
           state.error = action.error;
         });
@@ -231,7 +234,7 @@ function deleteResumeReducer() {
         .addCase(pending, (state) => {
           state.error = null;
         })
-        .addCase(fulfilled, (state, payload) => {})
+        .addCase(fulfilled, (state, payload) => { })
         .addCase(rejected, (state, action) => {
           state.error = action.error;
         });
@@ -305,7 +308,42 @@ function deleteQualificationReducer() {
         .addCase(pending, (state) => {
           state.error = null;
         })
-        .addCase(fulfilled, (state, payload) => {})
+        .addCase(fulfilled, (state, payload) => { })
+        .addCase(rejected, (state, action) => {
+          state.error = action.error;
+        });
+    }
+  };
+}
+
+
+function sendOTPforVerificationActions() {
+  return {
+    sendOTPforVerification: sendOTPforVerification(),
+  };
+
+  function sendOTPforVerification() {
+    return createAsyncThunk(
+      `${name}/Candidate/sendOTPforVerification`,
+      async (payload) =>
+        await fetchWrapper.put(
+          `${baseUrl}/api/User/updateEmailPhoneNumber`, payload
+        )
+    );
+  }
+}
+
+function sendOTPforVerificationReducers() {
+  return (builder) => {
+    sendOTPforVerification();
+
+    function sendOTPforVerification() {
+      var { pending, fulfilled, rejected } = sendOTPforVerificationActions.sendOTPforVerification;
+      builder
+        .addCase(pending, (state) => {
+          state.error = null;
+        })
+        .addCase(fulfilled, (state, payload) => { })
         .addCase(rejected, (state, action) => {
           state.error = action.error;
         });
