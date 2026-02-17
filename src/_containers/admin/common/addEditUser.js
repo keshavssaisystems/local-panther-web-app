@@ -23,9 +23,7 @@ export const AddEditUser = (props) => {
   const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
   const [companyId, setCompanyId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0);
   const [isCompanyUserRole, setIsCompanyUserRole] = useState(false);
-  let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
-    ? localStorage.getItem("isCompanyAdmin") === "true"
-    : false;
+  let isCompanyAdmin = localStorage.getItem("isCompanyAdmin") ? localStorage.getItem("isCompanyAdmin") === "true" : false;
   const dispatch = useDispatch();
   const rolesList = useSelector((state) => state.adminListing.rolesList);
   console.log(rolesList);
@@ -102,7 +100,16 @@ export const AddEditUser = (props) => {
   const [companyOptions, setCompanyOptions] = useState([]);
   const [companyValue, setCompanyValue] = useState(null);
   const [companyValidation, setCompanyValidation] = useState(false);
+  const [companyDomain, setCompanyDomain] = useState("");
   const createEntity = async (payload) => {
+    if (!validateEmailDomain(payload.email)) {
+      dispatch(showSnackbar({
+        message: `Email must match domain ${companyDomain}`,
+        type: "error"
+      }));
+      return;
+    }
+
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
       : "";
@@ -321,6 +328,13 @@ export const AddEditUser = (props) => {
         page_path: window.location.pathname,
       });
     }
+    if (isCompanyAdmin === true || currentRoleId === 4) { // super admin should see all companies in dropdown
+      const filteredCompany = props?.companiesList?.filter((company) => company.id === companyId);
+      if (filteredCompany && filteredCompany.length > 0) {
+        setCompanyDomain(filteredCompany[0].emaildomain);
+      }
+    }
+
   }, []);
 
   const selectRole = (data) => {
@@ -358,6 +372,7 @@ export const AddEditUser = (props) => {
       const companyList = (companies || []).map((company) => ({
         value: company.companyid,
         label: company.companyname + (company.isstaffingfirm ? " (Staffing Firm)" : ""),
+        companyDomain: company.emaildomain,
       }));
 
       setCompanyOptions(companyList);
@@ -388,6 +403,34 @@ export const AddEditUser = (props) => {
     }, 300),
     [loadOptionCompany]
   );
+
+  const getEmailDomain = (email) => {
+    if (!email.includes("@")) return "";
+    return email.split("@")[1].toLowerCase();
+  };
+
+
+  const validateEmailDomain = (email) => {
+    if (companyId === 0) return true; // if no company selected, skip domain validation
+    const emailDomain = getEmailDomain(email);
+
+    if (!companyDomain) return false;
+
+    return emailDomain === companyDomain.replace("@", "").toLowerCase();
+  };
+
+  const handleCompanyChange = async (companyId) => {
+    const company = companyOptions.find(c => c.value == companyId);
+    setCompanyDomain(company.companyDomain);
+  };
+
+  const getSelectedCompanyDomain = () => {
+    const selectedCompany = props?.companiesList?.find(
+      (company) => company.companyid === Number(companyId)
+    );
+
+    return selectedCompany?.emaildomain?.replace("@", "").toLowerCase() || "";
+  };
 
   return (
     <>
@@ -478,6 +521,7 @@ export const AddEditUser = (props) => {
                     setCompanyValue(val);
                     setCompanyValidation(false);
                     setValue("companyId", val?.value);
+                    handleCompanyChange(val?.value);
                   }}
                   isMulti={false}
                   styles={customStyles}
@@ -492,27 +536,6 @@ export const AddEditUser = (props) => {
 
               </FormGroup>
             </Col>}
-            {/* <Col md={6}>
-              <FormGroup>
-                <Label for="prefix" className="fw-semi-bold">
-                  Prefix <span style={{ color: "red" }}>* </span>
-                </Label>
-                <input
-                  type="text"
-                  name="prefix"
-                  {...register("prefix")}
-                  placeholder="Enter prefix"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.prefix ? "is-invalid error-text" : "input-text"
-                  }`}
-                  maxLength={10}
-                  disabled={isView}
-                />
-                <div className="invalid-feedback">
-                  {errors?.prefix?.message}
-                </div>
-              </FormGroup>
-            </Col> */}
             <Col md={6}>
               <FormGroup>
                 <Label for="firstname">
@@ -585,7 +608,7 @@ export const AddEditUser = (props) => {
                   maxLength={70}
                   disabled={isView}
                 />
-                <div className="invalid-feedback">{errors?.email?.message}</div>
+                <div className="invalid-feedback">{errors?.email?.message}</div>              
               </FormGroup>
             </Col>
             <Col md={6}>

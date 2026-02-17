@@ -63,7 +63,7 @@ export const AddEditCompany = (props) => {
   const [locationValidation, setLocationValidation] = useState(false);
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
-  const [isStaffingFirm, setIsStaffingFirm] = useState(data.isstaffingfirm);
+  const [isStaffingFirm, setIsStaffingFirm] = useState(data?.isstaffingfirm);
   const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
 
   useEffect(() => {
