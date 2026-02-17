@@ -92,8 +92,16 @@ const ReportsList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
     const [searchData, setSearchData] = useState("");
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = useState(() => {
+        const date = new Date();
+        date.setDate(date.getDate() - 7);
+        return date;
+    });
+    const [endDate, setEndDate] = useState(() => {
+        const date = new Date();
+        date.setDate(date.getDate());
+        return date;
+    });;
     const [subsidiaryId, setSubsidiaryId] = useState("");
     const [candidateId, setCandidateId] = useState("");
     const [candidateSelected, setCandidateSelected] = useState(null);
