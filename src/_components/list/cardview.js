@@ -528,6 +528,22 @@ export const CandidateCardView = (props) => {
                     </Row>
                   </p>
                 </Col>
+                {props.data.assignedInfoDTO?.[0]?.isassigned === true && 
+                (<Col className="col-12"> 
+                    <div className="card-details"> 
+                      <Row> 
+                        <Col md="1" lg="1"> 
+                          <span className="pe-2">
+                            <BsPerson size={"16px"} />
+                          </span> 
+                        </Col> 
+                        <Col md="11" lg="11"> 
+                          <b>Assignment Status</b> 
+                          <div>On Assignment / Already Working</div> 
+                        </Col> 
+                      </Row> 
+                    </div> 
+                </Col> )}
               </>)}
           </Row>
         </CardBody>
