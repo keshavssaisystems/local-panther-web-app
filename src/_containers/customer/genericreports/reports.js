@@ -319,7 +319,7 @@ const ReportsList = () => {
             filter.searchData === 1 && searchData !== '' && parameterParts.push(`@SearchText='${searchData || ""}'`);
             filter.startDate === 1 && startDate !== null && parameterParts.push(`@startdate='${startDate ? moment(startDate).format("YYYY-MM-DD") : null}'`);
             filter.endDate === 1 && endDate !== null && parameterParts.push(`@enddate='${endDate ? moment(endDate).format("YYYY-MM-DD") : null}'`);
-            filter.candidate === 1 && candidateId && parameterParts.push(`@candidateid=${candidateId || null}`);
+            filter.candidateFilter === 1 && candidateSelected && parameterParts.push(`@candidateid=${candidateSelected?.candidateid}`);
             filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId || null}`);
             filter.jobStatus === 1 && parameterParts.push(`@jobStatus=${jobStatus || null}`);
             filter.currentStatus === 1 && statusFilter !== 'All status' && parameterParts.push(`@isactive=${statusFilter}`);
@@ -327,7 +327,7 @@ const ReportsList = () => {
             filter.jobFilter === 1 && jobId && parameterParts.push(`@jobid=${jobId}`);
             const params = parameterParts.join(",");
             await dispatch(fetchReportList({ endpoint, params }));
-
+            parameterParts = []
         }
         catch (error) {
             console.error("list fetch failed", error);
@@ -362,7 +362,7 @@ const ReportsList = () => {
         fetchData();
     };
     const handleClear = () => {
-        setSearchData("");
+        // setSearchData("");
         setStartDate(null);
         setEndDate(null);
         setSubsidiaryId("");
@@ -373,7 +373,7 @@ const ReportsList = () => {
         setRecommStatusId(null);
         setCurrentPage(1);
 
-        fetchData(1, perPage, "", null, null, null, null, null, null);
+        fetchData();
     };
 
     const openJobDetails = async (jobId) => {
