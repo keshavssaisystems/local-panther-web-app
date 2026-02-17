@@ -528,6 +528,29 @@ export const CandidateCardView = (props) => {
                     </Row>
                   </p>
                 </Col>
+                {props.data.assignedInfoDTO?.[0]?.isassigned === true && 
+                (<Col className="col-12"> 
+                    <div className="card-details"> 
+                      <Row> 
+                        <Col md="1" lg="1"> 
+                        <span className="pe-2">
+                          <img
+                            src={customerIcons.On_Assignment}
+                            alt="On assignment"
+                            width="22"
+                            height="25"
+                            style={{ verticalAlign: "middle", objectFit: "contain" }}
+                          />
+                        </span>
+                          
+                        </Col> 
+                        <Col md="11" lg="11"> 
+                          <b>Assignment Status</b> 
+                          <div>On Assignment / Already Working</div> 
+                        </Col> 
+                      </Row> 
+                    </div> 
+                </Col> )}
               </>)}
           </Row>
         </CardBody>
