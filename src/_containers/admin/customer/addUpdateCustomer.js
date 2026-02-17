@@ -20,7 +20,7 @@ import "./customer.scss";
 import { AddEditCompany } from "../common/addEditCompany";
 import { dropdownActions } from "_store";
 import debounce from "lodash/debounce";
-
+import { showSnackbar } from "_store/snackbar.slice";
 export const AddUpdateCustomer = ({
   openModal,
   onClose,
@@ -42,7 +42,7 @@ export const AddUpdateCustomer = ({
   const companiesList = useSelector((state) => state.dropdown.companyList);
   const [save, setSave] = useState(false);
   const [companyModal, setCompanyModal] = useState(false);
-
+  const [companyDomain, setCompanyDomain] = useState("");
   const loadOptionsDeb = useCallback(
     debounce((inputValue, callback) => {
       loadOptions(inputValue).then(callback);
@@ -97,14 +97,29 @@ export const AddUpdateCustomer = ({
     //     setPrefixValidation(false);
     //   }
     // } else
+
     if (check === "company") {
-      data.company = parseInt(event.target.value);
-      if (data.company === 0) {
+      const companyId = parseInt(event.target.value);
+      data.companyid = companyId;
+
+      if (companyId === 0) {
         setCompanyValidation(true);
       } else {
         setCompanyValidation(false);
       }
-    } else if (check === "firstname") {
+
+      const selectedCompany = companiesList?.find(company => company.companyid === companyId);
+
+      const domain = selectedCompany?.emaildomain || "";
+      setCompanyDomain(domain);
+
+      // 🆕 Force revalidation of email
+      if (data.email && !validateEmailDomain(data.email)) {
+        setEmailValidation(true);
+      }
+
+    }
+    else if (check === "firstname") {
       data.firstname = event.target.value;
 
       if (data.firstname === "") {
@@ -146,6 +161,7 @@ export const AddUpdateCustomer = ({
 
   const getValidation = (event) => {
     event.preventDefault();
+
     setSave(true);
     parseInt(event.target.elements.companyname.value) === 0
       ? setCompanyValidation(true)
@@ -167,13 +183,16 @@ export const AddUpdateCustomer = ({
     event.target.elements.location.value === ""
       ? setLocationValidation(true)
       : setLocationValidation(false);
-    if (
-      event.target.elements.companyname.value !== 0 &&
-      event.target.elements.firstname.value !== "" &&
-      event.target.elements.lastname.value !== "" &&
-      event.target.elements.email.value !== "" &&
-      event.target.elements.location.value !== ""
-    ) {
+
+    if (event.target.elements.companyname.value !== 0 && event.target.elements.firstname.value !== "" && event.target.elements.lastname.value !== "" &&
+      event.target.elements.email.value !== "" && event.target.elements.location.value !== "") {
+      if (!validateEmailDomain(event.target.elements.email.value)) {
+        dispatch(showSnackbar({
+          message: `Email must match domain @${getSelectedCompanyDomain()}`,
+          type: "error"
+        }));
+        return;
+      }
       setSave(false);
       getSubmitForm(event);
     }
@@ -223,6 +242,33 @@ export const AddUpdateCustomer = ({
     dispatch(dropdownActions.getCompanyListThunk());
     setCompanyModal(false);
   };
+
+
+  const getEmailDomain = (email) => {
+    if (!email.includes("@")) return "";
+    return email.split("@")[1].toLowerCase();
+  };
+
+
+  const validateEmailDomain = (email) => {
+    const emailDomain = getEmailDomain(email);
+    const allowedDomain = getSelectedCompanyDomain();
+
+    if (!allowedDomain) return false;
+
+    return emailDomain === allowedDomain;
+  };
+
+
+  const getSelectedCompanyDomain = () => {
+    const selectedCompany = companiesList?.find(
+      (company) => company.companyid === Number(editData?.companyid)
+    );
+
+    return selectedCompany?.emaildomain?.replace("@", "").toLowerCase() || "";
+  };
+
+
   return (
     <Modal
       isOpen={openModal}
@@ -262,10 +308,11 @@ export const AddUpdateCustomer = ({
                     type="select"
                     name="companyname"
                     placeholder="company..."
-                    className={`form-control placeholder-name ${
-                      companyValidation ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => handleInputChange(e, "company")}
+                    className={`form-control placeholder-name ${companyValidation ? "is-invalid" : ""
+                      }`}
+                    onChange={(e) => {
+                      handleInputChange(e, "company");
+                    }}
                   >
                     <option key={0} value={0}>
                       Select company
@@ -331,9 +378,8 @@ export const AddUpdateCustomer = ({
                     placeholder="First name..."
                     defaultValue={editData?.firstname}
                     onInput={(e) => handleInputChange(e, "firstname")}
-                    className={`form-control placeholder-name ${
-                      firstNameValidation ? "is-invalid" : ""
-                    }`}
+                    className={`form-control placeholder-name ${firstNameValidation ? "is-invalid" : ""
+                      }`}
                     maxLength={50}
                   />
                   {firstNameValidation && save && (
@@ -351,9 +397,8 @@ export const AddUpdateCustomer = ({
                     name="lastname"
                     placeholder="Last name..."
                     defaultValue={editData?.lastname}
-                    className={`form-control placeholder-name ${
-                      lastNameValidation ? "is-invalid" : ""
-                    }`}
+                    className={`form-control placeholder-name ${lastNameValidation ? "is-invalid" : ""
+                      }`}
                     maxLength={50}
                     onInput={(e) => handleInputChange(e, "lastname")}
                   />
@@ -371,10 +416,9 @@ export const AddUpdateCustomer = ({
                     type="email"
                     name="email"
                     placeholder="Email..."
-                    defaultValue={editData?.email}
-                    className={`form-control placeholder-name ${
-                      emailValidation ? "is-invalid" : ""
-                    }`}
+                    value={editData?.email}
+                    className={`form-control placeholder-name ${emailValidation ? "is-invalid" : ""
+                      }`}
                     disabled={isEdit}
                     maxLength={70}
                     onInput={(e) => handleInputChange(e, "email")}
@@ -382,6 +426,13 @@ export const AddUpdateCustomer = ({
                   {emailValidation && save && (
                     <FormText color="danger">Please enter valid email</FormText>
                   )}
+                  {/* {editData.email &&
+                    getSelectedCompanyDomain() &&
+                    !validateEmailDomain(editData.email) && (
+                      <FormText color="danger">
+                        Email must match @{getSelectedCompanyDomain()}
+                      </FormText>
+                    )} */}
                 </FormGroup>
               </Col>
               <Col md={6}>
@@ -427,24 +478,23 @@ export const AddUpdateCustomer = ({
                     isMulti={false}
                     // styles={customStyles}
                     onChange={(e) => handleInputChange(e, "location")}
-                    className={`placeholder-name ${
-                      locationValidation ? "async-border-red" : ""
-                    }`}
+                    className={`placeholder-name ${locationValidation ? "async-border-red" : ""
+                      }`}
                     defaultValue={
                       isEdit === false
                         ? []
                         : {
-                            value:
-                              editData?.cityid +
-                              ", " +
-                              editData?.stateid +
-                              ", " +
-                              editData?.cityname +
-                              ", " +
-                              editData?.statename,
-                            label:
-                              editData?.cityname + ", " + editData?.statename,
-                          }
+                          value:
+                            editData?.cityid +
+                            ", " +
+                            editData?.stateid +
+                            ", " +
+                            editData?.cityname +
+                            ", " +
+                            editData?.statename,
+                          label:
+                            editData?.cityname + ", " + editData?.statename,
+                        }
                     }
                   />
                   {locationValidation && save && (
@@ -498,7 +548,7 @@ export const AddUpdateCustomer = ({
               className="mt-3 float-end"
               type="submit"
               color="primary"
-              //   disabled={formState.isSubmitting}
+            //   disabled={formState.isSubmitting}
             >
               {isEdit === true ? "Update" : "Save"}
             </Button>

@@ -134,7 +134,10 @@ const addCustomerSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.companiesList = data?.map((item) => {
-        return { id: item.companyid, name: item.companyname };
+        return {
+          id: item.companyid, name: item.companyname,
+          emaildomain: item.emaildomain
+        };
       });
     },
     [getCompaniesList.rejected]: (state, action) => {
