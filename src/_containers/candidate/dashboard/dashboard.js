@@ -27,7 +27,6 @@ import { history } from "_helpers";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import ProfileCompletionChatbot from "_components/createProfileComponents/ProfileCompletionChatbot";
-import { profileCompletionActions } from "_store";
 export default function CandidateDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();

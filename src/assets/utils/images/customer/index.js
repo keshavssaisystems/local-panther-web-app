@@ -21,6 +21,7 @@ const customerIcons = {
   audio_icon: require("./audio-icon.svg").default,
   video_icon: require("./camera-video.svg").default,
   present_icon: require("./list/present.svg").default,
+  On_Assignment: require("./On_Assignment.svg").default,
 };
 
 export default customerIcons;
