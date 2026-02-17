@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit"
-import { history, fetchWrapper } from "_helpers";
+import { fetchWrapper } from "_helpers";
 
 
 const name="genericreports"
@@ -7,48 +7,8 @@ const name="genericreports"
 export const fetchReportList = createAsyncThunk(
     `${name}/fetchReportList`,
         async ({ endpoint, params }) => {
-            const {
-                SearchText = "",
-                currentpage = 1,
-                PageSize = 10,
-                startDate,
-                endDate,
-                subsidiaryid,
-                candidateid,
-                jobid,
-            } = params;
-        console.log("slicestartdate",startDate)
-        console.log("sliceendDate",endDate)
-        let parameterParts = [];
-      
-        if (SearchText) {
-            parameterParts.push(`@SearchText='${SearchText}'`);
-        }
-          
-        if (startDate) {
-            parameterParts.push(`@startdate='${startDate}'`);
-        }
-        if (endDate) {
-            parameterParts.push(`@enddate='${endDate}'`);
-        }
-        if (subsidiaryid) { 
-            parameterParts.push(`@subsidiaryid=${subsidiaryid}`);
-        }
-        if (candidateid) {
-            parameterParts.push(`@candidateid=${candidateid}`);
-        }
-        if (jobid) {
-            parameterParts.push(`@jobid=${jobid}`);
-        }
         
-        parameterParts.push(`@currentpage=${currentpage}`);
-        parameterParts.push(`@PageSize=${PageSize}`);
-
-        const parameter = parameterParts.join(",");
-
-        console.log('Report parameters:', parameter);
-        
-        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/${endpoint}?parameter=${encodeURIComponent(parameter)}`;
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/${endpoint}?parameter=${encodeURIComponent(params)}`;
         
         return await fetchWrapper.get(TOKEN_END_POINT);
     }
