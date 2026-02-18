@@ -835,9 +835,9 @@ export const CandListView = (props) => {
                     ? "Offer declined"
                     : row?.candidaterecommendedjobstatusid === 6 &&
                       row?.customerrecommendedjobstatusid !== 5
-                      ? "Declined by candidate"
+                      ? "Declined"
                       : row?.customerrecommendedjobstatusid === 6
-                        ? "Declined by customer"
+                        ? "Declined"
                         : "-"
                 }
               >
@@ -846,9 +846,9 @@ export const CandListView = (props) => {
                   ? "Offer declined"
                   : row?.candidaterecommendedjobstatusid === 6 &&
                     row?.customerrecommendedjobstatusid !== 5
-                    ? "Declined by candidate"
+                    ? "Declined"
                     : row?.customerrecommendedjobstatusid === 6
-                      ? "Declined by customer"
+                      ? "Declined"
                       : "-"}
               </span>
             ),
@@ -858,9 +858,9 @@ export const CandListView = (props) => {
                 ? "Offer declined"
                 : row?.candidaterecommendedjobstatusid === 6 &&
                   row?.customerrecommendedjobstatusid !== 5
-                  ? "Declined by candidate"
+                  ? "Declined"
                   : row?.customerrecommendedjobstatusid === 6
-                    ? "Declined by customer"
+                    ? "Declined"
                     : "-",
             sortable: true,
             width: "14%",

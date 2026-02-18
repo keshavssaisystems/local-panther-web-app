@@ -1032,12 +1032,12 @@ export const CustCandidateListView = (props) => {
                 <span>
                   {row?.customerrecommendedjobstatusid === 5 &&
                     row?.candidaterecommendedjobstatusid === 6
-                    ? "Offer declined by candidate"
+                    ? "Offer declined"
                     : row?.candidaterecommendedjobstatusid === 6 &&
                       row?.customerrecommendedjobstatusid !== 5
-                      ? "Declined by candidate"
+                      ? "Declined"
                       : row?.customerrecommendedjobstatusid === 6
-                        ? "Declined by customer"
+                        ? "Declined"
                         : "-"}
                   {row?.candidaterecommendedjobstatusid === 6 ? (
                     <>
@@ -1082,12 +1082,12 @@ export const CustCandidateListView = (props) => {
               selector: (row) =>
                 row?.customerrecommendedjobstatusid === 5 &&
                   row?.candidaterecommendedjobstatusid === 6
-                  ? "Offer declined by candidate"
+                  ? "Offer declined"
                   : row?.candidaterecommendedjobstatusid === 6 &&
                     row?.customerrecommendedjobstatusid !== 5
-                    ? "Declined by candidate"
+                    ? "Declined"
                     : row?.customerrecommendedjobstatusid === 6
-                      ? "Declined by customer"
+                      ? "Declined"
                       : "-",
               ignoreRowClick: true,
               button: true,
