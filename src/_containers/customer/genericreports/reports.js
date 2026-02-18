@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import AsyncSelect from "react-select/async";
+import { CompanyFilter } from "../../admin/filterComponent";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
 import { exportToExcel } from "react-json-to-excel";
@@ -74,7 +75,7 @@ const ReportsList = () => {
 
     const loading = useSelector((state) => state.reportsReducer?.loader || false);
 
-    const totalRows = useSelector((state) => state.reportsReducer?.totalrows || 0);
+    let totalRows = useSelector((state) => state.reportsReducer?.totalrows || 0);
 
     const jobDetail = useSelector((state) => state?.customerReportReducer?.jobDetail);
     const scheduleInterviewDetail = useSelector((state) => state?.customerReportReducer?.scheduleInterviewDetail);
@@ -89,8 +90,8 @@ const ReportsList = () => {
 
     // pagination state
     let [jobfilter, setFilter] = useState({});
-    const [currentPage, setCurrentPage] = useState(1);
-    const [perPage, setPerPage] = useState(10);
+    let [currentPage, setCurrentPage] = useState(1);
+    let [perPage, setPerPage] = useState(10);
     const [searchData, setSearchData] = useState("");
     const [startDate, setStartDate] = useState(() => {
         const date = new Date();
@@ -103,12 +104,13 @@ const ReportsList = () => {
         return date;
     });;
     const [subsidiaryId, setSubsidiaryId] = useState("");
+    const [company, setCompany] = useState([]);
     const [candidateId, setCandidateId] = useState("");
     const [candidateSelected, setCandidateSelected] = useState(null);
     const [jobId, setJobId] = useState();
     const [jobSelected, setJobSelected] = useState(null);
     const [recommStatusId, setRecommStatusId] = useState("");
-    let [hiringmanagerId, setHiringMangerId] = useState();
+    const [hiringmanagerId, setHiringMangerId] = useState();
     const [roleId, setRoleId] = useState();
     const [customerId, setCustomerId] = useState("");
     const [showJDModal, setShowJDModal] = useState(false);
@@ -117,6 +119,7 @@ const ReportsList = () => {
     const [jobStatus, setJobStatus] = useState("");
     const [statusFilter, setStatusFilter] = useState(null);
     const [profileStatusFilter, setProfileStatusFilter] = useState(null);
+    let [isexport, setIsExport] = useState(0);
 
     const setSearchText = (text) => {
         setSearchData(text);
@@ -166,7 +169,7 @@ const ReportsList = () => {
 
     // for job dropdown with search in customer job aging report
 
-        const custJobSelectStyles = {
+    const custJobSelectStyles = {
         menuPortal: (base) => ({ ...base, zIndex: 9999, borderRadius: 0 }),
         menu: (base) => ({ ...base, borderRadius: 0 }),
         menuList: (base) => ({ ...base, borderRadius: 0 }),
@@ -208,6 +211,14 @@ const ReportsList = () => {
     );
     const loadJobOptions = (inputValue) =>
         new Promise((resolve) => debouncedFetch(inputValue, resolve));
+
+    const handleexportToExcel = () => {
+        setIsExport(1);
+        setPerPage(100000);
+        fetchData().then(() => {
+            exportToExcel(excelData, `${title || "Report"}_Export`, true);
+        });
+    }
 
     // candidate dropdown with search
     const debouncedFetchCandidate = React.useMemo(
@@ -333,15 +344,19 @@ const ReportsList = () => {
             filter.endDate === 1 && endDate !== null && parameterParts.push(`@enddate='${endDate ? moment(endDate).format("YYYY-MM-DD") : null}'`);
             filter.candidateFilter === 1 && candidateSelected && parameterParts.push(`@candidateid=${candidateSelected?.candidateid}`);
             filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId || null}`);
+            filter.companyFilter === 1 && company?.value && parameterParts.push(`@companyid=${company.value}`);
             filter.hiringManager === 1 && hiringmanagerId && parameterParts.push(`@hiringmanagerid=${hiringmanagerId}`);
-            filter.jobStatus === 1 && (jobStatus !== null || jobStatus !== '')&& parameterParts.push(`@jobStatus=${jobStatus || null}`);
+            filter.jobStatus === 1 && (jobStatus !== null || jobStatus !== '') && parameterParts.push(`@jobStatus=${jobStatus || null}`);
             filter.currentStatus === 1 && statusFilter !== 'All status' && parameterParts.push(`@isactive=${statusFilter}`);
             filter.profileStatus === 1 && profileStatusFilter !== null && parameterParts.push(`@profilestatus=${profileStatusFilter}`);
             filter.recommendedStatus === 1 && (recommStatusId !== null || recommStatusId !== '') && parameterParts.push(`@recommendedjobstatusid=${recommStatusId || null}`);
             filter.jobFilter === 1 && jobId && parameterParts.push(`@jobid=${jobId}`);
+            isexport === 1 && parameterParts.push(`@isexport=${isexport}`);
             const params = parameterParts.join(",");
             await dispatch(fetchReportList({ endpoint, params }));
-            parameterParts = []
+            parameterParts = []            
+            setIsExport(0);
+            setPerPage(perPage);
         }
         catch (error) {
             console.error("list fetch failed", error);
@@ -375,6 +390,7 @@ const ReportsList = () => {
     };
 
     const handleSearch = () => {
+        setPerPage(perPage);
         fetchData();
     };
     const handleClear = () => {
@@ -390,6 +406,7 @@ const ReportsList = () => {
         setStatusFilter(null);
         setProfileStatusFilter(null);
         setHiringMangerId("");
+        setCompany([]);
         setCurrentPage(1);
 
         fetchData();
@@ -457,7 +474,7 @@ const ReportsList = () => {
 
                                             <DropdownItem
                                                 onClick={() =>
-                                                    exportToExcel(excelData, `${title || "Report"}_Export`, true)
+                                                    handleexportToExcel()
                                                 }
                                             >
                                                 <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
@@ -477,26 +494,23 @@ const ReportsList = () => {
                                     </div>
                                 )}
                                 <Row className="mb-3">
-
-                                    {filter.subsidary === 1 && (<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
-                                        <FormGroup>
-                                            <Input
-                                                type="select"
-                                                name="subsidiary"
-                                                value={subsidiaryId}
-                                                placeholder="Subsidiary Id"
-                                                id="subsidiary"
-                                                onChange={(e) => setSubsidiaryId(e.target.value)}
-                                            >
-                                                <option value={""}>Select a subsidiary</option>
-                                                {subsidiaryOptions.map((item) => (
-                                                    <option key={item.id} value={item.id}>
-                                                        {item.name}
-                                                    </option>
-                                                ))}
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>)}
+                                    {filter.companyFilter === 1 && (
+                                        <Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
+                                            <CompanyFilter
+                                                name={"companyId"}
+                                                placeholder={"Search Company"}
+                                                onChange={(name, value, e) => {
+                                                    handleChange(name, value);
+                                                    setCompany(e);
+                                                    setHiringMangerId("");
+                                                    if (e?.value) {
+                                                        dispatch(getHiringMangerList(e.value));
+                                                    }
+                                                }}
+                                                value={company}
+                                            />
+                                        </Col>
+                                    )}
                                     {filter.hiringManager === 1 && (<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
                                         <FormGroup>
                                             <Input
@@ -538,8 +552,8 @@ const ReportsList = () => {
                                                 onChange={(e) => onProfileStatusSelect(e.target.value === "" ? null : e.target.value)}
                                             >
                                                 <option value={""}>All profile status</option>
-                                                <option value={"1"}>Active</option>
-                                                <option value={"0"}>In-active</option>
+                                                <option value={"1"}>Complete</option>
+                                                <option value={"0"}>In-Complete</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>)}
