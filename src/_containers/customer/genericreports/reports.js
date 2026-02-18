@@ -42,7 +42,7 @@ import {
     getCandidateSearchDropdown,
     getCustReportJobDetail,
 } from "../reports/customerreport.slice";
-import { getProfileActions } from "_store";
+import { getProfileActions, getHiringMangerList } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { useParams } from "react-router-dom";
@@ -92,8 +92,16 @@ const ReportsList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
     const [searchData, setSearchData] = useState("");
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = useState(() => {
+        const date = new Date();
+        date.setDate(date.getDate() - 7);
+        return date;
+    });
+    const [endDate, setEndDate] = useState(() => {
+        const date = new Date();
+        date.setDate(date.getDate());
+        return date;
+    });;
     const [subsidiaryId, setSubsidiaryId] = useState("");
     const [candidateId, setCandidateId] = useState("");
     const [candidateSelected, setCandidateSelected] = useState(null);
@@ -108,6 +116,7 @@ const ReportsList = () => {
     const [showIDModal, setShowIDModal] = useState(false);
     const [jobStatus, setJobStatus] = useState("");
     const [statusFilter, setStatusFilter] = useState(null);
+    const [profileStatusFilter, setProfileStatusFilter] = useState(null);
 
     const setSearchText = (text) => {
         setSearchData(text);
@@ -193,6 +202,9 @@ const ReportsList = () => {
     );
     const candidateDropDownList = useSelector(
         (state) => state?.customerReportReducer?.candidateDropDownList
+    );
+    const hiringManagerDownList = useSelector(
+        (state) => state?.customerReportReducer?.hiringmangers
     );
     const loadJobOptions = (inputValue) =>
         new Promise((resolve) => debouncedFetch(inputValue, resolve));
@@ -321,8 +333,10 @@ const ReportsList = () => {
             filter.endDate === 1 && endDate !== null && parameterParts.push(`@enddate='${endDate ? moment(endDate).format("YYYY-MM-DD") : null}'`);
             filter.candidateFilter === 1 && candidateSelected && parameterParts.push(`@candidateid=${candidateSelected?.candidateid}`);
             filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId || null}`);
-            filter.jobStatus === 1 && parameterParts.push(`@jobStatus=${jobStatus || null}`);
+            filter.hiringManager === 1 && hiringmanagerId && parameterParts.push(`@hiringmanagerid=${hiringmanagerId}`);
+            filter.jobStatus === 1 && (jobStatus !== null || jobStatus !== '')&& parameterParts.push(`@jobStatus=${jobStatus || null}`);
             filter.currentStatus === 1 && statusFilter !== 'All status' && parameterParts.push(`@isactive=${statusFilter}`);
+            filter.profileStatus === 1 && profileStatusFilter !== null && parameterParts.push(`@profilestatus=${profileStatusFilter}`);
             filter.recommendedStatus === 1 && (recommStatusId !== null || recommStatusId !== '') && parameterParts.push(`@recommendedjobstatusid=${recommStatusId || null}`);
             filter.jobFilter === 1 && jobId && parameterParts.push(`@jobid=${jobId}`);
             const params = parameterParts.join(",");
@@ -342,9 +356,11 @@ const ReportsList = () => {
 
     }, [path]);
     useEffect(() => {
+        const companyId = Number(localStorage.getItem("companyid"));
         dispatch(getJobDropdown());
         dispatch(getCandidateSearchDropdown());
         dispatch(getRecommendedJobStatus());
+        dispatch(getHiringMangerList(companyId));
     }, []);
 
     const handlePageChange = (page) => {
@@ -371,6 +387,9 @@ const ReportsList = () => {
         setJobId(null);
         setJobSelected(null);
         setRecommStatusId(null);
+        setStatusFilter(null);
+        setProfileStatusFilter(null);
+        setHiringMangerId("");
         setCurrentPage(1);
 
         fetchData();
@@ -403,6 +422,10 @@ const ReportsList = () => {
     };
     const onStatusSelect = (status) => {
         setStatusFilter(status);
+        // fetchData();
+    };
+    const onProfileStatusSelect = (status) => {
+        setProfileStatusFilter(status);
         // fetchData();
     };
     return (
@@ -474,6 +497,24 @@ const ReportsList = () => {
                                             </Input>
                                         </FormGroup>
                                     </Col>)}
+                                    {filter.hiringManager === 1 && (<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
+                                        <FormGroup>
+                                            <Input
+                                                id="hiringManagerId"
+                                                type="select"
+                                                value={hiringmanagerId || ""}
+                                                onChange={(e) => setHiringMangerId(e.target.value)}
+                                            >
+                                                <option value={""}>Select a Hiring Manager</option>
+                                                {hiringManagerDownList?.length > 0 &&
+                                                    hiringManagerDownList.map((data) => (
+                                                        <option value={data.id} key={data.id}>
+                                                            {data.name}
+                                                        </option>
+                                                    ))}
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>)}
                                     {filter.currentStatus === 1 && (<Col lg="2" md="4" sm="12" xs="12">
                                         <FormGroup>
                                             <Input
@@ -485,6 +526,20 @@ const ReportsList = () => {
                                                 <option value={null}>All status</option>
                                                 <option value={'1'}>Active</option>
                                                 <option value={'0'}>In-active</option>
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>)}
+                                    {filter.profileStatus === 1 && (<Col lg="2" md="4" sm="12" xs="12">
+                                        <FormGroup>
+                                            <Input
+                                                type="select"
+                                                name="profileStatus"
+                                                value={profileStatusFilter ?? ""}
+                                                onChange={(e) => onProfileStatusSelect(e.target.value === "" ? null : e.target.value)}
+                                            >
+                                                <option value={""}>All profile status</option>
+                                                <option value={"1"}>Active</option>
+                                                <option value={"0"}>In-active</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>)}
@@ -604,7 +659,7 @@ const ReportsList = () => {
                                                 <DatePicker
                                                     name="startDate"
                                                     id="startDate"
-                                                    placeholderText="MM/DD/YYYY"
+                                                    placeholderText="From date"
                                                     className="form-control"
                                                     selected={startDate}
                                                     maxDate={endDate}
@@ -627,7 +682,7 @@ const ReportsList = () => {
                                                 <DatePicker
                                                     name="endDate"
                                                     id="endDate"
-                                                    placeholderText="MM/DD/YYYY"
+                                                    placeholderText="To date"
                                                     className="form-control"
                                                     selected={endDate}
                                                     minDate={startDate}

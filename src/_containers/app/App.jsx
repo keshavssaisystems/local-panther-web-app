@@ -464,6 +464,15 @@ export function App() {
             </PrivateRoute>
           }
         />
+        <Route
+            path="/report/for/:id"
+            element={
+              <PrivateRoute>
+                <ReportsList />
+              </PrivateRoute>
+            }
+            key={6}
+        />
       </>
     );
   }
@@ -868,6 +877,15 @@ export function App() {
               <ChatInterface />
             </PrivateRoute>
           }
+        />
+        <Route
+            path="/report/for/:id"
+            element={
+              <PrivateRoute>
+                <ReportsList />
+              </PrivateRoute>
+            }
+            key={6}
         />
       </>
     );
