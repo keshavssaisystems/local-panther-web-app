@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Start React App",
+      "command": "npm start"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug in Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/src",
+      "breakOnLoad": true,
+      "sourceMaps": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Auto Start React + Debug in Chrome",
+      "configurations": ["Start React App", "Debug in Chrome"]
+    }
+  ]
+}
