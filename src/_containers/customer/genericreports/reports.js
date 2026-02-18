@@ -334,7 +334,7 @@ const ReportsList = () => {
             filter.candidateFilter === 1 && candidateSelected && parameterParts.push(`@candidateid=${candidateSelected?.candidateid}`);
             filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId || null}`);
             filter.hiringManager === 1 && hiringmanagerId && parameterParts.push(`@hiringmanagerid=${hiringmanagerId}`);
-            filter.jobStatus === 1 && parameterParts.push(`@jobStatus=${jobStatus || null}`);
+            filter.jobStatus === 1 && (jobStatus !== null || jobStatus !== '')&& parameterParts.push(`@jobStatus=${jobStatus || null}`);
             filter.currentStatus === 1 && statusFilter !== 'All status' && parameterParts.push(`@isactive=${statusFilter}`);
             filter.profileStatus === 1 && profileStatusFilter !== null && parameterParts.push(`@profilestatus=${profileStatusFilter}`);
             filter.recommendedStatus === 1 && (recommStatusId !== null || recommStatusId !== '') && parameterParts.push(`@recommendedjobstatusid=${recommStatusId || null}`);
@@ -534,12 +534,12 @@ const ReportsList = () => {
                                             <Input
                                                 type="select"
                                                 name="profileStatus"
-                                                value={profileStatusFilter}
-                                                onChange={(e) => onProfileStatusSelect(e.target.value)}
+                                                value={profileStatusFilter ?? ""}
+                                                onChange={(e) => onProfileStatusSelect(e.target.value === "" ? null : e.target.value)}
                                             >
-                                                <option value={null}>All profile status</option>
-                                                <option value={'1'}>Active</option>
-                                                <option value={'0'}>In-active</option>
+                                                <option value={""}>All profile status</option>
+                                                <option value={"1"}>Active</option>
+                                                <option value={"0"}>In-active</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>)}
