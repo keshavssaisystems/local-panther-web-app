@@ -119,6 +119,7 @@ const ReportsList = () => {
     const [jobStatus, setJobStatus] = useState("");
     const [statusFilter, setStatusFilter] = useState(null);
     const [profileStatusFilter, setProfileStatusFilter] = useState(null);
+    const [profileSourceFilter, setProfileSourceFilter] = useState(null);
     let [isexport, setIsExport] = useState(0);
 
     const setSearchText = (text) => {
@@ -349,6 +350,7 @@ const ReportsList = () => {
             filter.jobStatus === 1 && (jobStatus !== null || jobStatus !== '') && parameterParts.push(`@jobStatus=${jobStatus || null}`);
             filter.currentStatus === 1 && statusFilter !== 'All status' && parameterParts.push(`@isactive=${statusFilter}`);
             filter.profileStatus === 1 && profileStatusFilter !== null && parameterParts.push(`@profilestatus=${profileStatusFilter}`);
+            filter.profileSource === 1 && (profileSourceFilter !== null || profileSourceFilter !== '') && parameterParts.push(`@profilesource=${profileSourceFilter}`);
             filter.recommendedStatus === 1 && (recommStatusId !== null || recommStatusId !== '') && parameterParts.push(`@recommendedjobstatusid=${recommStatusId || null}`);
             filter.jobFilter === 1 && jobId && parameterParts.push(`@jobid=${jobId}`);
             isexport === 1 && parameterParts.push(`@isexport=${isexport}`);
@@ -394,7 +396,8 @@ const ReportsList = () => {
         fetchData();
     };
     const handleClear = () => {
-        // setSearchData("");
+        // Reset all local state variables
+        setSearchData("");  // Uncommented - this was missing
         setStartDate(null);
         setEndDate(null);
         setSubsidiaryId("");
@@ -405,10 +408,15 @@ const ReportsList = () => {
         setRecommStatusId(null);
         setStatusFilter(null);
         setProfileStatusFilter(null);
+        setProfileSourceFilter(null);
         setHiringMangerId("");
         setCompany([]);
         setCurrentPage(1);
-
+        
+        // Reset job filter state to clear all filter conditions in Redux
+        setFilter({});
+        
+        // Fetch data with no filters
         fetchData();
     };
 
@@ -503,7 +511,7 @@ const ReportsList = () => {
                                                     handleChange(name, value);
                                                     setCompany(e);
                                                     setHiringMangerId("");
-                                                    if (e?.value) {
+                                                    if (e?.value && filter.hiringManager === 1) {
                                                         dispatch(getHiringMangerList(e.value));
                                                     }
                                                 }}
@@ -554,6 +562,21 @@ const ReportsList = () => {
                                                 <option value={""}>All profile status</option>
                                                 <option value={"1"}>Complete</option>
                                                 <option value={"0"}>In-Complete</option>
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>)}
+
+                                    {filter.profileSource === 1 && (<Col lg="2" md="4" sm="12" xs="12">
+                                        <FormGroup>
+                                            <Input
+                                                type="select"
+                                                name="profileSource"
+                                                value={profileSourceFilter ?? ""}
+                                                onChange={(e) => setProfileSourceFilter(e.target.value === "" ? null : e.target.value)}
+                                            >
+                                                <option value={""}>All profile source</option>
+                                                <option value={"1"}>EcoSystem</option>
+                                                <option value={"0"}>Outside</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>)}
