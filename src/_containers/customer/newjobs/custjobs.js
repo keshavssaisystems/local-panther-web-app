@@ -8,6 +8,7 @@ import { custListPageSize } from "_helpers/constants";
 import { CardPagination } from "_components/common/cardpagination";
 import { CustJobCard } from "./custjobcard";
 import { CustJobDetail } from "./custjobdetails";
+import { CustJobListView } from "./custJobListView";
 import Loader from "react-loaders";
 import { CustJobFilter } from "./custjofilter";
 import { NoDataFound } from "_components/common/nodatafound";
@@ -17,9 +18,13 @@ import { CommonFilters } from "../../../_components/common/commonFilters";
 import { setJobStatus, setHiringManagerId, setSearchText } from "_store/commonCustFiltersSlice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { FaThLarge, FaList } from "react-icons/fa";
+import titleblock from "../../../assets/utils/images/customer/tileblock.svg";
+import titlelist from "../../../assets/utils/images/customer/tilelist.svg";
 
 export default function CustJobList() {
   const [page, setPage] = useState(1);
+  const [viewType, setViewType] = useState("block");
   // const [placeHolder, setPlaceHolder] = useState("Search job title");
   // const [selectedOpt, setSelectedOpt] = useState("JobTitle");
   // const [searchText, setSearchText] = useState("");
@@ -215,9 +220,54 @@ export default function CustJobList() {
   return (
     <>
       <Row>
-        <Col md="12">
-          {/* <PageTitle heading="Open Jobs" icon={titlelogo} /> */}
-          <PageTitle heading="Open Jobs" />
+        <Col md="12" style={{ padding: "0" }}>
+          {/* Page Title with View Toggle */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", paddingRight: "15px" }}>
+            <PageTitle heading="Open Jobs" /> 
+            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+              <button
+                onClick={() => setViewType("block")}
+                title="Block View"
+                aria-label="Block View"
+                style={{
+                  background: viewType === "block" ? "#2f479b" : "white",
+                  border: viewType === "block" ? "2px solid #2f479b" : "2px solid #e0e0e0",
+                  borderRadius: "6px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "40px",
+                  height: "40px",
+                }}
+              >
+                <img src={titleblock} alt="Block View" style={{ width: "18px", height: "18px", filter: viewType === "block" ? "brightness(0) invert(1)" : "none" }} />
+              </button>
+
+              <button
+                onClick={() => setViewType("list")}
+                title="List View"
+                aria-label="List View"
+                style={{
+                  background: viewType === "list" ? "#2f479b" : "white",
+                  border: viewType === "list" ? "2px solid #2f479b" : "2px solid #e0e0e0",
+                  borderRadius: "6px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "40px",
+                  height: "40px",
+                }}
+              >
+                <img src={titlelist} alt="List View" style={{ width: "18px", height: "18px", filter: viewType === "list" ? "brightness(0) invert(1)" : "none" }} />
+              </button>
+            </div>
+          </div>
         </Col>
 
         <CommonFilters
@@ -240,6 +290,9 @@ export default function CustJobList() {
           <>
             {!loading ? (
               <>
+                {viewType === "block" ? (
+                  // Block View Layout
+                  <>
                 {" "}
                 <p className="mb-1 row-count">{totalRows} jobs</p>
                 <Col
@@ -313,6 +366,22 @@ export default function CustJobList() {
                     </>
                   )}
                 </Col>
+              </>
+            ) 
+             : (
+                  // List View Layout
+                  <Col xs="12">
+                    <CustJobListView
+                      jobList={jobList}
+                      totalRows={totalRows}
+                      current={current}
+                      page={page}
+                      handlePageChange={handlePageChange}
+                      closeJob={closeJob}
+                      getSelectedJob={getSelectedJob}
+                    />
+                  </Col>
+                )}
               </>
             ) : (
               <>
