@@ -66,11 +66,11 @@ const ReportsList = () => {
 
     const dispatch = useDispatch();
 
-    const data = useSelector((state) => state.reportsReducer.reportsdata || []);
+    let data = useSelector((state) => state.reportsReducer.reportsdata || []);
 
-    const header = useSelector((state) => state.reportsReducer?.header || {});
-    const pagetitle = useSelector((state) => state.reportsReducer?.pagetitle);
-    var filter = useSelector((state) => state.reportsReducer?.filters || {});
+    let header = useSelector((state) => state.reportsReducer?.header || {});
+    let pagetitle = useSelector((state) => state.reportsReducer?.pagetitle);
+    let filter = useSelector((state) => state.reportsReducer?.filters || {});
 
 
     const loading = useSelector((state) => state.reportsReducer?.loader || false);
@@ -109,7 +109,7 @@ const ReportsList = () => {
     const [candidateSelected, setCandidateSelected] = useState(null);
     const [jobId, setJobId] = useState();
     const [jobSelected, setJobSelected] = useState(null);
-    const [recommStatusId, setRecommStatusId] = useState("");
+    const [recommStatusId, setRecommStatusId] = useState(-1);
     const [hiringmanagerId, setHiringMangerId] = useState();
     const [roleId, setRoleId] = useState();
     const [customerId, setCustomerId] = useState("");
@@ -214,12 +214,20 @@ const ReportsList = () => {
         new Promise((resolve) => debouncedFetch(inputValue, resolve));
 
     const handleexportToExcel = () => {
-        setIsExport(1);
-        setPerPage(100000);
-        fetchData().then(() => {
-            exportToExcel(excelData, `${title || "Report"}_Export`, true);
+        data = []; // to avoid export with current data, as we are fetching new data with isexport flag
+        fetchData(1, 10000, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, 
+            hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId).then(() => {   
+            setIsExport(1)
         });
-    }
+    };
+    useEffect(() => {
+        if (isexport === 1) {
+            exportToExcel(excelData, `${title || "Report"}_Export`, true);
+        }
+        setIsExport(0); // reset export flag after export is done
+        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+
+    }, [isexport]);
 
     // candidate dropdown with search
     const debouncedFetchCandidate = React.useMemo(
@@ -334,33 +342,48 @@ const ReportsList = () => {
     );
 
     // fetch helper - requests server with paging params and updates local totalRows
-    const fetchData = async () => {
+    const fetchData = async (
+        currentPage_,
+        perPage_,
+        startDate_,
+        endDate_,
+        searchData_,
+        candidateSelected_,
+        subsidiaryId_,
+        company_,
+        hiringmanagerId_,
+        jobStatus_,
+        statusFilter_,
+        profileStatusFilter_,
+        profileSourceFilter_,
+        recommStatusId_,
+        jobId_,
+        isexport_ = 0
+    ) => {
         try {
-
-            let parameterParts = []
-            parameterParts.push(`@currentpage=${currentPage || 1}`);
-            parameterParts.push(`@PageSize=${perPage || 10}`);
-            filter.searchData === 1 && searchData !== '' && parameterParts.push(`@SearchText='${searchData || ""}'`);
-            filter.startDate === 1 && startDate !== null && parameterParts.push(`@startdate='${startDate ? moment(startDate).format("YYYY-MM-DD") : null}'`);
-            filter.endDate === 1 && endDate !== null && parameterParts.push(`@enddate='${endDate ? moment(endDate).format("YYYY-MM-DD") : null}'`);
-            filter.candidateFilter === 1 && candidateSelected && parameterParts.push(`@candidateid=${candidateSelected?.candidateid}`);
-            filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId || null}`);
-            filter.companyFilter === 1 && company?.value && parameterParts.push(`@companyid=${company.value}`);
-            filter.hiringManager === 1 && hiringmanagerId && parameterParts.push(`@hiringmanagerid=${hiringmanagerId}`);
-            filter.jobStatus === 1 && (jobStatus !== null || jobStatus !== '') && parameterParts.push(`@jobStatus=${jobStatus || null}`);
-            filter.currentStatus === 1 && statusFilter !== 'All status' && parameterParts.push(`@isactive=${statusFilter}`);
-            filter.profileStatus === 1 && profileStatusFilter !== null && parameterParts.push(`@profilestatus=${profileStatusFilter}`);
-            filter.profileSource === 1 && (profileSourceFilter !== null || profileSourceFilter !== '') && parameterParts.push(`@profilesource=${profileSourceFilter}`);
-            filter.recommendedStatus === 1 && (recommStatusId !== null || recommStatusId !== '') && parameterParts.push(`@recommendedjobstatusid=${recommStatusId || null}`);
-            filter.jobFilter === 1 && jobId && parameterParts.push(`@jobid=${jobId}`);
-            isexport === 1 && parameterParts.push(`@isexport=${isexport}`);
+            let parameterParts = [];
+            parameterParts.push(`@currentpage=${currentPage_ || 1}`);
+            parameterParts.push(`@PageSize=${perPage_ || 10}`);
+            filter.searchData === 1 && searchData_ !== '' && parameterParts.push(`@SearchText='${searchData_}'`);
+            filter.startDate === 1 && startDate_ !== null && parameterParts.push(`@startdate='${startDate_ ? moment(startDate_).format("YYYY-MM-DD") : null}'`);
+            filter.endDate === 1 && endDate_ !== null && parameterParts.push(`@enddate='${endDate_ ? moment(endDate_).format("YYYY-MM-DD") : null}'`);
+            filter.candidateFilter === 1 && candidateSelected_ && parameterParts.push(`@candidateid=${candidateSelected_?.candidateid}`);
+            filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId_ || null}`);
+            filter.companyFilter === 1 && company_?.value && parameterParts.push(`@companyid=${company_.value}`);
+            filter.hiringManager === 1 && hiringmanagerId_ && parameterParts.push(`@hiringmanagerid=${hiringmanagerId_}`);
+            filter.jobStatus === 1 && (jobStatus_ !== null && jobStatus_ !== '' && jobStatus_ !== "") && parameterParts.push(`@jobStatus=${jobStatus_ || null}`);
+            filter.currentStatus === 1 && statusFilter_ !== 'All status' && parameterParts.push(`@isactive=${statusFilter_}`);
+            filter.profileStatus === 1 && profileStatusFilter_ !== null && parameterParts.push(`@profilestatus=${profileStatusFilter_}`);
+            filter.profileSource === 1 && (profileSourceFilter_ !== null && profileSourceFilter_ !== '' && profileSourceFilter_ !== "") && parameterParts.push(`@profilesource=${profileSourceFilter_}`);
+            filter.recommendedStatus === 1 && (recommStatusId_ !== null && recommStatusId_ !== '' && recommStatusId_ !== "") && parameterParts.push(`@recommendedjobstatusid=${recommStatusId_ || null}`);
+            filter.jobFilter === 1 && jobId_ && parameterParts.push(`@jobid=${jobId_}`);
+            isexport_ === 1 && parameterParts.push(`@isexport=${isexport_}`);
             const params = parameterParts.join(",");
             await dispatch(fetchReportList({ endpoint, params }));
-            parameterParts = []            
+            parameterParts = [];            
             setIsExport(0);
             setPerPage(perPage);
-        }
-        catch (error) {
+        } catch (error) {
             console.error("list fetch failed", error);
         }
     };
@@ -369,9 +392,10 @@ const ReportsList = () => {
         setSearchData("");
         setCurrentPage(1);
         setStatusFilter(null);
-        fetchData();
+        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
 
-    }, [path]);
+    }, [path,jobStatus, statusFilter, profileStatusFilter, profileSourceFilter,
+        recommStatusId, jobId, hiringmanagerId]);
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
         dispatch(getJobDropdown());
@@ -382,18 +406,18 @@ const ReportsList = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        fetchData();
+        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
     };
 
     const handlePerRowsChange = (newPerPage, page) => {
         setPerPage(newPerPage);
         setCurrentPage(page);
-        fetchData();
+        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
     };
 
     const handleSearch = () => {
         setPerPage(perPage);
-        fetchData();
+        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
     };
     const handleClear = () => {
         // Reset all local state variables
@@ -417,7 +441,7 @@ const ReportsList = () => {
         setFilter({});
         
         // Fetch data with no filters
-        fetchData();
+        fetchData(currentPage, perPage, null, null, "", null, "", [], "", null, null, null, null, null); // Reset to first page with current perPage
     };
 
     const openJobDetails = async (jobId) => {
@@ -653,6 +677,7 @@ const ReportsList = () => {
                                                     setRecommStatusId(e.target.value);
                                                 }}
                                             >
+                                                <option value={-1}>All</option>
                                                 <option value={""}>Matched</option>
                                                 {recommendedJobStatusList?.length > 0 ? (
                                                     recommendedJobStatusList.map((data) => (
@@ -663,6 +688,8 @@ const ReportsList = () => {
                                                 ) : (
                                                     <></>
                                                 )}
+                                                <option value={-2}>Presented</option>
+
                                             </Input>
                                         </FormGroup>
                                     </Col>)}
