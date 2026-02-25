@@ -325,6 +325,8 @@ const ReportsList = () => {
                                     </Button>
                                 </span>
                             );
+                        } else if (col.key.endsWith('date')) {
+                            return <span className="table-cell" title={value}>{moment.utc(value, "YYYY-MM-DD").local().format("MM/DD/YYYY")}</span>
                         } else {
                             return <span className="table-cell" title={value}>{value}</span>;
                         }
