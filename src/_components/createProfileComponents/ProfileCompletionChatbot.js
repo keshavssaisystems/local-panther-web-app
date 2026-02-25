@@ -320,6 +320,9 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       }))
         .then(() => {
           setIsComplete(true);
+          setTimeout(() => {
+            onClose();
+          }, 5000);
         })
         .catch(error => {
           console.error('Profile update error:', error);
@@ -429,7 +432,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       <div className="step-header">
         <h4>Welcome</h4>
         <p className="text-muted">
-          Welcome to your OpenWorX Profile Assistant! We're here to guide you through completing your profile for optimal job matching.
+          Welcome to your OpenWorX Profile Assistant. We're here to guide you through completing your profile for optimal job matching.
         </p>
 
         <p className="text-muted">
@@ -442,7 +445,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
         </p>
 
         <p className="text-muted">
-          Ready to start filling them out?
+          Ready to start?
         </p>
       </div>
     </div>
@@ -454,9 +457,8 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       <div className="step-header">
         <p><strong>Skills</strong></p>
         <p className="text-muted">
-          Great! Let's start with your professional skills.<br />
-          Please list your top 5 relevant skills (comma-separated,<br />
-          e.g., Figma, UX Research, Prototyping).
+          Great, Let's start with your professional skills.<br />
+          Please list your relevant skills (comma-separated).
         </p>
       </div>
 
@@ -466,7 +468,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
           rows="5"
           value={formData.skills}
           onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-          placeholder="Figma, UX Research, Prototyping"
+          placeholder="Example: Figma, UX Research, Prototyping"
           invalid={!!errors.skills}
         />
         {errors.skills && <div className="text-danger small mt-1">{errors.skills}</div>}
@@ -480,8 +482,8 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       <div className="step-header">
         <p><strong>Education</strong></p>
         <p className="text-muted">
-          Next, let's talk about your highest level of education.<br />
-          Please provide your <strong>Degree/Certification</strong> and the <strong>Institution Name</strong>.
+          Let’s talk about your education.<br />
+          Please provide your <strong>diploma/degree</strong> and <strong>institution/school name</strong>.
         </p>
       </div>
 
@@ -626,7 +628,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       <div className="step-header">
         <h4>Experience</h4>
         <p className="text-muted">
-          Almost done! Please summarize your most recent or<br />
+          Almost done. Please summarize your most recent or<br />
           relevant Professional Experience<br />
           (Role, Company, Key Responsibilities).
         </p>
@@ -650,9 +652,9 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                     </div>
                   )}
                   {exp.jobDescription && (
-                    <div className="text-muted small mt-1">
+                    <div className="text-muted small mt-1" title={exp.jobDescription}>
                       {exp.jobDescription.substring(0, 100)}...{' '}
-                      <span className="text-primary">More...</span>
+                      {/* <span className="text-primary">More...</span> */}
                     </div>
                   )}
                 </div>
@@ -823,8 +825,7 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       <div className="step-header">
         <h4>Review</h4>
         <p className="text-muted">
-          Fantastic! You've provided all the required information. Here is a<br />
-          summary of your updates.
+          Fantastic. You've provided all the required information. Here is a summary of your updates.
         </p>
       </div>
       {missingFields.includes('skills') && formData?.skills && formData.skills.trim() !== '' && (<div className="review-section">
@@ -842,9 +843,10 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
           {formData.education.map((edu, index) => (
             <Card key={edu.id} className="mb-3">
               <CardBody>
-                <div className="font-weight-bold mb-1">{edu.levelOfEducation}</div>
+                <div className="font-weight-bold mb-1"> {edu.levelOfEducation}</div>
+                <div className="text-muted mb-1">{edu.fieldOfStudy} </div>
                 <div className="text-muted small">
-                  {edu.school}, {edu.city}, {edu.state}
+                  {edu.school} {edu.city ? ',' + edu.city : ''} {edu.state ? ',' + edu.state : ''}
                 </div>
               </CardBody>
             </Card>
@@ -865,8 +867,8 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
                   )}
                 </div>
                 <div className="small">
-                  {exp.jobDescription}...{' '}
-                  <span className="text-primary">More...</span>
+                  {exp.jobDescription}
+                  {/* <span className="text-primary">More...</span> */}
                 </div>
               </CardBody>
             </Card>
@@ -888,18 +890,17 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
       <div className="success-icon mb-4">
         <FiCheck size={64} color="#28a745" />
       </div>
-      <h3 className="mb-3">Profile Complete!</h3>
+      <h3 className="mb-3">Profile Complete</h3>
       <p className="text-muted mb-4">
-        Your OpenWorX profile is now at 100% and ready for<br />
-        optimal AI-based job matching. Thank you for providing<br />
-        your details!
+        Your OpenWorX profile is now completed and ready for
+        optimal job matching.<br /> Thank you for providing your details.
       </p>
       <p className="font-weight-bold mb-4">
-        All required fields are updated. You're set!
+        All required fields are updated. You're set.
       </p>
-      <Button color="primary" size="lg" onClick={handleClose}>
+      {/* <Button color="primary" size="lg" onClick={handleClose}>
         Find Your Next Opportunity
-      </Button>
+      </Button> */}
     </div>
   );
 
@@ -980,10 +981,10 @@ const ProfileCompletionChatbot = ({ isOpen, missingFields, onClose, candidateId 
           <div className="footer-actions w-100">
             <Button
               color="link"
-              onClick={handleSkip}
+              // onClick={handleSkip}
               className="skip-btn"
             >
-              {currentStep !== 0 && currentStep < requiredSteps.length - 1 && "Skip for now"}
+              {/* {currentStep !== 0 && currentStep < requiredSteps.length - 1 && "Skip for now"} */}
             </Button>
             < div className="action-buttons">
               <Button
