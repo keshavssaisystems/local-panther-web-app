@@ -104,6 +104,7 @@ export const AssignJobsModal = ({
         <div
           style={{
             maxHeight: "250px",
+            minHeight: "200px",
             overflowY: "auto",
             border: "1px solid #dee2e6",
             borderRadius: "6px",
