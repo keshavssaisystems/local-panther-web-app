@@ -209,6 +209,7 @@ export default function CandidateDashboard() {
     data.id = "";
     data.description = "";
     SetConfAlert(data);
+    getCounts();
   };
 
   const showConfAlert = (id) => {
@@ -260,8 +261,13 @@ export default function CandidateDashboard() {
 
   const closeJobPreferModal = function () {
     setShowJobPreferModal(false);
+    getCounts();
   };
 
+
+  const getCounts = () => {
+    dispatch(candidateDashboardActions.getDashboardCount({ candidateId }));
+  }
   return (
     <>
       <Row>
