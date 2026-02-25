@@ -122,7 +122,9 @@ const candidateDashboardSlice = createSlice({
       state.error = action.error;
       state.schedulesLoader = false;
     },
-    [getDashboardCount.pending]: (state) => {},
+    [getDashboardCount.pending]: (state) => {
+      state.dashboardCounts = {};
+    },
     [getDashboardCount.fulfilled]: (state, action) => {
       state.dashboardCounts = action.payload.data;
     },
@@ -131,6 +133,7 @@ const candidateDashboardSlice = createSlice({
     },
 
     [createToDo.pending]: (state) => {
+      state.dashboardCounts = {};
       state.todoLoader = true;
     },
     [createToDo.fulfilled]: (state, action) => {
@@ -230,7 +233,7 @@ const candidateDashboardSlice = createSlice({
     [readNotification.rejected]: (state, action) => {
       // state.alertsLoader = false;
     },
-    [getCandidateSkillsListThunk.pending]: (state) => {},
+    [getCandidateSkillsListThunk.pending]: (state) => { },
     [getCandidateSkillsListThunk.fulfilled]: (state, action) => {
       state.availableSkills = action.payload.data;
     },
