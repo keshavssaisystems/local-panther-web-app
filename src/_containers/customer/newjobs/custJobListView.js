@@ -5,10 +5,7 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { custJobListActions, hiringManagerActions } from "_store";
 import { CardPagination } from "_components/common/cardpagination";
-import { AssignJobsModal } from "./AssignJobsModal";
 import { CloseJobReasonPopup } from "./closeJobReasonPopup";
-import { SNACKBAR_TYPES, SNACKBAR_POSITION } from "_constants/snackbarMessages";
-import { showSnackbar } from "_store/snackbar.slice";
 import closebutton from "../../../assets/utils/images/customer/closebutton.svg";
 import editbutton from "../../../assets/utils/images/customer/editbutton.svg";
 import "./custjoblistview.css";
@@ -22,19 +19,21 @@ export const CustJobListView = ({
   closeJob,
   getSelectedJob,
   isLoading = false,
+  onSelectedJobsChange = null,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedJobs, setSelectedJobs] = useState([]);
-  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
-  const [isAssigning, setIsAssigning] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const [selectedJobForClose, setSelectedJobForClose] = useState(null);
 
   const companyId = localStorage.getItem("companyid");
-  const hiringManagers = useSelector(
-    (state) => state?.customerReportReducer?.hiringmangers || []
-  );
+
+  useEffect(() => {
+    if (onSelectedJobsChange) {
+      onSelectedJobsChange(selectedJobs);
+    }
+  }, [selectedJobs, onSelectedJobsChange]);
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -206,74 +205,9 @@ export const CustJobListView = ({
 
   const columns = useMemo(() => generateColumns(), [selectedJobs, isAllSelected]);
 
-  const handleAssignJobs = async (jobIds, hiringManagerId) => {
-    setIsAssigning(true);
-    try {
-      const res = await dispatch(
-        custJobListActions.assignJobs({
-          jobIds: jobIds,
-          hiringManagerId: hiringManagerId,
-        })
-      );
-
-      if (res?.payload) {
-        dispatch(
-          showSnackbar({
-            message: "Jobs assigned successfully!",
-            type: SNACKBAR_TYPES.SUCCESS,
-            position: SNACKBAR_POSITION.TOP_CENTER,
-            autoClose: true,
-            autoCloseDelay: 2000,
-            maxWidth: 500,
-          })
-        );
-        setIsAssignModalOpen(false);
-        setSelectedJobs([]);
-        // Refresh job list
-        handlePageChange(page);
-      } else {
-        throw new Error("Failed to assign jobs");
-      }
-    } catch (error) {
-      dispatch(
-        showSnackbar({
-          message: "Failed to assign jobs. Please try again.",
-          type: SNACKBAR_TYPES.ERROR,
-          position: SNACKBAR_POSITION.TOP_CENTER,
-          autoClose: true,
-          autoCloseDelay: 2000,
-          maxWidth: 500,
-        })
-      );
-    } finally {
-      setIsAssigning(false);
-    }
-  };
-
   return (
     <>
       <p className="mb-3 row-count">{totalRows} jobs</p>
-
-      {/* Assign To Button */}
-      {selectedJobs.length > 0 && (
-        <div className="assign-btn-container" style={{ marginBottom: "20px" }}>
-          <Button
-            className="assign-to-btn"
-            style={{
-              backgroundColor: "#2F479B",
-              borderColor: "#0D6EFD",
-              border: "1px solid #0D6EFD",
-              borderRadius: "4px",
-              color: "white",
-              fontWeight: 600,
-              padding: "8px 20px",
-            }}
-            onClick={() => setIsAssignModalOpen(true)}
-          >
-            Assign To ({selectedJobs.length})
-          </Button>
-        </div>
-      )}
 
       {/* List View Table */}
       <div className="table-scroll-wrapper">
@@ -300,16 +234,6 @@ export const CustJobListView = ({
           />
         </div>
       ) : null}
-
-      {/* Assign Jobs Modal */}
-      <AssignJobsModal
-        isOpen={isAssignModalOpen}
-        onClose={() => setIsAssignModalOpen(false)}
-        selectedJobs={selectedJobs}
-        onAssign={handleAssignJobs}
-        isLoading={isAssigning}
-        hiringManagers={hiringManagers}
-      />
 
       {/* Close Job Confirmation Modal */}
       {closeConfirmation === true && selectedJobForClose && (

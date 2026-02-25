@@ -38,7 +38,10 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     interviewFeedbackStatus,
     showInterviewFeedbackStatus = false,
     showFromDateToDate = false,
-    onClearFilters
+    onClearFilters,
+    showAssignButton = false,
+    selectedJobsCount = 0,
+    onAssignClick = null
 }) => {
     const dispatch = useDispatch();
 
@@ -397,6 +400,27 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                         </InputGroup>
                                     </Form>
                                 </Col>
+                                {/* Assign To Button */}
+                                {showAssignButton &&  (
+                                    <Col xs={12} sm={6} md={4} lg={2} className="ms-auto d-flex justify-content-end align-items-center">
+                                        <Button
+                                            className="assign-to-btn"
+                                            style={{
+                                                backgroundColor: "#2F479B",
+                                                borderColor: "#0D6EFD",
+                                                border: "1px solid #0D6EFD",
+                                                borderRadius: "4px",
+                                                color: "white",
+                                                padding: "8px 18px",
+                                                maxHeight: "150px"
+                                            }}
+                                            onClick={onAssignClick}
+                                            disabled={selectedJobsCount === 0}
+                                        >
+                                            Assign To
+                                        </Button>
+                                    </Col>
+                                )}
                             </Row>
                         </div>
                     </div>

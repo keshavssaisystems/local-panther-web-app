@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Modal,
   ModalHeader,
@@ -8,147 +8,160 @@ import {
   Input,
   FormGroup,
   Label,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
+  Spinner,
 } from "reactstrap";
 
 export const AssignJobsModal = ({
   isOpen,
   onClose,
-  selectedJobs,
+  selectedJobs = [],
   onAssign,
   isLoading,
   hiringManagers = [],
 }) => {
   const [selectedHiringManagers, setSelectedHiringManagers] = useState([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  // Filter managers based on search
+  const filteredManagers = useMemo(() => {
+    return hiringManagers.filter((manager) =>
+      manager.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, hiringManagers]);
 
   const handleCheckboxChange = (managerId) => {
-    setSelectedHiringManagers((prevSelected) => {
-      if (prevSelected.includes(managerId)) {
-        return prevSelected.filter((id) => id !== managerId);
-      } else {
-        return [...prevSelected, managerId];
-      }
-    });
+    setSelectedHiringManagers((prev) =>
+      prev.includes(managerId)
+        ? prev.filter((id) => id !== managerId)
+        : [...prev, managerId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedHiringManagers.length === filteredManagers.length) {
+      setSelectedHiringManagers([]);
+    } else {
+      setSelectedHiringManagers(filteredManagers.map((m) => m.id));
+    }
   };
 
   const handleAssign = () => {
     if (selectedHiringManagers.length === 0) {
-      alert("Please select at least one hiring manager");
+      setError("Please select at least one hiring manager.");
       return;
     }
+
+    setError("");
     onAssign(selectedJobs, selectedHiringManagers);
-    setSelectedHiringManagers([]);
+    
   };
 
   const handleClose = () => {
     setSelectedHiringManagers([]);
-    setDropdownOpen(false);
+    setSearch("");
+    setError("");
     onClose();
   };
 
   return (
     <Modal isOpen={isOpen} toggle={handleClose} size="md" centered>
-      <ModalHeader toggle={handleClose} style={{ borderBottom: "1px solid #dee2e6" }}>
-        Assign Jobs To
+      <ModalHeader toggle={handleClose}>
+        Assign Jobs to Hiring Managers
       </ModalHeader>
-      <ModalBody style={{ padding: "20px" }}>
+
+      <ModalBody>
+        {/* Search */}
         <FormGroup>
-          <Label style={{ fontWeight: 600, marginBottom: "12px", display: "block" }}>
-            Hiring Manager
-          </Label>
-          <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-            <DropdownToggle
-              caret
-              style={{
-                borderColor: "#0D6EFD",
-                borderRadius: "4px",
-                padding: "8px 12px",
-                backgroundColor: "#fff",
-                color: "#000",
-                border: "1px solid #0D6EFD",
-                width: "100%",
-                textAlign: "left",
-              }}
-            >
-              {selectedHiringManagers.length === 0
-                ? "-- Select Hiring Managers --"
-                : `${selectedHiringManagers.length} selected`}
-            </DropdownToggle>
-            <DropdownMenu
-              style={{
-                width: "100%",
-                maxHeight: "250px",
-                overflowY: "auto",
-                borderRadius: "4px",
-                border: "1px solid #0D6EFD",
-              }}
-            >
-              {hiringManagers && hiringManagers.length > 0 ? (
-                hiringManagers.map((manager) => (
-                  <DropdownItem key={manager.id} toggle={false}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Input
-                        type="checkbox"
-                        id={`manager-${manager.id}`}
-                        checked={selectedHiringManagers.includes(manager.id)}
-                        onChange={() => handleCheckboxChange(manager.id)}
-                        style={{ marginRight: "8px", cursor: "pointer" }}
-                      />
-                      <Label
-                        for={`manager-${manager.id}`}
-                        style={{ marginBottom: "0", cursor: "pointer", flex: 1 }}
-                      >
-                        {manager.name}
-                      </Label>
-                    </div>
-                  </DropdownItem>
-                ))
-              ) : (
-                <DropdownItem disabled>No hiring managers available</DropdownItem>
-              )}
-            </DropdownMenu>
-          </Dropdown>
+          <Input
+            type="text"
+            placeholder="Search hiring manager..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            disabled={isLoading}
+          />
         </FormGroup>
-        <div style={{ marginTop: "16px", fontSize: "0.9rem", color: "#666" }}>
-          <strong>Selected Jobs:</strong> {selectedJobs.length} job(s) selected
-        </div>
-        <div style={{ marginTop: "8px", fontSize: "0.9rem", color: "#0D6EFD" }}>
-          <strong>Selected Hiring Managers:</strong> {selectedHiringManagers.length}
-        </div>
-      </ModalBody>
-      <ModalFooter style={{ borderTop: "1px solid #dee2e6", paddingTop: "16px" }}>
-        <Button
-          color="secondary"
-          onClick={handleClose}
+
+        {/* Select All */}
+        {filteredManagers.length > 0 && (
+          <div className="mb-2">
+            <Label style={{ cursor: "pointer" }}>
+              <Input
+                type="checkbox"
+                checked={
+                  selectedHiringManagers.length ===
+                  filteredManagers.length
+                }
+                onChange={handleSelectAll}
+                disabled={isLoading}
+              />{" "}
+              Select All
+            </Label>
+          </div>
+        )}
+
+        {/* Scrollable List */}
+        <div
           style={{
-            backgroundColor: "#6C757D",
-            borderColor: "#6C757D",
-            borderRadius: "4px",
+            maxHeight: "250px",
+            overflowY: "auto",
+            border: "1px solid #dee2e6",
+            borderRadius: "6px",
+            padding: "10px",
           }}
-          disabled={isLoading}
         >
-          Close
+          {filteredManagers.length > 0 ? (
+            filteredManagers.map((manager) => (
+              <div key={manager.id} className="mb-2">
+                <Label style={{ cursor: "pointer", width: "100%" }}>
+                  <Input
+                    type="checkbox"
+                    checked={selectedHiringManagers.includes(manager.id)}
+                    onChange={() => handleCheckboxChange(manager.id)}
+                    disabled={isLoading}
+                  />{" "}
+                  {manager.name}
+                </Label>
+              </div>
+            ))
+          ) : (
+            <div className="text-muted text-center">
+              No hiring managers found
+            </div>
+          )}
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="text-danger mt-2" style={{ fontSize: "0.9rem" }}>
+            {error}
+          </div>
+        )}
+
+        {/* Summary */}
+            {/* <div className="mt-3 text-muted" style={{ fontSize: "0.9rem" }}>
+            <strong>{selectedJobs?.length || 0}</strong> job(s) selected •{" "}
+            <strong>{selectedHiringManagers.length}</strong> manager(s) selected
+            </div> */}
+      </ModalBody>
+
+      <ModalFooter>
+        <Button color="secondary" onClick={handleClose} disabled={isLoading}>
+          Cancel
         </Button>
+
         <Button
           color="primary"
           onClick={handleAssign}
-          style={{
-            backgroundColor: "#2F479B",
-            borderColor: "#0D6EFD",
-            borderRadius: "4px",
-            border: "1px solid #0D6EFD",
-          }}
-          disabled={isLoading || selectedHiringManagers.length === 0}
+          disabled={isLoading}
         >
-          {isLoading ? "Assigning..." : "Assign"}
+          {isLoading ? (
+            <>
+              <Spinner size="sm" /> Assigning...
+            </>
+          ) : (
+            "Assign"
+          )}
         </Button>
       </ModalFooter>
     </Modal>

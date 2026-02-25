@@ -5,6 +5,7 @@ import { custJobListActions, createjobActions, dropdownActions } from "_store";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { custListPageSize } from "_helpers/constants";
+import { AssignJobsModal } from "./AssignJobsModal";
 import { CardPagination } from "_components/common/cardpagination";
 import { CustJobCard } from "./custjobcard";
 import { CustJobDetail } from "./custjobdetails";
@@ -19,12 +20,15 @@ import { setJobStatus, setHiringManagerId, setSearchText } from "_store/commonCu
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { FaThLarge, FaList } from "react-icons/fa";
+import  titlelist from "../../../assets/utils/images/customer/tilelist.svg";
 import titleblock from "../../../assets/utils/images/customer/tileblock.svg";
-import titlelist from "../../../assets/utils/images/customer/tilelist.svg";
 
 export default function CustJobList() {
   const [page, setPage] = useState(1);
   const [viewType, setViewType] = useState("block");
+  const [selectedJobs, setSelectedJobs] = useState([]);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
   // const [placeHolder, setPlaceHolder] = useState("Search job title");
   // const [selectedOpt, setSelectedOpt] = useState("JobTitle");
   // const [searchText, setSearchText] = useState("");
@@ -59,6 +63,10 @@ export default function CustJobList() {
 
   const { selectedOpt, searchText, jobStatus, hiringManagerId } = useSelector(
     (state) => state.commonCustFilters
+  );
+
+  const hiringManagers = useSelector(
+    (state) => state?.customerReportReducer?.hiringmangers || []
   );
 
   useEffect(() => {
@@ -217,6 +225,63 @@ export default function CustJobList() {
     // getJobList(filterOnPageChange);
   };
 
+  const handleAssignClick = () => {
+    setIsAssignModalOpen(true);
+  };
+
+  const handleAssignJobs = async (jobIds, hiringManagerIds) => {
+    setIsAssigning(true);
+    try {
+      const res = await dispatch(
+        custJobListActions.assignJobs({
+          jobIds: jobIds,
+          hiringManagerId: hiringManagerIds,
+        })
+      );
+      
+      // Check if all results are successful
+      if (!res?.payload || !Array.isArray(res.payload) || res.payload.length === 0) {
+        throw new Error("Failed to assign jobs");
+      }
+      
+      // Verify all responses are successful (status 200)
+      const allSuccessful = res.payload.every(
+        (result) => result?.statusCode === 200
+      );
+      
+      if (!allSuccessful) {
+        throw new Error("Some jobs failed to assign");
+      }
+
+      dispatch(
+        showSnackbar({
+          message: "Jobs assigned successfully!",
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        })
+      );
+      setIsAssignModalOpen(false);
+      setSelectedJobs([]);
+      handlePageChange(page);
+    } catch (error) {
+      dispatch(
+        showSnackbar({
+          message: "Failed to assign jobs. Please try again.",
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        })
+      );
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
   return (
     <>
       <Row>
@@ -243,7 +308,7 @@ export default function CustJobList() {
                   height: "40px",
                 }}
               >
-                <img src={titleblock} alt="Block View" style={{ width: "18px", height: "18px", filter: viewType === "block" ? "brightness(0) invert(1)" : "none" }} />
+               <img src={titleblock} alt="Block View" style={{ width: "18px", height: "18px", filter: viewType === "block" ? "brightness(0) invert(1)" : "none" }} />
               </button>
 
               <button
@@ -281,8 +346,9 @@ export default function CustJobList() {
           onJobStatusChange={onJobStatusChange}
           onJobHiringMangerChange={onJobHiringMangerChange}
           showClearButtonAtEnd={true}
-        // hiringManagerId={hiringManagerId}
-        // setHiringMangerId={setHiringMangerId} 
+          showAssignButton={true}
+          selectedJobsCount={selectedJobs.length}
+          onAssignClick={handleAssignClick}
         />
       </Row>
       <Row>
@@ -379,6 +445,7 @@ export default function CustJobList() {
                       handlePageChange={handlePageChange}
                       closeJob={closeJob}
                       getSelectedJob={getSelectedJob}
+                      onSelectedJobsChange={setSelectedJobs}
                     />
                   </Col>
                 )}
@@ -408,6 +475,15 @@ export default function CustJobList() {
         )}
       </Row>
 
+      {/* Assign Jobs Modal */}
+      <AssignJobsModal
+        isOpen={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        selectedJobs={selectedJobs}
+        onAssign={handleAssignJobs}
+        isLoading={isAssigning}
+        hiringManagers={hiringManagers}
+      />
     </>
   );
 }
