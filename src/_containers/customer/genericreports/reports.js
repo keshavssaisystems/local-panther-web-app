@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PageTitle from "_components/common/pagetitle";
-import { USPhoneNumber } from "_helpers/helper";
+import { USPhoneNumber, getTimezoneDateTime } from "_helpers/helper";
 import DataTable from "react-data-table-component";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -325,6 +325,10 @@ const ReportsList = () => {
                                     </Button>
                                 </span>
                             );
+                        } else if (col.key.endsWith('phone') && value) {
+                            return <span className="table-cell" title={value}>{USPhoneNumber(value)}</span>
+                        } else if (col.key.endsWith('date')) {
+                            return <span className="table-cell" title={value}>{getTimezoneDateTime(moment(value).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY hh:mm A")}</span>
                         } else {
                             return <span className="table-cell" title={value}>{value}</span>;
                         }
