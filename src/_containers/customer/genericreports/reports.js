@@ -215,18 +215,19 @@ const ReportsList = () => {
 
     const handleexportToExcel = () => {
         data = []; // to avoid export with current data, as we are fetching new data with isexport flag
-        fetchData(1, 10000, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, 
-            hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId).then(() => {   
-            setIsExport(1)
-        });
+        fetchData(1, 10000, startDate, endDate, searchData, candidateSelected, subsidiaryId, company,
+            hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId).then(() => {
+                setIsExport(1)
+            });
     };
     useEffect(() => {
-        if (isexport === 1) {
+        if (isexport === 1 && data.length > 0 && excelData && excelData.length > 0 && excelData[0].details && excelData[0].details.length > 0) {
             exportToExcel(excelData, `${title || "Report"}_Export`, true);
         }
         setIsExport(0); // reset export flag after export is done
-        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
-
+        if (data.length > 0 && excelData && excelData.length > 0 && excelData[0].details && excelData[0].details.length > 0) {
+            fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+        }
     }, [isexport]);
 
     // candidate dropdown with search
@@ -365,8 +366,8 @@ const ReportsList = () => {
             parameterParts.push(`@currentpage=${currentPage_ || 1}`);
             parameterParts.push(`@PageSize=${perPage_ || 10}`);
             filter.searchData === 1 && searchData_ !== '' && parameterParts.push(`@SearchText='${searchData_}'`);
-            filter.startDate === 1 && startDate_ !== null && parameterParts.push(`@startdate='${startDate_ ? moment(startDate_).format("YYYY-MM-DD") : null}'`);
-            filter.endDate === 1 && endDate_ !== null && parameterParts.push(`@enddate='${endDate_ ? moment(endDate_).format("YYYY-MM-DD") : null}'`);
+            parameterParts.push(`@startdate='${startDate_ ? moment(startDate_).format("YYYY-MM-DD") : null}'`);
+            parameterParts.push(`@enddate='${endDate_ ? moment(endDate_).format("YYYY-MM-DD") : null}'`);
             filter.candidateFilter === 1 && candidateSelected_ && parameterParts.push(`@candidateid=${candidateSelected_?.candidateid}`);
             filter.subsidary === 1 && parameterParts.push(`@subsidiaryid=${subsidiaryId_ || null}`);
             filter.companyFilter === 1 && company_?.value && parameterParts.push(`@companyid=${company_.value}`);
@@ -380,7 +381,7 @@ const ReportsList = () => {
             isexport_ === 1 && parameterParts.push(`@isexport=${isexport_}`);
             const params = parameterParts.join(",");
             await dispatch(fetchReportList({ endpoint, params }));
-            parameterParts = [];            
+            parameterParts = [];
             setIsExport(0);
             setPerPage(perPage);
         } catch (error) {
@@ -391,11 +392,27 @@ const ReportsList = () => {
     useEffect(() => {
         setSearchData("");
         setCurrentPage(1);
+        filter = {};
+        data = [];
+        const startdate = new Date();
+        startdate.setDate(startdate.getDate() - 7);
+        const enddate = new Date();
+        enddate.setDate(enddate.getDate());
+        setStartDate(startdate);
+        setEndDate(enddate);
+        fetchData(currentPage, perPage, startdate, enddate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+
+    }, [path]);
+
+    useEffect(() => {
+        setSearchData("");
+        setCurrentPage(1);
         setStatusFilter(null);
         fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
 
-    }, [path,jobStatus, statusFilter, profileStatusFilter, profileSourceFilter,
+    }, [jobStatus, statusFilter, profileStatusFilter, profileSourceFilter,
         recommStatusId, jobId, hiringmanagerId]);
+
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
         dispatch(getJobDropdown());
@@ -436,10 +453,10 @@ const ReportsList = () => {
         setHiringMangerId("");
         setCompany([]);
         setCurrentPage(1);
-        
+
         // Reset job filter state to clear all filter conditions in Redux
         setFilter({});
-        
+
         // Fetch data with no filters
         fetchData(currentPage, perPage, null, null, "", null, "", [], "", null, null, null, null, null); // Reset to first page with current perPage
     };
@@ -496,23 +513,19 @@ const ReportsList = () => {
                                 </div>
 
                                 <div className="btn-actions-pane-right actions-icon-btn">
-                                    <UncontrolledButtonDropdown>
+                                    <UncontrolledButtonDropdown
+                                        title="Download Excel Report"
+                                        onClick={() => handleexportToExcel()}
+                                        disabled={
+                                            !excelData ||
+                                            excelData.length === 0 ||
+                                            !excelData[0].details ||
+                                            excelData[0].details.length === 0
+                                        }
+                                    >
                                         <DropdownToggle className="btn-icon btn-icon-only" color="link">
                                             <i className="pe-7s-menu btn-icon-wrapper" />
                                         </DropdownToggle>
-
-                                        <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                                            <DropdownItem header>Download report</DropdownItem>
-
-                                            <DropdownItem
-                                                onClick={() =>
-                                                    handleexportToExcel()
-                                                }
-                                            >
-                                                <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
-                                                <span>Excel</span>
-                                            </DropdownItem>
-                                        </DropdownMenu>
                                     </UncontrolledButtonDropdown>
                                 </div>
                             </CardHeader>
