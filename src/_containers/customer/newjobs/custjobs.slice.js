@@ -30,6 +30,33 @@ export const getJobDetail = createAsyncThunk(
   }
 );
 
+// assignJobs thunk
+export const assignJobs = createAsyncThunk(
+  `${name}/assignJobs`,
+  async ({ jobIds, hiringManagerId }) => {
+    console.log("Assigning jobs:", jobIds, "to hiring managers:", hiringManagerId);
+    const ASSIGN_JOBS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/JobAssignedUsers`;
+    
+    const payloads = [];
+    jobIds.forEach((jobId) => {
+      hiringManagerId.forEach((managerId) => {
+        payloads.push({
+          jobid: jobId,
+          assignedto: managerId,
+        });
+      });
+    });
+    
+    console.log("Payloads for assigning jobs:", payloads);
+    
+    const results = await Promise.all(
+      payloads.map((payload) => fetchWrapper.post(ASSIGN_JOBS_END_POINT, payload))
+    );
+    
+    return results;
+  }
+);
+
 // Create the slice
 const custJobListSlice = createSlice({
   name,
@@ -39,6 +66,8 @@ const custJobListSlice = createSlice({
     jobDetail: [],
     loading: false,
     jdLoading: false,
+    assigningLoading: false,
+    assigningError: null,
   },
   reducers: {
     closeJob: (state, action) => {
@@ -123,6 +152,18 @@ const custJobListSlice = createSlice({
     [getJobDetail.rejected]: (state, action) => {
       state.jdLoading = false;
     },
+    [assignJobs.pending]: (state) => {
+      state.assigningLoading = true;
+      state.assigningError = null;
+    },
+    [assignJobs.fulfilled]: (state, action) => {
+      state.assigningLoading = false;
+      state.assigningError = null;
+    },
+    [assignJobs.rejected]: (state, action) => {
+      state.assigningLoading = false;
+      state.assigningError = action.error.message || "Failed to assign jobs";
+    },
   },
 });
 export const { clearJobList } = custJobListSlice.actions;
@@ -131,6 +172,7 @@ export const custJobListActions = {
   ...custJobListSlice.actions,
   getJobList,
   getJobDetail,
+  assignJobs,
 };
 
 export const custJobListReducer = custJobListSlice.reducer;

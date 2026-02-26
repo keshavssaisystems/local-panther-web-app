@@ -22,6 +22,10 @@ const customerIcons = {
   video_icon: require("./camera-video.svg").default,
   present_icon: require("./list/present.svg").default,
   On_Assignment: require("./On_Assignment.svg").default,
+  titleblock: require("./tileblock.svg").default,
+  titlelist: require("./tilelist.svg").default,
+  closebutton: require("./closebutton.svg").default,
+  editbutton: require("./editbutton.svg").default,
 };
 
 export default customerIcons;
