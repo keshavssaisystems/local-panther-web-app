@@ -29,6 +29,7 @@ import {
     faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Tooltip } from "reactstrap";
 export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
     showJobStatus = true,
     showSearch = true,
@@ -172,6 +173,9 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     };
 
     const onInterviewSearchClear = () => { };
+
+    const [tooltipOpen, setTooltipOpen] = useState(false);
+    const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 
     return (
         <Col md="12">
@@ -403,22 +407,35 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                 {/* Assign To Button */}
                                 {showAssignButton &&  (
                                     <Col xs={12} sm={6} md={4} lg={2} className="ms-auto d-flex justify-content-end align-items-center">
-                                        <Button
-                                            className="assign-to-btn"
-                                            style={{
-                                                backgroundColor: "#2F479B",
-                                                borderColor: "#0D6EFD",
-                                                border: "1px solid #0D6EFD",
-                                                borderRadius: "4px",
-                                                color: "white",
-                                                padding: "8px 18px",
-                                                maxHeight: "150px"
-                                            }}
-                                            onClick={onAssignClick}
-                                            disabled={selectedJobsCount === 0}
-                                        >
-                                            Assign To
-                                        </Button>
+                                        <span id="assignTooltipWrapper">
+                                            <Button
+                                                className="assign-to-btn"
+                                                style={{
+                                                    backgroundColor: "#2F479B",
+                                                    borderColor: "#0D6EFD",
+                                                    border: "1px solid #0D6EFD",
+                                                    borderRadius: "4px",
+                                                    color: "white",
+                                                    padding: "8px 18px",
+                                                    maxHeight: "150px"
+                                                }}
+                                                onClick={onAssignClick}
+                                                disabled={selectedJobsCount === 0}
+                                                >
+                                                Assign To
+                                            </Button>
+                                        </span> 
+                                        {selectedJobsCount === 0 && (
+                                            <Tooltip
+                                                placement="left"
+                                                isOpen={tooltipOpen}
+                                                target="assignTooltipWrapper"
+                                                toggle={toggleTooltip}
+                                            >
+                                                Select one or more jobs to assign to a manager.
+                                            </Tooltip>
+                                        )}
+                                        
                                     </Col>
                                 )}
                             </Row>
