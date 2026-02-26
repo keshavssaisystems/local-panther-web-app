@@ -91,18 +91,10 @@ const ReportsList = () => {
     // pagination state
     let [jobfilter, setFilter] = useState({});
     let [currentPage, setCurrentPage] = useState(1);
-    let [perPage, setPerPage] = useState(10);
+    let [perPage, setPerPage] = useState();
     const [searchData, setSearchData] = useState("");
-    const [startDate, setStartDate] = useState(() => {
-        const date = new Date();
-        date.setDate(date.getDate() - 7);
-        return date;
-    });
-    const [endDate, setEndDate] = useState(() => {
-        const date = new Date();
-        date.setDate(date.getDate());
-        return date;
-    });;
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
     const [subsidiaryId, setSubsidiaryId] = useState("");
     const [company, setCompany] = useState([]);
     const [candidateId, setCandidateId] = useState("");
@@ -396,26 +388,26 @@ const ReportsList = () => {
     useEffect(() => {
         setSearchData("");
         setCurrentPage(1);
+        setPerPage(10);
         filter = {};
         data = [];
-        const startdate = new Date();
-        startdate.setDate(startdate.getDate() - 7);
-        const enddate = new Date();
-        enddate.setDate(enddate.getDate());
+        const startdate = null;
+        const enddate = null;
         setStartDate(startdate);
         setEndDate(enddate);
+        const hmId = localStorage.getItem("userId");
+        setHiringMangerId(hmId ? Number(hmId) : "");
+        new Promise((resolve) => debouncedFetch("", resolve));
+        setJobSelected(null);
         fetchData(currentPage, perPage, startdate, enddate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
-
+        // handleClear();
     }, [path]);
 
     useEffect(() => {
-        setSearchData("");
-        setCurrentPage(1);
-        setStatusFilter(null);
         fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
 
     }, [jobStatus, statusFilter, profileStatusFilter, profileSourceFilter,
-        recommStatusId, jobId, hiringmanagerId]);
+        recommStatusId, jobId, hiringmanagerId, candidateSelected, startDate, endDate]);
 
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
@@ -427,17 +419,17 @@ const ReportsList = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+        fetchData(page, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
     };
 
     const handlePerRowsChange = (newPerPage, page) => {
         setPerPage(newPerPage);
         setCurrentPage(page);
-        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+        fetchData(page, newPerPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
     };
 
     const handleSearch = () => {
-        setPerPage(perPage);
+        // setPerPage(perPage);
         fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
     };
     const handleClear = () => {
@@ -450,19 +442,20 @@ const ReportsList = () => {
         setCandidateSelected(null);
         setJobId(null);
         setJobSelected(null);
-        setRecommStatusId(null);
+        setRecommStatusId(-1);
         setStatusFilter(null);
         setProfileStatusFilter(null);
         setProfileSourceFilter(null);
         setHiringMangerId("");
         setCompany([]);
         setCurrentPage(1);
-
+        setPerPage(10);
+        new Promise((resolve) => debouncedFetch("", resolve));
         // Reset job filter state to clear all filter conditions in Redux
         setFilter({});
 
         // Fetch data with no filters
-        fetchData(currentPage, perPage, null, null, "", null, "", [], "", null, null, null, null, null); // Reset to first page with current perPage
+        fetchData(1, 10, null, null, "", null, "", [], "", null, null, null, null, null); // Reset to first page with current perPage
     };
 
     const openJobDetails = async (jobId) => {
@@ -545,19 +538,21 @@ const ReportsList = () => {
                                 <Row className="mb-3">
                                     {filter.companyFilter === 1 && (
                                         <Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
-                                            <CompanyFilter
-                                                name={"companyId"}
-                                                placeholder={"Search Company"}
-                                                onChange={(name, value, e) => {
-                                                    handleChange(name, value);
-                                                    setCompany(e);
-                                                    setHiringMangerId("");
-                                                    if (e?.value && filter.hiringManager === 1) {
-                                                        dispatch(getHiringMangerList(e.value));
-                                                    }
-                                                }}
-                                                value={company}
-                                            />
+                                            <FormGroup>
+                                                <CompanyFilter
+                                                    name={"companyId"}
+                                                    placeholder={"Search Company"}
+                                                    onChange={(name, value, e) => {
+                                                        handleChange(name, value);
+                                                        setCompany(e);
+                                                        setHiringMangerId("");
+                                                        if (e?.value && filter.hiringManager === 1) {
+                                                            dispatch(getHiringMangerList(e.value));
+                                                        }
+                                                    }}
+                                                    value={company}
+                                                />
+                                            </FormGroup>
                                         </Col>
                                     )}
                                     {filter.hiringManager === 1 && (<Col xxl={2} xl={2} md={3} lg={3} sm={12} xs={12}>
