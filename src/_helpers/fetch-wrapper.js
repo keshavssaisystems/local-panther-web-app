@@ -27,6 +27,7 @@ function isCacheableDropdown(url) {
 
 function request(method) {
   return async (url, body) => {
+    url = url.replace('api//', 'api/'); // Ensure no double slashes in URL
     const shouldCache = isCacheableDropdown(url);
     const cacheKey = url;
     const cacheTtl = 300000; // 5 minutes
