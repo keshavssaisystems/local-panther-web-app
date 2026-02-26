@@ -1,7 +1,7 @@
 import React from "react";
 import "./fairMatchReport.css";
 import { BsClipboardDataFill } from "react-icons/bs";
-const FairMatchSection = ({ scorejson }) => {
+const FairMatchSection = ({ scorejson, jobTitle }) => {
   const data =
     typeof scorejson === "string"
       ? JSON.parse(scorejson)
@@ -13,11 +13,11 @@ const FairMatchSection = ({ scorejson }) => {
     <section className="mb-0 p-2 p-sm-4 pt-sm-0">
       <div className="border fairmatch-box">
 
-        <h2 className="mb-4 fw-bold">
+        <h2 className="mb-2 fw-bold">
           <BsClipboardDataFill size={30} color="#1E90FF" />
           OpenWorX FairMatch Report
         </h2>
-
+        <h4>Job Title: {jobTitle}</h4>
         <div className="row">
 
           {/* Overall */}
