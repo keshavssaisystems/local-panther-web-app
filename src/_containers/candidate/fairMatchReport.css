@@ -21,7 +21,7 @@
 }
 
 .match-percent {
-    font-weight: 600;   
+    font-weight: 600;
 }
 
 .progress-wrapper {
@@ -43,8 +43,6 @@
     margin: 0;
 }
 
-/* 
-.row {
-    margin-left: 0;
-    margin-right: 0;
-} */
+.resume-container p.match-description {
+    font-size: 0.875rem !important;
+}
