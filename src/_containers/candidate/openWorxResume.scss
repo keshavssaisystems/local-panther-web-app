@@ -107,7 +107,7 @@
 
 /* skill badges */
 .skill-badge {
-  font-size: 0.85rem;
+  font-size: 0.938rem;
   padding: 0.35em 0.65em;
   background-color: #eef5ff;
   color: #2F2E2E;
@@ -162,6 +162,7 @@
 
 .resume-section p.h6 {
   color: #9ca3af;
+  font-size: 0.94rem !important;
   /* muted */
   margin-bottom: 0.75rem;
 }
@@ -174,7 +175,9 @@
   // font-size: 0.97rem;
 }
 
-
+.resume-section div.h6 {
+  font-size: 0.94rem !important;
+}
 
 /* Contact row icon sizing/gap */
 .resume-container .gx-4>.col,
@@ -190,12 +193,12 @@
   color: #1e293b;
   font-size: 0.95rem;
   display: inline-block;
-  min-width: 100px;
+  min-width: 115px;
 }
 
 /* preference badge */
 .preference-badge {
-  font-size: 0.85rem;
+  font-size: 0.938rem;
   padding: 0.35em 0.65em;
   background-color: #eef5ff;
   color: #2F2E2E;
@@ -207,7 +210,7 @@
 
 /* Improve vertical rhythm and spacing for resume readability */
 .resume-container {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
 }
 
@@ -232,6 +235,7 @@
 .resume-container .text-secondary {
   margin-bottom: 0.5rem;
   line-height: 1.5;
+  font-size: 0.938rem !important;
 }
 
 /* Work experience item spacing */

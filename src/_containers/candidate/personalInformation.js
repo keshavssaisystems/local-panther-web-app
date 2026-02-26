@@ -251,8 +251,11 @@ export function PersonalInformation(props) {
   );
   const [dob, setDOB] = useState(null);
   const [isContactModal, setContactModal] = useState(false);
+  // const phoneRegExp =
+  //   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
   const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+    /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}[ \-]*[0-9]{3,4}$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   const [locationData, setLocation] = useState([]);
@@ -671,6 +674,12 @@ export function PersonalInformation(props) {
         errors.emailError = false;
       }
     } else if (check === "phonenumber") {
+      const cleaned = data.replaceAll(/\D/g, "");
+
+      // 🚫 Block if more than 10 digits
+      if (cleaned.length > 10) {
+        return;   // stop updating state
+      }
       new_data.phonenumber = data;
       if (!new_data.phonenumber.match(phoneRegExp)) {
         errors.phoneError = true;
@@ -833,8 +842,18 @@ export function PersonalInformation(props) {
   const sendOtp = async (mobileNumber) => {
     try {
       setIsOtpVerified(false);
+      const cleanedPhone = mobileNumber.replaceAll(/\D/g, "");
+
+      if (cleanedPhone.length !== 10) {
+        dispatch(showSnackbar({
+          message: "Phone number must be 10 digits",
+          type: SNACKBAR_TYPES.ERROR,
+        }));
+        return;
+      }
+
       const response = await dispatch(profileActions.sendOTPforVerification({
-        "phonenumber": mobileNumber
+        "phonenumber": mobileNumber.replaceAll(/\D/g, "")
       }));
 
       if (response.payload?.statusCode === 204) {
@@ -1232,7 +1251,7 @@ export function PersonalInformation(props) {
                         <InputGroup>
                           <InputMask
                             placeholder="Eg: (987)-654-3210"
-
+                            maskChar={null}
                             name="phonenumber"
                             type="text"
                             id="phonenumber"
