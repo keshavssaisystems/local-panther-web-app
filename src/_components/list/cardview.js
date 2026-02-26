@@ -537,8 +537,8 @@ export const CandidateCardView = (props) => {
                           <img
                             src={customerIcons.On_Assignment}
                             alt="On assignment"
-                            width="22"
-                            height="25"
+                            width="16"
+                            height="auto"
                             style={{ verticalAlign: "middle", objectFit: "contain" }}
                           />
                         </span>
