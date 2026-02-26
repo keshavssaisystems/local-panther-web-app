@@ -11,19 +11,19 @@ const FairMatchSection = ({ scorejson, jobTitle }) => {
 
   return (
     <section className="mb-0 p-2 p-sm-4 pt-sm-0">
-      <div className="border fairmatch-box">
+      <div className="border fairmatch-box p-3">
 
-        <h2 className="mb-2 fw-bold">
+        <h2 className="mb-2 section-title fw-bold">
           <BsClipboardDataFill size={30} color="#1E90FF" />
           OpenWorX FairMatch Report
         </h2>
-        <h4>Job Title: {jobTitle}</h4>
+        <h5 class="fw-bold text-dark pb-2">Job Title: {jobTitle}</h5>
         <div className="row">
 
           {/* Overall */}
           <div className="col-12 mb-4">
             <div className="overall-header d-flex justify-content-between align-items-center">
-              <h4 className="mb-0">Overall Role Fit</h4>
+              <h4 className="mb-0 fw-bold">Overall Role Fit</h4>
               <div className="overall-score">
                 {toPercent(data.average_score)}%
               </div>
