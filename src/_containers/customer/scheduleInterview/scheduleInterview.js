@@ -273,24 +273,24 @@ export function ScheduleInterview({ fromDashboard }) {
   };
   const updateScheduledInterview = async function (formData) {
     let scheduleinterviewid = formData.scheduleinterviewid;
-    await dispatch(
+    let res = await dispatch(
       scheduleInterviewActions.updateScheduledInterviewThunk({
         scheduleinterviewid,
         formData,
       })
     );
-
+    if (res?.payload?.statusCode === 204) {
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.INTERVIEW_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+      dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    }
     // setUpdateSuccess(true);
-    dispatch(showSnackbar({
-      message: CANDIDATE_MESSAGES.INTERVIEW_UPDATED_SUCCESS,
-      type: SNACKBAR_TYPES.SUCCESS,
-      position: SNACKBAR_POSITION.TOP_CENTER,
-      autoClose: true,
-      autoCloseDelay: 2000,
-      maxWidth: 500,
-    }));
-
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
 
   };
   const [toggleVar, setToggleVar] = useState(fromDashboard);
@@ -671,7 +671,7 @@ export function ScheduleInterview({ fromDashboard }) {
             autoCloseDelay: 3000,
             maxWidth: 500,
           }));
-           dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+          dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
           //props.updateList();
         } else {
           dispatch(showSnackbar({
@@ -693,8 +693,8 @@ export function ScheduleInterview({ fromDashboard }) {
     setOfferUploadLoading(data);
   };
 
-  const closeOfferModal=()=>{
-     dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+  const closeOfferModal = () => {
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
   }
 
   return (
