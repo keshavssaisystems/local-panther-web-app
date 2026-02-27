@@ -223,6 +223,22 @@ export const getHiringMangerList = createAsyncThunk(
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
   }
 );
+
+// get job dropdown list
+export const getJobDropdownByUserid = createAsyncThunk(
+  `${name}/getJobDropdownByUserid`,
+  async ({search = "", userId = null}) => {
+    // const GET_JOB_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDropdown`;
+    let companyid = Number(localStorage.getItem("companyid"));
+    const userIdParam = userId ? `&commonid=${userId}` : "";
+    const base = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=JobListByUserId`;
+    var GET_JOB_DROPDOWN_END_POINT = search
+      ? `${base}&searchBy=${encodeURIComponent(search)}${userIdParam}`
+      : `${base}${userIdParam}`;
+      
+    return await fetchWrapper.get(GET_JOB_DROPDOWN_END_POINT);
+  }
+);
 // Create the slice
 const customerReportSlice = createSlice({
   name,
@@ -421,8 +437,20 @@ const customerReportSlice = createSlice({
     [getHiringMangerList.fulfilled]: (state, { payload = {} }) => {
       state.hiringmangers = payload?.data;
     },
-    [getHiringMangerList.rejected]: (state, action) => { }
+    [getHiringMangerList.rejected]: (state, action) => { },
 
+    // job dropdown list
+    [getJobDropdownByUserid.pending]: (state) => {
+      state.jobDropDownList = [];
+    },
+    [getJobDropdownByUserid.fulfilled]: (state, action) => {
+      state.jobDropDownList = action?.payload?.data?.map((item => ({
+        jobtitle: item.name,
+        jobid: item.id
+      })));
+      // state.jobDropDownList = action?.payload?.data;
+    },
+    [getJobDropdownByUserid.rejected]: (state, action) => { },
   },
 
 });
@@ -445,7 +473,8 @@ export const customerReportActions = {
   getCustReportSchdIntvDetail,
   getReportSubsidiaryList,
   getReportCandidateInterviewList,
-  getHiringMangerList
+  getHiringMangerList,
+  getJobDropdownByUserid
 };
 
 export const customerReportReducer = customerReportSlice.reducer;
