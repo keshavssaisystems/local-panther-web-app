@@ -21,6 +21,7 @@
 .resume-container header {
   //padding: 2.0rem 2.5rem;
   position: relative;
+  height: 100px;
 }
 
 /* Make header divider thinner to match screenshot */
@@ -91,8 +92,8 @@
   font-size: 1.6rem;
   font-weight: 800 !important;
   color: #1e293b;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.25rem;
+  margin-bottom: 0.75rem !important;
+  padding-bottom: 0.25rem !important;
   border-bottom: 1px solid #2F479B;
   display: flex;
   align-items: center;
@@ -112,7 +113,7 @@
   background-color: #eef5ff;
   color: #2F2E2E;
   border-radius: 0.3rem;
-  font-weight: 600;
+  font-weight: normal;
   border: 1px solid #2F479B;
   display: inline-block;
 }
@@ -203,7 +204,7 @@
   background-color: #eef5ff;
   color: #2F2E2E;
   border-radius: 0.3rem;
-  font-weight: 600;
+  font-weight: normal;
   border: 1px solid #2F479B;
   display: inline-block;
 }

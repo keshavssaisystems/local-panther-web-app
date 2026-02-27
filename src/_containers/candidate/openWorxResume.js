@@ -236,11 +236,6 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                             </span>
                         )}
                     </h1>)}
-                    {/* {(userRoleId !== "3" && (
-                        < p className="h5 text-secondary">
-                            {props?.jobTitle ? props?.jobTitle : ''}
-                        </p>
-                    ))} */}
                     <Row className="gx-4 gy-2 text-secondary text-sm">
                         <Col xs="auto" className="d-flex align-items-center gap-1">
                             <BsGeoAltFill className="accent-color" size={18} />
@@ -283,7 +278,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                     )}
                                     {/* {item.jobdescription} */}
                                     {item.jobdescription && getJobDescriptionLines(item.jobdescription).map((line, index) => (
-                                        <p class="p1 small">
+                                        <p class="p1 small" style={{ paddingLeft: "1rem" }}>
                                             <Row className="pdf-bullet-row align-items-start">
                                                 <Col xs="auto" className="bullet-col">{BULLETS.round}</Col>
                                                 <Col className="text-col"> {line.replace(/•/g, '')}</Col>
@@ -357,7 +352,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                         {getDate(item)} {item.isexpired === false ? "(Expired)" : ""}
                                     </p>
                                     {item.description && item.description !== "" ? (
-                                        <><h6 className="small fw-medium text-dark mb-1">
+                                        <><h6 className="small fw-semibold text-dark mb-1">
                                             Description
                                         </h6>
                                             <p className="small m-0" style={{ whiteSpace: "pre-wrap" }}>
