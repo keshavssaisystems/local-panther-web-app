@@ -43,7 +43,7 @@ import {
     getCandidateSearchDropdown,
     getCustReportJobDetail,
 } from "../reports/customerreport.slice";
-import { getProfileActions, getHiringMangerList } from "_store";
+import { getProfileActions, getHiringMangerList, getHiringMangerListDynamic } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { useParams } from "react-router-dom";
@@ -320,9 +320,9 @@ const ReportsList = () => {
                                     </Button>
                                 </span>
                             );
-                        } else if (col.key.endsWith('phone') && value) {
+                        } else if (col.key.endsWith('phone') && value && value === '' && value === null) {
                             return <span className="table-cell" title={value}>{USPhoneNumber(value)}</span>
-                        } else if (col.key.endsWith('date')) {
+                        } else if (col.key.endsWith('date') && value && value === '' && value === null) {
                             return <span className="table-cell" title={value}>{getTimezoneDateTime(moment(value).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY hh:mm A")}</span>
                         } else {
                             return <span className="table-cell" title={value}>{value}</span>;
@@ -423,7 +423,7 @@ const ReportsList = () => {
         // dispatch(getJobDropdownByUserid({inputValue:"", hiringmanagerId}));
         dispatch(getCandidateSearchDropdown());
         dispatch(getRecommendedJobStatus());
-        dispatch(getHiringMangerList(companyId));
+        dispatch(getHiringMangerListDynamic({ companyId: companyId, endpoint: "allUserListByCompany" }));
     }, []);
 
     const handlePageChange = (page) => {
@@ -554,7 +554,7 @@ const ReportsList = () => {
                                                         setCompany(e);
                                                         setHiringMangerId("");
                                                         if (e?.value && filter.hiringManager === 1) {
-                                                            dispatch(getHiringMangerList(e.value));
+                                                            dispatch(getHiringMangerListDynamic({ companyId: e.value, endpoint: "allUserListByCompany" }));
                                                         }
                                                     }}
                                                     value={company}
@@ -629,11 +629,14 @@ const ReportsList = () => {
                                             <FormGroup>
                                                 <AsyncSelect
                                                     cacheOptions
-                                                    defaultOptions={(jobDropDownList || []).map((j) => ({
-                                                        label: j.jobtitle,
-                                                        value: j.jobid,
-                                                        jobid: j.jobid,
-                                                    }))}
+                                                    defaultOptions={[
+                                                        { label: "Select All", value: null, jobid: null },
+                                                        ...(jobDropDownList || []).map((j) => ({
+                                                            label: j.jobtitle,
+                                                            value: j.jobid,
+                                                            jobid: j.jobid,
+                                                        })),
+                                                    ]}
                                                     loadOptions={loadJobOptions}
                                                     className="cust-job-autosuggest"
                                                     classNamePrefix="react-select"
@@ -658,11 +661,14 @@ const ReportsList = () => {
                                             <FormGroup>
                                                 <AsyncSelect
                                                     cacheOptions
-                                                    defaultOptions={(candidateDropDownList || []).map((c) => ({
-                                                        label: c.candidatename || c.name,
-                                                        value: c.candidateid,
-                                                        candidateid: c.candidateid,
-                                                    }))}
+                                                    defaultOptions={[
+                                                        { label: "Select All", value: null, candidateid: null },
+                                                        (candidateDropDownList || []).map((c) => ({
+                                                            label: c.candidatename || c.name,
+                                                            value: c.candidateid,
+                                                            candidateid: c.candidateid,
+                                                        }))
+                                                    ]}
                                                     loadOptions={loadCandidateOptions}
                                                     className="cust-candidate-autosuggest"
                                                     classNamePrefix="react-select"

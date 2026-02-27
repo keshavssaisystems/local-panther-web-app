@@ -224,6 +224,15 @@ export const getHiringMangerList = createAsyncThunk(
   }
 );
 
+export const getHiringMangerListDynamic = createAsyncThunk(
+  `${name}/getHiringMangerListDynamic`,
+  async ({companyId, endpoint = 'userListByCompany'}) => {
+    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }Common/GetCommonDropdown?searchText=${endpoint}&commonId=${companyId}`;
+    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+  }
+);
+
 // get job dropdown list
 export const getJobDropdownByUserid = createAsyncThunk(
   `${name}/getJobDropdownByUserid`,
@@ -439,6 +448,14 @@ const customerReportSlice = createSlice({
     },
     [getHiringMangerList.rejected]: (state, action) => { },
 
+    [getHiringMangerListDynamic.pending]: (state) => {
+      state.hiringmangers = [];
+    },
+    [getHiringMangerListDynamic.fulfilled]: (state, { payload = {} }) => {
+      state.hiringmangers = payload?.data;
+    },
+    [getHiringMangerListDynamic.rejected]: (state, action) => { },
+
     // job dropdown list
     [getJobDropdownByUserid.pending]: (state) => {
       state.jobDropDownList = [];
@@ -474,6 +491,7 @@ export const customerReportActions = {
   getReportSubsidiaryList,
   getReportCandidateInterviewList,
   getHiringMangerList,
+  getHiringMangerListDynamic,
   getJobDropdownByUserid
 };
 
