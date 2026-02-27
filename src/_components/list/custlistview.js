@@ -2087,7 +2087,19 @@ export const CustCandidateListView = (props) => {
   };
 
   const onRescheduleInterview = (row) => {
-    setSelectedRowData(row);
+    const data = {
+      ...row,
+      scheduledInterviewDtos: row?.scheduledInterviewDtos?.map((item, index) =>
+        index === 0
+          ? {
+            ...item,
+            candidatename: `${row.firstname} ${row.lastname}`,
+            jobtitle: row.jobtitle
+          }
+          : item
+      )
+    };
+    setSelectedRowData(data);
     setShowIRSModal(true);
   };
 
