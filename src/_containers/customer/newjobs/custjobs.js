@@ -349,6 +349,7 @@ export default function CustJobList() {
           showAssignButton={true}
           selectedJobsCount={selectedJobs.length}
           onAssignClick={handleAssignClick}
+          viewType={viewType}
         />
       </Row>
       <Row>

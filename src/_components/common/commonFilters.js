@@ -42,7 +42,8 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     onClearFilters,
     showAssignButton = false,
     selectedJobsCount = 0,
-    onAssignClick = null
+    onAssignClick = null,
+    viewType=null
 }) => {
     const dispatch = useDispatch();
 
@@ -425,7 +426,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                 Assign To
                                             </Button>
                                         </span> 
-                                        {selectedJobsCount === 0 && (
+                                        {selectedJobsCount === 0 && viewType === "list" && (
                                             <Tooltip
                                                 placement="left"
                                                 isOpen={tooltipOpen}
@@ -433,6 +434,17 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                 toggle={toggleTooltip}
                                             >
                                                 Select one or more jobs to assign to a manager.
+                                            </Tooltip>
+                                        )}
+                                        {selectedJobsCount === 0 && viewType === "block" && (
+                                            <Tooltip
+                                                placement="left"
+                                                isOpen={tooltipOpen}
+                                                target="assignTooltipWrapper"
+                                                toggle={toggleTooltip}
+                                                style={{maxWidth: "250px"}}
+                                            >
+                                                Switch to List View to assign jobs to Hiring Managers.
                                             </Tooltip>
                                         )}
                                         
