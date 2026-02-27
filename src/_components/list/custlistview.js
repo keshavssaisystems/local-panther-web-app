@@ -27,6 +27,7 @@ import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import newoffer from "assets/utils/images/job-detail-icons/newoffer.svg";
+import nonAts from "assets/utils/images/job-detail-icons/nonats.svg";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
@@ -42,6 +43,7 @@ import { is } from "date-fns/locale";
 import { OfflineInterviewModal } from "_components/scheduleInterview/offlineInterviewModal";
 import { OfflineOffer } from "_components/modal/offlineOffer";
 import { ViewDocumentModal } from "_components/modal/viewdocumentmodal";
+
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -60,6 +62,7 @@ export const CustCandidateListView = (props) => {
   const [offlineInterviewLoading, setOfflineInterviewLoading] = useState(false);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState("");
+  const atsEnableStatus = localStorage.getItem("atsEnableStatus");
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -750,9 +753,21 @@ export const CustCandidateListView = (props) => {
             name: <span className="table-title">Candidate</span>,
             id: "Candidate",
             cell: (row) => (
-              <span title={row.firstname + " " + row.lastname}>
-                {row.firstname + " " + row.lastname}
-              </span>
+              <>
+                <span title={row.firstname + " " + row.lastname}>
+                  {row.firstname + " " + row.lastname}
+
+                </span>
+                {atsEnableStatus === "true" && row?.isatscandidate === false && (
+                  <img
+                    src={nonAts}
+                    alt="list maybe"
+                    className={"icon-pointer m-1"}
+                    width={"16px"}
+                    title={'Non-ATS'}
+                  ></img>
+                )}
+              </>
             ),
             selector: (row) => row.firstname + " " + row.lastname,
             sortable: true,
@@ -826,9 +841,20 @@ export const CustCandidateListView = (props) => {
               name: <span className="table-title">Candidate</span>,
               id: "Candidate",
               cell: (row) => (
-                <span title={row.firstname + " " + row.lastname}>
-                  {row.firstname + " " + row.lastname}
-                </span>
+                <>
+                  <span title={row.firstname + " " + row.lastname}>
+                    {row.firstname + " " + row.lastname}
+                  </span>
+                  {atsEnableStatus === "true" && row?.isatscandidate === false && (
+                    <img
+                      src={nonAts}
+                      alt="list maybe"
+                      className={"icon-pointer m-1"}
+                      width={"16px"}
+                      title={'Non-ATS'}
+                    ></img>
+                  )}
+                </>
               ),
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
@@ -1145,29 +1171,41 @@ export const CustCandidateListView = (props) => {
                 name: <span className="table-title">Candidate</span>,
                 id: "Candidate",
                 cell: (row) => (
-                  <span title={row.firstname + " " + row.lastname}>
-                    {row.firstname + " " + row.lastname}
-                    {row?.candidateacceptedcomment !== "" &&
-                      props.type === "accepted" ? (
-                      <>
-                        {" "}
-                        <BsFillInfoCircleFill
-                          id={"ac_" + row?.jobid + row?.candidateid}
-                          color="primary"
-                        />
-                        <UncontrolledTooltip
-                          placement="bottom"
-                          target={"ac_" + row?.jobid + row?.candidateid}
-                        >
-                          {row?.candidateacceptedcomment !== ""
-                            ? row?.candidateacceptedcomment
-                            : "-"}
-                        </UncontrolledTooltip>
-                      </>
-                    ) : (
-                      <></>
+                  <>
+                    <span title={row.firstname + " " + row.lastname}>
+                      {row.firstname + " " + row.lastname}
+                      {row?.candidateacceptedcomment !== "" &&
+                        props.type === "accepted" ? (
+                        <>
+                          {" "}
+                          <BsFillInfoCircleFill
+                            id={"ac_" + row?.jobid + row?.candidateid}
+                            color="primary"
+                          />
+                          <UncontrolledTooltip
+                            placement="bottom"
+                            target={"ac_" + row?.jobid + row?.candidateid}
+                          >
+                            {row?.candidateacceptedcomment !== ""
+                              ? row?.candidateacceptedcomment
+                              : "-"}
+                          </UncontrolledTooltip>
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                    </span>
+
+                    {atsEnableStatus === "true" && row?.isatscandidate === false && (
+                      <img
+                        src={nonAts}
+                        alt="list maybe"
+                        className={"icon-pointer m-1"}
+                        width={"16px"}
+                        title={'Non-ATS'}
+                      ></img>
                     )}
-                  </span>
+                  </>
                 ),
                 selector: (row) => row.firstname + " " + row.lastname,
                 sortable: true,
@@ -1408,9 +1446,20 @@ export const CustCandidateListView = (props) => {
                 name: <span className="table-title">Candidate</span>,
                 id: "Candidate",
                 cell: (row) => (
-                  <span title={row.firstname + " " + row.lastname}>
-                    {row.firstname + " " + row.lastname}
-                  </span>
+                  <>
+                    <span title={row.firstname + " " + row.lastname}>
+                      {row.firstname + " " + row.lastname}
+                    </span>
+                    {atsEnableStatus === "true" && row?.isatscandidate === false && (
+                      <img
+                        src={nonAts}
+                        alt="list maybe"
+                        className={"icon-pointer m-1"}
+                        width={"16px"}
+                        title={'Non-ATS'}
+                      ></img>
+                    )}
+                  </>
                 ),
                 selector: (row) => row.firstname + " " + row.lastname,
                 sortable: true,
@@ -1519,29 +1568,40 @@ export const CustCandidateListView = (props) => {
                   name: <span className="table-title">Candidate</span>,
                   id: "Candidate",
                   cell: (row) => (
-                    <span title={row.firstname + " " + row.lastname}>
-                      {row.firstname + " " + row.lastname}
-                      {row?.candidateacceptedcomment !== "" &&
-                        props.type === "accepted" ? (
-                        <>
-                          {" "}
-                          <BsFillInfoCircleFill
-                            id={"ac_" + row?.jobid + row?.candidateid}
-                            color="primary"
-                          />
-                          <UncontrolledTooltip
-                            placement="bottom"
-                            target={"ac_" + row?.jobid + row?.candidateid}
-                          >
-                            {row?.candidateacceptedcomment !== ""
-                              ? row?.candidateacceptedcomment
-                              : "-"}
-                          </UncontrolledTooltip>
-                        </>
-                      ) : (
-                        <></>
+                    <>
+                      <span title={row.firstname + " " + row.lastname}>
+                        {row.firstname + " " + row.lastname}
+                        {row?.candidateacceptedcomment !== "" &&
+                          props.type === "accepted" ? (
+                          <>
+                            {" "}
+                            <BsFillInfoCircleFill
+                              id={"ac_" + row?.jobid + row?.candidateid}
+                              color="primary"
+                            />
+                            <UncontrolledTooltip
+                              placement="bottom"
+                              target={"ac_" + row?.jobid + row?.candidateid}
+                            >
+                              {row?.candidateacceptedcomment !== ""
+                                ? row?.candidateacceptedcomment
+                                : "-"}
+                            </UncontrolledTooltip>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </span>
+                      {atsEnableStatus === "true" && row?.isatscandidate === false && (
+                        <img
+                          src={nonAts}
+                          alt="list maybe"
+                          className={"icon-pointer m-1"}
+                          width={"16px"}
+                          title={'Non-ATS'}
+                        ></img>
                       )}
-                    </span>
+                    </>
                   ),
                   selector: (row) => row.firstname + " " + row.lastname,
                   sortable: true,
@@ -1657,9 +1717,20 @@ export const CustCandidateListView = (props) => {
           name: <span className="table-title">Candidate</span>,
           id: "Candidate",
           cell: (row) => (
-            <span title={row.firstname + " " + row.lastname}>
-              {row.firstname + " " + row.lastname}
-            </span>
+            <>
+              <span title={row.firstname + " " + row.lastname}>
+                {row.firstname + " " + row.lastname}
+              </span>
+              {atsEnableStatus === "true" && row?.isatscandidate === false && (
+                <img
+                  src={nonAts}
+                  alt="list maybe"
+                  className={"icon-pointer m-1"}
+                  width={"16px"}
+                  title={'Non-ATS'}
+                ></img>
+              )}
+            </>
           ),
           selector: (row) => row.firstname + " " + row.lastname,
           sortable: true,
