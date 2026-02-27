@@ -9,7 +9,7 @@ import moment from "moment";
 import AsyncSelect from "react-select/async";
 import { CompanyFilter } from "../../admin/filterComponent";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
-import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
+import { faFileExcel, faDownload, faFileDownload } from "@fortawesome/free-solid-svg-icons";
 import { exportToExcel } from "react-json-to-excel";
 import debounce from "lodash/debounce";
 import {
@@ -39,7 +39,7 @@ import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import {
     getCustReportSchdIntvDetail,
     getRecommendedJobStatus,
-    getJobDropdown,
+    getJobDropdownByUserid,
     getCandidateSearchDropdown,
     getCustReportJobDetail,
 } from "../reports/customerreport.slice";
@@ -180,7 +180,7 @@ const ReportsList = () => {
     const debouncedFetch = React.useMemo(
         () =>
             debounce((inputValue, callback) => {
-                dispatch(getJobDropdown(inputValue)).then((res) => {
+                dispatch(getJobDropdownByUserid({ search: inputValue.inputValue, userId: inputValue.hiringmanagerId })).then((res) => {
                     const data = res?.payload?.data || [];
                     const options = data.map((j) => ({
                         label: j.jobtitle || j.name,
@@ -202,9 +202,12 @@ const ReportsList = () => {
     const hiringManagerDownList = useSelector(
         (state) => state?.customerReportReducer?.hiringmangers
     );
-    const loadJobOptions = (inputValue) =>
-        new Promise((resolve) => debouncedFetch(inputValue, resolve));
-
+    const loadJobOptions = (inputValue) => {
+        if (inputValue.length >= 2) {
+            return new Promise((resolve) => debouncedFetch({ inputValue: inputValue, hiringmanagerId: hiringmanagerId }, resolve));
+        }
+        return Promise.resolve([]);
+    }
     const handleexportToExcel = () => {
         data = []; // to avoid export with current data, as we are fetching new data with isexport flag
         fetchData(1, 10000, startDate, endDate, searchData, candidateSelected, subsidiaryId, company,
@@ -397,7 +400,7 @@ const ReportsList = () => {
         setEndDate(enddate);
         const hmId = localStorage.getItem("userId");
         setHiringMangerId(hmId ? Number(hmId) : "");
-        new Promise((resolve) => debouncedFetch("", resolve));
+        // new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hmId }, resolve));
         setJobSelected(null);
         fetchData(currentPage, perPage, startdate, enddate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
         // handleClear();
@@ -409,9 +412,15 @@ const ReportsList = () => {
     }, [jobStatus, statusFilter, profileStatusFilter, profileSourceFilter,
         recommStatusId, jobId, hiringmanagerId, candidateSelected, startDate, endDate]);
 
+
+    useEffect(() => {
+        new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hiringmanagerId }, resolve));
+    }, [hiringmanagerId]);
+
+
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
-        dispatch(getJobDropdown());
+        // dispatch(getJobDropdownByUserid({inputValue:"", hiringmanagerId}));
         dispatch(getCandidateSearchDropdown());
         dispatch(getRecommendedJobStatus());
         dispatch(getHiringMangerList(companyId));
@@ -450,7 +459,7 @@ const ReportsList = () => {
         setCompany([]);
         setCurrentPage(1);
         setPerPage(10);
-        new Promise((resolve) => debouncedFetch("", resolve));
+        new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hiringmanagerId }, resolve));
         // Reset job filter state to clear all filter conditions in Redux
         setFilter({});
 
@@ -509,8 +518,9 @@ const ReportsList = () => {
                                     Filter by
                                 </div>
 
-                                <div className="btn-actions-pane-right actions-icon-btn">
-                                    <UncontrolledButtonDropdown
+                                <div className="btn-actions-pane-right actions-icon-btn" >
+                                    <button className="btn btn-primary export-btn"
+                                        style={{ background: "rgb(47 71 155)" }}
                                         title="Download Excel Report"
                                         onClick={() => handleexportToExcel()}
                                         disabled={
@@ -518,12 +528,9 @@ const ReportsList = () => {
                                             excelData.length === 0 ||
                                             !excelData[0].details ||
                                             excelData[0].details.length === 0
-                                        }
-                                    >
-                                        <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                                            <i className="pe-7s-menu btn-icon-wrapper" />
-                                        </DropdownToggle>
-                                    </UncontrolledButtonDropdown>
+                                        }>
+                                        <FontAwesomeIcon icon={faFileDownload} /> Excel Report
+                                    </button>
                                 </div>
                             </CardHeader>
                             <CardBody>
