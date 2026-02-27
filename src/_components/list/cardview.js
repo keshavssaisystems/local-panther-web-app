@@ -581,26 +581,19 @@ export const CandidateCardView = (props) => {
                               <div>On Assignment / Already Working</div>
                                 <div className="d-flex flex-column gap-1">
                                   <div className="d-flex align-items-center">
-                                    <span style={{ minWidth: "60px", fontWeight: 500 }}>From</span>
                                     <span>
                                       {props.data.assignedInfoDTO?.[0]?.assignmentstartdate
-                                        ? new Date(
-                                            props.data.assignedInfoDTO?.[0]?.assignmentstartdate
-                                          ).toLocaleDateString("en-GB")
-                                        : "-"}
+                                        ? 
+                                        moment(props.data.assignedInfoDTO?.[0]?.assignmentstartdate ).format("MM/DD/YYYY")
+                                         : "-"}
                                     </span>
-                                  </div>
-
-                                  <div className="d-flex align-items-center">
-                                    <span style={{ minWidth: "60px", fontWeight: 500 }}>To</span>
+                                       {" - "}
                                     <span>
                                       {props.data.assignedInfoDTO?.[0]?.assignmentenddate
-                                        ? new Date(
-                                            props.data.assignedInfoDTO?.[0]?.assignmentenddate
-                                          ).toLocaleDateString("en-GB")
-                                        : "-"}
+                                        ? moment(props.data.assignedInfoDTO?.[0]?.assignmentenddate ).format("MM/DD/YYYY")
+                                         : "-"}
                                     </span>
-                                </div>
+                                  </div>
                               </div>
                             </div>
                             <div className="me-3 float-end">
