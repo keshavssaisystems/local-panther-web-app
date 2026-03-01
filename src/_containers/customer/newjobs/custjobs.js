@@ -285,11 +285,13 @@ export default function CustJobList() {
   return (
     <>
       <Row>
-        <Col md="12" style={{ padding: "0" }}>
-          {/* Page Title with View Toggle */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", paddingRight: "15px" }}>
-            <PageTitle heading="Open Jobs" /> 
-            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        <Col md="12">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: "12px" }}>
+            <div style={{ flex: 1 }}>
+              <PageTitle heading="Open Jobs" />
+            </div>
+            
+            <div style={{ display: "flex", gap: "12px", alignItems: "center", flexShrink: 0 }}>
               <button
                 onClick={() => setViewType("block")}
                 title="Block View"
@@ -308,7 +310,7 @@ export default function CustJobList() {
                   height: "40px",
                 }}
               >
-               <img src={titleblock} alt="Block View" style={{ width: "18px", height: "18px", filter: viewType === "block" ? "brightness(0) invert(1)" : "none" }} />
+                <img src={titleblock} alt="Block View" style={{ width: "18px", height: "18px", filter: viewType === "block" ? "brightness(0) invert(1)" : "none" }} />
               </button>
 
               <button
