@@ -421,7 +421,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                     maxHeight: "150px"
                                                 }}
                                                 onClick={onAssignClick}
-                                                disabled={selectedJobsCount === 0}
+                                                disabled={selectedJobsCount === 0 || viewType === "block"}
                                                 >
                                                 Assign To
                                             </Button>
@@ -436,7 +436,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                 Select one or more jobs to assign to a manager.
                                             </Tooltip>
                                         )}
-                                        {selectedJobsCount === 0 && viewType === "block" && (
+                                        {viewType === "block" && (
                                             <Tooltip
                                                 placement="left"
                                                 isOpen={tooltipOpen}
