@@ -65,7 +65,7 @@ export const AssignJobsModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} toggle={handleClose} size="md" centered>
+    <Modal isOpen={isOpen} toggle={handleClose} size="md" centered style={{ boxShadow: "none" }} >
       <ModalHeader toggle={handleClose}>
         Assign Jobs to Hiring Managers
       </ModalHeader>
