@@ -175,10 +175,7 @@ export function ScheduleInterview({ fromDashboard }) {
           data: upcomingInterview,
           format: upcomingInterview.format,
           title:
-            upcomingInterview.candidatename +
-            " (" +
-            upcomingInterview.jobtitle +
-            ")",
+            upcomingInterview.candidatename + " (" + upcomingInterview.jobtitle + " - " + upcomingInterview.roundname + ")",
           start: new Date(startDate),
           end: new Date(endDate),
           color:
