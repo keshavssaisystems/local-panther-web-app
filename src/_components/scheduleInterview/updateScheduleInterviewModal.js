@@ -355,7 +355,10 @@ export function UpdateScheduleInterviewModal({
                     <p className="mb-0 mt-1 mr-1">{interviewData?.jobtitle}</p>
                   </div>
                 </Col>
-                <Col></Col>
+                <Col><div className="detail-padding">
+                  <h6 className="mb-0 heading-custom">Round</h6>
+                  <p className="mb-0 mt-1 mr-1">{interviewData?.roundname}</p>
+                </div></Col>
                 <Col md={4}>
                   <FormGroup>
                     <Label for="scheduleDate" className="fw-semi-bold">
@@ -655,7 +658,7 @@ export function UpdateScheduleInterviewModal({
                       placeholder="Add hiring managers or other interviewers - enter emails seperated by comma"
                     />
                   </FormGroup>
-                  <FormGroup  style={{ display: 'none' }}>
+                  <FormGroup style={{ display: 'none' }}>
                     <Label for="phoneNo" className="fw-semi-bold">
                       Get text reminder for interviews
                     </Label>
