@@ -5,7 +5,7 @@ on:
       - 'presentation-branch'  # Trigger branch
 
 env:
-  HEAD_BRANCH: development
+  HEAD_BRANCH: presentation-branch
   BASE_BRANCHES: |
     prod-deployment-latest
 
