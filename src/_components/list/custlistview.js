@@ -288,6 +288,12 @@ export const CustCandidateListView = (props) => {
 
   }
 
+  const getRecentInterviewStatus = (row) => {
+    return row?.scheduledInterviewDtos &&
+      row?.scheduledInterviewDtos?.length > 0
+      && row?.scheduledInterviewDtos[0]?.interviewstatusid;
+  }
+
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
@@ -429,16 +435,27 @@ export const CustCandidateListView = (props) => {
     } else if (props.type === "scheduled") {
       return (
         <ButtonGroup>
-          <Button
+          {getRecentInterviewStatus(row) === 5 && (<Button
             // outline
             size="sm"
-            title="Reschedule Interview"
-            onClick={() => onRescheduleInterview(row)}
+            title="Schedule Next Round"
             className="btn-icon"
             color="alternate"
+            onClick={() => onScheduleClick(row)}
           >
-            <img src={customerIcons.list_schedule} alt="list reject"></img>
-          </Button>
+            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+          </Button>)}
+          {getRecentInterviewStatus(row) !== 5 && (
+            <Button
+              // outline
+              size="sm"
+              title="Reschedule Interview"
+              onClick={() => onRescheduleInterview(row)}
+              className="btn-icon"
+              color="alternate"
+            >
+              <img src={customerIcons.list_schedule} alt="list reject"></img>
+            </Button>)}
           <Button
             // outline
             size="sm"
@@ -739,6 +756,12 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Candidate History</span>
             </DropdownItem>
+            {props.type === "scheduled" &&
+              (<DropdownItem onClick={() => props.onCandidateInterviewHistory(candidateid, row)}>
+                <i className="dropdown-icon lnr-layers"></i>
+                <span>Interview History</span>
+              </DropdownItem>)}
+
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
@@ -1761,21 +1784,19 @@ export const CustCandidateListView = (props) => {
           sortable: true,
           cell: (row) => (
             <span
-              title={
-                row?.scheduledInterviewDtos != null
-                  ? getTimezoneDateTime(
-                    moment(
-                      row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
-                        0,
-                        11
-                      ) +
-                      (row?.scheduledInterviewDtos[0]?.starttime !== null
-                        ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                        : " 00:00:00")
-                    ).format("YYYY-MM-DD HH:mm:ss")
-                  )
-                  : ""
-              }
+              title={row?.scheduledInterviewDtos != null
+                ? getTimezoneDateTime(
+                  moment(
+                    row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
+                      0,
+                      11
+                    ) +
+                    (row?.scheduledInterviewDtos[0]?.starttime !== null
+                      ? row?.scheduledInterviewDtos[0]?.starttime
+                      : "00:00:00")
+                  ).format("YYYY-MM-DD HH:mm:ss")
+                )
+                : ""}
             >
               {row?.scheduledInterviewDtos != null
                 ? getTimezoneDateTime(

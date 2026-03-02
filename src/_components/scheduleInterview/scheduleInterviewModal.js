@@ -18,14 +18,14 @@ import InputMask from "react-input-mask";
 import moment from "moment-timezone";
 import DatePicker from "react-datepicker";
 import { useDispatch } from "react-redux";
-import { customerCandidateListsActions } from "_store";
-import { constant } from "lodash";
+import { customerCandidateListsActions, dropdownActions } from "_store";
+
 export function ScheduleInterviewModal({
   candidateData,
   durationOptions,
   postData,
   isOpen = false,
-  onClose,
+  onClose
 }) {
   const [videoModeCheck, setVideoModeCheck] = useState(0);
   const [timeOption, setTimeOption] = useState([]);
@@ -36,8 +36,15 @@ export function ScheduleInterviewModal({
   const [durationValidation, setDurationValidation] = useState(false);
   const [videoLinkValidation, setVideoLinkValidation] = useState(false);
   const [interviewAddressValidation, setInterviewAddressValidation] = useState(false);
+
+  // NEW: round validation
+  const [roundValidation, setRoundValidation] = useState(false);
+
   const [scheduledDate, setScheduledDate] = useState();
   const [slotDurationOptions, setSlotDurationOptions] = useState([]);
+
+  // NEW: fallback rounds if parent doesn’t pass any
+  const [effectiveRoundOptions, setEffectiveRoundOptions] = useState([])
 
   const dispatch = useDispatch();
   const toggle = () => {
@@ -51,7 +58,8 @@ export function ScheduleInterviewModal({
   };
   useEffect(() => {
     // getTimeArray();
-  }, []);
+    getRoundsDropdown();
+  }, [dispatch]);
 
   const getTimeArray = () => {
     let timeOptions = [];
@@ -96,7 +104,7 @@ export function ScheduleInterviewModal({
     let data = {
       scheduleDateUTC: moment(date).format("YYYY-MM-DD"),
       scheduleInterviewId: 0
-    }
+    };
     let res = await dispatch(
       customerCandidateListsActions.getInterviewSlots(data)
     );
@@ -129,6 +137,7 @@ export function ScheduleInterviewModal({
 
     return minutes;
   }
+
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.scheduleDate.value === ""
@@ -140,18 +149,28 @@ export function ScheduleInterviewModal({
     event.target.elements.duration.value === ""
       ? setDurationValidation(true)
       : setDurationValidation(false);
-    formatButton === 1 &&
+
+    // NEW: round mandatory
+    event.target.elements.round?.value === ""
+      ? setRoundValidation(true)
+      : setRoundValidation(false);
+
+    (formatButton === 1 &&
       event.target.elements.videoMode.value === "third-party-video" &&
-      event.target.elements.videoLink.value === ""
+      event.target.elements.videoLink.value === "")
       ? setVideoLinkValidation(true)
       : setVideoLinkValidation(false);
+
     formatButton === 3 && event.target.elements.interviewAddress.value === ""
       ? setInterviewAddressValidation(true)
       : setInterviewAddressValidation(false);
+
+    // Validation pass groups – add round check to all
     if (
       event.target.elements.scheduleDate.value !== "" &&
       event.target.elements.scheduleStartTime.value !== "" &&
       event.target.elements.duration.value !== "" &&
+      event.target.elements.round?.value !== "" &&
       formatButton === 1 &&
       ((event.target.elements.videoMode.value === "third-party-video" &&
         event.target.elements.videoLink.value !== "") ||
@@ -164,6 +183,7 @@ export function ScheduleInterviewModal({
       event.target.elements.scheduleDate.value !== "" &&
       event.target.elements.scheduleStartTime.value !== "" &&
       event.target.elements.duration.value !== "" &&
+      event.target.elements.round?.value !== "" &&
       formatButton === 3 &&
       event.target.elements.interviewAddress.value !== ""
     ) {
@@ -174,11 +194,13 @@ export function ScheduleInterviewModal({
       event.target.elements.scheduleDate.value !== "" &&
       event.target.elements.scheduleStartTime.value !== "" &&
       event.target.elements.duration.value !== "" &&
+      event.target.elements.round?.value !== "" &&
       formatButton === 2
     ) {
       getFormData(event);
     }
   };
+
   const getFormData = (event) => {
     event.preventDefault();
     let scheduleDateUTC = moment(
@@ -188,6 +210,7 @@ export function ScheduleInterviewModal({
     )
       .tz("Etc/UTC")
       .format("YYYY-MM-DD");
+
     let scheduleTimeUTC = moment(
       event.target.elements.scheduleDate.value +
       " " +
@@ -195,6 +218,12 @@ export function ScheduleInterviewModal({
     )
       .tz("Etc/UTC")
       .format("HH:mm:ss");
+
+    // NEW: round fields
+    const roundId = interviewRound;
+    const roundName =
+      effectiveRoundOptions.find((r) => Number(r.id) === roundId)?.name || "";
+
     let data = {
       scheduleinterviewid: 0,
       jobid: candidateData.jobid,
@@ -202,6 +231,11 @@ export function ScheduleInterviewModal({
       scheduledate: scheduleDateUTC,
       starttime: scheduleTimeUTC,
       durationid: Number(event.target.elements.duration.value),
+
+      // NEW: include round
+      interviewroundid: roundId || 1,
+      roundname: roundName,
+
       format:
         formatButton === 1
           ? "Video"
@@ -230,6 +264,26 @@ export function ScheduleInterviewModal({
     postData(data);
     onClose();
   };
+  const [interviewRound, setInterviewRound] = useState(1);
+  const getRoundsDropdown = async () => {
+    let res = await dispatch(
+      dropdownActions.getDropdownListThunk({
+        searchText: "interviewRound",
+        commonId: 0,
+        searchBy: ""
+      })
+    );
+
+    if (res?.payload?.data) {
+      const existingRounds = candidateData?.scheduledInterviewDtos?.length || 0;
+
+      const nextRound = existingRounds > 0 ? existingRounds + 1 : 1;
+
+      setInterviewRound(nextRound);
+      setEffectiveRoundOptions(res.payload.data);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -262,7 +316,35 @@ export function ScheduleInterviewModal({
                     <p className="mb-0 mt-1 mr-1">{candidateData.jobtitle}</p>
                   </div>
                 </Col>
-                <Col></Col>
+                <Col md={4}>
+                  <FormGroup>
+                    <Label htmlFor="round" className="fw-semi-bold">
+                      Round <span className="required-star">*</span>
+                    </Label>
+                    <Input
+                      type="select"
+                      name="round"
+                      id="round"
+                      value={interviewRound}
+                      invalid={roundValidation}
+                      onChange={(e) => {
+                        setInterviewRound(Number(e.target.value));
+                        setRoundValidation(false)
+                      }}
+                    >
+                      <option value="">Select round</option>
+                      {effectiveRoundOptions.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </Input>
+                    {roundValidation && (
+                      <FormText color="danger">Please select round</FormText>
+                    )}
+                  </FormGroup>
+                </Col>
+                {/* <Col></Col> */}
                 <Col md={4}>
                   <FormGroup>
                     <Label for="scheduleDate" className="fw-semi-bold">
@@ -289,21 +371,28 @@ export function ScheduleInterviewModal({
                 <Col md={4}>
                   <FormGroup>
                     <Label for="scheduleStartTime" className="fw-semi-bold">
-                      Start time <span className="required-star">* </span>
+                      Start time <span className="required-star">*</span>
                     </Label>
                     <Input
                       type="select"
                       name="scheduleStartTime"
                       id="scheduleStartTime"
                       invalid={scheduleTimeValidation}
-                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); }}
+                      onChange={(time) => {
+                        setScheduleTimeValidation(false);
+                        getSlotDuration(time);
+                      }}
                     >
                       <option key={0} value={""}>
                         Select start time
                       </option>
                       {timeOption.length > 0 &&
                         timeOption.map((options) => (
-                          <option key={options.slottime} value={options.slottime} disabled={!options.isavailable}>
+                          <option
+                            key={options.slottime}
+                            value={options.slottime}
+                            disabled={!options.isavailable}
+                          >
                             {convertTo12Hour(options.slottime)}{" "}
                           </option>
                         ))}
@@ -318,7 +407,7 @@ export function ScheduleInterviewModal({
                 <Col md={4}>
                   <FormGroup>
                     <Label for="duration" className="fw-semi-bold">
-                      Duration <span className="required-star">* </span>
+                      Duration <span className="required-star">*</span>
                     </Label>
                     <Input
                       type="select"
@@ -347,7 +436,7 @@ export function ScheduleInterviewModal({
               </Row>
               <FormGroup>
                 <Label for="exampleAddress" className="fw-semi-bold">
-                  Format <span className="required-star">* </span>
+                  Format <span className="required-star">*</span>
                 </Label>
                 <div>
                   <ButtonGroup>
@@ -381,6 +470,7 @@ export function ScheduleInterviewModal({
                   </ButtonGroup>
                 </div>
               </FormGroup>
+
               {formatButton === 1 && (
                 <FormGroup>
                   <Row>
@@ -415,10 +505,11 @@ export function ScheduleInterviewModal({
                   </Row>
                 </FormGroup>
               )}
+
               {formatButton === 1 && videoModeCheck === 1 && (
                 <FormGroup>
                   <Label for="videoLink" className="fw-semi-bold">
-                    Paste video link <span className="required-star">* </span>
+                    Paste video link <span className="required-star">*</span>
                   </Label>
                   <Input
                     type="text"
@@ -433,10 +524,11 @@ export function ScheduleInterviewModal({
                   )}
                 </FormGroup>
               )}
+
               {formatButton === 3 && (
                 <FormGroup>
                   <Label for="interviewAddress" className="fw-semi-bold">
-                    Interview address <span className="required-star">* </span>
+                    Interview address <span className="required-star">*</span>
                   </Label>
                   <Input
                     type="text"
@@ -453,6 +545,7 @@ export function ScheduleInterviewModal({
                   )}
                 </FormGroup>
               )}
+
               <FormGroup>
                 <Label for="message" className="fw-semi-bold">
                   Message to candidate
@@ -464,6 +557,7 @@ export function ScheduleInterviewModal({
                   placeholder="Enter message to candidate"
                 />
               </FormGroup>
+
               <FormGroup>
                 <Label for="hmEmails" className="fw-semi-bold">
                   Add Interviewers
@@ -475,7 +569,8 @@ export function ScheduleInterviewModal({
                   placeholder="Add hiring managers or other interviewers - enter emails seperated by comma"
                 />
               </FormGroup>
-              <Row style={{ display: 'none' }}>
+
+              <Row style={{ display: "none" }}>
                 <Col md={4}>
                   <FormGroup>
                     <Label for="phoneNo" className="fw-semi-bold">
@@ -493,6 +588,7 @@ export function ScheduleInterviewModal({
                 </Col>
               </Row>
             </Col>
+
             <div className="divider" />
             <div className="d-block text-center">
               <Button size="lg" color="primary" type="submit">
