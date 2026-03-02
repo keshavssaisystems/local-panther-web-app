@@ -92,7 +92,7 @@ export const updateScheduledInterviewThunk = createAsyncThunk(
 export const getAllInterviewThunk = createAsyncThunk(
   `${name}/getAllInterviewThunk`,
   async (userList) => {
-    
+
     const UPCOMING_INTEVRIEW_END_POINT_V3 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&isPaginationRequired=false&userList=${userList}`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V3);
   }
@@ -160,6 +160,14 @@ export const getInterviewGuideListThunk = createAsyncThunk(
   }
 );
 
+export const getCandidateInterviewListThunk = createAsyncThunk(
+  `${name}/getCandidateInterviewListThunk`,
+  async (candidaterecommendedjobid) => {
+    const END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_ScheduledInterviewHistory?parameter=@candidaterecommendedjobid=${candidaterecommendedjobid}`;
+    return await fetchWrapper.get(END_POINT);
+  }
+);
+
 // Create the slice
 const scheduleInterviewSlice = createSlice({
   name,
@@ -175,6 +183,7 @@ const scheduleInterviewSlice = createSlice({
     interviewStatus: [],
     interviewGuideList: [],
     loading: false,
+    interviewHistoryList: []
   },
   reducers: {
     feedback: (state, action) => {
@@ -434,6 +443,15 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getCandidateInterviewListThunk.pending]: (state) => {
+      state.interviewHistoryList = [];
+    },
+    [getCandidateInterviewListThunk.fulfilled]: (state, action) => {
+      state.interviewHistoryList = [];
+    },
+    [getCandidateInterviewListThunk.rejected]: (state, action) => {
+      state.interviewHistoryList = [];
+    },
   },
 });
 
@@ -457,6 +475,7 @@ export const scheduleInterviewActions = {
   getInterviewStatusDropDownThunk,
   interviewFeedbackThunk,
   getInterviewGuideListThunk,
+  getCandidateInterviewListThunk
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;
