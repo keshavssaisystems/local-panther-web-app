@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { custJobListActions, createjobActions, dropdownActions } from "_store";
+import { custJobListActions, createjobActions, dropdownActions, getHiringMangersList} from "_store";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { custListPageSize } from "_helpers/constants";
@@ -66,13 +66,14 @@ export default function CustJobList() {
   );
 
   const hiringManagers = useSelector(
-    (state) => state?.customerReportReducer?.hiringmangers || []
+    (state) => state?.customerReportReducer?.companyHiringManagers || []
   );
 
   useEffect(() => {
     dispatch(createjobActions.getCustomerDetailsThunk(userDetails?.InternalUserId));
     dispatch(dropdownActions.getCloseJobReasonListThunk());
-  }, [dispatch])
+    dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'allUserListByCompany'}));
+  }, [dispatch, companyId])
 
   useEffect(() => {
     dispatch(custJobListActions.clearJobList());

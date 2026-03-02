@@ -70,6 +70,7 @@ import {
   setStartDate,
   setEndDate
 } from "_store/commonCustFiltersSlice";
+import { CandidateInterviewHistoryModal } from "_components/modal/candidateinterviewhistorymodal";
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
   const { jobPostedbyId } = useParams();
@@ -103,7 +104,8 @@ export default function CustomerCandidateLists(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
-
+  const [candidateInterviewList, setCandidateInterviewList] = useState([]);
+  const [showCandidateInterviewHistoryModal, setShowCandidateInterviewHistoryModal] = useState(false);
   let [startDate1, setStartDate1] = useState();
   let [endDate1, setEndDate1] = useState();
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
@@ -491,6 +493,21 @@ export default function CustomerCandidateLists(props) {
       setCandidateHistoryList([]);
       setShowCandidateHistoryModal(false);
     }
+  };
+
+  const onCandidateInterviewHistoryClick = async (candidateId, row) => {
+    setCandidateName(row?.firstname + " " + row?.lastname);
+    let response = await dispatch(scheduleInterviewActions.getCandidateInterviewListThunk(row.candidaterecommendedjobid));
+    if (response?.payload) {
+      setCandidateInterviewList(response?.payload?.data?.data || []);
+      setShowCandidateInterviewHistoryModal(true);
+    }
+    else {
+      setCandidateInterviewList([]);
+      setShowCandidateInterviewHistoryModal(false);
+    }
+
+
   };
 
   const handleInterviewFilters = async () => {
@@ -1604,6 +1621,9 @@ export default function CustomerCandidateLists(props) {
                             onCandidateResume(candidateId, url)
                           }
                           isStaffingFirm={isStaffingFirm}
+                          onCandidateInterviewHistory={(candidateId, row) =>
+                            onCandidateInterviewHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1983,6 +2003,20 @@ export default function CustomerCandidateLists(props) {
           <CandidateCVModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)}
             url={candidateDocumentUrl}
           />
+        )}
+      </>
+      <>
+        {showCandidateInterviewHistoryModal ? (
+          <>
+            <CandidateInterviewHistoryModal
+              isOpen={showCandidateInterviewHistoryModal}
+              onClose={() => setShowCandidateInterviewHistoryModal(false)}
+              candidateInterviewList={candidateInterviewList}
+              candidateName={candidateName}
+            />
+          </>
+        ) : (
+          <></>
         )}
       </>
     </>
