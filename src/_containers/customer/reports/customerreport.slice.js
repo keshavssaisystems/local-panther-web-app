@@ -232,6 +232,15 @@ export const getHiringMangerListDynamic = createAsyncThunk(
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
   }
 );
+//getHiringMangersList use for AssignJobs Modal
+export const getHiringMangersList  = createAsyncThunk(
+  `${name}/getHiringMangerListDynamic`,
+  async ({companyId, endpoint = 'userListByCompany'}) => {
+    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }Common/GetCommonDropdown?searchText=${endpoint}&commonId=${companyId}`;
+    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+  }
+);
 
 // get job dropdown list
 export const getJobDropdownByUserid = createAsyncThunk(
@@ -254,6 +263,8 @@ const customerReportSlice = createSlice({
   initialState: {
     // initialize state from local storage to enable user to stay logged in
     loading: false,
+    companyHiringManagers: [],
+    assignHiringMangers: [],
     jobList: [],
     schdInterviewList: [],
     interviewedCandidateList: [],
@@ -455,6 +466,20 @@ const customerReportSlice = createSlice({
       state.hiringmangers = payload?.data;
     },
     [getHiringMangerListDynamic.rejected]: (state, action) => { },
+    //for Assign Jobs Modal and Assign Hiring Manager dropdown
+    [getHiringMangersList.pending]: (state) => {
+    },
+    [getHiringMangersList.fulfilled]: (state, { payload = {}, meta }) => {
+      const endpoint = meta?.arg?.endpoint;
+      if (endpoint === 'allUserListByCompany') {
+        state.companyHiringManagers = payload?.data;
+      }
+      if(endpoint === 'assignUserListByCompany') {
+        state.assignHiringManagers = payload?.data;
+      }
+    },
+    [getHiringMangersList.rejected]: (state, action) => {
+    },
 
     // job dropdown list
     [getJobDropdownByUserid.pending]: (state) => {
@@ -492,7 +517,8 @@ export const customerReportActions = {
   getReportCandidateInterviewList,
   getHiringMangerList,
   getHiringMangerListDynamic,
-  getJobDropdownByUserid
+  getHiringMangersList,
+  getJobDropdownByUserid,
 };
 
 export const customerReportReducer = customerReportSlice.reducer;

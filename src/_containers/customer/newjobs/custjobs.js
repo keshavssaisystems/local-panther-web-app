@@ -66,13 +66,14 @@ export default function CustJobList() {
   );
 
   const hiringManagers = useSelector(
-    (state) => state?.customerReportReducer?.hiringmangers || []
+    (state) => state?.customerReportReducer?.companyHiringManagers || []
   );
 
   useEffect(() => {
     dispatch(createjobActions.getCustomerDetailsThunk(userDetails?.InternalUserId));
     dispatch(dropdownActions.getCloseJobReasonListThunk());
-  }, [dispatch])
+    dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'allUserListByCompany'}));
+  }, [dispatch, companyId])
 
   useEffect(() => {
     dispatch(custJobListActions.clearJobList());

@@ -10,7 +10,7 @@ import {
     Input,
     Button,
 } from "reactstrap";
-import { getHiringMangerList, dropdownActions } from "_store";
+import { getHiringMangerListDynamic, dropdownActions ,getHiringMangersList} from "_store";
 import {
     setSelectedOpt,
     setSearchText,
@@ -54,13 +54,13 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
 
     // 🔹 Hiring Manager dropdown list
     const hiringManagerDownList = useSelector(
-        (state) => state?.customerReportReducer?.hiringmangers
+        (state) => state?.customerReportReducer?.assignHiringManagers
     );
 
     // 🔹 Fetch hiring managers
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
-        dispatch(getHiringMangerList(companyId));
+        dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'assignUserListByCompany' }));
         if (!hiringManagerId) {
             dispatch(setHiringManagerId(localStorage.getItem("userId")));
         }
