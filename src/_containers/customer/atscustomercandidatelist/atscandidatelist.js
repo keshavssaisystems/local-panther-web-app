@@ -26,12 +26,13 @@ function ATSCandidateList() {
     const dispatch = useDispatch();
     
     const data = useSelector((state) => state.ats?.candidates || []);
+    const totalRows = useSelector((state) => state.ats?.totalrows || 0);
+
     const loading = useSelector((state) => state.ats?.loader || false);
 
-    // pagination state
+    // pagination statex
     const [currentPage, setCurrentPage] = useState(1); // 1-based
     const [perPage, setPerPage] = useState(10);
-    const totalRows = useSelector((state) => state.ats?.totalrows || 0);
     const [searchData, setSearchData] = useState("");
     const [statusFilter, setStatusFilter] = useState(0);
     const setSearchText = (text) => {
@@ -42,16 +43,6 @@ function ATSCandidateList() {
         try {
             const params = { pageNumber: page, pageSize: pageSize, status: status || 0, searchText: searchText || "" };
             const res = await dispatch(atsActions.fetchCustomerCandidates(params));
-            const payload = res?.payload || {};
-            const total =
-                payload?.total ||
-                payload?.totalRecords ||
-                payload?.totalCount ||
-                payload?.data?.total ||
-                payload?.data?.totalRecords ||
-                (Array.isArray(payload?.data) ? payload.data.length : data.length);
-
-            // setTotalRows(Number(total) || 0);
         } catch (err) {
            
         }
@@ -81,7 +72,7 @@ function ATSCandidateList() {
 
     const onClearSearch = () => {
         setSearchData("");
-        fetchData(1, perPage, statusFilter, "");
+        fetchData(currentPage, perPage, statusFilter, "");
     };
 
     let columns = [
