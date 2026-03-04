@@ -234,7 +234,7 @@ export const getHiringMangerListDynamic = createAsyncThunk(
 );
 //getHiringMangersList use for AssignJobs Modal
 export const getHiringMangersList  = createAsyncThunk(
-  `${name}/getHiringMangerListDynamic`,
+  `${name}/getHiringMangersList`,
   async ({companyId, endpoint = 'userListByCompany'}) => {
     const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
       }Common/GetCommonDropdown?searchText=${endpoint}&commonId=${companyId}`;
