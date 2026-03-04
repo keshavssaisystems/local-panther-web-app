@@ -1,0 +1,64 @@
+name: Create Pull Requests to Base Branches
+on:
+  push:
+    branches:
+      - 'presentation-branch'  # Trigger branch
+
+env:
+  HEAD_BRANCH: presentation-branch
+  BASE_BRANCHES: |
+    prod-deployment-latest
+
+jobs:
+  create-pull-requests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Create PRs to multiple base branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: ${{ env.HEAD_BRANCH }}
+          BASE_BRANCHES: ${{ env.BASE_BRANCHES }}
+        run: |
+          IFS=$'\n'
+          for BASE_BRANCH in $BASE_BRANCHES; do
+            echo "Checking for existing PR from $HEAD_BRANCH to $BASE_BRANCH..."
+
+            pr_count=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head "$HEAD_BRANCH" \
+              --base "$BASE_BRANCH" \
+              --json title \
+              --jq 'length')
+
+            if [ "$pr_count" -eq 0 ]; then
+              echo "Creating PR from $HEAD_BRANCH to $BASE_BRANCH..."
+              gh pr create \
+                --title "Deploy changes automated PR from $HEAD_BRANCH to $BASE_BRANCH" \
+                --body "This PR was automatically created from the \`$HEAD_BRANCH\` branch." \
+                --base "$BASE_BRANCH" \
+                --head "$HEAD_BRANCH"
+            else
+              echo "PR already exists from $HEAD_BRANCH to $BASE_BRANCH. Skipping..."
+            fi
+          done
+
+
+      - name: Create pull request
+        if: steps.check_pr.outputs.pr_exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: ${{ github.ref_name }}
+          BASE_BRANCH: development
+        run: |
+          gh pr create \
+            --title "New changes automated PR from ${{ env.HEAD_BRANCH }} to ${{ env.BASE_BRANCH }}" \
+            --body "This PR was automatically created from the `${{ env.HEAD_BRANCH }}` branch." \
+            --base ${{ env.BASE_BRANCH }} \
+            --head ${{ env.HEAD_BRANCH }}
+

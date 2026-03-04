@@ -129,7 +129,6 @@ const atsSlice = createSlice({
                 state.atsauthorizationList = [];
             })
             .addCase(getCompanyATS.fulfilled, (state, action) => {
-                console.log(action.payload);
                 state.atsauthorizationList = action.payload?.data?.data || [];
                 //state.atsauthorizationList = payload?.data?.data;
                 state.loader = false;
@@ -150,7 +149,6 @@ const atsSlice = createSlice({
                 state.atstypeList = [];
             })
             .addCase(getATSList.fulfilled, (state, action) => {
-                console.log(action.payload);
                 state.atstypeList = action?.payload?.data?.data || [];
                 state.loader = false;
                 //state.atsauthorizationList = payload?.data?.data;
@@ -167,16 +165,19 @@ const atsSlice = createSlice({
             }).addCase(fetchCustomerCandidates.pending, (state, { payload }) => {
                 state.loader = true;
                 state.candidates = [];
+                state.totalrows = 0;
             })
             .addCase(fetchCustomerCandidates.fulfilled, (state, action) => {
-                console.log(action.payload);
                 state.loader = false;
-                if (action.payload?.data[0]?.data?.length > 0)
+                if (action.payload?.data[0]?.data?.length > 0) {
                     state.candidates = JSON.parse(action.payload?.data[0]?.data || []);
-                state.totalrows = action.payload?.data[0]?.totalrecord || 0;
-
+                } else {
+                    state.candidates = [];
+                }
+                state.totalrows = action.payload?.data[0]?.totalRows || 0;
+                
             })
-            .addCase(fetchCustomerCandidates.rejected, (state, action) => {
+            .addCase(fetchCustomerCandidates.rejected, (state) => {
                 state.loader = false;
             })
             .addCase(fetchATSCompanyList.pending, (state) => {
@@ -202,7 +203,6 @@ const atsSlice = createSlice({
                 state.atsauthorizationList = [];
             })
             .addCase(getAuthorizedATSList.fulfilled, (state, action) => {
-                console.log(action.payload);
                 state.atsauthorizationList = action.payload?.data?.data || [];
                 state.loader = false;
             })
