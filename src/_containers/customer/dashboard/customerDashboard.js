@@ -29,6 +29,7 @@ export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState(null);
+  const [jobListPage, setJobListPage] = useState(1);
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -81,12 +82,36 @@ export default function CustomerDashboard() {
 
   // ── Job Pipeline Timeline selectors ──────────────────────────────────────
   const pipelineJobList = useSelector((state) => state.custJobListReducer.jobList);
+  const totalRows = useSelector((state) => state.custJobListReducer.totalRows);
   const pipelineJobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
   const pipelineJdLoading = useSelector((state) => state.custJobListReducer.jdLoading);
 
   const handleBillDetailUpdate = () => {
     setShowRemModal(false);
     setShowPaymentModal(true);
+  };
+
+  const loadJobListPage = (pageNumber) => {
+    const dashCompanyId = localStorage.getItem("companyid");
+    const dashUserId = localStorage.getItem("userId");
+    if (dashUserId && dashCompanyId) {
+      dispatch(
+        custJobListActions.getJobList({
+          pageSize: 10,
+          pageNumber: pageNumber,
+          searchText: "",
+          companyId: dashCompanyId,
+          searchType: "JobTitle",
+          jobStatus: "",
+          hiringManagerId: dashUserId,
+        })
+      );
+      setJobListPage(pageNumber);
+    }
+  };
+
+  const handleLoadNextPage = () => {
+    loadJobListPage(jobListPage + 1);
   };
 
   useEffect(() => {
@@ -121,17 +146,7 @@ export default function CustomerDashboard() {
     const dashUserId = localStorage.getItem("userId");
     const dashCompanyId = localStorage.getItem("companyid");
     if (dashUserId && dashCompanyId) {
-      dispatch(
-        custJobListActions.getJobList({
-          pageSize: 50,
-          pageNumber: 1,
-          searchText: "",
-          companyId: dashCompanyId,
-          searchType: "JobTitle",
-          jobStatus: "",
-          hiringManagerId: dashUserId,
-        })
-      );
+      loadJobListPage(1);
     }
   }, []);
 
@@ -310,6 +325,10 @@ export default function CustomerDashboard() {
               selectedJobId={selectedJobId}
               onSelectJob={setSelectedJobId}
               userId={userId}
+              totalRows={totalRows}
+              currentPage={jobListPage}
+              pageSize={10}
+              onLoadNextPage={handleLoadNextPage}
             />
           </Col>
         </Row>
