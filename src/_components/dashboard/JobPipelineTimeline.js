@@ -149,6 +149,9 @@ export function JobPipelineTimeline({ job, hiringManagerId }) {
   // ------------------------------------------------------------------
   return (
     <div className="job-detail-cont">
+      <h5 className="fw-semibold fs-5 text-dark mb-2 px-3 py-2 ">
+    {job?.jobtitle}
+  </h5>
       <div className="forms-wizard-alt ms-3 me-3">
         <ol className="forms-wizard">{renderSteps()}</ol>
       </div>

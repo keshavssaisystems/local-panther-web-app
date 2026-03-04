@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Card, CardBody, Button, Badge } from "reactstrap";
+import React, { useEffect, useState } from "react";
+import { Row, Col } from "reactstrap";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
@@ -22,17 +22,13 @@ import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
 import { PaymentModal } from "_components/modal/paymentmodal";
-import Loader from "react-loaders";
-import { JobPipelineTimeline } from "_components/dashboard/JobPipelineTimeline";
+import { ActivePipelines } from "_components/dashboard/ActivePipelines";
 import { createAuthLink } from "_components/unifiedApp/unifiedApp";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(false);
-  const tabScrollRef = useRef(null);
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -307,96 +303,14 @@ export default function CustomerDashboard() {
         </Row>
         <Row>
           <Col sm="12">
-            {/* ── Active Pipelines ─────────────────────────────────────────── */}
-            <Card className="mb-3 shadow-sm">
-              <CardBody>
-                <h6 className="fw-semibold mb-3" style={{ color: "#2f2e2e", fontSize: "15px" }}>
-                  Active Pipelines
-                </h6>
-
-                {/* Job title tabs with horizontal scroll arrows */}
-                {pipelineJobList?.length > 0 && (
-                  <div className="d-flex align-items-center gap-1 mb-3">
-                    {/* Left arrow */}
-                    <Button
-                      color="light"
-                      size="sm"
-                      className="rounded-circle p-0 border flex-shrink-0"
-                      style={{ width: "28px", height: "28px", opacity: showLeftArrow ? 1 : 0.25 }}
-                      disabled={!showLeftArrow}
-                      onClick={() => tabScrollRef.current?.scrollBy({ left: -300, behavior: "smooth" })}
-                      aria-label="Scroll left"
-                    >
-                      <span style={{ fontWeight: 700, color: "#2f479b" }}>&#8249;</span>
-                    </Button>
-
-                    {/* Scrollable tab strip */}
-                    <div
-                      ref={(el) => {
-                        tabScrollRef.current = el;
-                        if (el) setShowRightArrow(el.scrollWidth > el.clientWidth);
-                      }}
-                      onScroll={(e) => {
-                        const el = e.currentTarget;
-                        setShowLeftArrow(el.scrollLeft > 0);
-                        setShowRightArrow(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-                      }}
-                      className="d-flex gap-2 flex-grow-1"
-                      style={{ overflowX: "hidden", scrollBehavior: "smooth" }}
-                    >
-                      {pipelineJobList.map((job) => (
-                        <Button
-                          key={job.jobid}
-                          size="sm"
-                          color={selectedJobId === job.jobid ? "primary" : "light"}
-                          className="rounded-pill border flex-shrink-0"
-                          style={{
-                            whiteSpace: "nowrap",
-                            borderColor: selectedJobId === job.jobid ? "#2f479b" : "#e0e0e0",
-                            fontWeight: selectedJobId === job.jobid ? 600 : 400,
-                          }}
-                          onClick={() => setSelectedJobId(job.jobid)}
-                        >
-                          {job.jobtitle}
-                        </Button>
-                      ))}
-                    </div>
-
-                    {/* Right arrow */}
-                    <Button
-                      color="light"
-                      size="sm"
-                      className="rounded-circle p-0 border flex-shrink-0"
-                      style={{ width: "28px", height: "28px", opacity: showRightArrow ? 1 : 0.25 }}
-                      disabled={!showRightArrow}
-                      onClick={() => tabScrollRef.current?.scrollBy({ left: 300, behavior: "smooth" })}
-                      aria-label="Scroll right"
-                    >
-                      <span style={{ fontWeight: 700, color: "#2f479b" }}>&#8250;</span>
-                    </Button>
-                  </div>
-                )}
-
-                {/* Pipeline timeline */}
-                {pipelineJobList?.length === 0 && !pipelineJdLoading && (
-                  <p className="text-muted small mb-0">No active jobs found.</p>
-                )}
-
-                {pipelineJdLoading ? (
-                  <Loader
-                    type="line-scale-pulse-out-rapid"
-                    className="d-flex justify-content-center"
-                  />
-                ) : (
-                  pipelineJobDetail?.length > 0 && (
-                    <JobPipelineTimeline
-                      job={pipelineJobDetail[0]}
-                      hiringManagerId={userId}
-                    />
-                  )
-                )}
-              </CardBody>
-            </Card>
+            <ActivePipelines
+              pipelineJobList={pipelineJobList}
+              pipelineJobDetail={pipelineJobDetail}
+              pipelineJdLoading={pipelineJdLoading}
+              selectedJobId={selectedJobId}
+              onSelectJob={setSelectedJobId}
+              userId={userId}
+            />
           </Col>
         </Row>
         <Row>
