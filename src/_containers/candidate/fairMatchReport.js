@@ -64,6 +64,11 @@ const FairMatchSection = ({ scorejson, jobTitle }) => {
             }
           />
 
+          <MatchBlock
+            title="Salary"
+            percent={toPercent(data.salaryscore)}
+            description={data.salary_match_description}
+          />
         </div>
       </div>
     </section>
