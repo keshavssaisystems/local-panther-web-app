@@ -10,6 +10,7 @@ import {
   dropdownActions,
   customerCandidateListsActions,
   candidateDashboardActions,
+  custJobListActions,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
@@ -21,11 +22,14 @@ import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
 import { PaymentModal } from "_components/modal/paymentmodal";
+import { ActivePipelines } from "_components/dashboard/ActivePipelines";
 import { createAuthLink } from "_components/unifiedApp/unifiedApp";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState(null);
+  const [jobListPage, setJobListPage] = useState(1);
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -76,9 +80,38 @@ export default function CustomerDashboard() {
     );
   };
 
+  // ── Job Pipeline Timeline selectors ──────────────────────────────────────
+  const pipelineJobList = useSelector((state) => state.custJobListReducer.jobList);
+  const totalRows = useSelector((state) => state.custJobListReducer.totalRows);
+  const pipelineJobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
+  const pipelineJdLoading = useSelector((state) => state.custJobListReducer.jdLoading);
+
   const handleBillDetailUpdate = () => {
     setShowRemModal(false);
     setShowPaymentModal(true);
+  };
+
+  const loadJobListPage = (pageNumber) => {
+    const dashCompanyId = localStorage.getItem("companyid");
+    const dashUserId = localStorage.getItem("userId");
+    if (dashUserId && dashCompanyId) {
+      dispatch(
+        custJobListActions.getJobList({
+          pageSize: 15,
+          pageNumber: pageNumber,
+          searchText: "",
+          companyId: dashCompanyId,
+          searchType: "JobTitle",
+          jobStatus: "",
+          hiringManagerId: dashUserId,
+        })
+      );
+      setJobListPage(pageNumber);
+    }
+  };
+
+  const handleLoadNextPage = () => {
+    loadJobListPage(jobListPage + 1);
   };
 
   useEffect(() => {
@@ -108,7 +141,28 @@ export default function CustomerDashboard() {
         page_path: window.location.pathname,
       });
     }
+
+    // Load job list for the Active Pipelines section
+    const dashUserId = localStorage.getItem("userId");
+    const dashCompanyId = localStorage.getItem("companyid");
+    if (dashUserId && dashCompanyId) {
+      loadJobListPage(1);
+    }
   }, []);
+
+  // Auto-select the first job whenever the pipeline job list loads
+  useEffect(() => {
+    if (pipelineJobList?.length > 0 && !selectedJobId) {
+      setSelectedJobId(pipelineJobList[0].jobid);
+    }
+  }, [pipelineJobList]);
+
+  // Fetch full job detail whenever the selected tab changes
+  useEffect(() => {
+    if (selectedJobId) {
+      dispatch(custJobListActions.getJobDetail({ jobId: selectedJobId }));
+    }
+  }, [selectedJobId]);
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
@@ -259,6 +313,22 @@ export default function CustomerDashboard() {
               onReadNotification={(id, status, item) =>
                 onReadNotification(id, status, item)
               }
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col sm="12">
+            <ActivePipelines
+              pipelineJobList={pipelineJobList}
+              pipelineJobDetail={pipelineJobDetail}
+              pipelineJdLoading={pipelineJdLoading}
+              selectedJobId={selectedJobId}
+              onSelectJob={setSelectedJobId}
+              userId={userId}
+              totalRows={totalRows}
+              currentPage={jobListPage}
+              pageSize={10}
+              onLoadNextPage={handleLoadNextPage}
             />
           </Col>
         </Row>
