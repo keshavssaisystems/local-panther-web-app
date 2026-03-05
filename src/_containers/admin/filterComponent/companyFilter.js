@@ -9,7 +9,13 @@ export function CompanyFilter({
   isMulti = false,
   value,
   disabled = false,
+  // optional react-select props to control menu stacking and portal behavior
+  styles = {},
+  menuPortalTarget = typeof document !== "undefined" ? document.body : null,
+  menuPosition = "fixed",
+  menuPlacement = "auto",
 }) {
+  const { zIndex = 9999 } = styles;
   const [defaultOptions, setDefaultOptions] = useState([]);
 
   useEffect(() => {
@@ -51,6 +57,10 @@ export function CompanyFilter({
       isMulti={isMulti}
       value={value}
       isDisabled={disabled}
+      styles={{ ...styles, menuPortal: (base) => ({ ...base, zIndex }) }}
+      menuPortalTarget={menuPortalTarget}
+      menuPosition={menuPosition}
+      menuPlacement={menuPlacement}
     />
   );
 }
