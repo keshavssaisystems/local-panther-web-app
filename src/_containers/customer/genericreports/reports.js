@@ -663,7 +663,7 @@ const ReportsList = () => {
                                                     cacheOptions
                                                     defaultOptions={[
                                                         { label: "Select All", value: null, candidateid: null },
-                                                        (candidateDropDownList || []).map((c) => ({
+                                                        ...(candidateDropDownList || []).map((c) => ({
                                                             label: c.candidatename || c.name,
                                                             value: c.candidateid,
                                                             candidateid: c.candidateid,
