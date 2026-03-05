@@ -69,7 +69,7 @@ export function ScorePopup({ scoreJson }) {
                 <Accordion open={open} toggle={toggle}>
                   {keys?.map((key, index) => (
                     <AccordionItem>
-                      <AccordionHeader targetId={index + 1}>
+                      {validatedJson[key] !== undefined && (<AccordionHeader targetId={index + 1}>
                         <div className="nav-item-header-custom">
                           <Row>
                             <Col
@@ -87,7 +87,8 @@ export function ScorePopup({ scoreJson }) {
                             </Col>
                           </Row>
                         </div>
-                      </AccordionHeader>
+                      </AccordionHeader>)}
+
                       <AccordionBody accordionId={index + 1}>
                         <>
                           {index + 1 === 1 && (
