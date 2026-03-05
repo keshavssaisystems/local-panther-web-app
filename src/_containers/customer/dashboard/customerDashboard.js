@@ -97,7 +97,7 @@ export default function CustomerDashboard() {
     if (dashUserId && dashCompanyId) {
       dispatch(
         custJobListActions.getJobList({
-          pageSize: 10,
+          pageSize: 15,
           pageNumber: pageNumber,
           searchText: "",
           companyId: dashCompanyId,
