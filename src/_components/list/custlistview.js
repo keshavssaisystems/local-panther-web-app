@@ -435,15 +435,16 @@ export const CustCandidateListView = (props) => {
     } else if (props.type === "scheduled") {
       return (
         <ButtonGroup>
-          {getRecentInterviewStatus(row) === 5 && (<Button
-            // outline
+          {getRecentInterviewStatus(row) === 5 && (
+            <Button           
             size="sm"
             title="Schedule Next Round"
             className="btn-icon"
             color="alternate"
             onClick={() => onScheduleClick(row)}
+            style={{ backgroundColor: "#2F479B" }}
           >
-            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+            <img src={customerIcons.list_schedule_next} alt="list schedule-next-round" style={{marginTop: "-3px"}}></img>
           </Button>)}
           {getRecentInterviewStatus(row) !== 5 && (
             <Button
