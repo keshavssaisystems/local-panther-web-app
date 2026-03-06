@@ -6,7 +6,7 @@ export const InterViewDetailModal = (props) => {
   return (
     <Modal className="modal-reject-align profile-view" isOpen={props.isOpen}>
       <ModalHeader toggle={() => props.onClose()} charCode="Y">
-        <strong className="card-title-text">Interview Details</strong>
+        <strong className="card-title-text">Interview Details {props?.data?.roundname && `(${props.data.roundname})`}</strong>
       </ModalHeader>
       <ScheduleDetails
         onClose={() => props.onClose()}
