@@ -93,8 +93,16 @@ const ReportsList = () => {
     let [currentPage, setCurrentPage] = useState(1);
     let [perPage, setPerPage] = useState();
     const [searchData, setSearchData] = useState("");
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState(() => {
+        const date = new Date();
+        date.setDate(date.getDate() - 90);
+        return date;
+    });
+    const [endDate, setEndDate] = useState(() => {
+        const date = new Date();
+        date.setDate(date.getDate());
+        return date;
+    });
     const [subsidiaryId, setSubsidiaryId] = useState("");
     const [company, setCompany] = useState([]);
     const [candidateId, setCandidateId] = useState("");
@@ -102,7 +110,7 @@ const ReportsList = () => {
     const [jobId, setJobId] = useState();
     const [jobSelected, setJobSelected] = useState(null);
     const [recommStatusId, setRecommStatusId] = useState(-1);
-    const [hiringmanagerId, setHiringMangerId] = useState();
+    const [hiringmanagerId, setHiringMangerId] = useState(null);
     const [roleId, setRoleId] = useState();
     const [customerId, setCustomerId] = useState("");
     const [showJDModal, setShowJDModal] = useState(false);
@@ -390,16 +398,25 @@ const ReportsList = () => {
 
     useEffect(() => {
         setSearchData("");
+        setJobStatus("");
         setCurrentPage(1);
         setPerPage(10);
         filter = {};
         data = [];
-        const startdate = null;
-        const enddate = null;
+        setCompany([]);
+        const startdate =  new Date();
+        startdate.setDate(startdate.getDate() - 90);
+        const enddate = new Date();
+        enddate.setDate(enddate.getDate());
         setStartDate(startdate);
         setEndDate(enddate);
         const hmId = localStorage.getItem("userId");
-        setHiringMangerId(hmId ? Number(hmId) : "");
+        const userroleid = localStorage.getItem("userroleid");
+        if (userroleid && Number(userroleid) > 1) { // which is usually the role id for hiring manager
+            setHiringMangerId(hmId ? Number(hmId) : null);
+        } else {
+            setHiringMangerId(null);
+        }
         // new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hmId }, resolve));
         setJobSelected(null);
         fetchData(currentPage, perPage, startdate, enddate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
@@ -409,7 +426,7 @@ const ReportsList = () => {
     useEffect(() => {
         fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
 
-    }, [jobStatus, statusFilter, profileStatusFilter, profileSourceFilter,
+    }, [jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, company,
         recommStatusId, jobId, hiringmanagerId, candidateSelected, startDate, endDate]);
 
 
@@ -455,13 +472,14 @@ const ReportsList = () => {
         setStatusFilter(null);
         setProfileStatusFilter(null);
         setProfileSourceFilter(null);
-        setHiringMangerId("");
+        setHiringMangerId(null);
         setCompany([]);
         setCurrentPage(1);
         setPerPage(10);
         new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hiringmanagerId }, resolve));
         // Reset job filter state to clear all filter conditions in Redux
         setFilter({});
+        setJobStatus("");
 
         // Fetch data with no filters
         fetchData(1, 10, null, null, "", null, "", [], "", null, null, null, null, null); // Reset to first page with current perPage
@@ -552,10 +570,8 @@ const ReportsList = () => {
                                                     onChange={(name, value, e) => {
                                                         handleChange(name, value);
                                                         setCompany(e);
-                                                        setHiringMangerId("");
-                                                        if (e?.value && filter.hiringManager === 1) {
-                                                            dispatch(getHiringMangerListDynamic({ companyId: e.value, endpoint: "allUserListByCompany" }));
-                                                        }
+                                                        setHiringMangerId(null);
+                                                        dispatch(getHiringMangerListDynamic({ companyId: e.value ? e.value : 0, endpoint: "allUserListByCompany" }));
                                                     }}
                                                     value={company}
                                                 />
@@ -568,9 +584,10 @@ const ReportsList = () => {
                                                 id="hiringManagerId"
                                                 type="select"
                                                 value={hiringmanagerId || ""}
-                                                onChange={(e) => setHiringMangerId(e.target.value)}
+                                                placeholder="Search Hiring Manager"
+                                                onChange={(e) => setHiringMangerId(e.target.value || null)}
                                             >
-                                                <option value={""}>Select a Hiring Manager</option>
+                                                <option value={""}>All Hiring Manager</option>
                                                 {hiringManagerDownList?.length > 0 &&
                                                     hiringManagerDownList.map((data) => (
                                                         <option value={data.id} key={data.id}>
@@ -617,7 +634,7 @@ const ReportsList = () => {
                                                 value={profileSourceFilter ?? ""}
                                                 onChange={(e) => setProfileSourceFilter(e.target.value === "" ? null : e.target.value)}
                                             >
-                                                <option value={""}>All profile source</option>
+                                                <option value={""}>All source</option>
                                                 <option value={"1"}>EcoSystem</option>
                                                 <option value={"0"}>Outside</option>
                                             </Input>
