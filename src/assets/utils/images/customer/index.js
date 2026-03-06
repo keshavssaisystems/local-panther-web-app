@@ -26,7 +26,8 @@ const customerIcons = {
   titlelist: require("./tilelist.svg").default,
   closebutton: require("./closebutton.svg").default,
   editbutton: require("./editbutton.svg").default,
-  anticlockFrame: require("./anticlockFrame.svg").default
+  anticlockFrame: require("./anticlockFrame.svg").default,
+  list_schedule_next: require("./list/schedule_next.svg").default,
 };
 
 export default customerIcons;
