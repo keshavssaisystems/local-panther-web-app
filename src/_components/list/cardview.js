@@ -584,13 +584,13 @@ export const CandidateCardView = (props) => {
                                     <span>
                                       {props.data.assignedInfoDTO?.[0]?.assignmentstartdate
                                         ? 
-                                        moment(props.data.assignedInfoDTO?.[0]?.assignmentstartdate ).format("MM/DD/YYYY")
+                                        moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentstartdate ).format("MM/DD/YYYY")
                                          : "-"}
                                     </span>
                                        {" - "}
                                     <span>
                                       {props.data.assignedInfoDTO?.[0]?.assignmentenddate
-                                        ? moment(props.data.assignedInfoDTO?.[0]?.assignmentenddate ).format("MM/DD/YYYY")
+                                        ? moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentenddate ).format("MM/DD/YYYY")
                                          : "-"}
                                     </span>
                                   </div>
