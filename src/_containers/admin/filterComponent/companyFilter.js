@@ -22,9 +22,10 @@ export function CompanyFilter({
     // Load all companies on mount
     (async () => {
       const { data = [] } = await getCompanyDropDown("");
-      setDefaultOptions(
-        data.map(({ companyid: value, companyname: label }) => ({ value, label }))
-      );
+      setDefaultOptions([
+        { value: null, label: "All Companies" },
+        ...data.map(({ companyid: value, companyname: label }) => ({ value, label })),
+      ]);
     })();
   }, []);
 
