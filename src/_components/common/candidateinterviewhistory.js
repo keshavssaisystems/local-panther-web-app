@@ -35,7 +35,7 @@ export const CandidateInterviewHistTable = (props) => {
         },
 
         {
-            name: <span className="table-title">Interviewer</span>,
+            name: <span className="table-title">External Interviewer</span>,
             id: "Interviewer",
             cell: (row) => row?.intervieweremailids,
             selector: (row) => (row?.intervieweremailids),
@@ -45,8 +45,14 @@ export const CandidateInterviewHistTable = (props) => {
         {
             name: <span className="table-title">Feedback</span>,
             id: "Feedback",
-            cell: (row) => (row?.interviewstatus || '') + (row?.interviewfeedback ? " - " + row?.interviewfeedback : ''),
-            selector: (row) => (row?.interviewstatus || '' + (row?.interviewfeedback ? " - " + row?.interviewfeedback : '')),
+            cell: (row) => (
+                <div>
+                    {`Status: ${row?.interviewstatus || ''}`}
+                    {row?.interviewfeedback ? <br /> : null}
+                    {row?.interviewfeedback ? `Feedback: ${row?.interviewfeedback}` : null}
+                </div>
+            ),
+            selector: (row) => (`Status: ${row?.interviewstatus || ''}`) + (row?.interviewfeedback ? " Feedback: " + row?.interviewfeedback : ''),
             grow: 2
         },
 
