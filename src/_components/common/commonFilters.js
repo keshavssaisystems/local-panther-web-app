@@ -178,6 +178,13 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     const [tooltipOpen, setTooltipOpen] = useState(false);
     const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 
+    // Reset hiring manager to default when viewType changes to "list"
+    useEffect(() => {
+        if (viewType === "list") {
+            dispatch(setHiringManagerId(""));
+        }
+    }, [viewType]);
+
     return (
         <Col md="12">
             <Card className="main-card mb-3 card-filter filter-toolbar">
@@ -196,6 +203,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                             handleHiringManagerChange(e.target.value)
                                         }
                                         className="filter-select"
+                                        disabled={viewType === "list"}
                                     >
                                         <option value={""}>Select a Hiring Manager</option>
                                         {hiringManagerDownList?.length > 0 &&

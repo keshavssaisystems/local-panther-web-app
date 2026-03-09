@@ -8,6 +8,7 @@ export const ActivePipelines = ({
   pipelineJobList = [],
   pipelineJobDetail = [],
   pipelineJdLoading = false,
+  JobListloader = false,
   selectedJobId = null,
   onSelectJob = () => {},
   userId = "",
@@ -141,7 +142,7 @@ export const ActivePipelines = ({
                 );
               })}
               {/* Inline loading indicator while fetching next page */}
-              {pipelineJdLoading && hasMoreRecords && (
+              {JobListloader && hasMoreRecords && (
                 <div className="px-3 py-2 d-flex align-items-center text-muted small flex-shrink-0">
                   Loading...
                 </div>
@@ -163,7 +164,7 @@ export const ActivePipelines = ({
         )}
 
         {/* Pipeline timeline */}
-        {allJobs.length === 0 && !pipelineJdLoading && (
+        {allJobs.length === 0 &&  (
           <p className="text-muted small mb-0">No active jobs found.</p>
         )}
 

@@ -80,41 +80,47 @@ export default function CustomerDashboard() {
     );
   };
 
-  // ── Job Pipeline Timeline selectors ──────────────────────────────────────
-  const pipelineJobList = useSelector((state) => state.custJobListReducer.jobList);
-  const totalRows = useSelector((state) => state.custJobListReducer.totalRows);
-  const pipelineJobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
-  const pipelineJdLoading = useSelector((state) => state.custJobListReducer.jdLoading);
-
+  
   const handleBillDetailUpdate = () => {
     setShowRemModal(false);
     setShowPaymentModal(true);
   };
 
   const loadJobListPage = (pageNumber) => {
-    const dashCompanyId = localStorage.getItem("companyid");
     const dashUserId = localStorage.getItem("userId");
-    if (dashUserId && dashCompanyId) {
+    if (dashUserId ) {
       dispatch(
-        custJobListActions.getJobList({
+        custJobListActions.getJobs({
           pageSize: 15,
           pageNumber: pageNumber,
-          searchText: "",
-          companyId: dashCompanyId,
-          searchType: "JobTitle",
-          jobStatus: "",
-          hiringManagerId: dashUserId,
+          companyId: null,
         })
       );
       setJobListPage(pageNumber);
     }
   };
+  
+   const pipelineJobList = useSelector(
+    (state) => state.custJobListReducer.jobs
+  );
 
+  const JobListloader = useSelector(
+    (state) => state.custJobListReducer.dbloading
+  );
+
+  const totalRows = useSelector(
+    (state) => state.custJobListReducer.totalRow
+  );
   const handleLoadNextPage = () => {
     loadJobListPage(jobListPage + 1);
   };
 
   useEffect(() => {
+    // Load job list for the Active Pipelines section
+    const dashUserId = localStorage.getItem("userId");
+    if (dashUserId) {
+      loadJobListPage(1);
+    }
     if (
       localStorage.getItem("companyreferrallogid") &&
       localStorage.getItem("companyreferrallogname")
@@ -131,7 +137,7 @@ export default function CustomerDashboard() {
     dispatch(scheduleInterviewActions.getAllInterviewThunk(localStorage.getItem("userId")));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
     dispatch(
-      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
+      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid") || 0)
     );
     dispatch(customerCandidateListsActions.getDurationOptions());
     if (analytics) {
@@ -142,12 +148,7 @@ export default function CustomerDashboard() {
       });
     }
 
-    // Load job list for the Active Pipelines section
-    const dashUserId = localStorage.getItem("userId");
-    const dashCompanyId = localStorage.getItem("companyid");
-    if (dashUserId && dashCompanyId) {
-      loadJobListPage(1);
-    }
+   
   }, []);
 
   // Auto-select the first job whenever the pipeline job list loads
@@ -163,6 +164,17 @@ export default function CustomerDashboard() {
       dispatch(custJobListActions.getJobDetail({ jobId: selectedJobId }));
     }
   }, [selectedJobId]);
+  
+   
+
+  const pipelineJobDetail = useSelector(
+    (state) => state.custJobListReducer.jobDetail
+  );
+
+  const pipelineJdLoading = useSelector(
+    (state) => state.custJobListReducer.jdLoading
+  );
+
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
@@ -322,6 +334,7 @@ export default function CustomerDashboard() {
               pipelineJobList={pipelineJobList}
               pipelineJobDetail={pipelineJobDetail}
               pipelineJdLoading={pipelineJdLoading}
+              JobListloader={JobListloader}
               selectedJobId={selectedJobId}
               onSelectJob={setSelectedJobId}
               userId={userId}
