@@ -34,7 +34,7 @@ export const getJobDetail = createAsyncThunk(
 export const assignJobs = createAsyncThunk(
   `${name}/assignJobs`,
   async ({ jobIds, hiringManagerId }) => {
-    console.log("Assigning jobs:", jobIds, "to hiring managers:", hiringManagerId);
+   
     const ASSIGN_JOBS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/JobAssignedUsers`;
     
     const payloads = [];
@@ -47,13 +47,27 @@ export const assignJobs = createAsyncThunk(
       });
     });
     
-    console.log("Payloads for assigning jobs:", payloads);
-    
     const results = await Promise.all(
       payloads.map((payload) => fetchWrapper.post(ASSIGN_JOBS_END_POINT, payload))
     );
     
     return results;
+  }
+);
+
+//job list api for Dashboard jobpipeline
+// getJobs thunk
+export const getJobs= createAsyncThunk(
+  `${name}/getJobs`,
+  async ({
+    pageSize,
+    pageNumber,
+    companyId,
+    userId = null,
+    jobId = null
+  }) => {
+    const LIST_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Fetch_Jobs_List?parameter=@jobid=${jobId},@companyid=${companyId},@isactive=1,@currentpage=${pageNumber},@pagesize=${pageSize},@userid=${userId},@totalrows=0`;
+    return await fetchWrapper.get(LIST_JOB_END_POINT);
   }
 );
 
@@ -63,6 +77,8 @@ const custJobListSlice = createSlice({
   initialState: {
     jobList: [],
     totalRows: 0,
+    jobs: [],
+    totalRow: 0,
     jobDetail: [],
     loading: false,
     jdLoading: false,
@@ -164,6 +180,20 @@ const custJobListSlice = createSlice({
       state.assigningLoading = false;
       state.assigningError = action.error.message || "Failed to assign jobs";
     },
+    [getJobs.pending]: (state) => {
+      state.dbloading = true;
+      state.jobs = [];
+      state.totalRows = 0;
+    },
+    [getJobs.fulfilled]: (state, action) => {
+      state.dbloading = false;
+      state.jobs = action.payload?.data?.data;
+      state.totalRow = action.payload?.data?.totalRows;
+    },
+    [getJobs.rejected]: (state) => {
+      state.dbloading = false;
+      state.jobs = [];
+    },
   },
 });
 export const { clearJobList } = custJobListSlice.actions;
@@ -173,6 +203,7 @@ export const custJobListActions = {
   getJobList,
   getJobDetail,
   assignJobs,
+  getJobs
 };
 
 export const custJobListReducer = custJobListSlice.reducer;
