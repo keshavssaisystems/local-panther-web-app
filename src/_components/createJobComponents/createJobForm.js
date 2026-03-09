@@ -295,10 +295,10 @@ export const CreateJob = forwardRef(
     const securityClearanceOptions = useSelector(
       (state) => state.dropdown.securityClearanceList
     );
-    
+
     let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
     const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
-    
+
     let educationOptions = levelOfEducationOption.map(
       ({ id: value, ...rest }) => {
         return {
@@ -901,35 +901,31 @@ export const CreateJob = forwardRef(
     const [zipCodeFromCityState, setZipCodeFromCityState] = useState(false);
     const getFormValidation = (event) => {
       event.preventDefault();
-      event.target.elements.companyName.value === ""
-        ? setcompanyValidation(true)
-        : setcompanyValidation(false);
-      event.target.elements.jobTitle.value === ""
-        ? setJobTitleValidation(true)
-        : setJobTitleValidation(false);
-      event.target.elements.openPositions.value === "" ||
-        Number(event.target.elements.openPositions.value) === 0
-        ? setOpenPositionValidation(true)
-        : setOpenPositionValidation(false);
-      event.target.elements.jobLocation.value === "0"
-        ? setJobLocationValidation(true)
-        : setJobLocationValidation(false);
-      event.target.elements.city.value === ""
-        ? setCityValidation(true)
-        : setCityValidation(false);
-      event.target.elements.zipCode.value === ""
-        ? setZipCodeValidation(true)
-        : setZipCodeValidation(false);
-      event.target.elements.address.value === ""
-        ? setAddressValidation(true)
-        : setAddressValidation(false);
-      event.target.elements.issecurityclearancerequired.checked === true &&
-        Number(event.target.elements.securityclearance.value) === 0
-        ? setSecurityValidation(true)
-        : setSecurityValidation(false);
-      descriptionData === ""
-        ? setDescriptionValidation(true)
-        : setDescriptionValidation(false);
+      const isCompanyInvalid = event.target.elements.companyName.value === "";
+      const isJobTitleInvalid = event.target.elements.jobTitle.value === "";
+      const isOpenPositionInvalid =
+        event.target.elements.openPositions.value === "" ||
+        Number(event.target.elements.openPositions.value) === 0;
+      const isJobLocationInvalid = event.target.elements.jobLocation.value === "0";
+      const isCityInvalid = event.target.elements.city.value === "";
+      const isZipCodeInvalid = event.target.elements.zipCode.value === "";
+      const isAddressInvalid =
+        event.target.elements.zipCode.value === "3" &&
+        event.target.elements.address.value === "";
+      const isSecurityInvalid =
+        event.target.elements.issecurityclearancerequired.checked === true &&
+        Number(event.target.elements.securityclearance.value) === 0;
+      const isDescriptionInvalid = descriptionData === "";
+
+      setcompanyValidation(isCompanyInvalid);
+      setJobTitleValidation(isJobTitleInvalid);
+      setOpenPositionValidation(isOpenPositionInvalid);
+      setJobLocationValidation(isJobLocationInvalid);
+      setCityValidation(isCityInvalid);
+      setZipCodeValidation(isZipCodeInvalid);
+      setAddressValidation(isAddressInvalid);
+      setSecurityValidation(isSecurityInvalid);
+      setDescriptionValidation(isDescriptionInvalid);
       let checkJobLocationCondition = false;
       if (
         Number(jobLocationOption) === 2 &&
@@ -959,60 +955,77 @@ export const CreateJob = forwardRef(
         checkSecurity = true;
       }
       let jobType = getJobType(event.target.elements.jobType);
-      jobType === "" ? setJobTypeValidation(true) : setJobTypeValidation(false);
-      event.target.elements.payPeriodType.value === ""
-        ? setPayPeriodTypeValidation(true)
-        : setPayPeriodTypeValidation(false);
-      event.target.elements.minimumAmount.value === ""
-        ? setMinimumBasepayValidation(true)
-        : setMinimumBasepayValidation(false);
-      event.target.elements.maximumAmount.value === ""
-        ? setMaximumBasepayValidation(true)
-        : setMaximumBasepayValidation(false);
-      prevKeyQualificationArr1?.length === 0 &&
-        keyQualificationArr1?.length === 0
-        ? setMustHaveValidation(true)
-        : setMustHaveValidation(false);
+      const isJobTypeInvalid = jobType === "";
+      const isPayPeriodTypeInvalid = event.target.elements.payPeriodType.value === "";
+      const isMinimumBasePayInvalid = event.target.elements.minimumAmount.value === "";
+      const isMaximumBasePayInvalid = event.target.elements.maximumAmount.value === "";
+      const isMustHaveInvalid =
+        prevKeyQualificationArr1?.length === 0 && keyQualificationArr1?.length === 0;
 
-      customerDetails.isatsenable === true && (event.target.elements.recruiterid.value === "" || event.target.elements.recruiterid.value === "0")
-        ? setRecruiterIdValidation(true)
-        : setRecruiterIdValidation(false);
+      setJobTypeValidation(isJobTypeInvalid);
+      setPayPeriodTypeValidation(isPayPeriodTypeInvalid);
+      setMinimumBasepayValidation(isMinimumBasePayInvalid);
+      setMaximumBasepayValidation(isMaximumBasePayInvalid);
+      setMustHaveValidation(isMustHaveInvalid);
 
-      isStaffingFirm === true && (event.target.elements.clientCompany.value === "" || event.target.elements.clientCompany.value === "0")
-        ? setClientCompanyValidation(true)
-        : setClientCompanyValidation(false);
+      const isRecruiterInvalid =
+        customerDetails.isatsenable === true &&
+        (event.target.elements.recruiterid.value === "" ||
+          event.target.elements.recruiterid.value === "0");
 
-      customerDetails.isatsenable === true && (event.target.elements.hiringmanagerid.value === "" || event.target.elements.hiringmanagerid.value === "0")
-        ? setHiringmanagerValidation(true)
-        : setHiringmanagerValidation(false);
+      const isClientCompanyInvalid =
+        isStaffingFirm === true &&
+        (event.target.elements.clientCompany.value === "" ||
+          event.target.elements.clientCompany.value === "0");
 
-      if (mustHaveValidation === true) {
-        setAccordion([false, false, false, true, false]);
-      }
+      const isHiringManagerInvalid =
+        customerDetails.isatsenable === true &&
+        (event.target.elements.hiringmanagerid.value === "" ||
+          event.target.elements.hiringmanagerid.value === "0");
+
+      setRecruiterIdValidation(isRecruiterInvalid);
+      setClientCompanyValidation(isClientCompanyInvalid);
+      setHiringmanagerValidation(isHiringManagerInvalid);
+
+      const hasBasicInfoError =
+        isCompanyInvalid ||
+        isJobTitleInvalid ||
+        isOpenPositionInvalid ||
+        isJobLocationInvalid ||
+        isCityInvalid ||
+        isZipCodeInvalid ||
+        isDescriptionInvalid ||
+        isAddressInvalid ||
+        isSecurityInvalid ||
+        isRecruiterInvalid ||
+        isHiringManagerInvalid ||
+        isClientCompanyInvalid;
+
+
+
       if (
-        payPeriodTypeValidation === true ||
-        minimumBasepayValidation === true ||
-        maximumBasepayValidation === true
-      ) {
-        setAccordion([false, false, true, false, false]);
-      }
-      if (jobTypeValidation === true) {
-        setAccordion([false, true, false, false, false]);
-      }
-      if (
-        companyValidation === true ||
-        jobTitleValidation === true ||
-        openPositionValidation === true ||
-        jobLocationValidation === true ||
-        cityValidation === true ||
-        descriptionValidation === true ||
-        addressValidation === true ||
-        hiringmanagerValidation === true ||
-        clientCompanyValidation === true
+        hasBasicInfoError
       ) {
         setAccordion([true, false, false, false, false]);
+        return;
+      }
+      if (isJobTypeInvalid) {
+        setAccordion([false, true, false, false, false]);
+        return;
+      }
+      if (
+        isPayPeriodTypeInvalid ||
+        isMinimumBasePayInvalid ||
+        isMaximumBasePayInvalid
+      ) {
+        setAccordion([false, false, true, false, false]);
+        return;
       }
 
+      if (isMustHaveInvalid) {
+        setAccordion([false, false, false, true, false]);
+        return;
+      }
       if (
         event.target.elements.companyName.value !== "" &&
         event.target.elements.jobTitle.value !== "" &&
@@ -2130,6 +2143,7 @@ export const CreateJob = forwardRef(
                                 value={hiringManagerValue}
                                 onChange={(val) => {
                                   setHiringManagerValue(val);
+                                  setHiringmanagerValidation(false);
                                   // if you need to persist selection to the form submission,
                                   // write the selected id into a hidden input or local state used by saveData
                                   // e.g. setSelectedAssignedToId(val ? val.value : null);
@@ -2423,6 +2437,7 @@ export const CreateJob = forwardRef(
                               value={assignedToValue}
                               onChange={(val) => {
                                 setAssignedToValue(val);
+                                setRecruiterIdValidation(false);
                                 // if you need to persist selection to the form submission,
                                 // write the selected id into a hidden input or local state used by saveData
                                 // e.g. setSelectedAssignedToId(val ? val.value : null);

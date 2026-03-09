@@ -45,6 +45,7 @@ export function ScheduleInterviewModal({
 
   // NEW: fallback rounds if parent doesn’t pass any
   const [effectiveRoundOptions, setEffectiveRoundOptions] = useState([])
+  const [disabledRoundIds, setDisabledRoundIds] = useState([]);
 
   const dispatch = useDispatch();
   const toggle = () => {
@@ -59,7 +60,7 @@ export function ScheduleInterviewModal({
   useEffect(() => {
     // getTimeArray();
     getRoundsDropdown();
-  }, [dispatch]);
+  }, [dispatch, candidateData, isOpen]);
 
   const getTimeArray = () => {
     let timeOptions = [];
@@ -275,12 +276,24 @@ export function ScheduleInterviewModal({
     );
 
     if (res?.payload?.data) {
-      const existingRounds = candidateData?.scheduledInterviewDtos?.length || 0;
+      const roundOptions = res.payload.data;
+      const scheduledRoundIds =
+        candidateData?.scheduledInterviewDtos
+          ?.map((interview) => Number(interview.interviewroundid))
+          .filter((id) => !Number.isNaN(id)) || [];
 
-      const nextRound = existingRounds > 0 ? existingRounds + 1 : 1;
+      const scheduledRoundIdSet = new Set(scheduledRoundIds);
+      const nextUnscheduledRound = roundOptions.find(
+        (option) => !scheduledRoundIdSet.has(Number(option.id))
+      );
 
-      setInterviewRound(nextRound);
-      setEffectiveRoundOptions(res.payload.data);
+      const previousRoundIdsToDisable = roundOptions
+        .filter((option) => scheduledRoundIdSet.has(Number(option.id)))
+        .map((option) => Number(option.id));
+
+      setInterviewRound(Number(nextUnscheduledRound?.id || (candidateData?.scheduledInterviewDtos?.length === 0 ? 1 : undefined)));
+      setDisabledRoundIds(previousRoundIdsToDisable);
+      setEffectiveRoundOptions(roundOptions);
     }
   };
 
@@ -334,7 +347,11 @@ export function ScheduleInterviewModal({
                     >
                       <option value="">Select round</option>
                       {effectiveRoundOptions.map((r) => (
-                        <option key={r.id} value={r.id}>
+                        <option
+                          key={r.id}
+                          value={r.id}
+                          disabled={disabledRoundIds.includes(Number(r.id))}
+                        >
                           {r.name}
                         </option>
                       ))}
