@@ -436,16 +436,16 @@ export const CustCandidateListView = (props) => {
       return (
         <ButtonGroup>
           {getRecentInterviewStatus(row) === 5 && (
-            <Button           
-            size="sm"
-            title="Schedule Next Round"
-            className="btn-icon"
-            color="alternate"
-            onClick={() => onScheduleClick(row)}
-            style={{ backgroundColor: "#2F479B" }}
-          >
-            <img src={customerIcons.list_schedule_next} alt="list schedule-next-round" style={{marginTop: "-3px"}}></img>
-          </Button>)}
+            <Button
+              size="sm"
+              title="Schedule Next Round"
+              className="btn-icon"
+              color="alternate"
+              onClick={() => onScheduleClick(row)}
+              style={{ backgroundColor: "#2F479B" }}
+            >
+              <img src={customerIcons.list_schedule_next} alt="list schedule-next-round" style={{ marginTop: "-3px" }}></img>
+            </Button>)}
           {getRecentInterviewStatus(row) !== 5 && (
             <Button
               // outline
@@ -1832,6 +1832,27 @@ export const CustCandidateListView = (props) => {
           //width: "16%",
         },
         {
+          name: <span className="table-title">Interview Round</span>,
+          sortable: true,
+          cell: (row) => (
+            <span
+              title={row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+                ? row?.scheduledInterviewDtos[0]?.roundname
+                : ""}
+            >             {row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+              ? row?.scheduledInterviewDtos[0]?.roundname
+              : ""}
+            </span >
+          ),
+          selector: (row) =>
+            row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+              ? row?.scheduledInterviewDtos[0]?.roundname
+              : "",
+          //width: "12%",
+        },
+
+
+        {
           name: <span className="table-title">Pre-screen</span>,
           cell: (row) =>
             row.candidateprescreenstatus === "NA" ? (
@@ -2010,14 +2031,13 @@ export const CustCandidateListView = (props) => {
                     ? row?.scheduledInterviewDtos[0]?.interviewstatus : ""
                   : ""
               }
-            >
-              {row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-                ? row?.scheduledInterviewDtos[0]?.interviewstatus ===
-                  '' ||
-                  row?.scheduledInterviewDtos[0]?.interviewstatus ===
-                  undefined
-                  ? "" : row?.scheduledInterviewDtos[0]?.interviewstatus
-                : ""}
+            >              {row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+              ? row?.scheduledInterviewDtos[0]?.interviewstatus ===
+                '' ||
+                row?.scheduledInterviewDtos[0]?.interviewstatus ===
+                undefined
+                ? "" : row?.scheduledInterviewDtos[0]?.interviewstatus
+              : ""}
             </span >
           ),
           selector: (row) =>
