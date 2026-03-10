@@ -227,9 +227,9 @@ const ReportsList = () => {
         if (isexport === 1 && data.length > 0 && excelData && excelData.length > 0 && excelData[0].details && excelData[0].details.length > 0) {
             exportToExcel(excelData, `${title || "Report"}_Export`, true);
         }
-        setIsExport(0); // reset export flag after export is done
-        if (data.length > 0 && excelData && excelData.length > 0 && excelData[0].details && excelData[0].details.length > 0) {
+        if (isexport === 1 && data.length > 0 && excelData && excelData.length > 0 && excelData[0].details && excelData[0].details.length > 0) {
             fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+            setIsExport(0); // reset export flag after export is done
         }
     }, [isexport]);
 
@@ -419,15 +419,15 @@ const ReportsList = () => {
         }
         // new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hmId }, resolve));
         setJobSelected(null);
-        fetchData(currentPage, perPage, startdate, enddate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+        fetchData(1, 10, startdate, enddate, "", candidateSelected, subsidiaryId, null, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, null);
         // handleClear();
     }, [path]);
 
-    useEffect(() => {
-        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
+    // useEffect(() => {
+    //     fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId);
 
-    }, [jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, company,
-        recommStatusId, jobId, hiringmanagerId, candidateSelected, startDate, endDate]);
+    // }, [jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, company,
+    //     recommStatusId, jobId, hiringmanagerId, candidateSelected, startDate, endDate]);
 
 
     useEffect(() => {
@@ -547,7 +547,7 @@ const ReportsList = () => {
                                             !excelData[0].details ||
                                             excelData[0].details.length === 0
                                         }>
-                                        <FontAwesomeIcon icon={faFileDownload} /> Excel Report
+                                        <FontAwesomeIcon icon={faFileDownload} /> Excel Export
                                     </button>
                                 </div>
                             </CardHeader>
