@@ -181,12 +181,19 @@ export const getJobsListThunk = createAsyncThunk(
 
 export const getDropdownListThunk = createAsyncThunk(
   `${name}/getDropdownListThunk`,
-  async ({searchText, commonId, searchBy}) => {
+  async ({ searchText, commonId, searchBy }) => {
     const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=${searchText}&commonId=${commonId}&searchBy=${searchBy}`;
     return await fetchWrapper.get(DROPDOWN_END_POINT);
   }
 );
 
+export const getInterviewRoundListThunk = createAsyncThunk(
+  `${name}/getInterviewRoundListThunk`,
+  async ({ searchText, commonId, searchBy }) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=${searchText}&commonId=${commonId}&searchBy=${searchBy}`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
 // Create the slice
 const dropdownSlice = createSlice({
   name,
@@ -210,7 +217,8 @@ const dropdownSlice = createSlice({
     closeJobReasonList: [],
     flaggedWordsList: [],
     loading: false,
-    jobsDropdownList: []
+    jobsDropdownList: [],
+    interviewRounds: []
   },
   reducers: {},
 
@@ -449,6 +457,17 @@ const dropdownSlice = createSlice({
     [getDropdownListThunk.rejected]: (state, action) => {
       state.error = action.error;
       state.loading = true;
+    },
+    [getInterviewRoundListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getInterviewRoundListThunk.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.interviewRounds = action.payload.data;
+    },
+    [getInterviewRoundListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
     }
   }
 });
@@ -476,7 +495,8 @@ export const dropdownActions = {
   getCloseJobReasonListThunk,
   getFlaggedWordsListThunk,
   getJobsListThunk,
-  getDropdownListThunk
+  getDropdownListThunk,
+  getInterviewRoundListThunk
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

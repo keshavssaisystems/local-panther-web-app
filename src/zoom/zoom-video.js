@@ -4,7 +4,7 @@ import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { authActions, scheduleInterviewActions } from "_store";
+import { authActions, scheduleInterviewActions, dropdownActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
 import {
@@ -59,6 +59,7 @@ export default function ZoomVideoScreen(props) {
   let urlParams = rest["*"] ? rest["*"] : "";
   let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
   const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  const [interviewDetails, setInterviewDetails] = useState({});
   const dispatch = useDispatch();
 
   let name = userDetails ? userDetails.FirstName + " " + userDetails.LastName : "Guest";
@@ -107,6 +108,11 @@ export default function ZoomVideoScreen(props) {
       (userRoleId === "2" || userRoleId === "4")
     ) {
       dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+      dispatch(dropdownActions.getInterviewRoundListThunk({
+        searchText: "interviewRound",
+        commonId: 0,
+        searchBy: ""
+      }));
     }
 
     document.addEventListener("keydown", keyDownHandler);
@@ -426,6 +432,11 @@ export default function ZoomVideoScreen(props) {
     }
   };
 
+  const onInterviewDetailsLoaded = (res) => {
+    setInterviewDetails(res?.payload?.data?.scheduledInterviewList[0]);
+    console.log("getScheduleIVList response in parent", res);
+  };
+
   const submitGuestUserData = (data) => {
     setParticipantData([data]);
     let ind = fbUsersData.findIndex(
@@ -570,6 +581,7 @@ export default function ZoomVideoScreen(props) {
                       fbUsersData={fbUsersData}
                       hostStartMeeting={() => hostStartMeeting()}
                       database={database}
+                      onInterviewDetailsLoaded={onInterviewDetailsLoaded}
                     ></HostPreview>
                   )}
                 </OffcanvasBody>
@@ -620,6 +632,7 @@ export default function ZoomVideoScreen(props) {
                   closeModal();
                   routeToHome();
                 }}
+                interviewDetails={interviewDetails}
               ></InterviewFeedback>
             </ModalBody>
           </Modal>

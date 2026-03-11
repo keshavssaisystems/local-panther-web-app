@@ -20,6 +20,7 @@ import {
   Col,
 } from "reactstrap";
 import DataTable from "react-data-table-component";
+import PropTypes from "prop-types";
 import { NoDataFound } from "_components/common/nodatafound";
 import half from "../../assets/utils/images/zoom/hourglass-half.svg";
 import check from "../../assets/utils/images/zoom/check-circle-fill.svg";
@@ -35,6 +36,7 @@ export const HostPreview = ({
   usersData,
   hostStartMeeting,
   database,
+  onInterviewDetailsLoaded,
 }) => {
   const [interViewData, setInterViewData] = useState([]);
 
@@ -104,6 +106,8 @@ export const HostPreview = ({
     let res = await dispatch(
       customerCandidateListsActions.getScheduleIVList(interviewId)
     );
+    // eslint-disable-next-line react/prop-types
+    onInterviewDetailsLoaded?.(res);
     if (res.payload.statusCode === 200) {
       setInterViewData(res?.payload?.data?.scheduledInterviewList[0]);
       let cand = [];
@@ -403,4 +407,8 @@ export const HostPreview = ({
       </div>
     </div>
   );
+};
+
+HostPreview.propTypes = {
+  onInterviewDetailsLoaded: PropTypes.func,
 };
