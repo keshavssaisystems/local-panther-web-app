@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,7 +33,7 @@ import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
-import { scheduleInterviewActions } from "_store";
+import { dropdownActions, scheduleInterviewActions } from "_store";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
 
@@ -63,6 +63,7 @@ export const CustCandidateListView = (props) => {
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState("");
   const atsEnableStatus = localStorage.getItem("atsEnableStatus");
+  const [roundOptions, setRoundOptions] = useState([]);
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -93,6 +94,11 @@ export const CustCandidateListView = (props) => {
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
+
+  useEffect(() => {
+    getRoundsDropdown();
+  }, [dispatch]);
+
   const onAcceptClick = async (row) => {
     //Enable upload offer modal from here
     setSelectedRowData(row);
@@ -294,6 +300,40 @@ export const CustCandidateListView = (props) => {
       && row?.scheduledInterviewDtos[0]?.interviewstatusid;
   }
 
+  const getRoundsDropdown = async () => {
+    let res = await dispatch(
+      dropdownActions.getDropdownListThunk({
+        searchText: "interviewRound",
+        commonId: 0,
+        searchBy: ""
+      })
+    );
+    if (res?.payload?.data) {
+      const roundOptions = res.payload.data;
+      setRoundOptions(roundOptions);
+    }
+  };
+  const isAllInterviewDone = (row) => {
+    const interviews = row?.scheduledInterviewDtos;
+    if (!Array.isArray(interviews) || interviews.length === 0) {
+      return false;
+    }
+
+    if (!Array.isArray(roundOptions) || roundOptions.length === 0) {
+      return false;
+    }
+    if (interviews?.filter((interview) => Number(interview?.interviewstatusid) === 1).length > 0) { //1: Candidate selected for an offer
+      return true;
+    }
+
+
+    const completedRounds = interviews.filter(
+      (interview) => Number(interview?.interviewstatusid) === 5 || Number(interview?.interviewstatusid) === 1
+    ).length;
+    console.log("completedRounds", completedRounds, "roundOptions.length", roundOptions.length, roundOptions);
+    return completedRounds >= roundOptions.length;
+  }
+
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
@@ -435,7 +475,7 @@ export const CustCandidateListView = (props) => {
     } else if (props.type === "scheduled") {
       return (
         <ButtonGroup>
-          {getRecentInterviewStatus(row) === 5 && (
+          {getRecentInterviewStatus(row) === 5 && !isAllInterviewDone(row) && (
             <Button
               size="sm"
               title="Schedule Next Round"
@@ -446,7 +486,7 @@ export const CustCandidateListView = (props) => {
             >
               <img src={customerIcons.list_schedule_next} alt="list schedule-next-round" style={{ marginTop: "-3px" }}></img>
             </Button>)}
-          {getRecentInterviewStatus(row) !== 5 && (
+          {getRecentInterviewStatus(row) !== 5 && getRecentInterviewStatus(row) !== 1 && (
             <Button
               // outline
               size="sm"
