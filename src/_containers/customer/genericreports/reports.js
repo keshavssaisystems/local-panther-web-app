@@ -289,7 +289,13 @@ const ReportsList = () => {
             .filter(col => col.isvisible === 1)
             .map(col => {
                 return {
-                    name: <span className="table-title">{col.label}</span>,
+                    // name: <span className="table-title">{col.label}</span>,
+                    name: <span className="table-title">
+                        {col.label
+                        .replace(/([A-Z])/g, "$1")       // convert camelCase 
+                        .replace(/_/g, " ")              // convert snake_case
+                        .replace(/\b\w/g, (c) => c.toUpperCase())
+                        }</span>, // capitalize words
                     selector: row => getDisplayValue(col, row),
                     cell: (row) => {
                         const value = getDisplayValue(col, row);
@@ -324,14 +330,18 @@ const ReportsList = () => {
                                         color="link"
                                         onClick={() => onInterviewDetailClick(row.scheduleinterviewid)}
                                     >
-                                        {value}
+                                        {getTimezoneDateTime(moment(value).format("MM/DD/YYYY HH:mm:ss"), "MM/DD/YYYY hh:mm A")}
+
+                                        {/* {value} */}
                                     </Button>
                                 </span>
                             );
-                        } else if (col.key.endsWith('phone') && value && value === '' && value === null) {
+                        } else if (col.key.endsWith('phone') && value && value !== '' && value !== null&& value !== '-') {
                             return <span className="table-cell" title={value}>{USPhoneNumber(value)}</span>
-                        } else if (col.key.endsWith('date') && value && value === '' && value === null) {
-                            return <span className="table-cell" title={value}>{getTimezoneDateTime(moment(value).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY hh:mm A")}</span>
+                        } else if ((col.key.endsWith('date') || col.key.endsWith('Date'))
+                             && value && value !== '' && value !== '-' && value !== null && value !== undefined) {
+                            return <span className="table-cell" title={getTimezoneDateTime(moment(value).format("MM/DD/YYYY HH:mm:ss"), "MM/DD/YYYY hh:mm A")}>
+                                {getTimezoneDateTime(moment(value).format("MM/DD/YYYY HH:mm:ss"), "MM/DD/YYYY hh:mm A")}</span>
                         } else {
                             return <span className="table-cell" title={value}>{value}</span>;
                         }
