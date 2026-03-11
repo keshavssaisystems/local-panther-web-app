@@ -86,8 +86,8 @@ export function UpcomingVideoDetails({
     selectedJobDetails?.length > 0 ? selectedJobDetails[0] : [];
   let scheduled = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetails?.starttime,
+    " " +
+    interviewDetails?.starttime,
     "MM/DD/YYYY"
   );
 
@@ -107,8 +107,8 @@ export function UpcomingVideoDetails({
   );
   let scheduledDate = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetails?.starttime,
+    " " +
+    interviewDetails?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -122,8 +122,8 @@ export function UpcomingVideoDetails({
   }
   let startTime = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
-      " " +
-      interviewDetails?.starttime,
+    " " +
+    interviewDetails?.starttime,
     "hh:mm A"
   );
   let startDate =
@@ -182,7 +182,7 @@ export function UpcomingVideoDetails({
   try {
     suggestedJson =
       interviewDetails?.suggestedquestion !== "" &&
-      interviewDetails?.suggestedquestion !== undefined
+        interviewDetails?.suggestedquestion !== undefined
         ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
         : "";
     suggestedQuestionArray = Array.isArray(suggestedJson?.questions)
@@ -214,7 +214,7 @@ export function UpcomingVideoDetails({
     let scheduledTime = getTimezoneDateTime(
       moment(
         interviewDetails?.scheduledate.slice(0, 11) +
-          interviewDetails?.starttime
+        interviewDetails?.starttime
       ).format("YYYY-MM-DD HH:mm:ss"),
 
       "MM/DD/YYYY HH:mm:ss"
@@ -286,20 +286,20 @@ export function UpcomingVideoDetails({
           <h6 className="fw-bold mb-0 job-heading">Status</h6>
           {interviewDetails?.isreschedulerequested === true
             ? "Requested for reschedule (" +
-              interviewDetails?.reschedulerequestedreason +
-              ")"
+            interviewDetails?.reschedulerequestedreason +
+            ")"
             : interviewDetails?.interviewstatusid !== 0
-            ? interviewDetails?.interviewstatusid === 1
-              ? "Completed"
-              : "Candidate not joined"
-            : interviewDetails?.isaccepted === true &&
-              interviewDetails?.isrejected === false
-            ? "Accepted"
-            : interviewDetails?.isrejected === true
-            ? interviewDetails?.rejectionreason !== ""
-              ? "Declined (" + interviewDetails?.rejectionreason + ")"
-              : "Declined"
-            : "No response"}
+              ? interviewDetails?.interviewstatusid === 1
+                ? "Completed"
+                : "Candidate not joined"
+              : interviewDetails?.isaccepted === true &&
+                interviewDetails?.isrejected === false
+                ? "Accepted"
+                : interviewDetails?.isrejected === true
+                  ? interviewDetails?.rejectionreason !== ""
+                    ? "Declined (" + interviewDetails?.rejectionreason + ")"
+                    : "Declined"
+                  : "No response"}
         </div>
         {interviewDetails?.interviewstatusid !== 0 &&
           interviewDetails?.interviewfeedback !== "" && (
@@ -379,8 +379,8 @@ export function UpcomingVideoDetails({
                     {interviewDetails.candidatephonenumber === undefined
                       ? ""
                       : USPhoneNumber(
-                          interviewDetails.candidatephonenumber
-                        )}{" "}
+                        interviewDetails.candidatephonenumber
+                      )}{" "}
                   </p>
                 </div>
               )}
@@ -546,6 +546,7 @@ export function UpcomingVideoDetails({
                 setFeedbackModal(false);
                 setOldInterviewId(interviewDetails.scheduleinterviewid);
               }}
+              interviewDetails={interviewDetails}
             />
           </div>
         )}
@@ -657,8 +658,8 @@ export function UpcomingVideoDetails({
           {interviewDetails?.candidatename
             ? interviewDetails?.candidatename
             : interviewDetails?.firstname && interviewDetails?.lastname
-            ? interviewDetails?.firstname + " " + interviewDetails?.lastname
-            : ""}
+              ? interviewDetails?.firstname + " " + interviewDetails?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
@@ -679,8 +680,8 @@ export function UpcomingVideoDetails({
           {interviewDetails?.candidatename
             ? interviewDetails?.candidatename
             : interviewDetails?.firstname && interviewDetails?.lastname
-            ? interviewDetails?.firstname + " " + interviewDetails?.lastname
-            : ""}
+              ? interviewDetails?.firstname + " " + interviewDetails?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
@@ -701,8 +702,8 @@ export function UpcomingVideoDetails({
           {interviewDetails?.candidatename
             ? interviewDetails?.candidatename
             : interviewDetails?.firstname && interviewDetails?.lastname
-            ? interviewDetails?.firstname + " " + interviewDetails?.lastname
-            : ""}
+              ? interviewDetails?.firstname + " " + interviewDetails?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
