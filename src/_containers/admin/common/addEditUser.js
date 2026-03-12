@@ -476,7 +476,7 @@ export const AddEditUser = (props) => {
                               : "",
                         }}
                       >
-                        <div>{options.description}</div>
+                        <div>{options.displayname}</div>
                       </option>
                     ))}
                   {(isCompanyAdmin || currentRoleId === 4) && // company admin
@@ -490,7 +490,7 @@ export const AddEditUser = (props) => {
                           display: options.userroleid === 2 ? "" : "none",
                         }}
                       >
-                        <div>{options.description}</div>
+                        <div>{options.displayname}</div>
                       </option>
                     ))}
                 </Input>
