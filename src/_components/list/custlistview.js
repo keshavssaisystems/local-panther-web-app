@@ -2607,6 +2607,7 @@ export const CustCandidateListView = (props) => {
             isOpen={showOfflineInterviewModal}
             onClose={() => setShowOfflineInterviewModal(false)}
             loading={offlineInterviewLoading}
+            roundOptions={roundOptions}
           />
         ) : (
           <></>
