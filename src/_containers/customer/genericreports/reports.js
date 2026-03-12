@@ -292,9 +292,9 @@ const ReportsList = () => {
                     // name: <span className="table-title">{col.label}</span>,
                     name: <span className="table-title">
                         {col.label
-                        .replace(/([A-Z])/g, "$1")       // convert camelCase 
-                        .replace(/_/g, " ")              // convert snake_case
-                        .replace(/\b\w/g, (c) => c.toUpperCase())
+                            .replace(/([A-Z])/g, "$1")       // convert camelCase 
+                            .replace(/_/g, " ")              // convert snake_case
+                            .replace(/\b\w/g, (c) => c.toUpperCase())
                         }</span>, // capitalize words
                     selector: row => getDisplayValue(col, row),
                     cell: (row) => {
@@ -336,10 +336,10 @@ const ReportsList = () => {
                                     </Button>
                                 </span>
                             );
-                        } else if (col.key.endsWith('phone') && value && value !== '' && value !== null&& value !== '-') {
+                        } else if (col.key.endsWith('phone') && value && value !== '' && value !== null && value !== '-') {
                             return <span className="table-cell" title={value}>{USPhoneNumber(value)}</span>
-                        } else if ((col.key.endsWith('date') || col.key.endsWith('Date'))
-                             && value && value !== '' && value !== '-' && value !== null && value !== undefined) {
+                        } else if ((col.key.toLowerCase().indexOf("data") !== -1 || col.key.toLowerCase().endsWith('date')) 
+                            && value && value !== '' && value !== '-' && value !== null && value !== undefined) {
                             return <span className="table-cell" title={getTimezoneDateTime(moment(value).format("MM/DD/YYYY HH:mm:ss"), "MM/DD/YYYY hh:mm A")}>
                                 {getTimezoneDateTime(moment(value).format("MM/DD/YYYY HH:mm:ss"), "MM/DD/YYYY hh:mm A")}</span>
                         } else {
@@ -414,7 +414,7 @@ const ReportsList = () => {
         filter = {};
         data = [];
         setCompany([]);
-        const startdate =  new Date();
+        const startdate = new Date();
         startdate.setDate(startdate.getDate() - 90);
         const enddate = new Date();
         enddate.setDate(enddate.getDate());
@@ -450,7 +450,7 @@ const ReportsList = () => {
         // dispatch(getJobDropdownByUserid({inputValue:"", hiringmanagerId}));
         dispatch(getCandidateSearchDropdown());
         dispatch(getRecommendedJobStatus());
-        dispatch(getHiringMangerListDynamic({ companyId: companyId, endpoint: "allUserListByCompany" }));
+        dispatch(getHiringMangerListDynamic({ companyId: companyId, endpoint: "allUserListByCompanyForReport" }));
     }, []);
 
     const handlePageChange = (page) => {
@@ -581,7 +581,7 @@ const ReportsList = () => {
                                                         handleChange(name, value);
                                                         setCompany(e);
                                                         setHiringMangerId(null);
-                                                        dispatch(getHiringMangerListDynamic({ companyId: e.value ? e.value : 0, endpoint: "allUserListByCompany" }));
+                                                        dispatch(getHiringMangerListDynamic({ companyId: e.value ? e.value : 0, endpoint: "allUserListByCompanyForReport" }));
                                                     }}
                                                     value={company}
                                                 />
