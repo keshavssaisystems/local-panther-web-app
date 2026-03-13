@@ -189,19 +189,20 @@ export function OfflineInterviewModal({
     event.preventDefault();
     let scheduleDateUTC = moment(event.target.elements.scheduleDate.value + " " + event.target.elements.scheduleStartTime.value).tz("Etc/UTC").format("YYYY-MM-DD");
     let scheduleTimeUTC = moment(event.target.elements.scheduleDate.value + " " + event.target.elements.scheduleStartTime.value).tz("Etc/UTC").format("HH:mm:ss");
+    let scheduleInterviews = candidateData?.scheduledInterviewDtos && candidateData?.scheduledInterviewDtos?.length > 0 ? candidateData?.scheduledInterviewDtos : [];
     let data = {
       scheduleinterviewid: candidateData.scheduledInterviewDtos && candidateData.scheduledInterviewDtos.length > 0 ? candidateData.scheduledInterviewDtos[0].scheduleinterviewid : 0,
       jobid: candidateData.jobid,
       candidateid: candidateData.candidateid,
       scheduledate: scheduleDateUTC,
       starttime: scheduleTimeUTC,
-      durationid: 1,//15 min default duration for offline interview
+      durationid:scheduleInterviews.length>0? scheduleInterviews[0]?.durationid || 1 : 1,//15 min default duration for offline interview
       isaccepted: type === "Interview Completed" ? true : false,
       interviewfeedback: type === "Interview Completed" ? event.target.elements.interviewFeedbacktext.value : "",
       interviewstatusid: type === "Interview Completed" ? Number(event.target.elements.interviewStatusId.value) : 0,
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
-      interviewroundid: 1// Default 1st Round, as offline interview will be scheduled for 1st round only
+      interviewroundid: currentRound // Default 1st Round, as offline interview will be scheduled for 1st round only
     };
     postData(data);
     onClose();
