@@ -22,8 +22,8 @@ export const AppSidebar = (props) => {
   useEffect(() => {
     if (menuDtoList) {
       const menuItems = menuDtoList?.map(
-        ({ path, menuname: title, subMenuList = [], ...rest }) => ({
-          itemId: path,
+        ({ menuid, path, menuname: title, subMenuList = [], ...rest }) => ({
+          itemId: path || String(menuid),
           pathname: path,
           title,
           ...rest,
@@ -32,9 +32,10 @@ export const AppSidebar = (props) => {
           ),
           ...(subMenuList?.length
             ? {
-              subNav: subMenuList.map(({ submenuname: title, path }) => ({
+              subNav: subMenuList.map(({ submenumenuid, submenuname: title, path }) => ({
                 title,
-                itemId: path,
+                itemId: path || String(submenumenuid),
+                pathname: path,
                 elemBefore: () => <FontAwesomeIcon icon={faBars} />,
               })),
             }
@@ -45,14 +46,21 @@ export const AppSidebar = (props) => {
       setMenuItems(menuItems);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [menuDtoList]);
 
   const onNavigate = (itemId) => {
+    const targetPath =
+      typeof itemId === "string" && itemId.startsWith("/") ? itemId : "";
+
+    if (!targetPath) {
+      return;
+    }
+
     if (window.screen.width < 768) {
       props.setIsSidebarOpen(false);
-      navigate(itemId);
+      navigate(targetPath);
     } else {
-      navigate(itemId);
+      navigate(targetPath);
     }
   };
 
