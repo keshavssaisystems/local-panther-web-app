@@ -797,7 +797,7 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Candidate History</span>
             </DropdownItem>
-            {props.type === "scheduled" &&
+            {(props.type === "scheduled" || props.type === "presented") &&
               (<DropdownItem onClick={() => props.onCandidateInterviewHistory(candidateid, row)}>
                 <i className="dropdown-icon lnr-layers"></i>
                 <span>Interview History</span>

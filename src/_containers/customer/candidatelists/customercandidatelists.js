@@ -1416,6 +1416,9 @@ export default function CustomerCandidateLists(props) {
                           onCandidateResume={(candidateId, url) =>
                             onCandidateResume(candidateId, url)
                           }
+                          onCandidateInterviewHistory={(candidateId, row) =>
+                            onCandidateInterviewHistoryClick(candidateId, row)
+                          }
                           isStaffingFirm={isStaffingFirm}
                           offlineStatuses={offlineStatuses}
                           onShowOHModal={(row) => onShowOHModal(row)}
