@@ -26,6 +26,7 @@ import {
   scheduleInterviewActions,
   graphActions,
   getJobDetail,
+  getHiringMangersList
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { getTimezoneDateTime } from "_helpers/helper";
@@ -81,7 +82,8 @@ export function ScheduleInterview({ fromDashboard }) {
     getUpdatedScheduleList();
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
-    dispatch(hiringManagerActions.getHiringManager(Number(localStorage.getItem("companyid"))));
+    dispatch(getHiringMangersList({ companyId: Number(localStorage.getItem("companyid")), endpoint: 'assignUserListByCompany' }));
+           
   }, []);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
@@ -109,7 +111,9 @@ export function ScheduleInterview({ fromDashboard }) {
     await dispatch(graphActions.getgraphThunk({ startDate, endDate }));
   };
   const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
-  const hiringManagerDownList = useSelector((state) => state.hiringManager?.hiringManagers);
+  const hiringManagerDownList = useSelector(
+    (state) => state?.customerReportReducer?.assignHiringManagers
+  );
   const getUpdatedScheduleList = () => {
     dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     dispatch(scheduleInterviewActions.getDurationThunk());
