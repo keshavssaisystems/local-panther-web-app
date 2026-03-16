@@ -27,7 +27,7 @@ import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import newoffer from "assets/utils/images/job-detail-icons/newoffer.svg";
-import nonAts from "assets/utils/images/job-detail-icons/nonats.svg";
+import nonAts from "assets/utils/images/job-detail-icons/OpenWorxIcon.svg";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
@@ -828,7 +828,7 @@ export const CustCandidateListView = (props) => {
                     alt="list maybe"
                     className={"icon-pointer m-1"}
                     width={"16px"}
-                    title={'Non-ATS'}
+                    title={'OpenWorX Candidate'}
                   ></img>
                 )}
               </>
@@ -915,7 +915,7 @@ export const CustCandidateListView = (props) => {
                       alt="list maybe"
                       className={"icon-pointer m-1"}
                       width={"16px"}
-                      title={'Non-ATS'}
+                      title={'OpenWorX Candidate'}
                     ></img>
                   )}
                 </>
@@ -1266,7 +1266,7 @@ export const CustCandidateListView = (props) => {
                         alt="list maybe"
                         className={"icon-pointer m-1"}
                         width={"16px"}
-                        title={'Non-ATS'}
+                        title={'OpenWorX Candidate'}
                       ></img>
                     )}
                   </>
@@ -1520,7 +1520,7 @@ export const CustCandidateListView = (props) => {
                         alt="list maybe"
                         className={"icon-pointer m-1"}
                         width={"16px"}
-                        title={'Non-ATS'}
+                        title={'OpenWorX Candidate'}
                       ></img>
                     )}
                   </>
@@ -1662,7 +1662,7 @@ export const CustCandidateListView = (props) => {
                           alt="list maybe"
                           className={"icon-pointer m-1"}
                           width={"16px"}
-                          title={'Non-ATS'}
+                          title={'OpenWorX Candidate'}
                         ></img>
                       )}
                     </>
@@ -1791,7 +1791,7 @@ export const CustCandidateListView = (props) => {
                   alt="list maybe"
                   className={"icon-pointer m-1"}
                   width={"16px"}
-                  title={'Non-ATS'}
+                  title={'OpenWorX Candidate'}
                 ></img>
               )}
             </>
