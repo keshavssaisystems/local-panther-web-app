@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { getCompanyDropDown } from "_store";
 import AsyncSelect from "react-select/async";
 
@@ -9,14 +9,43 @@ export function CompanyFilter({
   isMulti = false,
   value,
   disabled = false,
+  // optional react-select props to control menu stacking and portal behavior
+  styles = {},
+  menuPortalTarget = typeof document !== "undefined" ? document.body : null,
+  menuPosition = "fixed",
+  menuPlacement = "auto",
 }) {
+  const { zIndex = 9999 } = styles;
+  const [defaultOptions, setDefaultOptions] = useState([]);
+
+  useEffect(() => {
+    // Load all companies on mount
+    (async () => {
+      const { data = [] } = await getCompanyDropDown("");
+      setDefaultOptions([
+        { value: null, label: "All Companies" },
+        ...data.map(({ companyid: value, companyname: label }) => ({ value, label })),
+      ]);
+    })();
+  }, []);
+
   const loadOptions = async (inputValue) => {
-    if (inputValue.length > 2) {
+    const search = (inputValue || "").trim().toLowerCase();
+    if (!search || search.length < 3) {
+      // Return all companies if no input or input is short
+      return defaultOptions.filter(option =>
+        option.label && option.label.toLowerCase().includes(search)
+      );
+    } 
+    // If input is long enough, use API call
+    if (search.length >= 3) {
       const { data = [] } = await getCompanyDropDown(inputValue);
-      return data.map(({ companyid: value, companyname: label }) => {
-        return { value, label };
-      });
+      // If API returns results, use them, else fallback to filtered local
+      if (data.length > 0) {
+        return data.map(({ companyid: value, companyname: label }) => ({ value, label }));
+      }
     }
+    //return filtered;
   };
 
   return (
@@ -24,10 +53,15 @@ export function CompanyFilter({
       name={name}
       placeholder={placeholder}
       loadOptions={loadOptions}
+      defaultOptions={defaultOptions}
       onChange={(e) => onChange(name, e.value, e)}
       isMulti={isMulti}
       value={value}
       isDisabled={disabled}
+      styles={{ ...styles, menuPortal: (base) => ({ ...base, zIndex }) }}
+      menuPortalTarget={menuPortalTarget}
+      menuPosition={menuPosition}
+      menuPlacement={menuPlacement}
     />
   );
 }

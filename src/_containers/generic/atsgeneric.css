@@ -28,3 +28,7 @@
   background: rgba(0,0,0,0.12);
   border-radius: 6px;
 }
+.search-wrapper.active .btn-close {
+  left: 215px !important;
+  top: 18px !important;
+}

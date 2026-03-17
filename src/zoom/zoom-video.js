@@ -4,7 +4,7 @@ import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { authActions, scheduleInterviewActions } from "_store";
+import { authActions, scheduleInterviewActions, dropdownActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
 import {
@@ -58,12 +58,11 @@ export default function ZoomVideoScreen(props) {
   console.log(participantData);
   let urlParams = rest["*"] ? rest["*"] : "";
   let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
-
+  const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  const [interviewDetails, setInterviewDetails] = useState({});
   const dispatch = useDispatch();
-  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
-  let name = userDetails
-    ? userDetails.FirstName + " " + userDetails.LastName
-    : "Guest";
+
+  let name = userDetails ? userDetails.FirstName + " " + userDetails.LastName : "Guest";
   const host = userRoleId === "2" || userRoleId === "4";
   const navigate = useNavigate();
   let config = {
@@ -109,6 +108,11 @@ export default function ZoomVideoScreen(props) {
       (userRoleId === "2" || userRoleId === "4")
     ) {
       dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+      dispatch(dropdownActions.getInterviewRoundListThunk({
+        searchText: "interviewRound",
+        commonId: 0,
+        searchBy: ""
+      }));
     }
 
     document.addEventListener("keydown", keyDownHandler);
@@ -163,9 +167,15 @@ export default function ZoomVideoScreen(props) {
     }
   };
   useEffect(() => {
-    if (sessionData.length === 0) {
-      getToken();
+    if (id) {
+      if (sessionData.length === 0 && userDetails) {
+        getToken();
+      }
+      else {
+        setShowScreen("guest");
+      }
     }
+
   }, [id]);
   useEffect(() => {
     if (
@@ -228,9 +238,7 @@ export default function ZoomVideoScreen(props) {
         let users = [...fbUsersData];
         let ind = users.findIndex(
           (d) =>
-            d.email ===
-            JSON.parse(localStorage.getItem("userDetails")).EmailId &&
-            !d.isDenied
+            d.email === userDetails?.EmailId && !d.isDenied
         );
         if (ind > -1) {
           users[ind].isJoined = true;
@@ -239,10 +247,8 @@ export default function ZoomVideoScreen(props) {
       } else {
         let user = {
           name:
-            JSON.parse(localStorage.getItem("userDetails")).FirstName +
-            " " +
-            JSON.parse(localStorage.getItem("userDetails")).LastName,
-          email: JSON.parse(localStorage.getItem("userDetails")).EmailId,
+            userDetails?.FirstName + " " + userDetails?.LastName,
+          email: userDetails?.EmailId,
           isJoined: true,
           isAllowed: false,
           isDenied: false,
@@ -357,11 +363,8 @@ export default function ZoomVideoScreen(props) {
         setTimeout(() => {
           setParticipantData([
             {
-              name:
-                JSON.parse(localStorage.getItem("userDetails")).FirstName +
-                " " +
-                JSON.parse(localStorage.getItem("userDetails")).LastName,
-              email: JSON.parse(localStorage.getItem("userDetails")).EmailId,
+              name: userDetails?.FirstName + " " + userDetails?.LastName,
+              email: userDetails?.EmailId,
             },
           ]);
         }, 2000);
@@ -429,16 +432,17 @@ export default function ZoomVideoScreen(props) {
     }
   };
 
+  const onInterviewDetailsLoaded = (res) => {
+    setInterviewDetails(res?.payload?.data?.scheduledInterviewList[0]);
+    console.log("getScheduleIVList response in parent", res);
+  };
+
   const submitGuestUserData = (data) => {
     setParticipantData([data]);
     let ind = fbUsersData.findIndex(
       (d) => d.email === data.email && d.isJoined && d.isAllowed && !d.isDenied
     );
-    if (ind > -1) {
-      setShowScreen("load");
-    } else {
-      setShowScreen("waiting");
-    }
+    getGuestToken(data, ind);
   };
 
   const hostStartMeeting = () => {
@@ -476,6 +480,33 @@ export default function ZoomVideoScreen(props) {
     );
   };
 
+
+  const getGuestToken = async (data, ind) => {
+    let response = await dispatch(
+      authActions.generateToken({
+        scheduleInterviewId: id,
+        userIdentity: data?.name,
+      })
+    );
+    if (response?.payload?.statusCode === 201) {
+      let data = [];
+      data.push(response.payload.data);
+      setSessionData(data);
+      if (ind > -1) {
+        setShowScreen("load");
+      } else {
+        setShowScreen("waiting");
+      }
+
+    } else {
+      showSweetAlert({
+        title: response?.error?.message
+          ? response?.error?.message
+          : "Something went wrong, please try later!!",
+        type: "error",
+      });
+    }
+  };
   return (
     <>
       {/* <div id="previewContainer"></div> */}
@@ -550,6 +581,7 @@ export default function ZoomVideoScreen(props) {
                       fbUsersData={fbUsersData}
                       hostStartMeeting={() => hostStartMeeting()}
                       database={database}
+                      onInterviewDetailsLoaded={onInterviewDetailsLoaded}
                     ></HostPreview>
                   )}
                 </OffcanvasBody>
@@ -600,6 +632,7 @@ export default function ZoomVideoScreen(props) {
                   closeModal();
                   routeToHome();
                 }}
+                interviewDetails={interviewDetails}
               ></InterviewFeedback>
             </ModalBody>
           </Modal>

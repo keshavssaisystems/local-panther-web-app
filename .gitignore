@@ -26,3 +26,7 @@ yarn-error.log*
 package-lock.json
 *.log
 .eslintcache
+
+.github/
+.vscode/
+.scannerwork/

@@ -70,6 +70,7 @@ import {
   setStartDate,
   setEndDate
 } from "_store/commonCustFiltersSlice";
+import { CandidateInterviewHistoryModal } from "_components/modal/candidateinterviewhistorymodal";
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
   const { jobPostedbyId } = useParams();
@@ -103,13 +104,13 @@ export default function CustomerCandidateLists(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
-
+  const [candidateInterviewList, setCandidateInterviewList] = useState([]);
+  const [showCandidateInterviewHistoryModal, setShowCandidateInterviewHistoryModal] = useState(false);
   let [startDate1, setStartDate1] = useState();
   let [endDate1, setEndDate1] = useState();
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList.some(company => company.isstaffingfirm === true));
   const [offlineStatuses, setOfflineStatuses] = useState([]);
-  const jobList = useSelector((state) => state.customerCandidateList.jobLists);
   const [showInterviewFeedbackStatusFilter, setShowInterviewFeedbackStatusFilter] = useState(false);
   const [showFromToDateFilter, setShowFromToDateFilter] = useState(false);
   const [showSearch, setShowSearch] = useState(true);
@@ -139,13 +140,15 @@ export default function CustomerCandidateLists(props) {
     (state) => state.customerCandidateList.custOfferHistory
   );
   // const filteredItems = useSelector((state) => state.dropdown.jobsDropdownList);
-  const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
+  // const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
   const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const [interviewStatus, setInterviewStatus] = useState([]);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [candidateDocumentUrl, setCandidateDocumentUrl] = useState("");
   const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
   const reportData = useSelector((state) => state.customerCandidateList.reportData);
+  const [scoreJson, setScoreJson] = useState(null);
+  const [jobTitle, setJobTitle] = useState(null);
   // // // Set default actionbyId after hiringManagerDownList is loaded
   // useEffect(() => {
   //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
@@ -157,7 +160,6 @@ export default function CustomerCandidateLists(props) {
   // }, [hiringManagerDownList]);
 
   useEffect(() => {
-    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
     dispatch(scheduleInterviewActions.getDurationThunk());
@@ -207,7 +209,7 @@ export default function CustomerCandidateLists(props) {
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
-    dispatch(getHiringMangerList(companyId));
+    // dispatch(getHiringMangerList(companyId));
     if (id) {
       dispatch(setHiringManagerId(jobPostedbyId));
       dispatch(custJobListActions.getJobDetail({ jobId: id }));
@@ -271,12 +273,12 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
+      if (pageNo === 1) onGetCandidatesCount(id, clearText);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, clearText ? "" : searchText ? searchText : "");
+    if (pageNo === 1) onGetCandidatesCount(id, clearText);
   };
 
   const handlePageChange = (page) => {
@@ -284,9 +286,10 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(page, props.type || activeTab, id);
   };
   const toggle = (activetab) => {
+    const isScheduleTab = activetab === "scheduled";
     clearInterviewFilters();
-    setShowInterviewFeedbackStatusFilter(activetab === "scheduled" ? true : false);
-    setShowFromToDateFilter(activetab === "scheduled" ? true : false);
+    setShowInterviewFeedbackStatusFilter(isScheduleTab);
+    setShowFromToDateFilter(isScheduleTab);
     if (id) {
       //setSearchText("");
       setPageNo(1);
@@ -404,10 +407,13 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(pageNo, props.type || activeTab, id);
   };
 
-  const onBuildResumeClick = async (candidateId) => {
+  const onBuildResumeClick = async (candidateId, scoreJson, jobTitle) => {
+    setScoreJson(scoreJson);
+    setJobTitle(jobTitle);
     let response = await dispatch(getProfileActions.getCandidate(candidateId));
     if (response?.payload) {
       setShowProfileModal(true);
+
     }
   };
 
@@ -487,6 +493,21 @@ export default function CustomerCandidateLists(props) {
       setCandidateHistoryList([]);
       setShowCandidateHistoryModal(false);
     }
+  };
+
+  const onCandidateInterviewHistoryClick = async (candidateId, row) => {
+    setCandidateName(row?.firstname + " " + row?.lastname);
+    let response = await dispatch(scheduleInterviewActions.getCandidateInterviewListThunk(row.candidaterecommendedjobid));
+    if (response?.payload) {
+      setCandidateInterviewList(response?.payload?.data?.data || []);
+      setShowCandidateInterviewHistoryModal(true);
+    }
+    else {
+      setCandidateInterviewList([]);
+      setShowCandidateInterviewHistoryModal(false);
+    }
+
+
   };
 
   const handleInterviewFilters = async () => {
@@ -612,12 +633,12 @@ export default function CustomerCandidateLists(props) {
 
     if (activeTab === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, searchText);
+      if (pageNo === 1) onGetCandidatesCount(id, false);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, searchText);
+    if (pageNo === 1) onGetCandidatesCount(id, false);
   };
 
   const onCandidateResume = async (candidateId, url) => {
@@ -703,7 +724,7 @@ export default function CustomerCandidateLists(props) {
       navigate(`/candidate-list`);
     }
     else {
-      onSearchJob();
+      onClearSearch();
     }
   }
 
@@ -1044,8 +1065,8 @@ export default function CustomerCandidateLists(props) {
                                 }
                                 updateList={() => onUpdateList()}
                                 durationOptions={durationOptions}
-                                onBuildResume={(candidateId) =>
-                                  onBuildResumeClick(candidateId)
+                                onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                                  onBuildResumeClick(candidateId, scoreJson, jobTitle)
                                 }
                                 onCandidateResume={(candidateId, url) =>
                                   onCandidateResume(candidateId, url)
@@ -1129,8 +1150,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1215,8 +1236,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
@@ -1300,8 +1321,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1386,14 +1407,17 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
                           onCandidateResume={(candidateId, url) =>
                             onCandidateResume(candidateId, url)
+                          }
+                          onCandidateInterviewHistory={(candidateId, row) =>
+                            onCandidateInterviewHistoryClick(candidateId, row)
                           }
                           isStaffingFirm={isStaffingFirm}
                           offlineStatuses={offlineStatuses}
@@ -1589,8 +1613,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1600,6 +1624,9 @@ export default function CustomerCandidateLists(props) {
                             onCandidateResume(candidateId, url)
                           }
                           isStaffingFirm={isStaffingFirm}
+                          onCandidateInterviewHistory={(candidateId, row) =>
+                            onCandidateInterviewHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1678,8 +1705,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1765,8 +1792,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           onCandidateHistory={(candidateId, row) =>
@@ -1853,8 +1880,8 @@ export default function CustomerCandidateLists(props) {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
-                          onBuildResume={(candidateId) =>
-                            onBuildResumeClick(candidateId)
+                          onBuildResume={(candidateId, scoreJson, jobTitle) =>
+                            onBuildResumeClick(candidateId, scoreJson, jobTitle)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           showActionInterestColumns={true}
@@ -1919,6 +1946,8 @@ export default function CustomerCandidateLists(props) {
             <BuildCVModal
               isOpen={showProfileModal}
               onClose={() => setShowProfileModal(false)}
+              scoreJson={scoreJson}
+              jobTitle={jobTitle}
             />
           </>
         ) : (
@@ -1977,6 +2006,20 @@ export default function CustomerCandidateLists(props) {
           <CandidateCVModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)}
             url={candidateDocumentUrl}
           />
+        )}
+      </>
+      <>
+        {showCandidateInterviewHistoryModal ? (
+          <>
+            <CandidateInterviewHistoryModal
+              isOpen={showCandidateInterviewHistoryModal}
+              onClose={() => setShowCandidateInterviewHistoryModal(false)}
+              candidateInterviewList={candidateInterviewList}
+              candidateName={candidateName}
+            />
+          </>
+        ) : (
+          <></>
         )}
       </>
     </>

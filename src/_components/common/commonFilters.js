@@ -10,7 +10,7 @@ import {
     Input,
     Button,
 } from "reactstrap";
-import { getHiringMangerList, dropdownActions } from "_store";
+import { getHiringMangerListDynamic, dropdownActions ,getHiringMangersList} from "_store";
 import {
     setSelectedOpt,
     setSearchText,
@@ -29,6 +29,7 @@ import {
     faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Tooltip } from "reactstrap";
 export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
     showJobStatus = true,
     showSearch = true,
@@ -38,7 +39,11 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     interviewFeedbackStatus,
     showInterviewFeedbackStatus = false,
     showFromDateToDate = false,
-    onClearFilters
+    onClearFilters,
+    showAssignButton = false,
+    selectedJobsCount = 0,
+    onAssignClick = null,
+    viewType=null
 }) => {
     const dispatch = useDispatch();
 
@@ -50,13 +55,13 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
 
     // 🔹 Hiring Manager dropdown list
     const hiringManagerDownList = useSelector(
-        (state) => state?.customerReportReducer?.hiringmangers
+        (state) => state?.customerReportReducer?.assignHiringManagers
     );
 
     // 🔹 Fetch hiring managers
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
-        dispatch(getHiringMangerList(companyId));
+        dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'assignUserListByCompany' }));
         if (!hiringManagerId) {
             dispatch(setHiringManagerId(localStorage.getItem("userId")));
         }
@@ -170,6 +175,16 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
 
     const onInterviewSearchClear = () => { };
 
+    const [tooltipOpen, setTooltipOpen] = useState(false);
+    const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
+
+    // Reset hiring manager to default when viewType changes to "list"
+    useEffect(() => {
+        if (viewType === "list") {
+            dispatch(setHiringManagerId(""));
+        }
+    }, [viewType]);
+
     return (
         <Col md="12">
             <Card className="main-card mb-3 card-filter filter-toolbar">
@@ -188,6 +203,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                             handleHiringManagerChange(e.target.value)
                                         }
                                         className="filter-select"
+                                        disabled={viewType === "list"}
                                     >
                                         <option value={""}>Select a Hiring Manager</option>
                                         {hiringManagerDownList?.length > 0 &&
@@ -397,6 +413,51 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                         </InputGroup>
                                     </Form>
                                 </Col>
+                                {/* Assign To Button */}
+                                {showAssignButton &&  (
+                                    <Col xs={12} sm={6} md={4} lg={2} className="ms-auto d-flex justify-content-end align-items-center">
+                                        <span id="assignTooltipWrapper">
+                                            <Button
+                                                className="assign-to-btn"
+                                                style={{
+                                                    backgroundColor: "#2F479B",
+                                                    borderColor: "#0D6EFD",
+                                                    border: "1px solid #0D6EFD",
+                                                    borderRadius: "4px",
+                                                    color: "white",
+                                                    padding: "8px 18px",
+                                                    maxHeight: "150px"
+                                                }}
+                                                onClick={onAssignClick}
+                                                disabled={selectedJobsCount === 0 || viewType === "block"}
+                                                >
+                                                Assign To
+                                            </Button>
+                                        </span> 
+                                        {selectedJobsCount === 0 && viewType === "list" && (
+                                            <Tooltip
+                                                placement="left"
+                                                isOpen={tooltipOpen}
+                                                target="assignTooltipWrapper"
+                                                toggle={toggleTooltip}
+                                            >
+                                                Select one or more jobs to assign to a manager.
+                                            </Tooltip>
+                                        )}
+                                        {viewType === "block" && (
+                                            <Tooltip
+                                                placement="left"
+                                                isOpen={tooltipOpen}
+                                                target="assignTooltipWrapper"
+                                                toggle={toggleTooltip}
+                                                style={{maxWidth: "250px"}}
+                                            >
+                                                Switch to List View to assign jobs to Hiring Managers.
+                                            </Tooltip>
+                                        )}
+                                        
+                                    </Col>
+                                )}
                             </Row>
                         </div>
                     </div>

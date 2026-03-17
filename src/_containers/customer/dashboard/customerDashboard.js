@@ -10,6 +10,7 @@ import {
   dropdownActions,
   customerCandidateListsActions,
   candidateDashboardActions,
+  custJobListActions,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
@@ -21,11 +22,14 @@ import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
 import { PaymentModal } from "_components/modal/paymentmodal";
+import { ActivePipelines } from "_components/dashboard/ActivePipelines";
 import { createAuthLink } from "_components/unifiedApp/unifiedApp";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState(null);
+  const [jobListPage, setJobListPage] = useState(1);
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -76,12 +80,47 @@ export default function CustomerDashboard() {
     );
   };
 
+  
   const handleBillDetailUpdate = () => {
     setShowRemModal(false);
     setShowPaymentModal(true);
   };
 
+  const loadJobListPage = (pageNumber) => {
+    const dashUserId = localStorage.getItem("userId");
+    if (dashUserId ) {
+      dispatch(
+        custJobListActions.getJobs({
+          pageSize: 15,
+          pageNumber: pageNumber,
+          companyId: null,
+        })
+      );
+      setJobListPage(pageNumber);
+    }
+  };
+  
+   const pipelineJobList = useSelector(
+    (state) => state.custJobListReducer.jobs
+  );
+
+  const JobListloader = useSelector(
+    (state) => state.custJobListReducer.dbloading
+  );
+
+  const totalRows = useSelector(
+    (state) => state.custJobListReducer.totalRow
+  );
+  const handleLoadNextPage = () => {
+    loadJobListPage(jobListPage + 1);
+  };
+
   useEffect(() => {
+    // Load job list for the Active Pipelines section
+    const dashUserId = localStorage.getItem("userId");
+    if (dashUserId) {
+      loadJobListPage(1);
+    }
     if (
       localStorage.getItem("companyreferrallogid") &&
       localStorage.getItem("companyreferrallogname")
@@ -98,7 +137,7 @@ export default function CustomerDashboard() {
     dispatch(scheduleInterviewActions.getAllInterviewThunk(localStorage.getItem("userId")));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
     dispatch(
-      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
+      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid") || 0)
     );
     dispatch(customerCandidateListsActions.getDurationOptions());
     if (analytics) {
@@ -108,7 +147,34 @@ export default function CustomerDashboard() {
         page_path: window.location.pathname,
       });
     }
+
+   
   }, []);
+
+  // Auto-select the first job whenever the pipeline job list loads
+  useEffect(() => {
+    if (pipelineJobList?.length > 0 && !selectedJobId) {
+      setSelectedJobId(pipelineJobList[0].jobid);
+    }
+  }, [pipelineJobList]);
+
+  // Fetch full job detail whenever the selected tab changes
+  useEffect(() => {
+    if (selectedJobId) {
+      dispatch(custJobListActions.getJobDetail({ jobId: selectedJobId }));
+    }
+  }, [selectedJobId]);
+  
+   
+
+  const pipelineJobDetail = useSelector(
+    (state) => state.custJobListReducer.jobDetail
+  );
+
+  const pipelineJdLoading = useSelector(
+    (state) => state.custJobListReducer.jdLoading
+  );
+
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
@@ -196,6 +262,27 @@ export default function CustomerDashboard() {
       path: "/job-list",
     },
     {
+      title: "Matched candidates",
+      count: dashboardCounts.matchedcandidatereviewpendingcount,
+      className: "danger",
+      icon: custDashIcons.matchedpending,
+      path: "/candidate-list",
+    },
+    {
+      title: "Liked candidates",
+      count: dashboardCounts.newcandidatelikedcount,
+      className: "success",
+      icon: custDashIcons.liked,
+      path: `/customer-candidate-liked/0/${userId}`,
+    },
+    {
+      title: "Applied candidates",
+      count: dashboardCounts.appliedcount,
+      className: "danger",
+      icon: custDashIcons.applied,
+      path: `customer-candidate-applied/0/${userId}`,
+    },
+    {
       title: "Upcoming interview",
       count: dashboardCounts.upcominginterviewcount,
       className: "info",
@@ -208,29 +295,7 @@ export default function CustomerDashboard() {
       className: "danger",
       icon: custDashIcons.offer,
       path: `customer-candidate-offers/0/${userId}`,
-    },
-    {
-      title: "Liked candidates",
-      count: dashboardCounts.newcandidatelikedcount,
-      className: "success",
-      icon: custDashIcons.liked,
-      path: `/customer-candidate-liked/0/${userId}`,
-    },
-    {
-      title: "Matched candidate pending to review",
-      count: dashboardCounts.matchedcandidatereviewpendingcount,
-      className: "danger",
-      icon: custDashIcons.matchedpending,
-      path: "/candidate-list",
-    },
-
-    {
-      title: "Applied candidates",
-      count: dashboardCounts.appliedcount,
-      className: "danger",
-      icon: custDashIcons.applied,
-      path: `customer-candidate-applied/0/${userId}`,
-    },
+    }
   ];
 
   const callUnifiedApp = () => {
@@ -260,6 +325,23 @@ export default function CustomerDashboard() {
               onReadNotification={(id, status, item) =>
                 onReadNotification(id, status, item)
               }
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col sm="12">
+            <ActivePipelines
+              pipelineJobList={pipelineJobList}
+              pipelineJobDetail={pipelineJobDetail}
+              pipelineJdLoading={pipelineJdLoading}
+              JobListloader={JobListloader}
+              selectedJobId={selectedJobId}
+              onSelectJob={setSelectedJobId}
+              userId={userId}
+              totalRows={totalRows}
+              currentPage={jobListPage}
+              pageSize={10}
+              onLoadNextPage={handleLoadNextPage}
             />
           </Col>
         </Row>

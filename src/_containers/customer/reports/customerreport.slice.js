@@ -139,6 +139,18 @@ export const getCandidateDropdown = createAsyncThunk(
   }
 );
 
+// get candidate dropdown list (supports search)
+export const getCandidateSearchDropdown = createAsyncThunk(
+  `${name}/getCandidateSearchDropdown`,
+  async (search = "") => {
+    const base = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=candidateSearch`;
+    const GET_CANDIDATE_DROPDOWN_END_POINT = search
+      ? `${base}&searchBy=${encodeURIComponent(search)}`
+      : `${base}`;
+    return await fetchWrapper.get(GET_CANDIDATE_DROPDOWN_END_POINT);
+  }
+);
+
 // get candidate Recommended Job Status list
 export const getRecommendedJobStatus = createAsyncThunk(
   `${name}/getRecommendedJobStatus`,
@@ -211,12 +223,48 @@ export const getHiringMangerList = createAsyncThunk(
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
   }
 );
+
+export const getHiringMangerListDynamic = createAsyncThunk(
+  `${name}/getHiringMangerListDynamic`,
+  async ({companyId, endpoint = 'userListByCompany'}) => {
+    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }Common/GetCommonDropdown?searchText=${endpoint}&commonId=${companyId}`;
+    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+  }
+);
+//getHiringMangersList use for AssignJobs Modal
+export const getHiringMangersList  = createAsyncThunk(
+  `${name}/getHiringMangersList`,
+  async ({companyId, endpoint = 'userListByCompany'}) => {
+    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }Common/GetCommonDropdown?searchText=${endpoint}&commonId=${companyId}`;
+    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+  }
+);
+
+// get job dropdown list
+export const getJobDropdownByUserid = createAsyncThunk(
+  `${name}/getJobDropdownByUserid`,
+  async ({search = "", userId = null}) => {
+    // const GET_JOB_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDropdown`;
+    let companyid = Number(localStorage.getItem("companyid"));
+    const userIdParam = userId ? `&commonid=${userId}` : "";
+    const base = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=JobListByUserId`;
+    var GET_JOB_DROPDOWN_END_POINT = search
+      ? `${base}&searchBy=${encodeURIComponent(search)}${userIdParam}`
+      : `${base}${userIdParam}`;
+      
+    return await fetchWrapper.get(GET_JOB_DROPDOWN_END_POINT);
+  }
+);
 // Create the slice
 const customerReportSlice = createSlice({
   name,
   initialState: {
     // initialize state from local storage to enable user to stay logged in
     loading: false,
+    companyHiringManagers: [],
+    assignHiringMangers: [],
     jobList: [],
     schdInterviewList: [],
     interviewedCandidateList: [],
@@ -322,6 +370,16 @@ const customerReportSlice = createSlice({
     [getCandidateDropdown.fulfilled]: (state, action) => {
       state.candidateDropDownList = action?.payload?.data;
     },
+
+    [getCandidateSearchDropdown.fulfilled]: (state, action) => {
+      // normalize to consistent shape used by selectors
+      state.candidateDropDownList =
+        action?.payload?.data?.map((item) => ({
+          candidatename: item.name || item.candidatename || "",
+          candidateid: item.id || item.candidateid,
+        })) || [];
+    },
+
     [getCandidateDropdown.rejected]: (state, action) => { },
 
     // job dropdown list
@@ -399,8 +457,42 @@ const customerReportSlice = createSlice({
     [getHiringMangerList.fulfilled]: (state, { payload = {} }) => {
       state.hiringmangers = payload?.data;
     },
-    [getHiringMangerList.rejected]: (state, action) => { }
+    [getHiringMangerList.rejected]: (state, action) => { },
 
+    [getHiringMangerListDynamic.pending]: (state) => {
+      state.hiringmangers = [];
+    },
+    [getHiringMangerListDynamic.fulfilled]: (state, { payload = {} }) => {
+      state.hiringmangers = payload?.data;
+    },
+    [getHiringMangerListDynamic.rejected]: (state, action) => { },
+    //for Assign Jobs Modal and Assign Hiring Manager dropdown
+    [getHiringMangersList.pending]: (state) => {
+    },
+    [getHiringMangersList.fulfilled]: (state, { payload = {}, meta }) => {
+      const endpoint = meta?.arg?.endpoint;
+      if (endpoint === 'allUserListByCompany') {
+        state.companyHiringManagers = payload?.data;
+      }
+      if(endpoint === 'assignUserListByCompany') {
+        state.assignHiringManagers = payload?.data;
+      }
+    },
+    [getHiringMangersList.rejected]: (state, action) => {
+    },
+
+    // job dropdown list
+    [getJobDropdownByUserid.pending]: (state) => {
+      state.jobDropDownList = [];
+    },
+    [getJobDropdownByUserid.fulfilled]: (state, action) => {
+      state.jobDropDownList = action?.payload?.data?.map((item => ({
+        jobtitle: item.name,
+        jobid: item.id
+      })));
+      // state.jobDropDownList = action?.payload?.data;
+    },
+    [getJobDropdownByUserid.rejected]: (state, action) => { },
   },
 
 });
@@ -415,6 +507,7 @@ export const customerReportActions = {
   getCustReportMatchedCandList,
   getCustReporCandStatList,
   getCandidateDropdown,
+  getCandidateSearchDropdown,
   getJobDropdown,
   getRecommendedJobStatus,
   getScheduledCandidatesForCustomerDropdown,
@@ -422,7 +515,10 @@ export const customerReportActions = {
   getCustReportSchdIntvDetail,
   getReportSubsidiaryList,
   getReportCandidateInterviewList,
-  getHiringMangerList
+  getHiringMangerList,
+  getHiringMangerListDynamic,
+  getHiringMangersList,
+  getJobDropdownByUserid,
 };
 
 export const customerReportReducer = customerReportSlice.reducer;

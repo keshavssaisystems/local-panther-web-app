@@ -36,10 +36,10 @@ export function InterviewDetailsModal({
         className="interview-details-modal"
         onClosed={() => onClose()}
       >
-        <ModalHeader toggle={() => onClose()}>Interview details</ModalHeader>
+        <ModalHeader toggle={() => onClose()}>Interview details ({interviewDetail?.roundname})</ModalHeader>
         <ModalBody className="pt-4">
           <VideoInterviewDetails
-            interviewId={interviewDetail.scheduleinterviewid}
+            interviewId={interviewDetail?.scheduleinterviewid}
             postNotesData={(e) => postNotesData(e)}
             postInviteData={(e) => postInviteData(e)}
             cancelScheduleData={(e) => cancelScheduleData(e)}

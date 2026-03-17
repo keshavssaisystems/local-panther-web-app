@@ -25,7 +25,8 @@ import {
   BsFileEarmark,
   BsBuildings,
   BsCheckCircle,
-  BsPerson
+  BsPerson,
+  BsPencil
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
@@ -36,6 +37,7 @@ import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { ScorePopup } from "./scorePopup";
 import SweetAlert from "react-bootstrap-sweetalert";
+import AssigneeAtsCandidate from "_containers/customer/atscustomercandidatelist/AssigneeAtsCandidate";
 
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
@@ -45,6 +47,13 @@ export const CandidateCardView = (props) => {
   const [showReModal, setShowReModal] = useState(false);
   const [showRejSModal, setShowRejSModal] = useState(false);
   const [showSchdIntModal, setShowSchdIntSModal] = useState(false);
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [atsCandidateId, setAtsCandidateId] = useState(null);
+  const [isAssigned, setIsAssigned] = useState(false);
+  const [assignedCompanyId, setAssignedCompanyId] = useState(null);
+  const [assignmentStartDate, setAssignmentStartDate] = useState(null);
+  const [assignmentEndDate, setAssignmentEndDate] = useState(null);
+  const [assignedCompanyName, setAssignedCompanyName] = useState(null);
   const isStaffingFirm = props.isStaffingFirm;
   const dispatch = useDispatch();
   const onRejectClick = () => {
@@ -265,7 +274,9 @@ export const CandidateCardView = (props) => {
   const onBuildResume = () => {
     if (props?.data?.recommendedationCandidateShortList?.length > 0) {
       props.onBuildResume(
-        props?.data?.recommendedationCandidateShortList[0].candidateid
+        props?.data?.recommendedationCandidateShortList[0].candidateid,
+        props?.data?.scorejson?.replace(/'/g, '"').replace(/candidate"s/g, "candidate's"),
+        props?.data?.jobtitle ? props?.data?.jobtitle : "",
       );
     }
   };
@@ -281,7 +292,28 @@ export const CandidateCardView = (props) => {
 
   const onPresentClick = () => {
     props.onPresentClick(props?.data?.candidaterecommendedjobid);
-  }
+  };
+
+  const updateAssignedDetail = (atsCandidateId, isAssigned, assignedCompanyId, assignedCompanyName, assignmentStartDate, assignmentEndDate) => {
+    setAtsCandidateId(atsCandidateId);
+    setIsAssigned(isAssigned);
+    setAssignedCompanyId(assignedCompanyId);
+    setAssignedCompanyName(assignedCompanyName);
+    setAssignmentStartDate(assignmentStartDate);
+    setAssignmentEndDate(assignmentEndDate);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    setAtsCandidateId(null);
+  };
+
+  const handleRefreshData = () => {
+    if (props.updateList && typeof props.updateList === "function") {
+      props.updateList();
+    }
+  };
 
   return (
     <>
@@ -364,10 +396,49 @@ export const CandidateCardView = (props) => {
                     </span>
                   </Col>
                   <Col md="11" lg="11">
-                    <b>Work Experience</b>
+                    <div 
+                    style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "space-between", 
+                      gap: "8px" 
+                      }}>
+                      <div 
+                      style={{ 
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px" }}>
+                        <b>Work Experience</b>
+                      </div>
+
+                      {localStorage.getItem("atsEnableStatus") === "true" && props?.data?.isatscandidate === false && (
+                        <div
+                          style={{
+                            backgroundColor: "#FED7AA",
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "fit-content",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#C2410C",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            OpenWorX Candidate
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     <p>{returnWorkExperince()}</p>
                   </Col>
-                </Row>
+                 
+                  </Row>
               </p>
             </Col>
 
@@ -487,6 +558,67 @@ export const CandidateCardView = (props) => {
                     </Row>
                   </p>
                 </Col>
+                {props.data.assignedInfoDTO?.[0]?.isassigned === true && 
+                (<Col className="col-12"> 
+                    <div className="card-details"> 
+                      <Row> 
+                        <Col md="1" lg="1"> 
+                        <span className="pe-2">
+                          <img
+                            src={customerIcons.On_Assignment}
+                            alt="On assignment"
+                            width="16"
+                            height="auto"
+                            style={{ verticalAlign: "middle", objectFit: "contain" }}
+                          />
+                        </span>
+                          
+                        </Col> 
+                        <Col md="11" lg="11">
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "space-between" }}>
+                            <div>
+                              <b>Assignment Status</b> 
+                              <div>On Assignment / Already Working</div>
+                                <div className="d-flex flex-column gap-1">
+                                  <div className="d-flex align-items-center">
+                                    <span>
+                                      {props.data.assignedInfoDTO?.[0]?.assignmentstartdate
+                                        ? 
+                                        moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentstartdate ).format("MM/DD/YYYY")
+                                         : "-"}
+                                    </span>
+                                       {" - "}
+                                    <span>
+                                      {props.data.assignedInfoDTO?.[0]?.assignmentenddate
+                                        ? moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentenddate ).format("MM/DD/YYYY")
+                                         : "-"}
+                                    </span>
+                                  </div>
+                              </div>
+                            </div>
+                            <div className="me-3 float-end">
+                                <BsPencil
+                                    className="edit-icon"
+                                    size={16}
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                      const atsDetail = props.data.assignedInfoDTO?.[0];
+                                      updateAssignedDetail(
+                                          atsDetail?.atscandidateid,
+                                          atsDetail?.isassigned,
+                                          atsDetail?.assignedcompanyid,
+                                          atsDetail?.assignedcompanyname,
+                                          atsDetail?.assignmentstartdate,
+                                          atsDetail?.assignmentenddate
+                                      );
+                                    }}
+                                />
+                              </div>
+                          </div>
+                        </Col> 
+                      </Row> 
+                    </div> 
+                </Col> )}
               </>)}
           </Row>
         </CardBody>
@@ -628,6 +760,22 @@ export const CandidateCardView = (props) => {
             }}
             isOpen={showSchdIntModal}
             onClose={() => setShowSchdIntSModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>      <>
+        {openBDModal ? (
+          <AssigneeAtsCandidate
+            isOpen={openBDModal}
+            atsCandidateId={atsCandidateId}
+            isAssigned={isAssigned}
+            assignedCompanyId={assignedCompanyId}
+            assignedCompanyName={assignedCompanyName}
+            assignmentStartDate={assignmentStartDate}
+            assignmentEndDate={assignmentEndDate}
+            onClose={() => onCloseBDModal()}
+            onRefresh={handleRefreshData}
           />
         ) : (
           <></>

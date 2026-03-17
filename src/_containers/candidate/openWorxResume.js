@@ -23,6 +23,7 @@ import { useSelector } from "react-redux";
 
 import { getDate, getEducText } from "_helpers/helper";
 import html2pdf from "html2pdf.js";
+import FairMatchReport from "./fairMatchReport";
 export const OpenWorXResume = forwardRef((props, ref) => {
 
     let userRoleId = localStorage.getItem("userroleid");
@@ -112,22 +113,22 @@ export const OpenWorXResume = forwardRef((props, ref) => {
         setGetResponse(filtered_data);
     }, [get_response]);
 
-    const generatePDF = async function () {
+    const generatePDF = async () => {
         const content = componentRef.current;
-
         if (!content) return;
 
         setIsGenerating(true);
 
         try {
-            // use setTimeout to allow UI to update with loading state
             await new Promise((resolve) => setTimeout(resolve, 100));
-            const pdfOptions = {
-                margin: [10, 10, 10, 10],
-                filename: personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname + ".pdf",
-                image: { type: "jpeg", quality: 0.95 },
+
+            const opt = {
+                margin: 10,
+                filename: `${personalInfo_temp?.firstname} ${personalInfo_temp?.lastname}.pdf`,
+                image: { type: "jpeg", quality: 0.98 },
                 html2canvas: {
                     scale: 2,
+                    scrollY: 0,
                     useCORS: true
                 },
                 jsPDF: {
@@ -136,21 +137,20 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                     orientation: "portrait"
                 },
                 pagebreak: {
-                    mode: ["css"]
+                    mode: ["avoid-all", "css", "legacy"]
                 }
             };
 
-            await html2pdf().set(pdfOptions).from(componentRef.current).save();
-
-
+            await html2pdf().set(opt).from(content).save();
 
         } catch (error) {
             console.error("PDF generation error:", error);
-            alert("Failed to generate PDF. Please try again.");
+            alert("Failed to generate PDF.");
         } finally {
             setIsGenerating(false);
         }
     };
+
     // Expose generatePDF to parent via ref
     useImperativeHandle(ref, () => ({
         generatePDF: generatePDF,
@@ -236,10 +236,6 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                             </span>
                         )}
                     </h1>)}
-                    <p className="h5 text-secondary">
-                        {getCandidateJobRole()}
-                    </p>
-
                     <Row className="gx-4 gy-2 text-secondary text-sm">
                         <Col xs="auto" className="d-flex align-items-center gap-1">
                             <BsGeoAltFill className="accent-color" size={18} />
@@ -282,7 +278,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                     )}
                                     {/* {item.jobdescription} */}
                                     {item.jobdescription && getJobDescriptionLines(item.jobdescription).map((line, index) => (
-                                        <p class="p1 small">
+                                        <p class="p1 small" style={{ paddingLeft: "1rem" }}>
                                             <Row className="pdf-bullet-row align-items-start">
                                                 <Col xs="auto" className="bullet-col">{BULLETS.round}</Col>
                                                 <Col className="text-col"> {line.replace(/•/g, '')}</Col>
@@ -356,7 +352,7 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                         {getDate(item)} {item.isexpired === false ? "(Expired)" : ""}
                                     </p>
                                     {item.description && item.description !== "" ? (
-                                        <><h6 className="small fw-medium text-dark mb-1">
+                                        <><h6 className="small fw-semibold text-dark mb-1">
                                             Description
                                         </h6>
                                             <p className="small m-0" style={{ whiteSpace: "pre-wrap" }}>
@@ -485,6 +481,13 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                         </div>
                     </section>
                 ) : (<> </>)}
+
+                {props?.scoreJson && userRoleId !== "3" && (
+                    <div className="print-area">
+                        <FairMatchReport scorejson={props?.scoreJson} jobTitle={props?.jobTitle ? props?.jobTitle : ''} />
+                    </div>
+                )}
+
 
                 {/* FOOTER */}
                 {false && (<footer className="text-center border-top p-3 text-muted">

@@ -63,7 +63,7 @@ export function VideoInterviewDetails({
   const [showInviteCard, setShowInviteCard] = useState(false);
   const [feedbackModal, setFeedbackModal] = useState(false);
   const [linkDisabled, setLinkDisabled] = useState(true);
-  const [isPastInterview, setIsPastInterview] = useState(false);
+  const [isPastInterview, setIsPastInterview] = useState(false);  
 
   useEffect(() => {
     if (interviewDetails) {
@@ -369,7 +369,7 @@ export function VideoInterviewDetails({
               onClick={() => interviewDetail?.iscustomeroffered === true ? null : onAcceptClick(interviewDetail)}
               disabled={interviewDetail?.iscustomeroffered === true}
             >
-            {interviewDetail?.iscustomeroffered === true?" Offer generated":" Make an offer"}
+              {interviewDetail?.iscustomeroffered === true ? " Offer generated" : " Make an offer"}
             </Button>
 
           </div>}
@@ -607,6 +607,7 @@ export function VideoInterviewDetails({
               setFeedbackModal(false);
               setRefreshData(true);
             }}
+            interviewDetails={interviewDetails}
           />
         </div>
       )}

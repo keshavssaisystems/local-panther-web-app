@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { custJobListActions, createjobActions, dropdownActions } from "_store";
+import { custJobListActions, createjobActions, dropdownActions, getHiringMangersList} from "_store";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { custListPageSize } from "_helpers/constants";
+import { AssignJobsModal } from "./AssignJobsModal";
 import { CardPagination } from "_components/common/cardpagination";
 import { CustJobCard } from "./custjobcard";
 import { CustJobDetail } from "./custjobdetails";
+import { CustJobListView } from "./custJobListView";
 import Loader from "react-loaders";
 import { CustJobFilter } from "./custjofilter";
 import { NoDataFound } from "_components/common/nodatafound";
@@ -17,9 +19,16 @@ import { CommonFilters } from "../../../_components/common/commonFilters";
 import { setJobStatus, setHiringManagerId, setSearchText } from "_store/commonCustFiltersSlice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { FaThLarge, FaList } from "react-icons/fa";
+import  titlelist from "../../../assets/utils/images/customer/tilelist.svg";
+import titleblock from "../../../assets/utils/images/customer/tileblock.svg";
 
 export default function CustJobList() {
   const [page, setPage] = useState(1);
+  const [viewType, setViewType] = useState("block");
+  const [selectedJobs, setSelectedJobs] = useState([]);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
   // const [placeHolder, setPlaceHolder] = useState("Search job title");
   // const [selectedOpt, setSelectedOpt] = useState("JobTitle");
   // const [searchText, setSearchText] = useState("");
@@ -56,10 +65,15 @@ export default function CustJobList() {
     (state) => state.commonCustFilters
   );
 
+  const hiringManagers = useSelector(
+    (state) => state?.customerReportReducer?.companyHiringManagers || []
+  );
+
   useEffect(() => {
     dispatch(createjobActions.getCustomerDetailsThunk(userDetails?.InternalUserId));
     dispatch(dropdownActions.getCloseJobReasonListThunk());
-  }, [dispatch])
+    dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'allUserListByCompany'}));
+  }, [dispatch, companyId])
 
   useEffect(() => {
     dispatch(custJobListActions.clearJobList());
@@ -212,12 +226,116 @@ export default function CustJobList() {
     // getJobList(filterOnPageChange);
   };
 
+  const handleAssignClick = () => {
+    setIsAssignModalOpen(true);
+  };
+
+  const handleAssignJobs = async (jobIds, hiringManagerIds) => {
+    setIsAssigning(true);
+    try {
+      const res = await dispatch(
+        custJobListActions.assignJobs({
+          jobIds: jobIds,
+          hiringManagerId: hiringManagerIds,
+        })
+      );
+      
+      // Check if all results are successful
+      if (!res?.payload || !Array.isArray(res.payload) || res.payload.length === 0) {
+        throw new Error("Failed to assign jobs");
+      }
+      
+      // Verify all responses are successful (status 200)
+      const allSuccessful = res.payload.every(
+        (result) => result?.statusCode === 200
+      );
+      
+      if (!allSuccessful) {
+        throw new Error("Some jobs failed to assign");
+      }
+
+      dispatch(
+        showSnackbar({
+          message: "Jobs assigned successfully!",
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        })
+      );
+      setIsAssignModalOpen(false);
+      setSelectedJobs([]);
+      handlePageChange(page);
+    } catch (error) {
+      dispatch(
+        showSnackbar({
+          message: "Failed to assign jobs. Please try again.",
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        })
+      );
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
   return (
     <>
       <Row>
         <Col md="12">
-          {/* <PageTitle heading="Open Jobs" icon={titlelogo} /> */}
-          <PageTitle heading="Open Jobs" />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: "12px" }}>
+            <div style={{ flex: 1 }}>
+              <PageTitle heading="Open Jobs" />
+            </div>
+            
+            <div style={{ display: "flex", gap: "12px", alignItems: "center", flexShrink: 0 }}>
+              <button
+                onClick={() => setViewType("block")}
+                title="Block View"
+                aria-label="Block View"
+                style={{
+                  background: viewType === "block" ? "#2f479b" : "white",
+                  border: viewType === "block" ? "2px solid #2f479b" : "2px solid #e0e0e0",
+                  borderRadius: "6px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "40px",
+                  height: "40px",
+                }}
+              >
+                <img src={titleblock} alt="Block View" style={{ width: "18px", height: "18px", filter: viewType === "block" ? "brightness(0) invert(1)" : "none" }} />
+              </button>
+
+              <button
+                onClick={() => setViewType("list")}
+                title="List View"
+                aria-label="List View"
+                style={{
+                  background: viewType === "list" ? "#2f479b" : "white",
+                  border: viewType === "list" ? "2px solid #2f479b" : "2px solid #e0e0e0",
+                  borderRadius: "6px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "40px",
+                  height: "40px",
+                }}
+              >
+                <img src={titlelist} alt="List View" style={{ width: "18px", height: "18px", filter: viewType === "list" ? "brightness(0) invert(1)" : "none" }} />
+              </button>
+            </div>
+          </div>
         </Col>
 
         <CommonFilters
@@ -231,8 +349,10 @@ export default function CustJobList() {
           onJobStatusChange={onJobStatusChange}
           onJobHiringMangerChange={onJobHiringMangerChange}
           showClearButtonAtEnd={true}
-        // hiringManagerId={hiringManagerId}
-        // setHiringMangerId={setHiringMangerId} 
+          showAssignButton={true}
+          selectedJobsCount={selectedJobs.length}
+          onAssignClick={handleAssignClick}
+          viewType={viewType}
         />
       </Row>
       <Row>
@@ -240,6 +360,9 @@ export default function CustJobList() {
           <>
             {!loading ? (
               <>
+                {viewType === "block" ? (
+                  // Block View Layout
+                  <>
                 {" "}
                 <p className="mb-1 row-count">{totalRows} jobs</p>
                 <Col
@@ -314,6 +437,23 @@ export default function CustJobList() {
                   )}
                 </Col>
               </>
+            ) 
+             : (
+                  // List View Layout
+                  <Col xs="12">
+                    <CustJobListView
+                      jobList={jobList}
+                      totalRows={totalRows}
+                      current={current}
+                      page={page}
+                      handlePageChange={handlePageChange}
+                      closeJob={closeJob}
+                      getSelectedJob={getSelectedJob}
+                      onSelectedJobsChange={setSelectedJobs}
+                    />
+                  </Col>
+                )}
+              </>
             ) : (
               <>
                 {" "}
@@ -339,6 +479,15 @@ export default function CustJobList() {
         )}
       </Row>
 
+      {/* Assign Jobs Modal */}
+      <AssignJobsModal
+        isOpen={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        selectedJobs={selectedJobs}
+        onAssign={handleAssignJobs}
+        isLoading={isAssigning}
+        hiringManagers={hiringManagers}
+      />
     </>
   );
 }

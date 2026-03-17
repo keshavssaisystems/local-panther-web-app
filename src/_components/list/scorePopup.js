@@ -37,6 +37,7 @@ export function ScorePopup({ scoreJson }) {
       "skillsscore",
       "experiencescore",
       "educationscore",
+      "salaryscore"
     ];
 
     let text_keys = [
@@ -45,6 +46,7 @@ export function ScorePopup({ scoreJson }) {
       "skills_description",
       "experience_description",
       "education_field_description",
+      "salary_match_description",
     ];
     let displayName = {
       jobtitlescore: "Job title",
@@ -52,6 +54,7 @@ export function ScorePopup({ scoreJson }) {
       skillsscore: "Skills",
       experiencescore: "Experience",
       educationscore: "Education",
+      salaryscore: "Salary"
     };
     return (
       <>
@@ -66,7 +69,7 @@ export function ScorePopup({ scoreJson }) {
                 <Accordion open={open} toggle={toggle}>
                   {keys?.map((key, index) => (
                     <AccordionItem>
-                      <AccordionHeader targetId={index + 1}>
+                      {validatedJson[key] !== undefined && (<AccordionHeader targetId={index + 1}>
                         <div className="nav-item-header-custom">
                           <Row>
                             <Col
@@ -84,7 +87,8 @@ export function ScorePopup({ scoreJson }) {
                             </Col>
                           </Row>
                         </div>
-                      </AccordionHeader>
+                      </AccordionHeader>)}
+
                       <AccordionBody accordionId={index + 1}>
                         <>
                           {index + 1 === 1 && (
@@ -104,6 +108,11 @@ export function ScorePopup({ scoreJson }) {
                           {index + 1 === 5 && (
                             <div>
                               {validatedJson["education_field_description"]}
+                            </div>
+                          )}
+                          {index + 1 === 6 && (
+                            <div>
+                              {validatedJson["salary_match_description"]}
                             </div>
                           )}
                         </>

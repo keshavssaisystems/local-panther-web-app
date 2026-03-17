@@ -37,7 +37,7 @@ import { getLocationFilter } from "_store";
 import debounce from "lodash/debounce";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
+import OtpVerificationModal from "./otpVerificationModal";
 export function PersonalInformation(props) {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.getProfile.loader);
@@ -66,6 +66,14 @@ export function PersonalInformation(props) {
     (state) => state.getProfile.profileData.personalInfo
   );
   const uploadedImage = useSelector((state) => state.getProfile.profileImage);
+
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [pendingMobileNumber, setPendingMobileNumber] = useState("");
+  const [originalMobileNumber, setOriginalMobileNumber] = useState("");
+  const [isOtpVerified, setIsOtpVerified] = useState(true);
+  const [otpSentId, setOtpSentId] = useState(null);
+  const [initialPhoneVerified, setInitialPhoneVerified] = useState(false);
 
   useEffect(() => {
     let data = {
@@ -173,8 +181,11 @@ export function PersonalInformation(props) {
       isactive: true,
       userid: 0,
       currentUserId: 0,
+      isphoneverified: true,
     };
     setGetResponse(data);
+    setInitialPhoneVerified(true);
+    setIsOtpVerified(true);
     let countryData = data?.country;
 
     setCountrySelect(countryData);
@@ -240,8 +251,11 @@ export function PersonalInformation(props) {
   );
   const [dob, setDOB] = useState(null);
   const [isContactModal, setContactModal] = useState(false);
+  // const phoneRegExp =
+  //   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
   const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+    /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}[ \-]*[0-9]{3,4}$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   const [locationData, setLocation] = useState([]);
@@ -371,11 +385,30 @@ export function PersonalInformation(props) {
   }
 
   async function onSubmit(e, currentEmployer) {
-    let new_data = { ...getResponse };
+
     let errors = { ...requiredErrors };
+
+    e?.preventDefault();
+
+    const new_data = { ...getResponse };
+    const oldMobile = personalInfo_temp?.phonenumber;
+    const newMobile = new_data.phonenumber;
+
+    if (oldMobile !== newMobile && !isOtpVerified) {
+      dispatch(showSnackbar({
+        message: "Please verify your phone number before saving changes.",
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+      return;
+    }
+
     if (e !== "") {
       setSave(true);
-      e.preventDefault();
+      // e.preventDefault();
 
       if (
         // new_data.jobprofile === "" ||
@@ -641,11 +674,23 @@ export function PersonalInformation(props) {
         errors.emailError = false;
       }
     } else if (check === "phonenumber") {
+      const cleaned = data.replaceAll(/\D/g, "");
+
+      // 🚫 Block if more than 10 digits
+      if (cleaned.length > 10) {
+        return;   // stop updating state
+      }
       new_data.phonenumber = data;
       if (!new_data.phonenumber.match(phoneRegExp)) {
         errors.phoneError = true;
       } else {
         errors.phoneError = false;
+      }
+      // Check if phone number has been changed from original
+      if (data !== personalInfo_temp?.phonenumber) {
+        setIsOtpVerified(false);
+      } else {
+        setIsOtpVerified(initialPhoneVerified);
       }
     } else if (check === "zip") {
       new_data.zipcode = data;
@@ -793,6 +838,103 @@ export function PersonalInformation(props) {
     setEditImg(false);
     props.onCallBack();
   };
+
+  const sendOtp = async (mobileNumber) => {
+    try {
+      setIsOtpVerified(false);
+      const cleanedPhone = mobileNumber.replaceAll(/\D/g, "");
+
+      if (cleanedPhone.length !== 10) {
+        dispatch(showSnackbar({
+          message: "Phone number must be 10 digits",
+          type: SNACKBAR_TYPES.ERROR,
+        }));
+        return;
+      }
+
+      const response = await dispatch(profileActions.sendOTPforVerification({
+        "phonenumber": mobileNumber.replaceAll(/\D/g, "")
+      }));
+
+      if (response.payload?.statusCode === 204) {
+        dispatch(showSnackbar({
+          message: "OTP sent successfully",
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+        }));
+        setOtpSentId(response.payload?.data?.id);
+        setPendingMobileNumber(mobileNumber);
+        setOtpModalOpen(true);
+      }
+    } catch (err) {
+      dispatch(showSnackbar({
+        message: "Failed to send OTP",
+        type: SNACKBAR_TYPES.ERROR,
+      }));
+    }
+  };
+
+
+  const handleVerifyOtp = async (otp) => {
+    setOtpLoading(true);
+    setIsOtpVerified(false);
+    try {
+      const response = await dispatch(profileActions.sendOTPforVerification({
+        phonenumber: pendingMobileNumber,
+        otp: otp,
+        id: otpSentId
+      }));
+
+      setOtpLoading(false);
+
+      if (response.payload?.message === "Phone Number updated successfully") {
+        setOtpModalOpen(false);
+        setIsOtpVerified(true);
+        dispatch(showSnackbar({
+          message: "Mobile number updated successfully",
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000
+        }));
+
+        return { success: true };
+      } else {
+        dispatch(showSnackbar({
+          message: response.payload?.message || "Invalid or expired OTP",
+          type: SNACKBAR_TYPES.ERROR,
+        }));
+        return { success: false, message: "Invalid or expired OTP" };
+      }
+
+    } catch (error) {
+      setOtpLoading(false);
+      return { success: false, message: "Verification failed" };
+    }
+  };
+
+  const handleResendOtp = async () => {
+    let response = await dispatch(profileActions.sendOTPforVerification({
+      "id": otpSentId,
+      "phonenumber": pendingMobileNumber
+    }));
+    if (response.payload?.statusCode === 204) {
+      setOtpSentId(response.payload?.data?.id);
+      setOtpModalOpen(true);
+      dispatch(showSnackbar({
+        message: "OTP sent successfully",
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000
+      }));
+
+      return { success: true };
+    }
+  };
+
+
 
   return (
     <div>
@@ -1040,38 +1182,6 @@ export function PersonalInformation(props) {
                     onSubmit(evt, getResponse.isexcludemycurrentemployer)
                   }
                 >
-                  {/* <Row className="mb-3">
-                    <Col className="col-6">
-                      <Label for="firstname" className="fw-semi-bold">
-                        Desired/Current job profile{" "}
-                        <span className="required-icon">*</span>
-                      </Label>
-                      <input
-                        type="text"
-                        name="jobProfile"
-                        id="jobProfile"
-                        placeholder="Enter job profile"
-                        maxLength={50}
-                        value={getResponse.jobprofile}
-                        onInput={(evt) =>
-                          onHandleInputChange("jobprofile", evt.target.value)
-                        }
-                        className={`field-input placeholder-text form-control ${
-                          getResponse.jobprofile === "" ||
-                          !getResponse.jobprofile
-                            ? "is-invalid error-text"
-                            : ""
-                        }`}
-                      />
-                      <div className="invalid-feedback">
-                        {getResponse.jobprofile === "" ||
-                        !getResponse.jobprofile
-                          ? "Job profile is required"
-                          : ""}
-                      </div>
-                    </Col>
-                  </Row> */}
-
                   <Row>
                     <div className="mb-1 fw-bold">Contact</div>
                     <hr />
@@ -1138,33 +1248,43 @@ export function PersonalInformation(props) {
                         <Label for="phonenumber" className="fw-semi-bold">
                           Phone<span className="required-icon"> *</span>
                         </Label>
-                        <InputMask
-                          placeholder="Eg: (987)-654-3210"
-                          disabled
-                          name="phonenumber"
-                          type="text"
-                          id="phonenumber"
-                          mask="(999)-999-9999"
-                          value={getResponse.phonenumber}
-                          onInput={(evt) =>
-                            onHandleInputChange("phonenumber", evt.target.value)
-                          }
-                          className={`field-input placeholder-text form-control ${getResponse.phonenumber == "" ||
-                            getResponse.phoneError
-                            ? "is-invalid"
-                            : ""
-                            }`}
-                        />
-                        <div className="invalid-feedback">
-                          {getResponse.phonenumber == ""
-                            ? "Phone number is required"
-                            : ""}
+                        <InputGroup>
+                          <InputMask
+                            placeholder="Eg: (987)-654-3210"
+                            maskChar={null}
+                            name="phonenumber"
+                            type="text"
+                            id="phonenumber"
+                            mask="(999)-999-9999"
+                            value={getResponse.phonenumber}
+                            onInput={(evt) =>
+                              onHandleInputChange("phonenumber", evt.target.value)
+                            }
+                            className={`field-input placeholder-text form-control ${getResponse.phonenumber == "" ||
+                              getResponse.phoneError
+                              ? "is-invalid"
+                              : ""
+                              }`}
+                          />
+                          {isOtpVerified ? (
+                            <div className="btn btn-success" style={{ pointerEvents: "none" }}>
+                              <i className="fa fa-check-circle"></i> Verified
+                            </div>
+                          ) : (
+                            <Button
+                              color="primary"
+                              onClick={() => sendOtp(getResponse.phonenumber)}
+                              disabled={getResponse.phonenumber == "" || getResponse.phoneError}
+                            >
+                              Send OTP
+                            </Button>
+                          )}
+                        </InputGroup>
+                        <div className="invalid-feedback" style={{ display: getResponse.phonenumber == "" ? "block" : "none" }}>
+                          Phone number is required
                         </div>
-                        <div className="invalid-feedback">
-                          {getResponse.phonenumber != "" &&
-                            getResponse.phoneError
-                            ? "Phone number is not valid"
-                            : ""}
+                        <div className="invalid-feedback" style={{ display: getResponse.phonenumber != "" && getResponse.phoneError ? "block" : "none" }}>
+                          Phone number is not valid
                         </div>
                       </FormGroup>
                     </Col>
@@ -1651,6 +1771,24 @@ export function PersonalInformation(props) {
           </CardBody>
         </Card>
       </Modal>
+
+      <OtpVerificationModal
+        isOpen={otpModalOpen}
+        mobileNumber={pendingMobileNumber}
+        onClose={() => {
+          setOtpModalOpen(false);
+          // restore old number if verification failed/cancelled
+          setGetResponse(prev => ({
+            ...prev,
+            phonenumber: originalMobileNumber
+          }));
+        }}
+        onVerify={handleVerifyOtp}
+        onResend={handleResendOtp}
+        loading={otpLoading}
+      />
+
+
     </div>
   );
 }
