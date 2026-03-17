@@ -27,6 +27,6 @@ package-lock.json
 *.log
 .eslintcache
 
-/.github
-/.vscode
-/.scannerwork
+.github/
+.vscode/
+.scannerwork/
