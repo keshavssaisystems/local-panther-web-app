@@ -221,7 +221,7 @@ export const CustJobListView = ({
 
   return (
     <>
-      <p className="mb-3 row-count">{totalRows} jobs</p>
+      {/* <p className="mb-3 row-count">{totalRows} jobs</p> */}
 
       {/* List View Table */}
       <div className="table-scroll-wrapper">
