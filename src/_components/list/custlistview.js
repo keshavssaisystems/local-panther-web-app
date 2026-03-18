@@ -27,7 +27,8 @@ import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import newoffer from "assets/utils/images/job-detail-icons/newoffer.svg";
-import nonAts from "assets/utils/images/job-detail-icons/OpenWorxIcon.svg";
+import openWorxIcon from "assets/utils/images/job-detail-icons/OpenWorxIcon.svg";
+import Ats from "assets/utils/images/job-detail-icons/nonats.svg";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
@@ -824,13 +825,22 @@ export const CustCandidateListView = (props) => {
                 </span>
                 {atsEnableStatus === "true" && row?.isatscandidate === false && (
                   <img
-                    src={nonAts}
+                    src={openWorxIcon}
                     alt="list maybe"
                     className={"icon-pointer m-1"}
                     width={"16px"}
                     title={'OpenWorX Candidate'}
                   ></img>
                 )}
+                {atsEnableStatus === "true" && row?.isatscandidate === true && (
+                <img
+                  src={Ats}
+                  alt="list maybe"
+                  className={"icon-pointer m-1"}
+                  width={"16px"}
+                  title={'ATS Candidate'}
+                ></img>
+              )}
               </>
             ),
             selector: (row) => row.firstname + " " + row.lastname,
@@ -911,12 +921,21 @@ export const CustCandidateListView = (props) => {
                   </span>
                   {atsEnableStatus === "true" && row?.isatscandidate === false && (
                     <img
-                      src={nonAts}
+                      src={openWorxIcon}
                       alt="list maybe"
                       className={"icon-pointer m-1"}
                       width={"16px"}
                       title={'OpenWorX Candidate'}
                     ></img>
+                  )}
+                  {atsEnableStatus === "true" && row?.isatscandidate === true && (
+                      <img
+                        src={Ats}
+                        alt="list maybe"
+                        className={"icon-pointer m-1"}
+                        width={"16px"}
+                        title={'ATS Candidate'}
+                      ></img>
                   )}
                 </>
               ),
@@ -1262,11 +1281,20 @@ export const CustCandidateListView = (props) => {
 
                     {atsEnableStatus === "true" && row?.isatscandidate === false && (
                       <img
-                        src={nonAts}
+                        src={openWorxIcon}
                         alt="list maybe"
                         className={"icon-pointer m-1"}
                         width={"16px"}
                         title={'OpenWorX Candidate'}
+                      ></img>
+                    )}
+                    {atsEnableStatus === "true" && row?.isatscandidate === true && (
+                      <img
+                        src={Ats}
+                        alt="list maybe"
+                        className={"icon-pointer m-1"}
+                        width={"16px"}
+                        title={'ATS Candidate'}
                       ></img>
                     )}
                   </>
@@ -1516,13 +1544,22 @@ export const CustCandidateListView = (props) => {
                     </span>
                     {atsEnableStatus === "true" && row?.isatscandidate === false && (
                       <img
-                        src={nonAts}
+                        src={openWorxIcon}
                         alt="list maybe"
                         className={"icon-pointer m-1"}
                         width={"16px"}
                         title={'OpenWorX Candidate'}
                       ></img>
                     )}
+                    {atsEnableStatus === "true" && row?.isatscandidate === true && (
+                    <img
+                      src={Ats}
+                      alt="list maybe"
+                      className={"icon-pointer m-1"}
+                      width={"16px"}
+                      title={'ATS Candidate'}
+                    ></img>
+                  )}
                   </>
                 ),
                 selector: (row) => row.firstname + " " + row.lastname,
@@ -1658,11 +1695,20 @@ export const CustCandidateListView = (props) => {
                       </span>
                       {atsEnableStatus === "true" && row?.isatscandidate === false && (
                         <img
-                          src={nonAts}
+                          src={openWorxIcon}
                           alt="list maybe"
                           className={"icon-pointer m-1"}
                           width={"16px"}
                           title={'OpenWorX Candidate'}
+                        ></img>
+                      )}
+                      {atsEnableStatus === "true" && row?.isatscandidate === true && (
+                        <img
+                          src={Ats}
+                          alt="list maybe"
+                          className={"icon-pointer m-1"}
+                          width={"16px"}
+                          title={'ATS Candidate'}
                         ></img>
                       )}
                     </>
@@ -1787,11 +1833,20 @@ export const CustCandidateListView = (props) => {
               </span>
               {atsEnableStatus === "true" && row?.isatscandidate === false && (
                 <img
-                  src={nonAts}
+                  src={openWorxIcon}
                   alt="list maybe"
                   className={"icon-pointer m-1"}
                   width={"16px"}
                   title={'OpenWorX Candidate'}
+                ></img>
+              )}
+              {atsEnableStatus === "true" && row?.isatscandidate === true && (
+                <img
+                  src={Ats}
+                  alt="list maybe"
+                  className={"icon-pointer m-1"}
+                  width={"16px"}
+                  title={'ATS'}
                 ></img>
               )}
             </>
