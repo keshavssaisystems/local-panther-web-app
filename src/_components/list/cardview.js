@@ -430,7 +430,7 @@ export const CandidateCardView = (props) => {
                               fontWeight: 600,
                             }}
                           >
-                            OpenWorX Candidate
+                            ATS
                           </span>
                         </div>
                       )}
