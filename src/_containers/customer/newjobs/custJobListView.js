@@ -10,6 +10,7 @@ import { AssignedJobHiringManagerModal } from "./assignedJobHiringManagerModal";
 import closebutton from "../../../assets/utils/images/customer/closebutton.svg";
 import editbutton from "../../../assets/utils/images/customer/editbutton.svg";
 import "./custjoblistview.css";
+import joblist from "../../../assets/utils/images/customer/joblist.svg";
 
 export const CustJobListView = ({
   jobList,
@@ -205,7 +206,7 @@ export const CustJobListView = ({
                 setAssignListModal(true);
               }}
             >
-              <img src={editbutton} alt="Assign List" className="action-icon" />
+              <img src={joblist} alt="Assign List" className="action-icon" style={{ width: "20px", height: "20px", filter: "brightness(0) invert(1)" }} />
             </Button>
           </div>
         ),

@@ -9,6 +9,7 @@ import {
   Table,
   Spinner,
 } from "reactstrap";
+import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { custJobListActions } from "_store";
 
 export const AssignedJobHiringManagerModal = ({ isOpen, toggle, jobId }) => {
@@ -51,7 +52,7 @@ export const AssignedJobHiringManagerModal = ({ isOpen, toggle, jobId }) => {
 
   return (
     <Modal isOpen={isOpen} toggle={toggle} size="lg">
-      <ModalHeader toggle={toggle}>Hiring Manager Assigned List</ModalHeader>
+      <ModalHeader toggle={toggle}>Hiring Manager Assigned Job List</ModalHeader>
       <ModalBody>
         {removeError && (
           <div className="alert alert-danger py-2 mb-3" role="alert">
@@ -83,14 +84,25 @@ export const AssignedJobHiringManagerModal = ({ isOpen, toggle, jobId }) => {
                   <td>{getManagerName(manager)}</td>
                   <td>{formatDate(manager.createddate)}</td>
                   <td>
-                    <Button
+                    {/* <Button
                       size="sm"
                       color="danger"
                       disabled={removeLoading}
                       onClick={() => handleRemove(manager.jobassigneduserid)}
                     >
                       {removeLoading ? <Spinner size="sm" /> : "Remove"}
-                    </Button>
+                    </Button> */}
+                    <BsTrash3
+                      size={21}
+                      disabled={removeLoading}
+                      onClick={() => !removeLoading && handleRemove(manager.jobassigneduserid)}
+                      style={{
+                        color: "red",
+                        verticalAlign: "top",
+                        cursor: removeLoading ? "not-allowed" : "pointer",
+                        opacity: removeLoading ? 0.5 : 1,
+                      }}
+                    />
                   </td>
                 </tr>
               ))}
