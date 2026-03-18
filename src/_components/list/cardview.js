@@ -410,8 +410,30 @@ export const CandidateCardView = (props) => {
                         gap: "8px" }}>
                         <b>Work Experience</b>
                       </div>
-
-                      {localStorage.getItem("atsEnableStatus") === "true" && props?.data?.isatscandidate === false && (
+                       {localStorage.getItem("atsEnableStatus") === "true" && props?.data?.isatscandidate === false && (
+                        <div
+                          style={{
+                            backgroundColor: "#E3F3FE",
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "fit-content",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#2f5fa3",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            OpenWorX Candidate
+                          </span>
+                        </div>
+                      )}
+                      {localStorage.getItem("atsEnableStatus") === "true" && props?.data?.isatscandidate === true && (
                         <div
                           style={{
                             backgroundColor: "#FED7AA",
@@ -430,7 +452,7 @@ export const CandidateCardView = (props) => {
                               fontWeight: 600,
                             }}
                           >
-                            OpenWorX Candidate
+                            ATS
                           </span>
                         </div>
                       )}
