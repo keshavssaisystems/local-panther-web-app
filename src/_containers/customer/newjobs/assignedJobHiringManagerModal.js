@@ -84,25 +84,21 @@ export const AssignedJobHiringManagerModal = ({ isOpen, toggle, jobId }) => {
                   <td>{getManagerName(manager)}</td>
                   <td>{formatDate(manager.createddate)}</td>
                   <td>
-                    {/* <Button
-                      size="sm"
-                      color="danger"
-                      disabled={removeLoading}
-                      onClick={() => handleRemove(manager.jobassigneduserid)}
-                    >
-                      {removeLoading ? <Spinner size="sm" /> : "Remove"}
-                    </Button> */}
-                    <BsTrash3
-                      size={21}
-                      disabled={removeLoading}
-                      onClick={() => !removeLoading && handleRemove(manager.jobassigneduserid)}
-                      style={{
-                        color: "red",
-                        verticalAlign: "top",
-                        cursor: removeLoading ? "not-allowed" : "pointer",
-                        opacity: removeLoading ? 0.5 : 1,
-                      }}
-                    />
+                    {manager.isactive === true? (
+                      <BsTrash3
+                        size={21}
+                        disabled={removeLoading}
+                        onClick={() => !removeLoading && handleRemove(manager.jobassigneduserid)}
+                        style={{
+                          color: "red",
+                          verticalAlign: "top",
+                          cursor: removeLoading ? "not-allowed" : "pointer",
+                          opacity: removeLoading ? 0.5 : 1,
+                        }}
+                      />
+                    ) : (
+                      <span className="text-muted">Removed</span>
+                    )}
                   </td>
                 </tr>
               ))}
