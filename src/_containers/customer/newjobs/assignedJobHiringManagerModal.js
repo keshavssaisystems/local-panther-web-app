@@ -67,6 +67,7 @@ export const AssignedJobHiringManagerModal = ({ isOpen, toggle, jobId }) => {
           jobAssigneesHiringManager.length === 0 ? (
           <p className="text-center text-muted py-4">No Data Found</p>
         ) : (
+          <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           <Table bordered hover responsive>
             <thead>
               <tr>
@@ -104,6 +105,7 @@ export const AssignedJobHiringManagerModal = ({ isOpen, toggle, jobId }) => {
               ))}
             </tbody>
           </Table>
+          </div>
         )}
       </ModalBody>
       <ModalFooter>
