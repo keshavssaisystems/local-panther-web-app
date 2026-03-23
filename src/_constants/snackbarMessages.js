@@ -27,7 +27,7 @@ export const CANDIDATE_MESSAGES = {
   OFFER_UPLOADED_SUCCESS: 'Success.',
   INTERVIEW_RESCHEDULED_SUCCESS: 'Success.',
   JOB_STATUS_UPDATED_SUCCESS: 'Success.',
-  RESUME_NOT_AVAILABLE: 'Please upload your resume to continue.'
+  RESUME_NOT_AVAILABLE: 'The candidate has not uploaded their resume.'
 };
 
 // Card Details
