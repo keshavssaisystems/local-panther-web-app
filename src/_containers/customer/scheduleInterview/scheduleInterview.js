@@ -83,7 +83,7 @@ export function ScheduleInterview({ fromDashboard }) {
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(getHiringMangersList({ companyId: Number(localStorage.getItem("companyid")), endpoint: 'assignUserListByCompany' }));
-           
+
   }, []);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
@@ -343,12 +343,9 @@ export function ScheduleInterview({ fromDashboard }) {
     dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
   };
   const handleSelectEvent = useCallback((event) => {
-    if (Number(localStorage.getItem("userId")) === hiringManagerIdRef.current ||
-      hiringManagerIdRef.current === '') {
-      setPopupData(event.data);
-      setOpenModal(true);
-      setPopupType(event.format);
-    }
+    setPopupData(event.data);
+    setOpenModal(true);
+    setPopupType(event.format);
   }, []);
 
   const postNotesData = (notesData) => {
