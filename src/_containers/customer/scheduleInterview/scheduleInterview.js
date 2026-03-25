@@ -42,6 +42,7 @@ import { hiringManagerActions } from "_store/dropDownHiringManager.slice";
 import { use, useRef } from "react";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -343,9 +344,23 @@ export function ScheduleInterview({ fromDashboard }) {
     dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
   };
   const handleSelectEvent = useCallback((event) => {
-    setPopupData(event.data);
-    setOpenModal(true);
-    setPopupType(event.format);
+    if (event.data.isclosed === false) {
+      setPopupData(event.data);
+      setOpenModal(true);
+      setPopupType(event.format);
+    } else if (event.data.isclosed === true) {
+      toast(<Row>
+        <p>
+          <b>Job has been closed. </b>
+        </p>
+      </Row>,
+        {
+          position: "bottom-center",
+          autoClose: 2000,
+          style: { zIndex: 9999 },
+        }
+      );
+    }
   }, []);
 
   const postNotesData = (notesData) => {
