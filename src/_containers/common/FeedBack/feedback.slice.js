@@ -69,6 +69,7 @@ const feedbackSlice = createSlice({
       loading: false,
       typeLoading: false,
       error: null,
+      response: null,
       totalRows: 0,
       feedbackTypeList: [],
   },
@@ -76,6 +77,7 @@ const feedbackSlice = createSlice({
 
   extraReducers: {
     [addFeedbackThunk.pending]: (state) => {
+      state.response = null;
       state.error = null;
     },
     [addFeedbackThunk.fulfilled]: (state, action) => {
@@ -83,14 +85,20 @@ const feedbackSlice = createSlice({
         state.error = null;
     },
     [addFeedbackThunk.rejected]: (state, action) => {
+      state.response = null;
       state.error = action.error?.message;
     },
 
     [updateFeedbackThunk.pending]: (state) => {
+      state.response = null;
       state.error = null;
     },
-    [updateFeedbackThunk.fulfilled]: (state, payload) => {},
+    [updateFeedbackThunk.fulfilled]: (state, action) => {
+      state.response = action.payload;
+      state.error = null;
+    },
     [updateFeedbackThunk.rejected]: (state, action) => {
+      state.response = null;
       state.error = action.error?.message;
     },
     [getFeedbackListThunk.pending]: (state) => {

@@ -10,11 +10,10 @@ import {
   Input,
   Button,
 } from "reactstrap";
-import { addFeedbackThunk } from "./feedback.slice";
+import { feedbackActions, addFeedbackThunk, getFeedbackTypeList } from "./feedback.slice";
 import { showSnackbar } from "_store/snackbar.slice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION } from "_constants/snackbarMessages";
-import { getFeedbackTypeList } from "./feedback.slice";
-import { feedbackActions } from "./feedback.slice";
+
 
 const initialForm = {
   feedbackTypeId: "",
