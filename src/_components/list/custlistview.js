@@ -1375,7 +1375,7 @@ export const CustCandidateListView = (props) => {
                         ? "-"
                         : row?.jobOfferDtos[0]?.startdate === null
                           ? "-"
-                          : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
+                          : moment(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                             "MM/DD/YYYY"
                           )
                     }
@@ -1384,7 +1384,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                         ? "-"
-                        : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
+                        : moment(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                           "MM/DD/YYYY"
                         )}
                   </span>
@@ -1394,7 +1394,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
+                      : moment(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                         "MM/DD/YYYY"
                       ),
                 sortable: true,
