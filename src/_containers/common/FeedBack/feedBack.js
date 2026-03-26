@@ -6,8 +6,6 @@ import {
   Col,
   Card,
   CardBody,
-  FormGroup,
-  Input,
   Button,
 } from "reactstrap";
 import AddFeedbackModal from "./AddFeedbackModal";
@@ -17,8 +15,6 @@ import { feedbackActions } from "./feedback.slice";
 
 const FeedBack = () => {
   
-  const [searchData, setSearchText] = useState("");
-  const [status, setStatus] = useState(0);
   const [showAddFeedback, setShowAddFeedback] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -34,7 +30,7 @@ const FeedBack = () => {
         pageSize: pageSize,
         })
     );
-  }, [page, pageSize]);
+  }, [dispatch, page, pageSize]);
 
 
   const columns = [

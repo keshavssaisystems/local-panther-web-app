@@ -31,8 +31,10 @@ const AddFeedbackModal = ({ isOpen, toggle, page, pageSize }) => {
   const [loading, setLoading] = useState(false);
   const { feedbackTypeList } = useSelector((state) => state.feedback);
   useEffect(() => {
+    if (isOpen) {
       dispatch(getFeedbackTypeList());
-    },[]);
+    }
+  }, [isOpen, dispatch]);
 
   const validate = () => {
     const newErrors = {};

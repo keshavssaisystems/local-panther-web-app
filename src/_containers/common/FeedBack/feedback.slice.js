@@ -6,7 +6,7 @@ const name = "feedback";
 
 export const addFeedbackThunk = createAsyncThunk(
   `${name}/addFeedbackThunk`,
-  async (feedback_data, { rejectWithValue }) => {
+  async (feedback_data) => {
     const END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/RatingsAndFeedback`;
 
     const formData = new FormData();
@@ -21,21 +21,7 @@ export const addFeedbackThunk = createAsyncThunk(
       formData.append("File", feedback_data.file);
     }
 
-    const token = localStorage.getItem("token") || "";
-    const response = await fetch(END_POINT, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return rejectWithValue(errorData);
-    }
-
-    return response.json().catch(() => ({}));
+    return fetchWrapper.postForm(END_POINT, formData);
   }
 );
 
@@ -54,7 +40,7 @@ export const updateFeedbackThunk = createAsyncThunk(
       formData.append("ResponseFile", feedback_data.responseFile);
     }
 
-    return await fetchWrapper.put(END_POINT, formData);
+    return fetchWrapper.putForm(END_POINT, formData);
   }
 );
 
@@ -81,6 +67,7 @@ const feedbackSlice = createSlice({
   initialState: {
     feedback_data_profile: [],
       loading: false,
+      typeLoading: false,
       error: null,
       totalRows: 0,
       feedbackTypeList: [],
@@ -96,7 +83,7 @@ const feedbackSlice = createSlice({
         state.error = null;
     },
     [addFeedbackThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = action.error?.message;
     },
 
     [updateFeedbackThunk.pending]: (state) => {
@@ -104,7 +91,7 @@ const feedbackSlice = createSlice({
     },
     [updateFeedbackThunk.fulfilled]: (state, payload) => {},
     [updateFeedbackThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = action.error?.message;
     },
     [getFeedbackListThunk.pending]: (state) => {
         state.loading = true;
@@ -123,17 +110,17 @@ const feedbackSlice = createSlice({
         state.error = action.error?.message;
     },
    [getFeedbackTypeList.pending]: (state) => {
-         state.loading = true;
+         state.typeLoading = true;
          state.error = null;
     },
     [getFeedbackTypeList.fulfilled]: (state, { payload = {} }) => {
          const { data } = payload;
-         state.loading = false;
+         state.typeLoading = false;
          state.feedbackTypeList = data;
     },
     [getFeedbackTypeList.rejected]: (state, action) => {
-         state.loading = false;
-         state.error = action.error;
+         state.typeLoading = false;
+         state.error = action.error?.message;
     }, 
   },
 });
