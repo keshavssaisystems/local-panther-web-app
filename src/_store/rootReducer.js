@@ -68,6 +68,7 @@ import commonCustFiltersReducer from "./commonCustFiltersSlice";
 import { atsReducer } from "./ats.slice";
 import { atsgenericReducer } from "./atsgeneric.slice";
 import { reportsReducer } from "_containers/customer/genericreports/reports.slice";
+import { feedbackReducer } from "_containers/common/FeedBack/feedback.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -137,6 +138,7 @@ export * from "_containers/customer/reports/customerreport.slice";
 // import { jobListReducer } from "./jobList.slice";
 // import { locationReducer } from "../_components/dropdownComponents/location.slice";
 // ... keep importing everything you already have
+export * from "_containers/common/FeedBack/feedback.slice";
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -203,6 +205,8 @@ const appReducer = combineReducers({
     ats: atsReducer,
     atsgeneric: atsgenericReducer,
     reportsReducer : reportsReducer,
+    feedback: feedbackReducer,
+
     
 });
 
