@@ -42,6 +42,7 @@ export function ScheduleInterviewModal({
 
   const [scheduledDate, setScheduledDate] = useState();
   const [slotDurationOptions, setSlotDurationOptions] = useState([]);
+  const [messagePlaceholder, setMessagePlaceholder] = useState("");
 
   // NEW: fallback rounds if parent doesn’t pass any
   const [effectiveRoundOptions, setEffectiveRoundOptions] = useState([])
@@ -60,6 +61,22 @@ export function ScheduleInterviewModal({
   useEffect(() => {
     // getTimeArray();
     getRoundsDropdown();
+    let mounted = true;
+    if (isOpen) {
+      (async () => {
+        try {
+          const res = await dispatch(customerCandidateListsActions.getPromptMessage());
+          const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
+          if (apiRaw) {
+            const populated = apiRaw.replace(/\[Job Title\]/gi, candidateData?.jobtitle || "");
+            if (mounted) setMessagePlaceholder(populated);
+          }
+        } catch (err) {
+          console.warn("Failed to load PromptMessageForInterview:", err);
+        }
+      })();
+    }
+    return () => { mounted = false; };
   }, [dispatch, candidateData, isOpen]);
 
   const getTimeArray = () => {
@@ -571,7 +588,7 @@ export function ScheduleInterviewModal({
                   type="textarea"
                   name="message"
                   id="message"
-                  placeholder="Enter message to candidate"
+                  placeholder={messagePlaceholder || "Enter message to candidate"}
                 />
               </FormGroup>
 
