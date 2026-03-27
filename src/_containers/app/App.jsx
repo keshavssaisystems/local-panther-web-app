@@ -36,6 +36,7 @@ import GetAppPopup from "_components/common/GetAppPopup";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import SuccessPage from "_components/unifiedApp/unifiedSuccess";
+import FeedBack from "_containers/common/FeedBack/feedBack";
 const CreateJobWizard = React.lazy(() => import("_containers/customer/createJob/createJobWizard").then(m => ({ default: m.CreateJobWizard })));
 const CandidateProfile = React.lazy(() => import("_containers/candidate/candidateProfile").then(m => ({ default: m.CandidateProfile })));
 const ScheduleInterview = React.lazy(() =>
@@ -754,7 +755,7 @@ export function App() {
             }
             key={6}
         />
-<Route
+          <Route
             path="/report/for/:id"
             element={
               <PrivateRoute>
@@ -762,6 +763,14 @@ export function App() {
               </PrivateRoute>
             }
             key={6}
+        />
+        <Route
+          path="/feedback"
+          element={
+            <PrivateRoute>
+              <FeedBack />
+            </PrivateRoute>
+          }
         />
       </>
     );
@@ -886,6 +895,14 @@ export function App() {
               </PrivateRoute>
             }
             key={6}
+        />
+        <Route
+          path="/feedback"
+          element={
+            <PrivateRoute>
+              <FeedBack />
+            </PrivateRoute>
+          }
         />
       </>
     );

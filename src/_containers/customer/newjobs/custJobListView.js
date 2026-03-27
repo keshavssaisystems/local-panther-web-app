@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { custJobListActions, hiringManagerActions } from "_store";
 import { CardPagination } from "_components/common/cardpagination";
 import { CloseJobReasonPopup } from "./closeJobReasonPopup";
+import { AssignedJobHiringManagerModal } from "./assignedJobHiringManagerModal";
 import closebutton from "../../../assets/utils/images/customer/closebutton.svg";
 import editbutton from "../../../assets/utils/images/customer/editbutton.svg";
 import "./custjoblistview.css";
+import joblist from "../../../assets/utils/images/customer/joblist.svg";
 
 export const CustJobListView = ({
   jobList,
@@ -26,6 +28,8 @@ export const CustJobListView = ({
   const [selectedJobs, setSelectedJobs] = useState([]);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const [selectedJobForClose, setSelectedJobForClose] = useState(null);
+  const [assignListModal, setAssignListModal] = useState(false);
+  const [selectedJobForAssignList, setSelectedJobForAssignList] = useState(null);
 
   const companyId = localStorage.getItem("companyid");
 
@@ -193,6 +197,17 @@ export const CustJobListView = ({
             {row.isclosed && (
               <span className="closed-badge">Closed</span>
             )}
+            <Button
+              size="sm"
+              className="action-icon-btn"
+              title="Hiring Manager Job Assign List"
+              onClick={() => {
+                setSelectedJobForAssignList(row.jobid);
+                setAssignListModal(true);
+              }}
+            >
+              <img src={joblist} alt="Assign List" className="action-icon" style={{ width: "20px", height: "20px", filter: "brightness(0) invert(1)" }} />
+            </Button>
           </div>
         ),
         minWidth: "180px",
@@ -207,7 +222,7 @@ export const CustJobListView = ({
 
   return (
     <>
-      <p className="mb-3 row-count">{totalRows} jobs</p>
+      {/* <p className="mb-3 row-count">{totalRows} jobs</p> */}
 
       {/* List View Table */}
       <div className="table-scroll-wrapper">
@@ -234,6 +249,18 @@ export const CustJobListView = ({
           />
         </div>
       ) : null}
+
+      {/* Assigned Hiring Manager List Modal */}
+      {assignListModal && selectedJobForAssignList && (
+        <AssignedJobHiringManagerModal
+          isOpen={assignListModal}
+          toggle={() => {
+            setAssignListModal(false);
+            setSelectedJobForAssignList(null);
+          }}
+          jobId={selectedJobForAssignList}
+        />
+      )}
 
       {/* Close Job Confirmation Modal */}
       {closeConfirmation === true && selectedJobForClose && (

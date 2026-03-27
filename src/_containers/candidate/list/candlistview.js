@@ -454,6 +454,10 @@ export const CandListView = (props) => {
         {
           name: <span className="table-title">Pre-screen</span>,
           cell: (row) =>
+            row?.scheduledInterviewDtos?.[0]?.isrejected === true ||
+            row?.scheduledInterviewDtos?.[0]?.interviewstatusid > 0 || row?.scheduledInterviewDtos?.[0]?.interviewstatusid === null ? (
+              "-"
+            ) : 
             row.candidateprescreenstatus === "NA" ? (
               "-"
             ) : row.candidateprescreenstatus === "Pending" ? (
