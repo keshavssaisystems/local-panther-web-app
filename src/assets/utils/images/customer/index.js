@@ -28,6 +28,7 @@ const customerIcons = {
   editbutton: require("./editbutton.svg").default,
   anticlockFrame: require("./anticlockFrame.svg").default,
   list_schedule_next: require("./list/schedule_next.svg").default,
+  joblist : require("./joblist.svg").default,
 };
 
 export default customerIcons;
