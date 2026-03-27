@@ -72,9 +72,8 @@ import {
 } from "_store/commonCustFiltersSlice";
 import { CandidateInterviewHistoryModal } from "_components/modal/candidateinterviewhistorymodal";
 export default function CustomerCandidateLists(props) {
-  const { id } = useParams();
-  const { jobPostedbyId } = useParams();
-  const [activeTab, setActiveTab] = useState(props.type || "matched");
+  const { id, jobPostedbyId, type: typeParam } = useParams();
+  const [activeTab, setActiveTab] = useState(props.type || typeParam || "matched");
   const [pageNo, setPageNo] = useState(1);
 
   const [selectedJobId, setSelectedJobId] = useState(id || "");
@@ -224,6 +223,13 @@ export default function CustomerCandidateLists(props) {
       dispatch(setSearchText(jobDetail[0]?.jobtitle));
     }
   }, [jobDetail])
+
+  useEffect(() => {
+    // setPageNo(1);
+    // let pageno = 1;
+    // onGetPageList(pageno, props.type || activeTab, "");    
+    setActiveTab(props.type || 'matched');
+  }, [props.type])
 
   const returnStatusId = (type) => {
     if (type === "liked") {
