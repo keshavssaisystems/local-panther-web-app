@@ -113,6 +113,12 @@ export const NotificationCounter = () => {
       ) {
         history.navigate("/profile");
       }
+    } else {
+      if (item?.notificationmessage?.toLowerCase() === "job offer accepted by candidate") {
+        history.navigate("/customer-candidate-offers");
+      } else {
+        history.navigate("/candidate-list");
+      }
     }
   };
 

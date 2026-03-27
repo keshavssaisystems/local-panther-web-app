@@ -50,6 +50,12 @@ export const Notifications = () => {
       ) {
         history.navigate("/profile");
       }
+    } else {
+      if (item?.notificationmessage?.toLowerCase() === "job offer accepted by candidate") {
+        history.navigate("/customer-candidate-offers");
+      } else {
+        history.navigate("/candidate-list");
+      }
     }
   };
 
