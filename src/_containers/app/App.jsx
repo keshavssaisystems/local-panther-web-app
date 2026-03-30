@@ -474,6 +474,14 @@ export function App() {
             }
             key={6}
         />
+         <Route
+          path="/feedback"
+          element={
+            <PrivateRoute>
+              <FeedBack />
+            </PrivateRoute>
+          }
+        />
       </>
     );
   }

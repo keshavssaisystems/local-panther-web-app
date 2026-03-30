@@ -46,8 +46,8 @@ export const updateFeedbackThunk = createAsyncThunk(
 
 export const getFeedbackListThunk = createAsyncThunk(
   `${name}/getFeedbackListThunk`,
-  async ({ pageNumber = 1, pageSize = 10 }) => {
-    const END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Fetch_RatingsAndFeedback_List?parameter=@currentpage=${pageNumber},@pagesize=${pageSize}`;
+  async ({ pageNumber = 1, pageSize = 10, userroleid=null }) => {
+    const END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Fetch_RatingsAndFeedback_List?parameter=@currentpage=${pageNumber},@pagesize=${pageSize},@userroleid=${userroleid}`;
 
     return await fetchWrapper.get(END_POINT);
   }
@@ -57,6 +57,13 @@ export const getFeedbackListThunk = createAsyncThunk(
 export const getFeedbackTypeList = createAsyncThunk(`${name}/getFeedbackTypeList`, async () => {
   return await fetchWrapper.get(
     `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=FeedbackTypes`
+  );
+});
+
+// Get FeedbackStatus list
+export const getFeedbackStatusList = createAsyncThunk(`${name}/getFeedbackStatusList`, async () => {
+  return await fetchWrapper.get(
+    `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=FeedbackStatus`
   );
 });
 
@@ -72,6 +79,7 @@ const feedbackSlice = createSlice({
       response: null,
       totalRows: 0,
       feedbackTypeList: [],
+      feedbackStatusList: [],
   },
   reducers: {},
 
@@ -129,7 +137,17 @@ const feedbackSlice = createSlice({
     [getFeedbackTypeList.rejected]: (state, action) => {
          state.typeLoading = false;
          state.error = action.error?.message;
-    }, 
+    },
+    [getFeedbackStatusList.pending]: (state) => {
+         state.error = null;
+    },
+    [getFeedbackStatusList.fulfilled]: (state, { payload = {} }) => {
+         const { data } = payload;
+         state.feedbackStatusList = data;
+    },
+    [getFeedbackStatusList.rejected]: (state, action) => {
+         state.error = action.error?.message;
+    },
   },
 });
 
@@ -141,6 +159,7 @@ export const feedbackActions = {
   updateFeedbackThunk,
   getFeedbackListThunk,
   getFeedbackTypeList,
+  getFeedbackStatusList,
 };
 
 export const feedbackReducer = feedbackSlice.reducer;
