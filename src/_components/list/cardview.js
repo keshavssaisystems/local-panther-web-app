@@ -35,6 +35,7 @@ import "./cardview.scss";
 import { ProgressCircle } from "_components/common/progress";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
+import { getTimezoneDateTime } from "_helpers/helper";
 import { ScorePopup } from "./scorePopup";
 import SweetAlert from "react-bootstrap-sweetalert";
 import AssigneeAtsCandidate from "_containers/customer/atscustomercandidatelist/AssigneeAtsCandidate";
@@ -643,6 +644,26 @@ export const CandidateCardView = (props) => {
                 </Col> )}
               </>)}
           </Row>
+          <Row className="mt-2">
+            <Col md={6} lg={6}>
+              <div className="muted-name">Job posted on</div>
+              <div className="muted-name">
+                {getTimezoneDateTime(props?.data?.createddate, "MM/DD/YYYY hh:mm A")}
+              </div>
+            </Col>
+            <Col md={6} lg={6} className="text-end">
+              <div className="muted-name">Job matched on</div>
+              <div className="muted-name">
+                {getTimezoneDateTime(
+                  props?.data?.modifieddate === null
+                    ? props?.data?.createddate
+                    : props?.data?.modifieddate,
+                  "MM/DD/YYYY hh:mm A"
+                )}
+              </div>
+            </Col>
+          </Row>
+
         </CardBody>
         <CardFooter className="auto-margin">
           <Row noGutters>
