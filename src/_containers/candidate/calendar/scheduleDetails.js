@@ -507,6 +507,9 @@ export function ScheduleDetails({
                                       </a>{" "}
                                       the in-app interview
                                     </p>
+                                    <p className="mb-0">
+                                      You can join this call before 15 Min of scheduled time
+                                    </p>
                                   </div>
                                 )}
                             </>
