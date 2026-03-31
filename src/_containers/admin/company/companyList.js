@@ -597,7 +597,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
     } else {
       dispatch(showSnackbar({
         message: response.error.message,
-        type: SNACKBAR_TYPES.SUCCESS,
+        type: SNACKBAR_TYPES.ERROR,
         position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
         autoCloseDelay: 3000,
@@ -835,8 +835,14 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         }
         confirmText="Update Setting"
         cancelText="Cancel"
-        onConfirm={handleCandidateNameConfirm}
-        onCancel={() => setShowCandidateNameModal(false)}
+        onConfirm={() => {
+          handleCandidateNameConfirm();
+          setPendingCandidateNameToggle(null);
+        }}
+        onCancel={() => {
+          setShowCandidateNameModal(false);
+          setPendingCandidateNameToggle(null);
+        }}
         zIndex={1050}
       />
 

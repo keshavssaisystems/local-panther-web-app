@@ -281,6 +281,7 @@ export const updateAllowDataSharing = createAsyncThunk(
   }
 );
 
+// Update candidate name visibility by id - PUT /api/Company/{id}
 export const updateCandidateNameVisibility = createAsyncThunk(
   `${name}/updateCandidateNameVisibility`,
   async ({ id, payload }) => {
