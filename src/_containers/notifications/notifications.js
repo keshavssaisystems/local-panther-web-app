@@ -50,6 +50,24 @@ export const Notifications = () => {
       ) {
         history.navigate("/profile");
       }
+    } else {
+      if (item?.notificationmessage?.toLowerCase().includes("job offer accepted")) {
+        history.navigate("/customer-candidate-offers");
+      } else if (item?.notificationmessage?.toLowerCase().includes("job offer declined")
+        || item?.notificationmessage?.toLowerCase().includes("job offer rejected")) {
+        history.navigate("/customer-candidate-rejected");
+      } else if (item?.notificationmessage?.toLowerCase().includes("reschedule interview request")) {
+        history.navigate("/customer-candidate-scheduled");
+      } else if (item?.notificationmessage?.toLowerCase().includes("declined interview")
+        || item?.notificationmessage?.toLowerCase().includes("accepted interview")) {
+        history.navigate("/customer-candidate-scheduled");
+      } else if (item?.notificationmessage?.toLowerCase().includes("applied for the")) {
+        history.navigate("/customer-candidate-applied");
+      } else if (item?.notificationmessage?.toLowerCase().includes("rejected interview")) {
+        history.navigate("/customer-candidate-scheduled");
+      } else {
+        history.navigate("/candidate-list");
+      }
     }
   };
 

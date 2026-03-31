@@ -32,6 +32,8 @@ const AddFeedbackModal = ({ isOpen, toggle, page, pageSize }) => {
   useEffect(() => {
     if (isOpen) {
       dispatch(getFeedbackTypeList());
+      setForm(initialForm);
+      setErrors({});
     }
   }, [isOpen, dispatch]);
 
@@ -88,13 +90,13 @@ const AddFeedbackModal = ({ isOpen, toggle, page, pageSize }) => {
       })
     );
 
-    // refresh list
-    dispatch(
-      feedbackActions.getFeedbackListThunk({
-        pageNumber: page,
-        pageSize: pageSize,
-      })
-    );
+      dispatch(
+        feedbackActions.getFeedbackListThunk({
+          pageNumber: page,
+          pageSize: pageSize,
+          userroleid: localStorage.getItem("userroleid"),
+        })
+      );
 
     setForm(initialForm);
     setErrors({});

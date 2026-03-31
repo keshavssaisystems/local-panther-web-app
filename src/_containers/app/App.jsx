@@ -160,7 +160,7 @@ const AIProfileOffCanvas = React.lazy(() =>
   import("_components/createProfileComponents/AIProfileOffCanvas")
 );
 const ReportsList = React.lazy(() =>
-  import ("_containers/customer/genericreports/reports")
+  import("_containers/customer/genericreports/reports")
 );
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -466,13 +466,21 @@ export function App() {
           }
         />
         <Route
-            path="/report/for/:id"
-            element={
-              <PrivateRoute>
-                <ReportsList />
-              </PrivateRoute>
-            }
-            key={6}
+          path="/report/for/:id"
+          element={
+            <PrivateRoute>
+              <ReportsList />
+            </PrivateRoute>
+          }
+          key={6}
+        />
+         <Route
+          path="/feedback"
+          element={
+            <PrivateRoute>
+              <FeedBack />
+            </PrivateRoute>
+          }
         />
       </>
     );
@@ -561,6 +569,16 @@ export function App() {
           path="/customer-candidate-presented/:id/:jobPostedbyId"
           element={<CustomerCandidateLists type={"presented"} />}
         />
+        <Route path="/customer-candidate-matched" element={<CustomerCandidateLists type={"matched"} />}/>
+        <Route path="/customer-candidate-liked" element={<CustomerCandidateLists type={"liked"} />}/>
+        <Route path="/customer-candidate-maybe" element={<CustomerCandidateLists type={"maybe"} />}/>
+        <Route path="/customer-candidate-applied" element={<CustomerCandidateLists type={"applied"} />}/>
+        <Route path="/customer-candidate-scheduled" element={<CustomerCandidateLists type={"scheduled"} />}/>
+        <Route path="/customer-candidate-accepted" element={<CustomerCandidateLists type={"accepted"} />}/>
+        <Route path="/customer-candidate-rejected" element={<CustomerCandidateLists type={"rejected"} />}/>
+        <Route path="/customer-candidate-offers" element={<CustomerCandidateLists type={"offers"} />}/>
+        <Route path="/customer-candidate-presented" element={<CustomerCandidateLists type={"presented"} />}/>
+        
         <Route path="/candidate-list" element={<CustomerCandidateLists />} />
 
         <Route
@@ -747,22 +765,22 @@ export function App() {
           }
         />
         <Route
-            path="/report/customer-jobs/:id"
-            element={
-              <PrivateRoute>
-                <ReportsList />
-              </PrivateRoute>
-            }
-            key={6}
+          path="/report/customer-jobs/:id"
+          element={
+            <PrivateRoute>
+              <ReportsList />
+            </PrivateRoute>
+          }
+          key={6}
         />
-          <Route
-            path="/report/for/:id"
-            element={
-              <PrivateRoute>
-                <ReportsList />
-              </PrivateRoute>
-            }
-            key={6}
+        <Route
+          path="/report/for/:id"
+          element={
+            <PrivateRoute>
+              <ReportsList />
+            </PrivateRoute>
+          }
+          key={6}
         />
         <Route
           path="/feedback"
@@ -888,13 +906,13 @@ export function App() {
           }
         />
         <Route
-            path="/report/for/:id"
-            element={
-              <PrivateRoute>
-                <ReportsList />
-              </PrivateRoute>
-            }
-            key={6}
+          path="/report/for/:id"
+          element={
+            <PrivateRoute>
+              <ReportsList />
+            </PrivateRoute>
+          }
+          key={6}
         />
         <Route
           path="/feedback"
