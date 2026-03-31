@@ -8,7 +8,10 @@ import {
   CardBody,
   Button,
 } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faReply } from "@fortawesome/free-solid-svg-icons";
 import AddFeedbackModal from "./AddFeedbackModal";
+import AddResponseModal from "./AddResponseModal";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { feedbackActions } from "./feedback.slice";
@@ -16,18 +19,22 @@ import { feedbackActions } from "./feedback.slice";
 const FeedBack = () => {
   
   const [showAddFeedback, setShowAddFeedback] = useState(false);
+  const [showResponseModal, setShowResponseModal] = useState(false);
+  const [selectedResponseRow, setSelectedResponseRow] = useState(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   const dispatch = useDispatch();
   const { feedback_data_profile, loading,totalRows } = useSelector((state) => state.feedback);
-
+  
+  const userroleid = localStorage.getItem("userroleid");
    
   useEffect(() => {
     dispatch(
         feedbackActions.getFeedbackListThunk({
         pageNumber: page,
         pageSize: pageSize,
+        userroleid: userroleid,
         })
     );
   }, [dispatch, page, pageSize]);
@@ -36,7 +43,13 @@ const FeedBack = () => {
   const columns = [
   {
     name: "Subject",
-    selector: (row) => row.subject,
+    cell: (row) => (
+      <span title={row.subject}>
+        {row.subject?.length > 50
+          ? row.subject.substring(0, 50) + "..."
+          : row.subject}
+      </span>
+    ),
   },
   {
     name: "Feedback",
@@ -66,7 +79,13 @@ const FeedBack = () => {
 
   {
     name: "Response",
-    selector: (row) => row.response || "",
+    cell: (row) => (
+      <span title={row.response}>
+        {row.response?.length > 50
+          ? row.response.substring(0, 50) + "..."
+          : row.response || ""}
+      </span>
+    ),
   },
   {
     name: "Response File",
@@ -86,6 +105,34 @@ const FeedBack = () => {
   },
 ];
 
+  if (userroleid === "1") {
+    columns.push({
+      name: "Add Response",
+      cell: (row) => (
+        <button
+          title="Add Response"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "#2f479b",
+            fontSize: "16px",
+            padding: "4px 8px",
+          }}
+          onClick={() => {
+            setSelectedResponseRow(row);
+            setShowResponseModal(true);
+          }}
+        >
+          <FontAwesomeIcon icon={faReply} />
+        </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    });
+  }
+
  
   return (
     <div>
@@ -100,6 +147,7 @@ const FeedBack = () => {
 
               
               <Row className="mb-3">
+                {userroleid != "1" && (
                 <Col md="12">
                 <Button
                      style={{
@@ -110,7 +158,7 @@ const FeedBack = () => {
                                onClick={() => setShowAddFeedback(true)}
                 > Add FeedBack
                 </Button>
-                </Col>
+                </Col>)}
               </Row>
 
               <div className="table-scroll-wrapper">
@@ -139,6 +187,17 @@ const FeedBack = () => {
         toggle={() => setShowAddFeedback(false)}
         page={page}             
         pageSize={pageSize}
+      />
+
+      <AddResponseModal
+        isOpen={showResponseModal}
+        toggle={() => {
+          setShowResponseModal(false);
+          setSelectedResponseRow(null);
+        }}
+        page={page}
+        pageSize={pageSize}
+        selectedRow={selectedResponseRow}
       />
     </div>
   );
