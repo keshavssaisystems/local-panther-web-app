@@ -43,7 +43,13 @@ const FeedBack = () => {
   const columns = [
   {
     name: "Subject",
-    selector: (row) => row.subject,
+    cell: (row) => (
+      <span title={row.subject}>
+        {row.subject?.length > 50
+          ? row.subject.substring(0, 50) + "..."
+          : row.subject}
+      </span>
+    ),
   },
   {
     name: "Feedback",
@@ -73,7 +79,13 @@ const FeedBack = () => {
 
   {
     name: "Response",
-    selector: (row) => row.response || "",
+    cell: (row) => (
+      <span title={row.response}>
+        {row.response?.length > 50
+          ? row.response.substring(0, 50) + "..."
+          : row.response || ""}
+      </span>
+    ),
   },
   {
     name: "Response File",
