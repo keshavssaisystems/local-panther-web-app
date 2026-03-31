@@ -17,7 +17,7 @@ import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { dropdownActions, addCustomerActions } from "_store";
-import { getCompanies, updateAllowDataSharing } from "_containers/admin/_redux/adminListing.slice";
+import { getCompanies, updateAllowDataSharing, updateCandidateNameVisibility } from "_containers/admin/_redux/adminListing.slice";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
 import { useNavigate } from "react-router-dom";
@@ -52,6 +52,8 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   const [selectedCustomer, setSelectedCustomer] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [pendingToggle, setPendingToggle] = useState(null);
+  const [showCandidateNameModal, setShowCandidateNameModal] = useState(false);
+  const [pendingCandidateNameToggle, setPendingCandidateNameToggle] = useState(null);
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
 
@@ -212,7 +214,49 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           sortable: true,
         }
       ] : []),
-
+      
+    {
+      name: "Candidate Name Visibility",
+      cell: (row) => (
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            title="Candidate Name Visibility"
+            className="switch has-switch"
+            data-on-label="ON"
+            data-off-label="OFF"
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              openCandidateNameConfirmModal(
+                !row.iscandidatenamevisible,
+                row
+              )
+            }
+          >
+            <div
+              className={cx("switch-animate", {
+                "switch-on": row.iscandidatenamevisible,
+                "switch-off": !row.iscandidatenamevisible,
+              })}
+              size="sm"
+            >
+              <input type="checkbox" />
+              <span className="switch-left">ON</span>
+              <label>&nbsp;</label>
+              <span className="switch-right">OFF</span>
+            </div>
+          </div>
+        </div>
+      ),
+      sortable: false,
+      width: "12%",
+    },
     {
       name: "Action",
       cell: (row) => (
@@ -523,6 +567,46 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   };
 
 
+  const openCandidateNameConfirmModal = (value, row) => {
+    setShowCandidateNameModal(true);
+    setPendingCandidateNameToggle({ value, row });
+  };
+
+  const handleCandidateNameConfirm = async () => {
+    if (!pendingCandidateNameToggle) return;
+    const { value, row } = pendingCandidateNameToggle;
+    await handleToggleCandidateNameVisibility(value, row);
+    setShowCandidateNameModal(false);
+  };
+
+  const handleToggleCandidateNameVisibility = async function (value, row) {
+    let id = row.companyid;
+    let data = {
+      iscandidatenamevisible: value ? 1 : 0,
+    };
+    let response = await dispatch(updateCandidateNameVisibility({ id, payload: data }));
+    if (response.payload) {
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    } else {
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+    getCompanyList(pageSize, pageNo);
+  };
+
   const handleToggleExcludeCandidateFromEcosystems = async function (value, row) {
     let id = row.companyid;
     let data = {
@@ -737,6 +821,22 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         cancelText="Cancel"
         onConfirm={handleConfirm}
         onCancel={() => setShowModal(false)}
+        zIndex={1050}
+      />
+      <ConfirmModal
+        isOpen={showCandidateNameModal}
+        title="Confirm Candidate Name Visibility"
+        icon={info}
+        message={
+          <>
+            <p>This will update the candidate name visibility setting for this company.</p>
+            <p>Do you want to continue?</p>
+          </>
+        }
+        confirmText="Update Setting"
+        cancelText="Cancel"
+        onConfirm={handleCandidateNameConfirm}
+        onCancel={() => setShowCandidateNameModal(false)}
         zIndex={1050}
       />
 

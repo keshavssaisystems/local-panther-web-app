@@ -281,6 +281,14 @@ export const updateAllowDataSharing = createAsyncThunk(
   }
 );
 
+export const updateCandidateNameVisibility = createAsyncThunk(
+  `${name}/updateCandidateNameVisibility`,
+  async ({ id, payload }) => {
+    const put_candidate_name_visibility_url = `${baseUrl}/V2/543985EC-3630-437F-9E09-9955033C7482/${id}`;
+    return await fetchWrapper.put(put_candidate_name_visibility_url, payload);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -712,6 +720,17 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+    [updateCandidateNameVisibility.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateCandidateNameVisibility.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateCandidateNameVisibility.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   }
 });
 
@@ -747,7 +766,8 @@ export const adminListingActions = {
   admAddCandidate,
   updateIsVisibleToOthersById,
   updateIsCompanyAdminByUserId,
-  updateAllowDataSharing
+  updateAllowDataSharing,
+  updateCandidateNameVisibility
 };
 
 export const adminListingReducer = adminListingSlice.reducer;
