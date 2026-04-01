@@ -90,6 +90,7 @@ export const AssignedJobHiringManagerModal = ({ isOpen, toggle, jobId }) => {
                         size={21}
                         disabled={removeLoading}
                         onClick={() => !removeLoading && handleRemove(manager.jobassigneduserid)}
+                        title="Job Assignment Remove"
                         style={{
                           color: "red",
                           verticalAlign: "top",
