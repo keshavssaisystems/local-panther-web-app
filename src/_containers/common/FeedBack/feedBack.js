@@ -15,6 +15,7 @@ import AddResponseModal from "./AddResponseModal";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { feedbackActions } from "./feedback.slice";
+import { AttachmentModal } from "./AttachmentModal";
 
 const FeedBack = () => {
   
@@ -23,6 +24,8 @@ const FeedBack = () => {
   const [selectedResponseRow, setSelectedResponseRow] = useState(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [openDocumentModal, setOpenDocumentModal] = useState(false);
+  const [documentUrl, setDocumentUrl] = useState("");
 
   const dispatch = useDispatch();
   const { feedback_data_profile, loading,totalRows } = useSelector((state) => state.feedback);
@@ -65,9 +68,15 @@ const FeedBack = () => {
     name: "Attachment",
     cell: (row) =>
       row.fileurl ? (
-        <a href={row.fileurl} target="_blank" rel="noreferrer">
+        <span
+          style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+          onClick={() => {
+            setDocumentUrl(row.fileurl);
+            setOpenDocumentModal(true);
+          }}
+        >
           View File
-        </a>
+        </span>
       ) : (
         ""
       ),
@@ -91,9 +100,15 @@ const FeedBack = () => {
     name: "Response File",
     cell: (row) =>
       row.responsefileurl ? (
-        <a href={row.responsefileurl} target="_blank" rel="noreferrer">
+        <span
+          style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+          onClick={() => {
+            setDocumentUrl(row.responsefileurl);
+            setOpenDocumentModal(true);
+          }}
+        >
           View File
-        </a>
+        </span>
       ) : (
         ""
       ),
@@ -199,6 +214,14 @@ const FeedBack = () => {
         pageSize={pageSize}
         selectedRow={selectedResponseRow}
       />
+
+      {openDocumentModal && (
+        <AttachmentModal
+          isOpen={openDocumentModal}
+          onClose={() => setOpenDocumentModal(false)}
+          url={documentUrl}
+        />
+      )}
     </div>
   );
 };
