@@ -26,6 +26,7 @@ const AddResponseModal = ({ isOpen, toggle, page, pageSize, selectedRow }) => {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [existingFile, setExistingFile] = useState(null);
 
   const { feedbackStatusList } = useSelector((state) => state.feedback);
 
@@ -37,6 +38,8 @@ const AddResponseModal = ({ isOpen, toggle, page, pageSize, selectedRow }) => {
         response: selectedRow?.response || "",
         responseFile: null,
       });
+      // Bind existing file if available
+      setExistingFile(selectedRow?.responseFile || selectedRow?.existingFile || null);
       setErrors({});
     }
   }, [isOpen, dispatch, selectedRow]);
@@ -60,7 +63,11 @@ const AddResponseModal = ({ isOpen, toggle, page, pageSize, selectedRow }) => {
 
   const handleCancel = () => {
     setForm(initialForm);
+    setExistingFile(null);
     setErrors({});
+    // Clear the file input element
+    const fileInput = document.getElementById("responseFile");
+    if (fileInput) fileInput.value = "";
     toggle();
   };
 
@@ -75,6 +82,7 @@ const AddResponseModal = ({ isOpen, toggle, page, pageSize, selectedRow }) => {
       feedbackStatusId: Number(form.feedbackStatusId),
       response: form.response,
       responseFile: form.responseFile || null,
+      existingFile: !form.responseFile && existingFile ? existingFile : null, // Keep existing file if no new file selected
       modifiedBy: Number(localStorage.getItem("userId")),
     };
 
@@ -101,7 +109,11 @@ const AddResponseModal = ({ isOpen, toggle, page, pageSize, selectedRow }) => {
       );
 
       setForm(initialForm);
+      setExistingFile(null);
       setErrors({});
+      // Clear the file input element
+      const fileInput = document.getElementById("responseFile");
+      if (fileInput) fileInput.value = "";
       toggle();
     } catch (err) {
       dispatch(
@@ -165,6 +177,11 @@ const AddResponseModal = ({ isOpen, toggle, page, pageSize, selectedRow }) => {
         {/* Attachment */}
         <FormGroup>
           <Label for="responseFile">Attachment (Optional)</Label>
+          {existingFile && (
+            <div className="mb-2">
+              <small>Current file: {typeof existingFile === 'string' ? existingFile : existingFile?.name}</small>
+            </div>
+          )}
           <Input
             type="file"
             id="responseFile"
