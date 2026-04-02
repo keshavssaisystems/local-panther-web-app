@@ -58,6 +58,7 @@ export function UpdateScheduleInterviewModal({
     setModal(!modal);
   };
   useEffect(() => {
+    let mounted = true;
     if (isOpen) {
       setFormatButton(interviewData?.format === "Video" ? 1 : interviewData?.format === "Phone" ? 2 : interviewData?.format === "In-person" ? 3 : 1);
       setHmEmails(interviewData?.intervieweremailids);
@@ -68,6 +69,20 @@ export function UpdateScheduleInterviewModal({
       setVideoMode(interviewData?.isappvideocall);
       setVideoModeCheck(interviewData?.isappvideocall === true ? 0 : 1);
       getTimeArray();
+      (async () => {
+        try {
+          const res = await dispatch(customerCandidateListsActions.getPromptMessage());
+          const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
+          if (apiRaw) {
+            const jobTitleForTemplate = interviewData?.scheduledInterviewDtos?.[0]?.jobtitle || interviewData?.jobtitle || "";
+            const populated = apiRaw.replace(/\[Job Title\]/gi, jobTitleForTemplate);
+            if (mounted) setMessagePlaceholder(populated);
+          }
+        } catch (err) {
+          
+        }
+      })();
+
       let date = new Date(
         getTimezoneDateTime(
           interviewData?.scheduledInterviewDtos &&
@@ -109,7 +124,7 @@ export function UpdateScheduleInterviewModal({
       // onScheduleDateChange(date).then(() => {
       //   getSlotDuration(event);
       // });
-    }
+    }return () => { mounted = false; };
   }, [isOpen]);
   const getTimeArray = () => {
     let timeOptions = [];
@@ -301,6 +316,7 @@ export function UpdateScheduleInterviewModal({
   const [hmEmails, setHmEmails] = useState('');
   const [phoneNo, setPhoneNo] = useState();
   const [message, setMessage] = useState();
+  const [messagePlaceholder, setMessagePlaceholder] = useState("");
   const [interviewAddress, setInterviewAddress] = useState('');
   const [videoLink, setVideoLink] = useState('');
   const [videoMode, setVideoMode] = useState();
@@ -642,7 +658,7 @@ export function UpdateScheduleInterviewModal({
                       id="message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Enter message to candidate"
+                      placeholder={messagePlaceholder || "Enter message to candidate"}
                     />
                   </FormGroup>
                   <FormGroup>
