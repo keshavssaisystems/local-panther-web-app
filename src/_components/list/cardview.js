@@ -648,7 +648,7 @@ export const CandidateCardView = (props) => {
             <Col md={6} lg={6}>
               <div className="muted-name">Job posted on</div>
               <div className="muted-name">
-                {getTimezoneDateTime(props?.data?.createddate, "MM/DD/YYYY hh:mm A")}
+                {getTimezoneDateTime(props?.data?.jobpublishdatetime, "MM/DD/YYYY hh:mm A")}
               </div>
             </Col>
             <Col md={6} lg={6} className="text-end">
