@@ -42,6 +42,8 @@ import AssigneeAtsCandidate from "_containers/customer/atscustomercandidatelist/
 
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { fetchWrapper } from "_helpers/fetch-wrapper";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -55,8 +57,18 @@ export const CandidateCardView = (props) => {
   const [assignmentStartDate, setAssignmentStartDate] = useState(null);
   const [assignmentEndDate, setAssignmentEndDate] = useState(null);
   const [assignedCompanyName, setAssignedCompanyName] = useState(null);
+  const [showJDModal, setShowJDModal] = useState(false);
+  const [jobDetail, setJobDetail] = useState([]);
   const isStaffingFirm = props.isStaffingFirm;
   const dispatch = useDispatch();
+
+  const openJobDetails = async (jobId) => {
+    const res = await fetchWrapper.get(`${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDetails/${jobId}`);
+    if (res?.statusCode === 200) {
+      setJobDetail([res.data]);
+      setShowJDModal(true);
+    }
+  };
   const onRejectClick = () => {
     setShowReModal(true);
   };
@@ -398,7 +410,20 @@ export const CandidateCardView = (props) => {
                   </Col>
                   <Col md="11" lg="11">
                     <b>Job Title </b>
-                    <p>{props?.data?.jobtitle || "-"}</p>
+                    <p>
+                      {props?.data?.jobid ? (
+                        <Button
+                          color="link"
+                          className="p-0"
+                          style={{ fontWeight: "normal" }}
+                          onClick={() => openJobDetails(props?.data?.jobid)}
+                        >
+                          {props?.data?.jobtitle || "-"}
+                        </Button>
+                      ) : (
+                        props?.data?.jobtitle || "-"
+                      )}
+                    </p>
                   </Col>
                 </Row>
               </p>
@@ -823,7 +848,14 @@ export const CandidateCardView = (props) => {
         ) : (
           <></>
         )}
-      </>      <>
+      </>      {showJDModal && jobDetail?.length > 0 && (
+        <CustJobDetailModal
+          isOpen={showJDModal}
+          data={jobDetail}
+          onClose={() => setShowJDModal(false)}
+        />
+      )}
+      <>
         {openBDModal ? (
           <AssigneeAtsCandidate
             isOpen={openBDModal}
