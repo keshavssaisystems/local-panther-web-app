@@ -281,6 +281,15 @@ export const updateAllowDataSharing = createAsyncThunk(
   }
 );
 
+// Set company active/inactive by Super Admin
+export const setCompanyActive = createAsyncThunk(
+  `${name}/setCompanyActive`,
+  async ({ companyId, dto }) => {
+    const SET_ACTIVE_URL = `${baseUrl}/Company/SetActive/${companyId}`;
+    return await fetchWrapper.put(SET_ACTIVE_URL, dto);
+  }
+);
+
 // Update candidate name visibility by id - PUT /api/Company/{id}
 export const updateCandidateNameVisibility = createAsyncThunk(
   `${name}/updateCandidateNameVisibility`,
@@ -721,6 +730,17 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+    [setCompanyActive.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [setCompanyActive.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [setCompanyActive.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
     [updateCandidateNameVisibility.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -768,6 +788,7 @@ export const adminListingActions = {
   updateIsVisibleToOthersById,
   updateIsCompanyAdminByUserId,
   updateAllowDataSharing,
+  setCompanyActive,
   updateCandidateNameVisibility
 };
 
