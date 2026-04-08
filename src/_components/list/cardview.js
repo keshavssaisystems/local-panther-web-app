@@ -393,6 +393,22 @@ export const CandidateCardView = (props) => {
                 <Row>
                   <Col md="1" lg="1">
                     <span className="pe-2">
+                      <BsMortarboard size={"16px"} />
+                    </span>
+                  </Col>
+                  <Col md="11" lg="11">
+                    <b>Job Title </b>
+                    <p>{props?.data?.jobtitle || "-"}</p>
+                  </Col>
+                </Row>
+              </p>
+            </Col>
+
+            <Col className="col-12">
+              <p className="card-details">
+                <Row>
+                  <Col md="1" lg="1">
+                    <span className="pe-2">
                       <BsBriefcase size={"16px"} />
                     </span>
                   </Col>
