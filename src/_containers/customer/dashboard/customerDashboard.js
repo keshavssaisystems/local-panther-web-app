@@ -205,6 +205,22 @@ export default function CustomerDashboard() {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
     }
+    // Prefer routing based on metadata saved by backend when available
+    try {
+      if (item?.notificationresponse) {
+        const meta = JSON.parse(item.notificationresponse);
+        if (meta?.groupId) {
+          history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`);
+          return;
+        }
+        if (meta?.redirectUrl) {
+          history.navigate(meta.redirectUrl);
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore parse errors and continue
+    }
   };
 
   const showSweetAlert = ({ title, type }) => {

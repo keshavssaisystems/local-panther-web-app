@@ -29,6 +29,22 @@ export const Notifications = () => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
     }
+    // If backend stored routing metadata, prefer routing based on that
+    try {
+      if (item?.notificationresponse) {
+        const meta = JSON.parse(item.notificationresponse);
+        if (meta?.groupId) {
+          history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`);
+          return;
+        }
+        if (meta?.redirectUrl) {
+          history.navigate(meta.redirectUrl);
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore parse errors and fall back to legacy routing
+    }
 
     if (localStorage.getItem("userroleid") === "3") {
       if (item?.notificationmessage?.toLowerCase() === "interview scheduled") {

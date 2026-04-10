@@ -33,6 +33,28 @@ export const getCompletedCustomerListThunk = createAsyncThunk(
     return await fetchWrapper.get(CUSTOMER_LIST);
   }
 );
+
+// sendChatNotification thunk - posts chat notification metadata to backend
+export const sendChatNotification = createAsyncThunk(
+  `${name}/sendChatNotification`,
+  async ({ receiverId, groupId, messagePreview, redirectUrl }) => {
+    const END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Notification/SendChatNotification`;
+    const payload = {
+      ReceiverId: Number(receiverId),
+      GroupId: groupId,
+      MessagePreview: messagePreview,
+      RedirectUrl: redirectUrl,
+    };
+    try {
+      return await fetchWrapper.post(END_POINT, payload);
+    } catch (err) {
+      // swallow error and return a normalized failure object so callers don't get an unhandled rejection
+      // Keep debug log only (no visible warning in production console)
+      if (process.env.NODE_ENV !== 'production') console.debug('sendChatNotification failed:', err);
+      return { status: 'Failed', message: err || 'SendChatNotification failed' };
+    }
+  }
+);
 // Create the slice
 const chatSlice = createSlice({
   name,
@@ -90,6 +112,7 @@ export const chatActions = {
   getCustomerListThunk,
   getCandidateListThunk,
   getCompletedCustomerListThunk,
+  sendChatNotification,
 };
 
 export const chatReducer = chatSlice.reducer;

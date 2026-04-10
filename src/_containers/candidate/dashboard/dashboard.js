@@ -152,6 +152,23 @@ export default function CandidateDashboard() {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
     }
+    // Prefer routing based on metadata saved by backend when available
+    try {
+      if (item?.notificationresponse) {
+        const meta = JSON.parse(item.notificationresponse);
+        if (meta?.groupId) {
+          history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`);
+          return;
+        }
+        if (meta?.redirectUrl) {
+          history.navigate(meta.redirectUrl);
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore and fall back to legacy routing
+    }
+
     if (localStorage.getItem("userroleid") === "3") {
       if (item?.notificationmessage?.toLowerCase() === "interview scheduled") {
         history.navigate("/job-list-interview");
