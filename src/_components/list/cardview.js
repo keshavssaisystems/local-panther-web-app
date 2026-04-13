@@ -405,7 +405,13 @@ export const CandidateCardView = (props) => {
                 <Row>
                   <Col md="1" lg="1">
                     <span className="pe-2">
-                      <BsMortarboard size={"16px"} />
+                      <img
+                        src={customerIcons.person_vcard}
+                        alt="job title"
+                        width="16"
+                        height="auto"
+                        style={{ verticalAlign: "middle", objectFit: "contain" }}
+                      />
                     </span>
                   </Col>
                   <Col md="11" lg="11">
