@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "firebase/firestore";
 import "./chat.scss";
 import { Card, Nav, NavItem } from "reactstrap";
 import { ChatUsers } from "firebase/chat/chatUsers";
 import { Chat } from "./chat";
 import avatar1 from "assets/utils/images/avatars/1.jpg";
+import { useLocation } from "react-router-dom";
 
 export function ChatList({ list }) {
   let loginUserDetails = JSON.parse(localStorage.getItem("userDetails"));
@@ -12,6 +13,28 @@ export function ChatList({ list }) {
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [selectedChat, setSelectedChat] = useState({});
   const currentUserId = localStorage.getItem("userId");
+  // Preselect a chat if a groupId is present in the URL (e.g. /chat?groupId=123-456)
+  const location = useLocation();
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      const groupParam = params.get("groupId");
+      if (groupParam) {
+        setSelectedGroupId(groupParam);
+        const parts = groupParam.split("-");
+        const otherId = parts.find((p) => p !== String(currentUserId));
+        const found = list?.find((l) => String(l.id) === String(otherId));
+        if (found) setSelectedChat(found);
+        else if (otherId) setSelectedChat({ id: Number(otherId), name: "" });
+      } else {
+        // Clear selection when query is removed
+        setSelectedGroupId("");
+        setSelectedChat({});
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [location.search, list]);
   const getSelectedChatGroup = (event) => {
     setSelectedGroupId(
       (userRole === 2 || userRole === 4)

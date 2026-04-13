@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AlertModal } from "_components/modal/alertModal";
 import { history } from "_helpers";
+import { isInternalUrl } from "_helpers/helper";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 
@@ -91,6 +92,24 @@ export const NotificationCounter = () => {
   const onReadNotification = async (id, status, item) => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
+    }
+
+    // Prefer routing based on metadata saved by backend when available
+    try {
+      if (item?.notificationresponse) {
+        const meta = JSON.parse(item.notificationresponse);
+        if (meta?.groupId) {
+          setTimeout(() => history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`), 0);
+          return;
+        }
+        if (meta?.redirectUrl && isInternalUrl(meta.redirectUrl)) {
+          history.navigate(meta.redirectUrl);
+          return;
+        }
+        // ignore external or invalid redirectUrl values
+      }
+    } catch (e) {
+      // ignore and fall back to legacy routing
     }
 
     if (localStorage.getItem("userroleid") === "3") {
