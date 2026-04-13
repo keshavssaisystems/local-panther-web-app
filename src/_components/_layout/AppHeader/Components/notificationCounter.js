@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AlertModal } from "_components/modal/alertModal";
 import { history } from "_helpers";
+import { isInternalUrl } from "_helpers/helper";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 
@@ -98,14 +99,14 @@ export const NotificationCounter = () => {
       if (item?.notificationresponse) {
         const meta = JSON.parse(item.notificationresponse);
         if (meta?.groupId) {
-          
           setTimeout(() => history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`), 0);
           return;
         }
-        if (meta?.redirectUrl) {
+        if (meta?.redirectUrl && isInternalUrl(meta.redirectUrl)) {
           history.navigate(meta.redirectUrl);
           return;
         }
+        // ignore external or invalid redirectUrl values
       }
     } catch (e) {
       // ignore and fall back to legacy routing

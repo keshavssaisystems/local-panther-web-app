@@ -116,11 +116,11 @@ export function Chat({ groupId, details }) {
             messagePreview: (formData || "").slice(0, 100),
             redirectUrl: `/chat?groupId=${encodeURIComponent(groupId)}`,
           };
-          // Dispatch a Redux thunk instead of calling fetch directly — keeps API calls in slices
-          dispatch(chatActions.sendChatNotification(payload));
+          // Dispatch a Redux thunk and await result so we can observe failures (dev-only logging)
+          await dispatch(chatActions.sendChatNotification(payload));
         }
       } catch (err) {
-        console.warn("Failed to trigger server chat notification", err);
+        // intentionally swallow notification errors to avoid breaking UI
       }
     }
   };

@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { candidateDashboardActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { history } from "_helpers";
+import { isInternalUrl } from "_helpers/helper";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 
@@ -37,13 +38,12 @@ export const Notifications = () => {
           history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`);
           return;
         }
-        if (meta?.redirectUrl) {
+        if (meta?.redirectUrl && isInternalUrl(meta.redirectUrl)) {
           history.navigate(meta.redirectUrl);
           return;
         }
       }
     } catch (e) {
-      // ignore parse errors and fall back to legacy routing
     }
 
     if (localStorage.getItem("userroleid") === "3") {

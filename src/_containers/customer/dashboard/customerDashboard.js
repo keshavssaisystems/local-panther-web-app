@@ -21,6 +21,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
+import { isInternalUrl } from "_helpers/helper";
 import { PaymentModal } from "_components/modal/paymentmodal";
 import { ActivePipelines } from "_components/dashboard/ActivePipelines";
 import { createAuthLink } from "_components/unifiedApp/unifiedApp";
@@ -213,13 +214,12 @@ export default function CustomerDashboard() {
           history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`);
           return;
         }
-        if (meta?.redirectUrl) {
+        if (meta?.redirectUrl && isInternalUrl(meta.redirectUrl)) {
           history.navigate(meta.redirectUrl);
           return;
         }
       }
     } catch (e) {
-      // ignore parse errors and continue
     }
   };
 

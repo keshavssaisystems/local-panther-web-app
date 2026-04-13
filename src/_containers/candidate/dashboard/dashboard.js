@@ -24,6 +24,7 @@ import infoIcon from "assets/utils/images/yellow-info-big.svg";
 import { analytics } from "../../../firebase/index";
 import { JobPreferences } from "../jobPreferences";
 import { history } from "_helpers";
+import { isInternalUrl } from "_helpers/helper";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import ProfileCompletionChatbot from "_components/createProfileComponents/ProfileCompletionChatbot";
@@ -160,10 +161,11 @@ export default function CandidateDashboard() {
           history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`);
           return;
         }
-        if (meta?.redirectUrl) {
+        if (meta?.redirectUrl && isInternalUrl(meta.redirectUrl)) {
           history.navigate(meta.redirectUrl);
           return;
         }
+        // ignore external or invalid redirectUrl
       }
     } catch (e) {
       // ignore and fall back to legacy routing

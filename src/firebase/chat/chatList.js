@@ -26,6 +26,10 @@ export function ChatList({ list }) {
         const found = list?.find((l) => String(l.id) === String(otherId));
         if (found) setSelectedChat(found);
         else if (otherId) setSelectedChat({ id: Number(otherId), name: "" });
+      } else {
+        // Clear selection when query is removed
+        setSelectedGroupId("");
+        setSelectedChat({});
       }
     } catch (e) {
       // ignore
