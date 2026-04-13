@@ -17,9 +17,11 @@ import { ChatMessage } from "./chatMessage";
 import { BsFillSendFill } from "react-icons/bs";
 import moment from "moment-timezone";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { chatActions } from "_store";
 
 export function Chat({ groupId, details }) {
+  const dispatch = useDispatch();
   const completedInterviewCustomerList = useSelector(
     (state) => state.chat.completedCustomerList
   );
@@ -73,7 +75,8 @@ export function Chat({ groupId, details }) {
       });
       dummy.current.scrollIntoView({ behavior: "smooth" });
       setFormValue("");
-      if (messages.length < 1) {
+      const messagesCount = Array.isArray(messages) ? messages.length : 0;
+      if (messagesCount < 1) {
         await chatUserRef.add({
           customerId: customerId,
           customerName: customerName,
@@ -87,15 +90,37 @@ export function Chat({ groupId, details }) {
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
         });
-      }
-      if (messages.length > 0) {
-        await chatUserRef.doc(chatList[0]?.id).update({
+      } else if (messagesCount > 0 && chatList?.[0]?.id) {
+        await chatUserRef.doc(chatList[0].id).update({
           lastMessage: formData,
           lastMessageBy: Number(localStorage.getItem("userId")),
           lastMessageDateTime: firebase.firestore.FieldValue.serverTimestamp(),
           seen: false,
           sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
         });
+      }
+
+      // Send server-side chat notification so receiver gets dashboard + push notification
+      try {
+        const currentUserId = Number(localStorage.getItem("userId"));
+        // Determine receiver id: prefer details.id (selected chat participant), fallback to chatList doc
+        let receiverId = details?.id;
+        if (!receiverId && chatList && chatList.length > 0) {
+          const doc = chatList[0];
+          receiverId = doc.candidateId === currentUserId ? doc.customerId : doc.candidateId;
+        }
+        if (receiverId) {
+          const payload = {
+            receiverId: Number(receiverId),
+            groupId: groupId,
+            messagePreview: (formData || "").slice(0, 100),
+            redirectUrl: `/chat?groupId=${encodeURIComponent(groupId)}`,
+          };
+          // Dispatch a Redux thunk and await result so we can observe failures (dev-only logging)
+          await dispatch(chatActions.sendChatNotification(payload));
+        }
+      } catch (err) {
+        // intentionally swallow notification errors to avoid breaking UI
       }
     }
   };

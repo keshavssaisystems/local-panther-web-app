@@ -62,7 +62,7 @@ export function UpdateScheduleInterviewModal({
     if (isOpen) {
       setFormatButton(interviewData?.format === "Video" ? 1 : interviewData?.format === "Phone" ? 2 : interviewData?.format === "In-person" ? 3 : 1);
       setHmEmails(interviewData?.intervieweremailids);
-      setMessage(interviewData?.messagetocandidate);
+      setMessage((interviewData?.messagetocandidate || "").slice(0, 160));
       setPhoneNo(interviewData?.textremaindernumbers);
       setVideoLink(interviewData?.videolink);
       setInterviewAddress(interviewData?.textremaindernumbers);
@@ -73,10 +73,10 @@ export function UpdateScheduleInterviewModal({
         try {
           const res = await dispatch(customerCandidateListsActions.getPromptMessage());
           const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
-          if (apiRaw) {
+            if (apiRaw) {
             const jobTitleForTemplate = interviewData?.scheduledInterviewDtos?.[0]?.jobtitle || interviewData?.jobtitle || "";
             const populated = apiRaw.replace(/\[Job Title\]/gi, jobTitleForTemplate);
-            if (mounted) setMessagePlaceholder(populated);
+            if (mounted) setMessagePlaceholder((populated || "").slice(0,160));
           }
         } catch (err) {
           
@@ -275,6 +275,8 @@ export function UpdateScheduleInterviewModal({
       .tz("Etc/UTC")
       .format("HH:mm:ss");
 
+    const messageValue = ((event.target.elements.message && event.target.elements.message.value) || messagePlaceholder || "").slice(0,160);
+
     let data = {
       scheduleinterviewid:
         interviewData?.scheduledInterviewDtos &&
@@ -290,7 +292,7 @@ export function UpdateScheduleInterviewModal({
       isappvideocall: formatButton === 1 ? event.target.elements.videoMode.value === "third-party-video" ? false : true : false,
       videolink: formatButton === 1 && event.target.elements.videoMode.value === "third-party-video" ? event.target.elements.videoLink.value : "",
       interviewAddress: formatButton === 3 ? event.target.elements.interviewAddress.value : "",
-      messagetocandidate: event.target.elements.message.value,
+      messagetocandidate: messageValue,
       intervieweremailids: event.target.elements.hmEmails.value,
       textremaindernumbers: event.target.elements.phoneNo.value,
       // format: interviewData?.format,
@@ -657,9 +659,10 @@ export function UpdateScheduleInterviewModal({
                       name="message"
                       id="message"
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
+                      onChange={(e) => setMessage(e.target.value.slice(0,160))}
                       placeholder={messagePlaceholder || "Enter message to candidate"}
                     />
+                    <FormText color="muted">{(message ? message.length : 0)}/160</FormText>
                   </FormGroup>
                   <FormGroup>
                     <Label for="hmEmails" className="fw-semi-bold">

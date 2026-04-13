@@ -43,6 +43,7 @@ export function ScheduleInterviewModal({
   const [scheduledDate, setScheduledDate] = useState();
   const [slotDurationOptions, setSlotDurationOptions] = useState([]);
   const [messagePlaceholder, setMessagePlaceholder] = useState("");
+  const [message, setMessage] = useState("");
 
   // NEW: fallback rounds if parent doesn’t pass any
   const [effectiveRoundOptions, setEffectiveRoundOptions] = useState([])
@@ -69,7 +70,11 @@ export function ScheduleInterviewModal({
           const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
           if (apiRaw) {
             const populated = apiRaw.replace(/\[Job Title\]/gi, candidateData?.jobtitle || "");
-            if (mounted) setMessagePlaceholder(populated);
+            if (mounted) {
+              setMessagePlaceholder(populated);
+              // initialize message if candidateData provides one (safety)
+              if (candidateData?.messagetocandidate) setMessage((candidateData?.messagetocandidate || "").slice(0,160));
+            }
           }
         } catch (err) {
           console.warn("Failed to load PromptMessageForInterview:", err);
@@ -242,6 +247,8 @@ export function ScheduleInterviewModal({
     const roundName =
       effectiveRoundOptions.find((r) => Number(r.id) === roundId)?.name || "";
 
+    const messageValue = ((event.target.elements.message && event.target.elements.message.value) || messagePlaceholder || "").slice(0,160);
+
     let data = {
       scheduleinterviewid: 0,
       jobid: candidateData.jobid,
@@ -273,7 +280,8 @@ export function ScheduleInterviewModal({
           : "",
       interviewAddress:
         formatButton === 3 ? event.target.elements.interviewAddress.value : "",
-      messagetocandidate: event.target.elements.message.value,
+
+      messagetocandidate: messageValue,
       intervieweremailids: event.target.elements.hmEmails.value,
       textremaindernumbers: event.target.elements.phoneNo.value,
       isactive: true,
@@ -589,7 +597,10 @@ export function ScheduleInterviewModal({
                   name="message"
                   id="message"
                   placeholder={messagePlaceholder || "Enter message to candidate"}
+                  value={message}
+                  onChange={(e) => setMessage((e.target.value || "").slice(0,160))}
                 />
+                <FormText color="muted">{(message ? message.length : 0)}/160</FormText>
               </FormGroup>
 
               <FormGroup>

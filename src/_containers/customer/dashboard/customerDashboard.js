@@ -21,6 +21,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
+import { isInternalUrl } from "_helpers/helper";
 import { PaymentModal } from "_components/modal/paymentmodal";
 import { ActivePipelines } from "_components/dashboard/ActivePipelines";
 import { createAuthLink } from "_components/unifiedApp/unifiedApp";
@@ -204,6 +205,21 @@ export default function CustomerDashboard() {
   const onReadNotification = (id, status, item) => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
+    }
+    // Prefer routing based on metadata saved by backend when available
+    try {
+      if (item?.notificationresponse) {
+        const meta = JSON.parse(item.notificationresponse);
+        if (meta?.groupId) {
+          history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`);
+          return;
+        }
+        if (meta?.redirectUrl && isInternalUrl(meta.redirectUrl)) {
+          history.navigate(meta.redirectUrl);
+          return;
+        }
+      }
+    } catch (e) {
     }
   };
 
