@@ -5,7 +5,7 @@ const initialState = {
     selectedOpt: "JobTitle",
     searchText: "",
     hiringManagerId: "",
-    jobStatus: "",
+    jobStatus: "Publish",
     placeHolder: "Search job title",
     interviewFeedbackStatusId: "",
     startDate: null,
@@ -44,7 +44,7 @@ const commonCustFiltersSlice = createSlice({
             state.selectedOpt = "JobTitle";
             state.searchText = "";
             state.hiringManagerId = localStorage.getItem("userId") || "";
-            state.jobStatus = "";
+            state.jobStatus = "Publish";
             state.placeHolder = "Search job title";
             state.interviewFeedbackStatusId = "";
             state.startDate = null;
@@ -52,7 +52,7 @@ const commonCustFiltersSlice = createSlice({
         },
         clearFiltersOnPageLoad: (state) => {
             state.searchText = "";
-            state.jobStatus = "";
+            state.jobStatus = "Publish";
             state.placeHolder = "Search job title";
             state.interviewFeedbackStatusId = "";
             state.startDate = null;

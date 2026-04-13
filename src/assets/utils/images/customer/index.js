@@ -29,6 +29,7 @@ const customerIcons = {
   anticlockFrame: require("./anticlockFrame.svg").default,
   list_schedule_next: require("./list/schedule_next.svg").default,
   joblist : require("./joblist.svg").default,
+  person_vcard: require("./person-vcard.svg").default,
 };
 
 export default customerIcons;
