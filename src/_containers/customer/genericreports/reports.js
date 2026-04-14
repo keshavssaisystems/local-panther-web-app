@@ -162,9 +162,10 @@ const ReportsList = () => {
             return obj;
         });
 
+        const safeSheetName = title && title.length > 30 ? "Report" : (title || "Report");
         return [
             {
-                sheetName: title || "Report",
+                sheetName: safeSheetName,
                 details: filteredData,
             },
         ];
