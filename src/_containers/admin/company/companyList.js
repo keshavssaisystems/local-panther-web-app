@@ -56,33 +56,9 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   const [pendingCandidateNameToggle, setPendingCandidateNameToggle] = useState(null);
   const [pendingCompanyToggle, setPendingCompanyToggle] = useState(null);
   const [showCompanyConfirmModal, setShowCompanyConfirmModal] = useState(false);
+
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
-
-  // Helper to normalise boolean-like values coming from API (0/1, "true"/"false", boolean)
-  const toBool = (v) => {
-    if (v === true) return true;
-    if (v === false) return false;
-    if (v === 1 || v === "1") return true;
-    if (v === 0 || v === "0") return false;
-    if (typeof v === "string") {
-      const s = v.toLowerCase();
-      return s === "true" || s === "1" || s === "yes" || s === "on";
-    }
-    if (typeof v === "number") return v !== 0;
-    return Boolean(v);
-  };
-
-  // Read boolean-like value from multiple possible property name variants
-  const getBoolFromRow = (row, keys = []) => {
-    for (const k of keys) {
-      if (Object.prototype.hasOwnProperty.call(row, k)) {
-        const v = row[k];
-        if (v !== undefined && v !== null) return toBool(v);
-      }
-    }
-    return false;
-  };
 
   const userDetails = localStorage.getItem("userDetails")
     ? JSON.parse(localStorage.getItem("userDetails"))
@@ -199,137 +175,119 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       ? [
         {
           name: "Allow Data Sharing with OpenWorX Ecosystem",
-          cell: (row) => {
-            const styleWrap = {
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            };
-            const current = getBoolFromRow(row, [
-              "isexcludecandidatesfromecosystem",
-              "isExcludeCandidatesFromEcosystem",
-              "is_excludecandidatesfromecosystem",
-              "is_exclude_candidates_from_ecosystem",
-              "isexcludecandidates",
-              "isExcludeCandidates",
-            ]);
-            const showOn = !current;
-            return (
-              <div style={styleWrap}>
-                <div
-                  title="Allow Data Sharing with OpenWorX Ecosystem"
-                  className="switch has-switch"
-                  data-on-label="ON"
-                  data-off-label="OFF"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => openConfirmModal(!current, row)}
-                >
-                  {row.isstaffingfirm && (
-                    <div
-                      className={cx("switch-animate", {
-                        "switch-on": showOn,
-                        "switch-off": !showOn,
-                      })}
-                      size="sm"
-                    >
-                      <input type="checkbox" checked={showOn} readOnly />
-                      <span className="switch-left">ON</span>
-                      <label>&nbsp;</label>
-                      <span className="switch-right">OFF</span>
-                    </div>
-                  )}
-                </div>
+          cell: (row) => (
+            <div
+              style={{
+                width: "100%",                // take full cell width
+                display: "flex",
+                justifyContent: "center",     // horizontal center
+                alignItems: "center",         // vertical center
+              }}
+            >
+              <div
+                title="Allow Data Sharing with OpenWorX Ecosystem"
+                className="switch has-switch"
+                data-on-label="ON"
+                data-off-label="OFF"
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  openConfirmModal(
+                    !row.isexcludecandidatesfromecosystem,
+                    row
+                  )
+                }
+              >
+                {row.isstaffingfirm && (
+                  <div
+                    className={cx("switch-animate", {
+                      "switch-on": !row.isexcludecandidatesfromecosystem,
+                      "switch-off": row.isexcludecandidatesfromecosystem,
+                    })}
+                    size="sm"
+                  >
+                    <input type="checkbox" />
+                    <span className="switch-left">ON</span>
+                    <label>&nbsp;</label>
+                    <span className="switch-right">OFF</span>
+                  </div>
+                )}
               </div>
-            );
-          },
+            </div>
+          ),
           sortable: true,
         }
       ] : []),
       
     {
       name: "Candidate Name Visibility",
-      cell: (row) => {
-        const styleWrap = { width: "100%", display: "flex", justifyContent: "center", alignItems: "center" };
-        const current = getBoolFromRow(row, [
-          "iscandidatenamevisible",
-          "isCandidateNameVisible",
-          "iscandidateNameVisible",
-          "is_candidatename_visible",
-          "is_candidate_name_visible",
-          "IsCandidateNameVisible",
-          "isCandidatenameVisible",
-        ]);
-        return (
-          <div style={styleWrap}>
+      cell: (row) => (
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            title="Candidate Name Visibility"
+            className="switch has-switch"
+            data-on-label="ON"
+            data-off-label="OFF"
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              openCandidateNameConfirmModal(
+                !row.iscandidatenamevisible,
+                row
+              )
+            }
+          >
             <div
-              title="Candidate Name Visibility"
-              className="switch has-switch"
-              data-on-label="ON"
-              data-off-label="OFF"
-              style={{ cursor: "pointer" }}
-              onClick={() => openCandidateNameConfirmModal(!current, row)}
+              className={cx("switch-animate", {
+                "switch-on": row.iscandidatenamevisible,
+                "switch-off": !row.iscandidatenamevisible,
+              })}
+              size="sm"
             >
-              <div
-                className={cx("switch-animate", {
-                  "switch-on": current,
-                  "switch-off": !current,
-                })}
-                size="sm"
-              >
-                <input type="checkbox" checked={current} readOnly />
-                <span className="switch-left">ON</span>
-                <label>&nbsp;</label>
-                <span className="switch-right">OFF</span>
-              </div>
+              <input type="checkbox" />
+              <span className="switch-left">ON</span>
+              <label>&nbsp;</label>
+              <span className="switch-right">OFF</span>
             </div>
           </div>
-        );
-      },
+        </div>
+      ),
       sortable: false,
       width: "12%",
     },
     {
       name: "Active",
-      cell: (row) => {
-        const styleWrap = { width: "100%", display: "flex", justifyContent: "center", alignItems: "center" };
-        const current = getBoolFromRow(row, [
-          "isactive",
-          "IsActive",
-          "is_active",
-          "isActive",
-        ]);
-        return (
-          <div style={styleWrap}>
+      cell: (row) => (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            className="switch has-switch"
+            onClick={() => {
+              setPendingCompanyToggle({
+                value: !row.isactive,
+                row,
+              });
+              setShowCompanyConfirmModal(true);
+            }}
+          >
             <div
-              title={current ? "Disable company" : "Enable company"}
-              className="switch has-switch"
-              data-on-label="ON"
-              data-off-label="OFF"
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                setPendingCompanyToggle({ value: !current, row });
-                setShowCompanyConfirmModal(true);
-              }}
+              className={cx("switch-animate", {
+                "switch-on": row.isactive,
+                "switch-off": !row.isactive,
+              })}
             >
-              <div
-                className={cx("switch-animate", {
-                  "switch-on": current,
-                  "switch-off": !current,
-                })}
-                size="sm"
-              >
-                <input type="checkbox" checked={current} readOnly />
-                <span className="switch-left">ON</span>
-                <label>&nbsp;</label>
-                <span className="switch-right">OFF</span>
-              </div>
+              <input type="checkbox" />
+              <span className="switch-left">ON</span>
+              <label>&nbsp;</label>
+              <span className="switch-right">OFF</span>
             </div>
           </div>
-        );
-      },
-      sortable: false,
-      width: "10%",
+        </div>
+      ),
     },
     {
       name: "Action",
