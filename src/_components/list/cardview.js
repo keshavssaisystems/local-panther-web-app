@@ -400,6 +400,24 @@ export const CandidateCardView = (props) => {
               </Row>
             </Col>
 
+            {isStaffingFirm && props?.data?.clientcompanyname && (
+              <Col className="col-12">
+                <p className="card-details">
+                  <Row>
+                    <Col md="1" lg="1">
+                      <span className="pe-2">
+                        <BsBuildings size={"16px"} />
+                      </span>
+                    </Col>
+                    <Col md="11" lg="11">
+                      <b>Client Company </b>
+                      <p> {props?.data?.clientcompanyname}</p>
+                    </Col>
+                  </Row>
+                </p>
+              </Col>
+            )}
+
             <Col className="col-12">
               <p className="card-details">
                 <Row>
@@ -594,21 +612,6 @@ export const CandidateCardView = (props) => {
                         <b>Resume </b>
                         <p>{returnResume()}</p>
 
-                      </Col>
-                    </Row>
-                  </p>
-                </Col>
-                <Col className="col-12">
-                  <p className="card-details">
-                    <Row>
-                      <Col md="1" lg="1">
-                        <span className="pe-2">
-                          <BsBuildings size={"16px"} />
-                        </span>
-                      </Col>
-                      <Col md="11" lg="11">
-                        <b>Client Company </b>
-                        <p> {props?.data?.clientcompanyname}</p>
                       </Col>
                     </Row>
                   </p>
