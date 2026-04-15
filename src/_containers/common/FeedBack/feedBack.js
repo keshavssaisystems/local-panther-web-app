@@ -171,7 +171,7 @@ const FeedBack = () => {
                              }}
                               className="input-group-text float-end mt-1"
                                onClick={() => setShowAddFeedback(true)}
-                > Add FeedBack
+                > Add Feedback
                 </Button>
                 </Col>)}
               </Row>
