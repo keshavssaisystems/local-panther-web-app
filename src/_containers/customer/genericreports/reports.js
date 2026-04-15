@@ -123,6 +123,7 @@ const ReportsList = () => {
     let [isexport, setIsExport] = useState(0);
     const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
     const [interviewFeedbackStatusId, setInterviewFeedbackStatusId] = useState(0);
+    const [offerStatusId, setOfferStatusId] = useState("");
 
     const setSearchText = (text) => {
         setSearchData(text);
@@ -222,7 +223,7 @@ const ReportsList = () => {
     const handleexportToExcel = () => {
         data = []; // to avoid export with current data, as we are fetching new data with isexport flag
         fetchData(1, 10000, startDate, endDate, searchData, candidateSelected, subsidiaryId, company,
-            hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId).then(() => {
+            hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId).then(() => {
                 setIsExport(1)
             });
     };
@@ -231,7 +232,7 @@ const ReportsList = () => {
             exportToExcel(excelData, `${title || "Report"}_Export`, true);
         }
         if (isexport === 1 && data.length > 0 && excelData && excelData.length > 0 && excelData[0].details && excelData[0].details.length > 0) {
-            fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId);
+            fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId);
             setIsExport(0); // reset export flag after export is done
         }
     }, [isexport]);
@@ -380,6 +381,7 @@ const ReportsList = () => {
         recommStatusId_,
         jobId_,
         interviewFeedbackStatusId_ = 0,
+        offerStatusId_ = "",
         isexport_ = 0
     ) => {
         try {
@@ -400,6 +402,7 @@ const ReportsList = () => {
             filter.recommendedStatus === 1 && (recommStatusId_ !== null && recommStatusId_ !== '' && recommStatusId_ !== "") && parameterParts.push(`@recommendedjobstatusid=${recommStatusId_ || null}`);
             filter.jobFilter === 1 && jobId_ && parameterParts.push(`@jobid=${jobId_}`);
             filter.interviewFeedbackStatus === 1 && interviewFeedbackStatusId_ && Number(interviewFeedbackStatusId_) !== 0 && parameterParts.push(`@interviewfeedbackstatusid=${interviewFeedbackStatusId_}`);
+            filter.offerStatus === 1 && offerStatusId_ !== "" && offerStatusId_ !== null && parameterParts.push(`@offerstatusid=${offerStatusId_}`);
             isexport_ === 1 && parameterParts.push(`@isexport=${isexport_}`);
             const params = parameterParts.join(",");
             await dispatch(fetchReportList({ endpoint, params }));
@@ -434,7 +437,8 @@ const ReportsList = () => {
         }
         // new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hmId }, resolve));
         setJobSelected(null);
-        fetchData(1, 10, startdate, enddate, "", candidateSelected, subsidiaryId, null, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, null, 0);
+        setOfferStatusId("");
+        fetchData(1, 10, startdate, enddate, "", candidateSelected, subsidiaryId, null, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, null, 0, "");
         // handleClear();
     }, [path]);
 
@@ -461,18 +465,18 @@ const ReportsList = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        fetchData(page, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId);
+        fetchData(page, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId);
     };
 
     const handlePerRowsChange = (newPerPage, page) => {
         setPerPage(newPerPage);
         setCurrentPage(page);
-        fetchData(page, newPerPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId);
+        fetchData(page, newPerPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId);
     };
 
     const handleSearch = () => {
         // setPerPage(perPage);
-        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId);
+        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId);
     };
     const handleClear = () => {
         // Reset all local state variables
@@ -489,6 +493,7 @@ const ReportsList = () => {
         setProfileStatusFilter(null);
         setProfileSourceFilter(null);
         setInterviewFeedbackStatusId(0);
+        setOfferStatusId("");
         setHiringMangerId(null);
         setCompany([]);
         setCurrentPage(1);
@@ -499,7 +504,7 @@ const ReportsList = () => {
         setJobStatus("");
 
         // Fetch data with no filters
-        fetchData(1, 10, null, null, "", null, "", [], "", null, null, null, null, null, 0); // Reset to first page with current perPage
+        fetchData(1, 10, null, null, "", null, "", [], "", null, null, null, null, null, 0, 0, ""); // Reset to first page with current perPage
     };
 
     const openJobDetails = async (jobId) => {
@@ -772,6 +777,25 @@ const ReportsList = () => {
                                                 )}
                                                 <option value={-2}>Presented</option>
 
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>)}
+                                    {filter.offerStatus == 1 && (<Col lg="2" md="4" sm="12" sx="12">
+                                        <FormGroup>
+                                            <Input
+                                                type="select"
+                                                value={offerStatusId}
+                                                name="offerstatusid"
+                                                id="offerstatusid"
+                                                placeholder="Offer Status"
+                                                title="Offer Status"
+                                                onChange={(e) => {
+                                                    setOfferStatusId(e.target.value);
+                                                }}
+                                            >
+                                                <option value={""}>All</option>
+                                                <option value={5}>Accepted</option>
+                                                <option value={6}>Declined</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>)}
