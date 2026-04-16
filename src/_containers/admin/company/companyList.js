@@ -260,35 +260,38 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       sortable: false,
       width: "12%",
     },
-    {
-      name: "Active",
-      cell: (row) => (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div
-            className="switch has-switch"
-            onClick={() => {
-              setPendingCompanyToggle({
-                value: !row.isactive,
-                row,
-              });
-              setShowCompanyConfirmModal(true);
-            }}
-          >
+    ...(currentRoleId === 1
+      ? [
+      {
+        name: "Active",
+        cell: (row) => (
+          <div style={{ display: "flex", justifyContent: "center" }}>
             <div
-              className={cx("switch-animate", {
-                "switch-on": row.isactive,
-                "switch-off": !row.isactive,
-              })}
+              className="switch has-switch"
+              onClick={() => {
+                setPendingCompanyToggle({
+                  value: !row.isactive,
+                  row,
+                });
+                setShowCompanyConfirmModal(true);
+              }}
             >
-              <input type="checkbox" />
-              <span className="switch-left">ON</span>
-              <label>&nbsp;</label>
-              <span className="switch-right">OFF</span>
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isactive,
+                  "switch-off": !row.isactive,
+                })}
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
             </div>
           </div>
-        </div>
-      ),
-    },
+        ),
+      }
+      ] : []),
     {
       name: "Action",
       cell: (row) => (
