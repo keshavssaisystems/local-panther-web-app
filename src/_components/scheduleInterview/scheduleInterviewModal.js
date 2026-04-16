@@ -64,16 +64,27 @@ export function ScheduleInterviewModal({
     getRoundsDropdown();
     let mounted = true;
     if (isOpen) {
+      // prefer nested scheduledInterviewDtos message, fallback to top-level
+      setMessage(
+        ((candidateData?.scheduledInterviewDtos &&
+          candidateData?.scheduledInterviewDtos.length > 0 &&
+          candidateData?.scheduledInterviewDtos[0]?.messagetocandidate) ||
+          candidateData?.messagetocandidate ||
+          ""
+        ).slice(0,160)
+      );
       (async () => {
         try {
           const res = await dispatch(customerCandidateListsActions.getPromptMessage());
           const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
           if (apiRaw) {
-            const populated = apiRaw.replace(/\[Job Title\]/gi, candidateData?.jobtitle || "");
+            const jobTitleForTemplate = candidateData?.scheduledInterviewDtos?.[0]?.jobtitle || candidateData?.jobtitle || "";
+            const populated = apiRaw.replace(/\[Job Title\]/gi, jobTitleForTemplate);
             if (mounted) {
-              setMessagePlaceholder(populated);
-              // initialize message if candidateData provides one (safety)
-              if (candidateData?.messagetocandidate) setMessage((candidateData?.messagetocandidate || "").slice(0,160));
+              const sliced = (populated || "").slice(0,160);
+              setMessagePlaceholder(sliced);
+              // only populate `message` with the template if the user/candidate didn't provide one
+              setMessage((prev) => (prev && prev.length > 0 ? prev : sliced));
             }
           }
         } catch (err) {
@@ -596,7 +607,7 @@ export function ScheduleInterviewModal({
                   type="textarea"
                   name="message"
                   id="message"
-                  placeholder={messagePlaceholder || "Enter message to candidate"}
+                  placeholder={"Enter message to candidate"}
                   value={message}
                   onChange={(e) => setMessage((e.target.value || "").slice(0,160))}
                 />
