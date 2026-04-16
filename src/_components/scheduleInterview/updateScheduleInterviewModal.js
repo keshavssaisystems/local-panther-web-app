@@ -62,7 +62,14 @@ export function UpdateScheduleInterviewModal({
     if (isOpen) {
       setFormatButton(interviewData?.format === "Video" ? 1 : interviewData?.format === "Phone" ? 2 : interviewData?.format === "In-person" ? 3 : 1);
       setHmEmails(interviewData?.intervieweremailids);
-      setMessage((interviewData?.messagetocandidate || "").slice(0, 160));
+      setMessage(
+        ((interviewData?.scheduledInterviewDtos &&
+          interviewData?.scheduledInterviewDtos.length > 0 &&
+          interviewData?.scheduledInterviewDtos[0]?.messagetocandidate) ||
+          interviewData?.messagetocandidate ||
+          ""
+        ).slice(0, 160)
+      );
       setPhoneNo(interviewData?.textremaindernumbers);
       setVideoLink(interviewData?.videolink);
       setInterviewAddress(interviewData?.textremaindernumbers);
@@ -74,10 +81,14 @@ export function UpdateScheduleInterviewModal({
           const res = await dispatch(customerCandidateListsActions.getPromptMessage());
           const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
             if (apiRaw) {
-            const jobTitleForTemplate = interviewData?.scheduledInterviewDtos?.[0]?.jobtitle || interviewData?.jobtitle || "";
-            const populated = apiRaw.replace(/\[Job Title\]/gi, jobTitleForTemplate);
-            if (mounted) setMessagePlaceholder((populated || "").slice(0,160));
-          }
+              const jobTitleForTemplate = interviewData?.scheduledInterviewDtos?.[0]?.jobtitle || interviewData?.jobtitle || "";
+              const populated = apiRaw.replace(/\[Job Title\]/gi, jobTitleForTemplate);
+              if (mounted) {
+                const sliced = (populated || "").slice(0,160);
+                setMessagePlaceholder(sliced);
+                setMessage(prev => (prev && prev.length > 0 ? prev : sliced));
+              }
+            }
         } catch (err) {
           
         }
@@ -317,7 +328,7 @@ export function UpdateScheduleInterviewModal({
   const [videoModeCheck, setVideoModeCheck] = useState(0);
   const [hmEmails, setHmEmails] = useState('');
   const [phoneNo, setPhoneNo] = useState();
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState("");
   const [messagePlaceholder, setMessagePlaceholder] = useState("");
   const [interviewAddress, setInterviewAddress] = useState('');
   const [videoLink, setVideoLink] = useState('');
@@ -659,8 +670,8 @@ export function UpdateScheduleInterviewModal({
                       name="message"
                       id="message"
                       value={message}
-                      onChange={(e) => setMessage(e.target.value.slice(0,160))}
-                      placeholder={messagePlaceholder || "Enter message to candidate"}
+                      onChange={(e) => setMessage((e.target.value || "").slice(0,160))}
+                      placeholder={"Enter message to candidate"}
                     />
                     <FormText color="muted">{(message ? message.length : 0)}/160</FormText>
                   </FormGroup>
