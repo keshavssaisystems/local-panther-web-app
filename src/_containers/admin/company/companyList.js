@@ -217,49 +217,52 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           sortable: true,
         }
       ] : []),
-      
-    {
-      name: "Candidate Name Visibility",
-      cell: (row) => (
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+    ...( isStaffingFirm===false
+      ? [  
+      {
+        name: "Candidate Name Visibility",
+        cell: (row) => (
           <div
-            title="Candidate Name Visibility"
-            className="switch has-switch"
-            data-on-label="ON"
-            data-off-label="OFF"
-            style={{ cursor: "pointer" }}
-            onClick={() =>
-              openCandidateNameConfirmModal(
-                !row.iscandidatenamevisible,
-                row
-              )
-            }
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
+            {!row.isstaffingfirm && (
             <div
-              className={cx("switch-animate", {
-                "switch-on": row.iscandidatenamevisible,
-                "switch-off": !row.iscandidatenamevisible,
-              })}
-              size="sm"
+              title="Candidate Name Visibility"
+              className="switch has-switch"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                openCandidateNameConfirmModal(
+                  !row.iscandidatenamevisible,
+                  row
+                )
+              }
             >
-              <input type="checkbox" />
-              <span className="switch-left">ON</span>
-              <label>&nbsp;</label>
-              <span className="switch-right">OFF</span>
-            </div>
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.iscandidatenamevisible,
+                  "switch-off": !row.iscandidatenamevisible,
+                })}
+                size="sm"
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div>)}
           </div>
-        </div>
-      ),
-      sortable: false,
-      width: "12%",
-    },
+        ),
+        sortable: false,
+        width: "12%",
+      }
+     ] : []),
     ...(currentRoleId === 1
       ? [
       {
