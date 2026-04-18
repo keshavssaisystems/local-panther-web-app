@@ -34,7 +34,7 @@ export function ChatList({ list }) {
     } catch (e) {
       // ignore
     }
-  }, [location.search, list]);
+  }, [location.search]);
   const getSelectedChatGroup = (event) => {
     setSelectedGroupId(
       (userRole === 2 || userRole === 4)
