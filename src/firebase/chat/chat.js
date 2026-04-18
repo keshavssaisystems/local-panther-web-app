@@ -1,5 +1,5 @@
 import firebase from "firebase/app";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import "firebase/firestore";
 import { firebaseConfig } from "firebase/index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -51,7 +51,10 @@ export function Chat({ groupId, details }) {
   }
   const firestore = firebase.firestore();
   const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
-  const dummy = useRef();
+  const psContainerRef = useRef(null);
+  const initialScrollDone = useRef(false);
+  const prevMessageCount = useRef(0);
+
   const messagesRef = firestore.collection("messages"  + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const query = messagesRef
@@ -62,6 +65,29 @@ export function Chat({ groupId, details }) {
   const [messages] = useCollectionData(query, { idField: "id" });
   const [chatList] = useCollectionData(chatUserList, { idField: "id" });
   const [formValue, setFormValue] = useState("");
+
+  // Reset scroll state when switching to a different chat
+  useEffect(() => {
+    initialScrollDone.current = false;
+    prevMessageCount.current = 0;
+  }, [groupId]);
+
+  useEffect(() => {
+    if (!messages || !psContainerRef.current) return;
+    const container = psContainerRef.current;
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+    if (!initialScrollDone.current) {
+      // Chat opened: instantly at bottom, no animation
+      container.scrollTop = container.scrollHeight;
+      initialScrollDone.current = true;
+    } else if (messages.length > prevMessageCount.current && isNearBottom) {
+      // New message arrived and user is already near bottom: scroll down
+      container.scrollTop = container.scrollHeight;
+    }
+    // If user scrolled up to read history, don't force them down
+    prevMessageCount.current = messages.length;
+  }, [messages]);
   const sendMessage = async (e) => {
     e.preventDefault();
     let formData = formValue;
@@ -73,7 +99,10 @@ export function Chat({ groupId, details }) {
         groupId: groupId,
         sender: localStorage.getItem("userId"),
       });
-      dummy.current.scrollIntoView({ behavior: "smooth" });
+      // Always scroll to bottom when the current user sends a message
+      if (psContainerRef.current) {
+        psContainerRef.current.scrollTop = psContainerRef.current.scrollHeight;
+      }
       setFormValue("");
       const messagesCount = Array.isArray(messages) ? messages.length : 0;
       if (messagesCount < 1) {
@@ -128,18 +157,13 @@ export function Chat({ groupId, details }) {
     <>
       <CardBody className="overflow-auto chat-box-area">
         <main className="scroll-area-lg">
-          <PerfectScrollbar>
+          <PerfectScrollbar containerRef={(c) => { psContainerRef.current = c; }}>
             {messages &&
               messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
             {messages?.length === 0 && (
-              <>
-                <div className="text-center">
-                  Start a new chat with {details.name}
-                </div>
-              </>
+              <div className="text-center">Start a new chat with {details.name}</div>
             )}
           </PerfectScrollbar>
-          <span ref={dummy}></span>
         </main>
       </CardBody>
       <CardFooter>
