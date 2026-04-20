@@ -29,7 +29,7 @@ import {
     faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Tooltip } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
     showJobStatus = true,
     showSearch = true,
@@ -174,9 +174,6 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     };
 
     const onInterviewSearchClear = () => { };
-
-    const [tooltipOpen, setTooltipOpen] = useState(false);
-    const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 
     // Reset hiring manager to default when viewType changes to "list"
     useEffect(() => {
@@ -435,25 +432,21 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                             </Button>
                                         </span> 
                                         {selectedJobsCount === 0 && viewType === "list" && (
-                                            <Tooltip
+                                            <SafeUncontrolledTooltip
                                                 placement="left"
-                                                isOpen={tooltipOpen}
                                                 target="assignTooltipWrapper"
-                                                toggle={toggleTooltip}
                                             >
                                                 Select one or more jobs to assign to a manager.
-                                            </Tooltip>
+                                            </SafeUncontrolledTooltip>
                                         )}
                                         {viewType === "block" && (
-                                            <Tooltip
+                                            <SafeUncontrolledTooltip
                                                 placement="left"
-                                                isOpen={tooltipOpen}
                                                 target="assignTooltipWrapper"
-                                                toggle={toggleTooltip}
                                                 style={{maxWidth: "250px"}}
                                             >
                                                 Switch to List View to assign jobs to Hiring Managers.
-                                            </Tooltip>
+                                            </SafeUncontrolledTooltip>
                                         )}
                                         
                                     </Col>

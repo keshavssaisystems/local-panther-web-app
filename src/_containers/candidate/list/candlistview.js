@@ -10,8 +10,8 @@ import {
   DropdownToggle,
   Button,
   ButtonGroup,
-  UncontrolledTooltip,
 } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { BsXCircle } from "react-icons/bs";
 import moment from "moment";
