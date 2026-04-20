@@ -10,9 +10,9 @@ import {
   DropdownToggle,
   Button,
   ButtonGroup,
-  UncontrolledTooltip,
   Input,
 } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import { BsXCircle } from "react-icons/bs";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
@@ -1168,14 +1168,14 @@ export const CustCandidateListView = (props) => {
                         id={"rr_" + row?.jobid + row?.candidateid}
                         color="primary"
                       />
-                      <UncontrolledTooltip
+                      <SafeUncontrolledTooltip
                         placement="bottom"
                         target={"rr_" + row?.jobid + row?.candidateid}
                       >
                         {row?.candidaterejectedcomment !== ""
                           ? row?.candidaterejectedcomment
                           : "-"}
-                      </UncontrolledTooltip>
+                      </SafeUncontrolledTooltip>
                     </>
                   ) : (
                     <></>
@@ -1184,17 +1184,17 @@ export const CustCandidateListView = (props) => {
                     <>
                       {" "}
                       <BsFillInfoCircleFill
-                        id={"rr_" + row?.jobid + row?.candidateid}
+                        id={"rc_" + row?.jobid + row?.candidateid}
                         color="primary"
                       ></BsFillInfoCircleFill>
-                      <UncontrolledTooltip
+                      <SafeUncontrolledTooltip
                         placement="bottom"
-                        target={"rr_" + row?.jobid + row?.candidateid}
+                        target={"rc_" + row?.jobid + row?.candidateid}
                       >
                         {row?.customerrejectedcomment !== ""
                           ? row?.customerrejectedcomment
                           : "-"}
-                      </UncontrolledTooltip>
+                      </SafeUncontrolledTooltip>
                     </>
                   ) : (
                     <></>
@@ -1278,14 +1278,14 @@ export const CustCandidateListView = (props) => {
                             id={"ac_" + row?.jobid + row?.candidateid}
                             color="primary"
                           />
-                          <UncontrolledTooltip
+                          <SafeUncontrolledTooltip
                             placement="bottom"
                             target={"ac_" + row?.jobid + row?.candidateid}
                           >
                             {row?.candidateacceptedcomment !== ""
                               ? row?.candidateacceptedcomment
                               : "-"}
-                          </UncontrolledTooltip>
+                          </SafeUncontrolledTooltip>
                         </>
                       ) : (
                         <></>
@@ -1693,14 +1693,14 @@ export const CustCandidateListView = (props) => {
                               id={"ac_" + row?.jobid + row?.candidateid}
                               color="primary"
                             />
-                            <UncontrolledTooltip
+                            <SafeUncontrolledTooltip
                               placement="bottom"
                               target={"ac_" + row?.jobid + row?.candidateid}
                             >
                               {row?.candidateacceptedcomment !== ""
                                 ? row?.candidateacceptedcomment
                                 : "-"}
-                            </UncontrolledTooltip>
+                            </SafeUncontrolledTooltip>
                           </>
                         ) : (
                           <></>
@@ -2049,7 +2049,7 @@ export const CustCandidateListView = (props) => {
                       row?.scheduledInterviewDtos[0].jobid
                     }
                   ></BsFillInfoCircleFill>
-                  <UncontrolledTooltip
+                  <SafeUncontrolledTooltip
                     placement="bottom"
                     target={
                       "rsr_" +
@@ -2063,7 +2063,7 @@ export const CustCandidateListView = (props) => {
                       ? row?.scheduledInterviewDtos[0]
                         .reschedulerequestedreason
                       : "-"}
-                  </UncontrolledTooltip>
+                  </SafeUncontrolledTooltip>
                 </>
               ) : (
                 <></>
@@ -2081,7 +2081,7 @@ export const CustCandidateListView = (props) => {
                       row?.scheduledInterviewDtos[0].jobid
                     }
                   ></BsFillInfoCircleFill>
-                  <UncontrolledTooltip
+                  <SafeUncontrolledTooltip
                     placement="bottom"
                     target={
                       "rr_" +
@@ -2093,7 +2093,7 @@ export const CustCandidateListView = (props) => {
                     {row?.scheduledInterviewDtos[0].rejectionreason !== ""
                       ? row?.scheduledInterviewDtos[0].rejectionreason
                       : "-"}
-                  </UncontrolledTooltip>
+                  </SafeUncontrolledTooltip>
                 </>
               ) : (
                 <></>
