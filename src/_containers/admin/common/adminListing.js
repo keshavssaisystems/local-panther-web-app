@@ -13,8 +13,8 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  UncontrolledTooltip,
 } from "reactstrap";
-import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { USPhoneNumber } from "_helpers/helper";
 import "_containers/admin/common/adminListing.scss";
@@ -45,7 +45,7 @@ import { PaymentModal } from "_components/modal/paymentmodal";
 import {
   getCustomers,
   verifyCustomer,
-  updateIsVisibleToOthersById,
+  // updateIsVisibleToOthersById,
   updateIsCompanyAdminByUserId
 } from "_containers/admin/_redux/adminListing.slice";
 
@@ -132,22 +132,22 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       cell: (row) => (
         <>
           {row.email}
-          {row?.isactive === false && (
+          {row?.isactive === false && row?.userId != null && (
             <>
               <BsFillInfoCircleFill
-                id={"rr_" + row?.userId}
+                id={"rr_" + row.userId}
                 color="primary"
                 className="ms-2"
               ></BsFillInfoCircleFill>
-              <SafeUncontrolledTooltip
+              <UncontrolledTooltip
                 placement="bottom"
-                target={"rr_" + row?.userId}
+                target={"rr_" + row.userId}
               >
                 {row?.deactivationreason !== "" ||
                   row?.deactivationreason !== undefined
                   ? row?.deactivationreason
                   : "-"}
-              </SafeUncontrolledTooltip>
+              </UncontrolledTooltip>
             </>
           )}
         </>
@@ -202,37 +202,37 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
         </>
       ),
     },
-    {
-      name: "Visibility",
-      id: "visibility",
-      selector: (row) => (
-        <>
-          {<>
-            <div
-              title="Active/Inactive visibility"
-              className="switch has-switch  me-2"
-              data-on-label="ON"
-              data-off-label="OFF"
-              style={{ verticalAlign: "bottom", cursor: "pointer" }}
-              onClick={() => openConfirmationModal(`you want to ${!row.isvisibletoothers ? "enable" : "disable"} visibility for this user?`, 'Visibility', !row.isvisibletoothers, row)}
-            >
-              <div
-                className={cx("switch-animate", {
-                  "switch-on": row.isvisibletoothers,
-                  "switch-off": !row.isvisibletoothers,
-                })}
-                size="sm"
-              >
-                <input type="checkbox" />
-                <span className="switch-left">ON</span>
-                <label>&nbsp;</label>
-                <span className="switch-right">OFF</span>
-              </div>
-            </div></>
-          }
-        </>
-      ),
-    },
+    // {
+    //   name: "Visibility",
+    //   id: "visibility",
+    //   selector: (row) => (
+    //     <>
+    //       {<>
+    //         <div
+    //           title="Active/Inactive visibility"
+    //           className="switch has-switch  me-2"
+    //           data-on-label="ON"
+    //           data-off-label="OFF"
+    //           style={{ verticalAlign: "bottom", cursor: "pointer" }}
+    //           onClick={() => openConfirmationModal(`you want to ${!row.isvisibletoothers ? "enable" : "disable"} visibility for this user?`, 'Visibility', !row.isvisibletoothers, row)}
+    //         >
+    //           <div
+    //             className={cx("switch-animate", {
+    //               "switch-on": row.isvisibletoothers,
+    //               "switch-off": !row.isvisibletoothers,
+    //             })}
+    //             size="sm"
+    //           >
+    //             <input type="checkbox" />
+    //             <span className="switch-left">ON</span>
+    //             <label>&nbsp;</label>
+    //             <span className="switch-right">OFF</span>
+    //           </div>
+    //         </div></>
+    //       }
+    //     </>
+    //   ),
+    // },
 
     {
       name: "Billing",
@@ -763,30 +763,30 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
   };
 
 
-  const toggleVisibility = async function (value, row) {
-    let response = await dispatch(updateIsVisibleToOthersById(row.customerid));
-    if (response?.payload) {
-      dispatch(showSnackbar({
-        message: response?.payload?.message,
-        type: SNACKBAR_TYPES.SUCCESS,
-        position: SNACKBAR_POSITION.TOP_CENTER,
-        autoClose: true,
-        autoCloseDelay: 3000,
-        maxWidth: 500,
-      }));
+  // const toggleVisibility = async function (value, row) {
+  //   let response = await dispatch(updateIsVisibleToOthersById(row.customerid));
+  //   if (response?.payload) {
+  //     dispatch(showSnackbar({
+  //       message: response?.payload?.message,
+  //       type: SNACKBAR_TYPES.SUCCESS,
+  //       position: SNACKBAR_POSITION.TOP_CENTER,
+  //       autoClose: true,
+  //       autoCloseDelay: 3000,
+  //       maxWidth: 500,
+  //     }));
 
-      getUsersList();
-    } else {
-      dispatch(showSnackbar({
-        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
-        type: SNACKBAR_TYPES.ERROR,
-        position: SNACKBAR_POSITION.TOP_CENTER,
-        autoClose: true,
-        autoCloseDelay: 3000,
-        maxWidth: 500,
-      }));
-    }
-  }
+  //     getUsersList();
+  //   } else {
+  //     dispatch(showSnackbar({
+  //       message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+  //       type: SNACKBAR_TYPES.ERROR,
+  //       position: SNACKBAR_POSITION.TOP_CENTER,
+  //       autoClose: true,
+  //       autoCloseDelay: 3000,
+  //       maxWidth: 500,
+  //     }));
+  //   }
+  // }
 
   const toggleCompanyAdmin = async function (value, row) {
     let response = await dispatch(updateIsCompanyAdminByUserId(row.userId));
@@ -834,9 +834,9 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     if (actionType === 'CompanyAdmin') {
       toggleCompanyAdmin(selectedValue, selectedRowData);
     }
-    else if (actionType === 'Visibility') {
-      toggleVisibility(selectedValue, selectedRowData);
-    }
+    // else if (actionType === 'Visibility') {
+    //   toggleVisibility(selectedValue, selectedRowData);
+    // }
     setDeactivateConfirm(false);
   }
 
