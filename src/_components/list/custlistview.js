@@ -34,7 +34,7 @@ import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
-import { dropdownActions, scheduleInterviewActions } from "_store";
+import { dropdownActions, scheduleInterviewActions,custJobListActions } from "_store";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
 
@@ -63,6 +63,8 @@ export const CustCandidateListView = (props) => {
   const [offlineInterviewLoading, setOfflineInterviewLoading] = useState(false);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState("");
+  const [jobDetailForModal, setJobDetailForModal] = useState([]);
+  const [jdLoading, setJdLoading] = useState(false);
   const atsEnableStatus = localStorage.getItem("atsEnableStatus");
   const [roundOptions, setRoundOptions] = useState([]);
   // custom styles to make column sizing predictable and enable truncation
@@ -124,8 +126,19 @@ export const CustCandidateListView = (props) => {
     // }
   };
 
-  const showJobDetail = (row) => {
+  const showJobDetail = async (row) => {
     setSelectedRowData(row);
+    setJdLoading(true);
+    try {
+      const res = await dispatch(custJobListActions.getJobDetail({ jobId: row.jobid }));
+      const detail = res?.payload?.data;
+      setJobDetailForModal(detail ? [detail] : [row]);
+    } catch (e) {
+      // fallback to row data if API fails
+      setJobDetailForModal([row]);
+    } finally {
+      setJdLoading(false);
+    }
     setShowJDModal(true);
   };
 
@@ -2595,8 +2608,9 @@ export const CustCandidateListView = (props) => {
         {showJDModal ? (
           <CustJobDetailModal
             isOpen={showJDModal}
-            data={[selectedRowData]}
+            data={jobDetailForModal.length > 0 ? jobDetailForModal : [selectedRowData]}
             onClose={() => setShowJDModal(false)}
+            isAdmin={true}
           />
         ) : (
           <></>

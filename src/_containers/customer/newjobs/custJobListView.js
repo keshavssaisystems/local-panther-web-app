@@ -173,14 +173,17 @@ export const CustJobListView = ({
         name: <span className="table-title">Actions</span>,
         cell: (row) => (
           <div className="actions-cell">
-            <Button
-              size="sm"
-              className="action-icon-btn"
-              title="Edit"
-              onClick={() => navigate(`/customer-edit-job/${row.jobid}`)}
-            >
-              <img src={editbutton} alt="Edit" className="action-icon" />
-            </Button>
+            {!row.isclosed && (
+              <Button
+                size="sm"
+                className="action-icon-btn"
+                title="Edit"
+                onClick={() => navigate(`/customer-edit-job/${row.jobid}`)}
+              >
+                <img src={editbutton} alt="Edit" className="action-icon" />
+              </Button>
+            )}
+              
             {!row.isclosed && (
               <Button
                 size="sm"
