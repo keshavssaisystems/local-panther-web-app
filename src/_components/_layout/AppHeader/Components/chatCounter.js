@@ -3,8 +3,8 @@ import React from "react";
 import "firebase/firestore";
 import { firebaseConfig } from "firebase/index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { UncontrolledTooltip } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 export function ChatCounter() {
   let userRole = Number(localStorage.getItem("userroleid"));
   const navigate = useNavigate();
@@ -39,16 +39,16 @@ export function ChatCounter() {
             <span className="badge rounded-pill bg-primary">
               {chatList?.length ?? 0}
             </span>
-            <UncontrolledTooltip placement="bottom" target={"Tooltip-1"}>
+            <SafeUncontrolledTooltip placement="bottom" target={"Tooltip-1"}>
               There are {chatList?.length ?? 0} unseen messages! Click to open
               chat
-            </UncontrolledTooltip>
+            </SafeUncontrolledTooltip>
           </>
         ) : (
           <>
-            <UncontrolledTooltip placement="bottom" target={"Tooltip-1"}>
+            <SafeUncontrolledTooltip placement="bottom" target={"Tooltip-1"}>
               There are no unseen messages! Click to open chat
-            </UncontrolledTooltip>
+            </SafeUncontrolledTooltip>
           </>
         )}
       </button>
