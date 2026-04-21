@@ -13,6 +13,8 @@ const memoryCache = {};
 const inflightRequests = {};
 const EXCLUDED_DROPDOWN_KEYS = [
   'userListByCompany',
+  'assignUserListByCompany',
+  'allUserListByCompany',
   'ScheduledCandidatesForCustomer',
   'ScheduledCandidateListByUserId',
 ];
