@@ -95,7 +95,8 @@ const createjobSlice = createSlice({
     publishJob: [],
     customerDetails: [],
     recommendedList: [],
-    jobForUpdate: [],
+    jobForUpdate: null,
+    jobForUpdateLoading: false,
     updateJob: [],
     loading: false,
   },
@@ -187,14 +188,18 @@ const createjobSlice = createSlice({
     },
     [getJobDetailForUpdateThunk.pending]: (state) => {
       state.loading = true;
+      state.jobForUpdate = null;
+      state.jobForUpdateLoading = true;
     },
     [getJobDetailForUpdateThunk.fulfilled]: (state, action) => {
       state.jobForUpdate = action.payload.data;
       state.loading = false;
+      state.jobForUpdateLoading = false;
     },
     [getJobDetailForUpdateThunk.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
+      state.loading = false;
+      state.jobForUpdateLoading = false;
     },
     [getCloseJobThunk.pending]: (state) => {
       state.loading = true;

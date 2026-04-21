@@ -10,8 +10,8 @@ import {
   DropdownToggle,
   Button,
   ButtonGroup,
-  UncontrolledTooltip,
 } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { BsXCircle } from "react-icons/bs";
 import moment from "moment";
@@ -295,59 +295,18 @@ export const CandListView = (props) => {
     } else if (props.type === "offers") {
       return (
         <ButtonGroup>
-          {acceptedListData.companyIds.includes(row?.companyid) && (
-            <>
-              <Button
-                size="sm"
-                className="btn-icon btn-mute"
-                color="success"
-                id="offerDisable"
-              >
-                <img src={customerIcons?.list_accept} alt="list apply"></img>
-              </Button>
-              <UncontrolledTooltip placement="bottom" target={"offerDisable"}>
-                You have already accepted a job from this employer; you cannot
-                accept the job!
-              </UncontrolledTooltip>
-            </>
-          )}
-          {!acceptedListData.companyIds.includes(row?.companyid) &&
-            acceptedListData.jobAcceptPermission === false && (
-              <>
-                <Button
-                  size="sm"
-                  className="btn-icon btn-mute"
-                  color="success"
-                  id="offerAcceptButton"
-                >
-                  <img src={customerIcons?.list_accept} alt="list apply"></img>
-                </Button>
-                <UncontrolledTooltip
-                  placement="bottom"
-                  target={"offerAcceptButton"}
-                >
-                  You have already accepted a full time or direct hiring job.
-                  You cannot accept the job!
-                </UncontrolledTooltip>
-              </>
-            )}
-          {!acceptedListData.companyIds.includes(row?.companyid) &&
-            acceptedListData.jobAcceptPermission === true && (
-              <>
-                <Button
-                  // outline
-                  size="sm"
-                  title="Accept offer"
-                  className="btn-icon"
-                  color="success"
-                  onClick={() =>
-                    onBtnClick("accepted", row.candidaterecommendedjobid)
-                  }
-                >
-                  <img src={customerIcons?.list_accept} alt="list apply"></img>
-                </Button>
-              </>
-            )}
+          <Button
+            // outline
+            size="sm"
+            title="Accept offer"
+            className="btn-icon"
+            color="success"
+            onClick={() =>
+              onBtnClick("accepted", row.candidaterecommendedjobid)
+            }
+          >
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
+          </Button>
           <Button
             // outline
             size="sm"
@@ -454,6 +413,11 @@ export const CandListView = (props) => {
         {
           name: <span className="table-title">Pre-screen</span>,
           cell: (row) =>
+            row?.scheduledInterviewDtos?.[0]?.isactive === false ||
+            row?.scheduledInterviewDtos?.[0]?.isrejected === true ||
+            row?.scheduledInterviewDtos?.[0]?.interviewstatusid > 0 || row?.scheduledInterviewDtos?.[0]?.interviewstatusid === null ? (
+              "-"
+            ) : 
             row.candidateprescreenstatus === "NA" ? (
               "-"
             ) : row.candidateprescreenstatus === "Pending" ? (

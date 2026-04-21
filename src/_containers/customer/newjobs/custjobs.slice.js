@@ -70,6 +70,22 @@ export const getJobs= createAsyncThunk(
     return await fetchWrapper.get(LIST_JOB_END_POINT);
   }
 );
+// getAssignedJobHiringManagerList thunk
+export const getAssignedJobHiringManagerList = createAsyncThunk(
+  `${name}/getAssignedJobHiringManagerList`,
+  async ({ jobId }) => {
+    const ASSIGNED_JOB_HIRING_MANAGER_LIST_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_Assigned_Job_HiringManager_List?parameter=@jobid=${jobId},@isactive=1`;
+    return await fetchWrapper.get(ASSIGNED_JOB_HIRING_MANAGER_LIST_END_POINT);
+  }
+);
+// removeJobHiringManagerAssignment thunk
+export const removeJobHiringManagerAssignment = createAsyncThunk(
+  `${name}/removeJobHiringManagerAssignment`,
+  async ({ jobassigneduserid }) => {
+    const REMOVE_ASSIGNMENT_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Get_Assigned_Job_HiringManager_List?parameter=@isactive=1,@operationtype='RemoveAssignment',@jobassigneduserid=${jobassigneduserid}`;
+    return await fetchWrapper.get(REMOVE_ASSIGNMENT_END_POINT);
+  }
+);
 
 // Create the slice
 const custJobListSlice = createSlice({
@@ -194,6 +210,31 @@ const custJobListSlice = createSlice({
       state.dbloading = false;
       state.jobs = [];
     },
+    [getAssignedJobHiringManagerList.pending]: (state) => {
+      state.AHMloading = true;
+    },
+    [getAssignedJobHiringManagerList.fulfilled]: (state, action) => {
+      state.AHMloading = false;
+      state.jobAssigneesHiringManager = action.payload?.data?.data;
+      console.log("jobAssigneesHiringManager in slice", state.jobAssigneesHiringManager);
+      //state.totalRow = action.payload?.data?.totalRows;
+    },
+    [getAssignedJobHiringManagerList.rejected]: (state) => {
+      state.AHMloading  = false;
+      state.jobAssigneesHiringManager = [];
+    },
+    [removeJobHiringManagerAssignment.pending]: (state) => {
+      state.removeLoading = true;
+      state.removeError = null;
+    },
+    [removeJobHiringManagerAssignment.fulfilled]: (state) => {
+      state.removeLoading = false;
+      state.removeError = null;
+    },
+    [removeJobHiringManagerAssignment.rejected]: (state, action) => {
+      state.removeLoading = false;
+      state.removeError = action.error.message || "Failed to remove assignment";
+    },
   },
 });
 export const { clearJobList } = custJobListSlice.actions;
@@ -203,7 +244,9 @@ export const custJobListActions = {
   getJobList,
   getJobDetail,
   assignJobs,
-  getJobs
+  getJobs,
+  getAssignedJobHiringManagerList,
+  removeJobHiringManagerAssignment,
 };
 
 export const custJobListReducer = custJobListSlice.reducer;

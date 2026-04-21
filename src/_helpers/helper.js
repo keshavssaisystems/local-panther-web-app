@@ -410,6 +410,15 @@ export function calculateEndTime(startTime, duration) {
   return endTime;
 }
 
+export const isInternalUrl = function (url) {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed.startsWith("/")) return false;
+  if (trimmed.startsWith("//")) return false;
+  if (/^[a-zA-Z]+:\/\//.test(trimmed)) return false;
+  return true;
+};
+
 export function checkDateValidation(data) {
   if (
     data.toDateSelect.year !== "" &&

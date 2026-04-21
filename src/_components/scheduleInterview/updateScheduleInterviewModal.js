@@ -58,16 +58,42 @@ export function UpdateScheduleInterviewModal({
     setModal(!modal);
   };
   useEffect(() => {
+    let mounted = true;
     if (isOpen) {
       setFormatButton(interviewData?.format === "Video" ? 1 : interviewData?.format === "Phone" ? 2 : interviewData?.format === "In-person" ? 3 : 1);
       setHmEmails(interviewData?.intervieweremailids);
-      setMessage(interviewData?.messagetocandidate);
+      setMessage(
+        ((interviewData?.scheduledInterviewDtos &&
+          interviewData?.scheduledInterviewDtos.length > 0 &&
+          interviewData?.scheduledInterviewDtos[0]?.messagetocandidate) ||
+          interviewData?.messagetocandidate ||
+          ""
+        ).slice(0, 160)
+      );
       setPhoneNo(interviewData?.textremaindernumbers);
       setVideoLink(interviewData?.videolink);
       setInterviewAddress(interviewData?.textremaindernumbers);
       setVideoMode(interviewData?.isappvideocall);
       setVideoModeCheck(interviewData?.isappvideocall === true ? 0 : 1);
       getTimeArray();
+      (async () => {
+        try {
+          const res = await dispatch(customerCandidateListsActions.getPromptMessage());
+          const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
+            if (apiRaw) {
+              const jobTitleForTemplate = interviewData?.scheduledInterviewDtos?.[0]?.jobtitle || interviewData?.jobtitle || "";
+              const populated = apiRaw.replace(/\[Job Title\]/gi, jobTitleForTemplate);
+              if (mounted) {
+                const sliced = (populated || "").slice(0,160);
+                setMessagePlaceholder(sliced);
+                setMessage(prev => (prev && prev.length > 0 ? prev : sliced));
+              }
+            }
+        } catch (err) {
+          
+        }
+      })();
+
       let date = new Date(
         getTimezoneDateTime(
           interviewData?.scheduledInterviewDtos &&
@@ -109,7 +135,7 @@ export function UpdateScheduleInterviewModal({
       // onScheduleDateChange(date).then(() => {
       //   getSlotDuration(event);
       // });
-    }
+    }return () => { mounted = false; };
   }, [isOpen]);
   const getTimeArray = () => {
     let timeOptions = [];
@@ -260,6 +286,8 @@ export function UpdateScheduleInterviewModal({
       .tz("Etc/UTC")
       .format("HH:mm:ss");
 
+    const messageValue = ((event.target.elements.message && event.target.elements.message.value) || messagePlaceholder || "").slice(0,160);
+
     let data = {
       scheduleinterviewid:
         interviewData?.scheduledInterviewDtos &&
@@ -275,7 +303,7 @@ export function UpdateScheduleInterviewModal({
       isappvideocall: formatButton === 1 ? event.target.elements.videoMode.value === "third-party-video" ? false : true : false,
       videolink: formatButton === 1 && event.target.elements.videoMode.value === "third-party-video" ? event.target.elements.videoLink.value : "",
       interviewAddress: formatButton === 3 ? event.target.elements.interviewAddress.value : "",
-      messagetocandidate: event.target.elements.message.value,
+      messagetocandidate: messageValue,
       intervieweremailids: event.target.elements.hmEmails.value,
       textremaindernumbers: event.target.elements.phoneNo.value,
       // format: interviewData?.format,
@@ -300,7 +328,8 @@ export function UpdateScheduleInterviewModal({
   const [videoModeCheck, setVideoModeCheck] = useState(0);
   const [hmEmails, setHmEmails] = useState('');
   const [phoneNo, setPhoneNo] = useState();
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState("");
+  const [messagePlaceholder, setMessagePlaceholder] = useState("");
   const [interviewAddress, setInterviewAddress] = useState('');
   const [videoLink, setVideoLink] = useState('');
   const [videoMode, setVideoMode] = useState();
@@ -641,9 +670,10 @@ export function UpdateScheduleInterviewModal({
                       name="message"
                       id="message"
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Enter message to candidate"
+                      onChange={(e) => setMessage((e.target.value || "").slice(0,160))}
+                      placeholder={"Enter message to candidate"}
                     />
+                    <FormText color="muted">{(message ? message.length : 0)}/160</FormText>
                   </FormGroup>
                   <FormGroup>
                     <Label for="hmEmails" className="fw-semi-bold">

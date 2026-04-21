@@ -13,8 +13,8 @@ import {
   CardBody,
   CardFooter,
   Input,
-  UncontrolledTooltip,
 } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -411,12 +411,12 @@ export function EmployerRegistration() {
                 Select Company <span style={{ color: "red" }}>* </span>
                 {!selectedComp?.value && (
                   <>
-                    <UncontrolledTooltip
+                    <SafeUncontrolledTooltip
                       placement="bottom"
                       target={"info-no-comp"}
                     >
                       If your company is already registered, it will appear in the search result.
-                    </UncontrolledTooltip>
+                    </SafeUncontrolledTooltip>
                     <img
                       id="info-no-comp"
                       src={infoIcon}
@@ -428,12 +428,12 @@ export function EmployerRegistration() {
                 )}
                 {selectedComp?.value && selectedComp?.value !== "0" && (
                   <>
-                    <UncontrolledTooltip
+                    <SafeUncontrolledTooltip
                       placement="bottom"
                       target={"info-new-comp"}
                     >
                       Your account will be created under this company with the role of Hiring Manager.
-                    </UncontrolledTooltip>
+                    </SafeUncontrolledTooltip>
                     <img
                       id="info-new-comp"
                       src={infoIcon}
