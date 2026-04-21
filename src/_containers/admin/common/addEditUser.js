@@ -521,7 +521,7 @@ export const AddEditUser = (props) => {
                     setCompanyValue(val);
                     setCompanyValidation(false);
                     setValue("companyId", val?.value);
-                    handleCompanyChange(val?.value);
+                    setCompanyDomain(val?.companyDomain || "");
                   }}
                   isMulti={false}
                   styles={customStyles}

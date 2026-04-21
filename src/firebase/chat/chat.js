@@ -1,5 +1,5 @@
 import firebase from "firebase/app";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import "firebase/firestore";
 import { firebaseConfig } from "firebase/index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -17,9 +17,11 @@ import { ChatMessage } from "./chatMessage";
 import { BsFillSendFill } from "react-icons/bs";
 import moment from "moment-timezone";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { chatActions } from "_store";
 
 export function Chat({ groupId, details }) {
+  const dispatch = useDispatch();
   const completedInterviewCustomerList = useSelector(
     (state) => state.chat.completedCustomerList
   );
@@ -49,7 +51,10 @@ export function Chat({ groupId, details }) {
   }
   const firestore = firebase.firestore();
   const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
-  const dummy = useRef();
+  const psContainerRef = useRef(null);
+  const initialScrollDone = useRef(false);
+  const prevMessageCount = useRef(0);
+
   const messagesRef = firestore.collection("messages"  + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const query = messagesRef
@@ -60,6 +65,29 @@ export function Chat({ groupId, details }) {
   const [messages] = useCollectionData(query, { idField: "id" });
   const [chatList] = useCollectionData(chatUserList, { idField: "id" });
   const [formValue, setFormValue] = useState("");
+
+  // Reset scroll state when switching to a different chat
+  useEffect(() => {
+    initialScrollDone.current = false;
+    prevMessageCount.current = 0;
+  }, [groupId]);
+
+  useEffect(() => {
+    if (!messages || !psContainerRef.current) return;
+    const container = psContainerRef.current;
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+    if (!initialScrollDone.current) {
+      // Chat opened: instantly at bottom, no animation
+      container.scrollTop = container.scrollHeight;
+      initialScrollDone.current = true;
+    } else if (messages.length > prevMessageCount.current && isNearBottom) {
+      // New message arrived and user is already near bottom: scroll down
+      container.scrollTop = container.scrollHeight;
+    }
+    // If user scrolled up to read history, don't force them down
+    prevMessageCount.current = messages.length;
+  }, [messages]);
   const sendMessage = async (e) => {
     e.preventDefault();
     let formData = formValue;
@@ -71,9 +99,13 @@ export function Chat({ groupId, details }) {
         groupId: groupId,
         sender: localStorage.getItem("userId"),
       });
-      dummy.current.scrollIntoView({ behavior: "smooth" });
+      // Always scroll to bottom when the current user sends a message
+      if (psContainerRef.current) {
+        psContainerRef.current.scrollTop = psContainerRef.current.scrollHeight;
+      }
       setFormValue("");
-      if (messages.length < 1) {
+      const messagesCount = Array.isArray(messages) ? messages.length : 0;
+      if (messagesCount < 1) {
         await chatUserRef.add({
           customerId: customerId,
           customerName: customerName,
@@ -87,9 +119,8 @@ export function Chat({ groupId, details }) {
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
         });
-      }
-      if (messages.length > 0) {
-        await chatUserRef.doc(chatList[0]?.id).update({
+      } else if (messagesCount > 0 && chatList?.[0]?.id) {
+        await chatUserRef.doc(chatList[0].id).update({
           lastMessage: formData,
           lastMessageBy: Number(localStorage.getItem("userId")),
           lastMessageDateTime: firebase.firestore.FieldValue.serverTimestamp(),
@@ -97,24 +128,42 @@ export function Chat({ groupId, details }) {
           sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
         });
       }
+
+      // Send server-side chat notification so receiver gets dashboard + push notification
+      try {
+        const currentUserId = Number(localStorage.getItem("userId"));
+        // Determine receiver id: prefer details.id (selected chat participant), fallback to chatList doc
+        let receiverId = details?.id;
+        if (!receiverId && chatList && chatList.length > 0) {
+          const doc = chatList[0];
+          receiverId = doc.candidateId === currentUserId ? doc.customerId : doc.candidateId;
+        }
+        if (receiverId) {
+          const payload = {
+            receiverId: Number(receiverId),
+            groupId: groupId,
+            messagePreview: (formData || "").slice(0, 100),
+            redirectUrl: `/chat?groupId=${encodeURIComponent(groupId)}`,
+          };
+          // Dispatch a Redux thunk and await result so we can observe failures (dev-only logging)
+          await dispatch(chatActions.sendChatNotification(payload));
+        }
+      } catch (err) {
+        // intentionally swallow notification errors to avoid breaking UI
+      }
     }
   };
   return (
     <>
       <CardBody className="overflow-auto chat-box-area">
         <main className="scroll-area-lg">
-          <PerfectScrollbar>
+          <PerfectScrollbar containerRef={(c) => { psContainerRef.current = c; }}>
             {messages &&
               messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
             {messages?.length === 0 && (
-              <>
-                <div className="text-center">
-                  Start a new chat with {details.name}
-                </div>
-              </>
+              <div className="text-center">Start a new chat with {details.name}</div>
             )}
           </PerfectScrollbar>
-          <span ref={dummy}></span>
         </main>
       </CardBody>
       <CardFooter>

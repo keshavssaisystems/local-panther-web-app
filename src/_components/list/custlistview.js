@@ -10,9 +10,9 @@ import {
   DropdownToggle,
   Button,
   ButtonGroup,
-  UncontrolledTooltip,
   Input,
 } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import { BsXCircle } from "react-icons/bs";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
@@ -34,7 +34,7 @@ import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
-import { dropdownActions, scheduleInterviewActions } from "_store";
+import { dropdownActions, scheduleInterviewActions,custJobListActions } from "_store";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
 
@@ -63,6 +63,8 @@ export const CustCandidateListView = (props) => {
   const [offlineInterviewLoading, setOfflineInterviewLoading] = useState(false);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState("");
+  const [jobDetailForModal, setJobDetailForModal] = useState([]);
+  const [jdLoading, setJdLoading] = useState(false);
   const atsEnableStatus = localStorage.getItem("atsEnableStatus");
   const [roundOptions, setRoundOptions] = useState([]);
   // custom styles to make column sizing predictable and enable truncation
@@ -124,8 +126,19 @@ export const CustCandidateListView = (props) => {
     // }
   };
 
-  const showJobDetail = (row) => {
+  const showJobDetail = async (row) => {
     setSelectedRowData(row);
+    setJdLoading(true);
+    try {
+      const res = await dispatch(custJobListActions.getJobDetail({ jobId: row.jobid }));
+      const detail = res?.payload?.data;
+      setJobDetailForModal(detail ? [detail] : [row]);
+    } catch (e) {
+      // fallback to row data if API fails
+      setJobDetailForModal([row]);
+    } finally {
+      setJdLoading(false);
+    }
     setShowJDModal(true);
   };
 
@@ -1155,14 +1168,14 @@ export const CustCandidateListView = (props) => {
                         id={"rr_" + row?.jobid + row?.candidateid}
                         color="primary"
                       />
-                      <UncontrolledTooltip
+                      <SafeUncontrolledTooltip
                         placement="bottom"
                         target={"rr_" + row?.jobid + row?.candidateid}
                       >
                         {row?.candidaterejectedcomment !== ""
                           ? row?.candidaterejectedcomment
                           : "-"}
-                      </UncontrolledTooltip>
+                      </SafeUncontrolledTooltip>
                     </>
                   ) : (
                     <></>
@@ -1171,17 +1184,17 @@ export const CustCandidateListView = (props) => {
                     <>
                       {" "}
                       <BsFillInfoCircleFill
-                        id={"rr_" + row?.jobid + row?.candidateid}
+                        id={"rc_" + row?.jobid + row?.candidateid}
                         color="primary"
                       ></BsFillInfoCircleFill>
-                      <UncontrolledTooltip
+                      <SafeUncontrolledTooltip
                         placement="bottom"
-                        target={"rr_" + row?.jobid + row?.candidateid}
+                        target={"rc_" + row?.jobid + row?.candidateid}
                       >
                         {row?.customerrejectedcomment !== ""
                           ? row?.customerrejectedcomment
                           : "-"}
-                      </UncontrolledTooltip>
+                      </SafeUncontrolledTooltip>
                     </>
                   ) : (
                     <></>
@@ -1265,14 +1278,14 @@ export const CustCandidateListView = (props) => {
                             id={"ac_" + row?.jobid + row?.candidateid}
                             color="primary"
                           />
-                          <UncontrolledTooltip
+                          <SafeUncontrolledTooltip
                             placement="bottom"
                             target={"ac_" + row?.jobid + row?.candidateid}
                           >
                             {row?.candidateacceptedcomment !== ""
                               ? row?.candidateacceptedcomment
                               : "-"}
-                          </UncontrolledTooltip>
+                          </SafeUncontrolledTooltip>
                         </>
                       ) : (
                         <></>
@@ -1375,7 +1388,7 @@ export const CustCandidateListView = (props) => {
                         ? "-"
                         : row?.jobOfferDtos[0]?.startdate === null
                           ? "-"
-                          : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
+                          : moment(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                             "MM/DD/YYYY"
                           )
                     }
@@ -1384,7 +1397,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                         ? "-"
-                        : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
+                        : moment(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                           "MM/DD/YYYY"
                         )}
                   </span>
@@ -1394,7 +1407,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : moment.utc(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
+                      : moment(row?.jobOfferDtos[0]?.startdate, "YYYY-MM-DD").local().format(
                         "MM/DD/YYYY"
                       ),
                 sortable: true,
@@ -1680,14 +1693,14 @@ export const CustCandidateListView = (props) => {
                               id={"ac_" + row?.jobid + row?.candidateid}
                               color="primary"
                             />
-                            <UncontrolledTooltip
+                            <SafeUncontrolledTooltip
                               placement="bottom"
                               target={"ac_" + row?.jobid + row?.candidateid}
                             >
                               {row?.candidateacceptedcomment !== ""
                                 ? row?.candidateacceptedcomment
                                 : "-"}
-                            </UncontrolledTooltip>
+                            </SafeUncontrolledTooltip>
                           </>
                         ) : (
                           <></>
@@ -2036,7 +2049,7 @@ export const CustCandidateListView = (props) => {
                       row?.scheduledInterviewDtos[0].jobid
                     }
                   ></BsFillInfoCircleFill>
-                  <UncontrolledTooltip
+                  <SafeUncontrolledTooltip
                     placement="bottom"
                     target={
                       "rsr_" +
@@ -2050,7 +2063,7 @@ export const CustCandidateListView = (props) => {
                       ? row?.scheduledInterviewDtos[0]
                         .reschedulerequestedreason
                       : "-"}
-                  </UncontrolledTooltip>
+                  </SafeUncontrolledTooltip>
                 </>
               ) : (
                 <></>
@@ -2068,7 +2081,7 @@ export const CustCandidateListView = (props) => {
                       row?.scheduledInterviewDtos[0].jobid
                     }
                   ></BsFillInfoCircleFill>
-                  <UncontrolledTooltip
+                  <SafeUncontrolledTooltip
                     placement="bottom"
                     target={
                       "rr_" +
@@ -2080,7 +2093,7 @@ export const CustCandidateListView = (props) => {
                     {row?.scheduledInterviewDtos[0].rejectionreason !== ""
                       ? row?.scheduledInterviewDtos[0].rejectionreason
                       : "-"}
-                  </UncontrolledTooltip>
+                  </SafeUncontrolledTooltip>
                 </>
               ) : (
                 <></>
@@ -2595,8 +2608,9 @@ export const CustCandidateListView = (props) => {
         {showJDModal ? (
           <CustJobDetailModal
             isOpen={showJDModal}
-            data={[selectedRowData]}
+            data={jobDetailForModal.length > 0 ? jobDetailForModal : [selectedRowData]}
             onClose={() => setShowJDModal(false)}
+            isAdmin={true}
           />
         ) : (
           <></>

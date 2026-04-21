@@ -29,6 +29,7 @@ function createInitialState() {
     prescreenQues: [],
     custOfferHistory: [],
     offerLetterTemplates: [],
+    promptMessageTemplate: [],
     reportData: null, // New state variable to store report data
   };
 }
@@ -38,6 +39,7 @@ function createExtraActions() {
   return {
     getDrpDwnJobLists: getDrpDwnJobLists(),
     getRejectDropDown: getRejectDropDown(),
+    getPromptMessage: getPromptMessage(),
     getCandidateLists: getCandidateLists(),
     putLikedCandidate: putLikedCandidate(),
     putMayBeCandidate: putMayBeCandidate(),
@@ -213,6 +215,14 @@ function createExtraActions() {
     );
   }
 
+  function getPromptMessage() {
+    return createAsyncThunk(
+      `${name}/getPromptMessage`,
+      async () =>
+        await fetchWrapper.get(`${newUrl}/Common/GetCommonDropdown?searchText=PromptMessageForInterview`)
+    );
+  }
+
   function postScheduleInterview() {
     return createAsyncThunk(
       `${name}/postScheduleInterview`,
@@ -383,6 +393,7 @@ function createExtraReducers() {
     getCustOfferHistory();
     getofferLetterTemplate();
     getInterviewSlots();
+    getPromptMessage();
     getCandidateCardCount(); // Register the new report action
     getPresentedCandidateLists();
     putPresentCandidate();
@@ -642,6 +653,20 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           state.interviewSlots = [];
+        });
+    }
+
+    function getPromptMessage() {
+      let { pending, fulfilled, rejected } = extraActions.getPromptMessage;
+      builder
+        .addCase(pending, (state) => {
+          
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.promptMessageTemplate = action?.payload?.data ? action.payload.data : [];
+        })
+        .addCase(rejected, (state, action) => {
+          state.promptMessageTemplate = [];
         });
     }
 

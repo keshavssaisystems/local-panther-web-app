@@ -514,6 +514,11 @@ export function VideoInterviewDetails({
                   </p>
                 </div>
               )}
+              <div className="p-custom">
+                <p className="mb-0">
+                You can join this call before 15 Min of scheduled time
+                </p>
+              </div>
             <div className="p-custom">
               <p className="mb-0">
                 Interviewer -{" "}

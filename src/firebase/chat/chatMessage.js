@@ -5,16 +5,19 @@ import moment from "moment-timezone";
 
 export function ChatMessage(props) {
   var offset = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const { text, sender, sendDate } = props.message;
+  const { text, sender, createdAt } = props.message;
+  // Use server timestamp (createdAt) for reliable date/time display
+  // sendDate is a client-generated string and not reliable for display
+  const timestamp = createdAt?.toDate?.() || new Date(createdAt);
   let today = moment.utc().tz(offset).format("YYYY-MM-DD");
-  let displayDate = moment.utc(sendDate).tz(offset).format("YYYY-MM-DD");
-  let displayTime = moment.utc(sendDate).tz(offset).format("hh:mm A");
+  let displayDate = moment.utc(timestamp).tz(offset).format("YYYY-MM-DD");
+  let displayTime = moment.utc(timestamp).tz(offset).format("hh:mm A");
   let displayDateTime =
     displayDate === today
       ? displayTime + " | Today"
       : displayTime +
         " | " +
-        moment.utc(sendDate).tz(offset).format("MM/DD/YYYY");
+        moment.utc(timestamp).tz(offset).format("MM/DD/YYYY");
   const messageClass =
     sender === localStorage.getItem("userId") ? "sent" : "received";
   return (

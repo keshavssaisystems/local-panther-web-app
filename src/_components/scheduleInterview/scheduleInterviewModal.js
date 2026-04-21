@@ -42,6 +42,8 @@ export function ScheduleInterviewModal({
 
   const [scheduledDate, setScheduledDate] = useState();
   const [slotDurationOptions, setSlotDurationOptions] = useState([]);
+  const [messagePlaceholder, setMessagePlaceholder] = useState("");
+  const [message, setMessage] = useState("");
 
   // NEW: fallback rounds if parent doesn’t pass any
   const [effectiveRoundOptions, setEffectiveRoundOptions] = useState([])
@@ -60,6 +62,37 @@ export function ScheduleInterviewModal({
   useEffect(() => {
     // getTimeArray();
     getRoundsDropdown();
+    let mounted = true;
+    if (isOpen) {
+      // prefer nested scheduledInterviewDtos message, fallback to top-level
+      setMessage(
+        ((candidateData?.scheduledInterviewDtos &&
+          candidateData?.scheduledInterviewDtos.length > 0 &&
+          candidateData?.scheduledInterviewDtos[0]?.messagetocandidate) ||
+          candidateData?.messagetocandidate ||
+          ""
+        ).slice(0,160)
+      );
+      (async () => {
+        try {
+          const res = await dispatch(customerCandidateListsActions.getPromptMessage());
+          const apiRaw = Array.isArray(res?.payload?.data) ? res.payload.data[0]?.name : res?.payload?.data?.name || "";
+          if (apiRaw) {
+            const jobTitleForTemplate = candidateData?.scheduledInterviewDtos?.[0]?.jobtitle || candidateData?.jobtitle || "";
+            const populated = apiRaw.replace(/\[Job Title\]/gi, jobTitleForTemplate);
+            if (mounted) {
+              const sliced = (populated || "").slice(0,160);
+              setMessagePlaceholder(sliced);
+              // only populate `message` with the template if the user/candidate didn't provide one
+              setMessage((prev) => (prev && prev.length > 0 ? prev : sliced));
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to load PromptMessageForInterview:", err);
+        }
+      })();
+    }
+    return () => { mounted = false; };
   }, [dispatch, candidateData, isOpen]);
 
   const getTimeArray = () => {
@@ -225,6 +258,8 @@ export function ScheduleInterviewModal({
     const roundName =
       effectiveRoundOptions.find((r) => Number(r.id) === roundId)?.name || "";
 
+    const messageValue = ((event.target.elements.message && event.target.elements.message.value) || messagePlaceholder || "").slice(0,160);
+
     let data = {
       scheduleinterviewid: 0,
       jobid: candidateData.jobid,
@@ -256,7 +291,8 @@ export function ScheduleInterviewModal({
           : "",
       interviewAddress:
         formatButton === 3 ? event.target.elements.interviewAddress.value : "",
-      messagetocandidate: event.target.elements.message.value,
+
+      messagetocandidate: messageValue,
       intervieweremailids: event.target.elements.hmEmails.value,
       textremaindernumbers: event.target.elements.phoneNo.value,
       isactive: true,
@@ -571,8 +607,11 @@ export function ScheduleInterviewModal({
                   type="textarea"
                   name="message"
                   id="message"
-                  placeholder="Enter message to candidate"
+                  placeholder={"Enter message to candidate"}
+                  value={message}
+                  onChange={(e) => setMessage((e.target.value || "").slice(0,160))}
                 />
+                <FormText color="muted">{(message ? message.length : 0)}/160</FormText>
               </FormGroup>
 
               <FormGroup>

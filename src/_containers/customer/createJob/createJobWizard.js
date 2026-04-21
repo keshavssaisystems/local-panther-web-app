@@ -67,7 +67,11 @@ export function CreateJobWizard({ type }) {
     return () => unsubscribe();
   }, []);
   const selectedJobDetailsForEdit = useSelector(
-    (state) => state.custJobListReducer.jobDetail
+    (state) =>
+      state.createJob.jobForUpdate ? [state.createJob.jobForUpdate] : []
+  );
+  const jobForUpdateLoading = useSelector(
+    (state) => state.createJob.jobForUpdateLoading
   );
 
   const getOptionsData = (event) => {
@@ -401,6 +405,15 @@ export function CreateJobWizard({ type }) {
         heading={type === "edit" ? "Edit job" : "Create New Job"}
         icon={titlelogo}
       />
+      {type === "edit" && jobForUpdateLoading ? (
+        <Row>
+          <Col className="text-center p-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </Col>
+        </Row>
+      ) : (
       <Row>
         <Col>
           <Card className="main-card mb-3">
@@ -496,6 +509,7 @@ export function CreateJobWizard({ type }) {
           </Card>
         </Col>
       </Row>
+      )}
       {showPopupWithNextStep === true && (
         <PopupWithNextStep
           type={"success"}
