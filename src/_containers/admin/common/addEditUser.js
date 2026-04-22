@@ -471,7 +471,7 @@ export const AddEditUser = (props) => {
                         value={options.userroleid}
                         style={{
                           display:
-                            options.userroleid === 2 || options.userroleid === 3
+                            options.userroleid === 3
                               ? "none"
                               : "",
                         }}
