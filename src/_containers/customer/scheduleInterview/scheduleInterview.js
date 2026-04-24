@@ -579,23 +579,58 @@ export function ScheduleInterview({ fromDashboard }) {
   };
   const postFeedbackData = async (event) => {
     let scheduleinterviewid = event.scheduleinterviewid;
-    let payload = event;
-    await dispatch(
-      scheduleInterviewActions.interviewFeedbackThunk({
-        scheduleinterviewid,
-        payload,
-      })
+
+    // Detect external-member feedback by presence of name/email or explicit flag
+    const isExternalSubmission = !!(
+      event?.Name || event?.name || event?.Email || event?.email || event?.isExternal
     );
-    await dispatch(
-      scheduleInterviewActions.feedback({
-        scheduleInterviewList: candidateList,
-        upcomingInterviewList: upcomingInterviews?.scheduledInterviewList,
-        allInterviewList: allInterviews,
-        scheduleinterviewid: scheduleinterviewid,
-        interviewstatusid: event.interviewstatusid,
-        interviewfeedback: event.interviewfeedback,
-      })
-    );
+
+    if (isExternalSubmission) {
+      const name = event?.Name || event?.name || localStorage.getItem("externalMemberName") || localStorage.getItem("externalName") || "";
+      const email = event?.Email || event?.email || localStorage.getItem("externalMemberEmail") || localStorage.getItem("externalEmail") || "";
+      const feedbackText = event?.interviewfeedback || event?.interviewFeedback || event?.interviewfeedbacktext || "";
+
+      const externalPayload = {
+        Scheduleinterviewid: Number(scheduleinterviewid),
+        Interviewstatusid: event?.interviewstatusid || null,
+        Name: name,
+        Email: email,
+        Feedback: feedbackText,
+      };
+
+      await dispatch(
+        scheduleInterviewActions.postExternalMemberInterviewFeedbackThunk(externalPayload)
+      );
+
+      await dispatch(
+        scheduleInterviewActions.feedback({
+          scheduleInterviewList: candidateList,
+          upcomingInterviewList: upcomingInterviews?.scheduledInterviewList,
+          allInterviewList: allInterviews,
+          scheduleinterviewid: scheduleinterviewid,
+          interviewstatusid: event.interviewstatusid,
+          interviewfeedback: feedbackText,
+        })
+      );
+    } else {
+      let payload = event;
+      await dispatch(
+        scheduleInterviewActions.interviewFeedbackThunk({
+          scheduleinterviewid,
+          payload,
+        })
+      );
+      await dispatch(
+        scheduleInterviewActions.feedback({
+          scheduleInterviewList: candidateList,
+          upcomingInterviewList: upcomingInterviews?.scheduledInterviewList,
+          allInterviewList: allInterviews,
+          scheduleinterviewid: scheduleinterviewid,
+          interviewstatusid: event.interviewstatusid,
+          interviewfeedback: event.interviewfeedback,
+        })
+      );
+    }
   };
 
   useEffect(() => {
