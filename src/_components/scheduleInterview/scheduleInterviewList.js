@@ -12,9 +12,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { InterviewDetailsModal } from "./interviewDetailsModal";
 import moment from "moment-timezone";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
 import { getTimezoneDateTime } from "_helpers/helper";
+import { ExternalMemberFeedbackModal } from "_components/modal/externalmemberfeedbackmodal";
+import { scheduleInterviewActions } from "_store";
 
 export function ScheduleInterviewList({
   candidateList,
@@ -30,7 +32,11 @@ export function ScheduleInterviewList({
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
+  const dispatch = useDispatch();
   const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
+  const [showExternalFeedbackModal, setShowExternalFeedbackModal] = useState(false);
+  const [externalFeedbacks, setExternalFeedbacks] = useState([]);
+  const [externalFeedbackTitle, setExternalFeedbackTitle] = useState("");
   const customStyles = {
     headRow: {
       style: {
@@ -111,6 +117,12 @@ export function ScheduleInterviewList({
                   <span value={row.scheduleinterviewid}>Interview detail</span>
                 </DropdownItem>
               )}
+              <DropdownItem
+                onClick={() => onViewExternalFeedback(row)}
+              >
+                <i className="dropdown-icon lnr-users"> </i>
+                <span>External Member Feedbacks</span>
+              </DropdownItem>
             </DropdownMenu>
           </UncontrolledButtonDropdown>
         </div>
@@ -124,6 +136,18 @@ export function ScheduleInterviewList({
 
   const handleButtonClick = () => {
     console.log("clicked");
+  };
+  const onViewExternalFeedback = async (row) => {
+    const res = await dispatch(
+      scheduleInterviewActions.getExternalMemberFeedbacksByScheduleIdThunk(
+        row.scheduleinterviewid
+      )
+    );
+    setExternalFeedbacks(res?.payload?.data || []);
+    setExternalFeedbackTitle(
+      `${row.candidatename || ""} — ${row.jobtitle || ""}`
+    );
+    setShowExternalFeedbackModal(true);
   };
   const [selectedJobDetails, setSelectedJobDetails] = useState({});
   const openInterviewDeatils = (data) => {
@@ -174,6 +198,12 @@ export function ScheduleInterviewList({
         }}
         isOpen={showEditScheduleModal}
         onClose={() => setShowEditScheduleModal(false)}
+      />
+      <ExternalMemberFeedbackModal
+        isOpen={showExternalFeedbackModal}
+        onClose={() => setShowExternalFeedbackModal(false)}
+        feedbacks={externalFeedbacks}
+        interviewTitle={externalFeedbackTitle}
       />
     </>
   );

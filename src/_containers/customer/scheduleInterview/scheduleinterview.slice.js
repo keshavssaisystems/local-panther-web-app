@@ -151,6 +151,24 @@ export const interviewFeedbackThunk = createAsyncThunk(
   }
 );
 
+// postExternalMemberInterviewFeedbackThunk thunk
+export const postExternalMemberInterviewFeedbackThunk = createAsyncThunk(
+  `${name}/postExternalMemberInterviewFeedbackThunk`,
+  async (payload) => {
+    const EXTERNAL_FEEDBACK_ENDPOINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ExternalMemberInterviewFeedbacks`;
+    return await fetchWrapper.post(EXTERNAL_FEEDBACK_ENDPOINT, payload);
+  }
+);
+
+// getExternalMemberFeedbacksByScheduleIdThunk thunk
+export const getExternalMemberFeedbacksByScheduleIdThunk = createAsyncThunk(
+  `${name}/getExternalMemberFeedbacksByScheduleIdThunk`,
+  async (scheduleinterviewid) => {
+    const ENDPOINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ExternalMemberInterviewFeedbacks/GetByScheduleInterviewId/${scheduleinterviewid}`;
+    return await fetchWrapper.get(ENDPOINT);
+  }
+);
+
 // getInterviewGuideListThunk thunk
 export const getInterviewGuideListThunk = createAsyncThunk(
   `${name}/getInterviewGuideListThunk`,
@@ -183,7 +201,9 @@ const scheduleInterviewSlice = createSlice({
     interviewStatus: [],
     interviewGuideList: [],
     loading: false,
-    interviewHistoryList: []
+    interviewHistoryList: [],
+    externalMemberFeedbacks: [],
+    error: null,
   },
   reducers: {
     feedback: (state, action) => {
@@ -452,6 +472,29 @@ const scheduleInterviewSlice = createSlice({
     [getCandidateInterviewListThunk.rejected]: (state, action) => {
       state.interviewHistoryList = [];
     },
+    [postExternalMemberInterviewFeedbackThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [postExternalMemberInterviewFeedbackThunk.fulfilled]: (state) => {
+      state.loading = false;
+    },
+    [postExternalMemberInterviewFeedbackThunk.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [getExternalMemberFeedbacksByScheduleIdThunk.pending]: (state) => {
+      state.externalMemberFeedbacks = [];
+      state.loading = true;
+    },
+    [getExternalMemberFeedbacksByScheduleIdThunk.fulfilled]: (state, action) => {
+      state.externalMemberFeedbacks = action.payload?.data || [];
+      state.loading = false;
+    },
+    [getExternalMemberFeedbacksByScheduleIdThunk.rejected]: (state, action) => {
+      state.externalMemberFeedbacks = [];
+      state.loading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -475,7 +518,9 @@ export const scheduleInterviewActions = {
   getInterviewStatusDropDownThunk,
   interviewFeedbackThunk,
   getInterviewGuideListThunk,
-  getCandidateInterviewListThunk
+  getCandidateInterviewListThunk,
+  postExternalMemberInterviewFeedbackThunk,
+  getExternalMemberFeedbacksByScheduleIdThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;
