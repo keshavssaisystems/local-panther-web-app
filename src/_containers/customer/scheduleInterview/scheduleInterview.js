@@ -26,7 +26,8 @@ import {
   scheduleInterviewActions,
   graphActions,
   getJobDetail,
-  getHiringMangersList
+  getHiringMangersList,
+  dropdownActions
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { getTimezoneDateTime } from "_helpers/helper";
@@ -84,6 +85,7 @@ export function ScheduleInterview({ fromDashboard }) {
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(getHiringMangersList({ companyId: Number(localStorage.getItem("companyid")), endpoint: 'assignUserListByCompany' }));
+    dispatch(dropdownActions.getInterviewRoundListThunk({ searchText: "interviewRound", commonId: 0, searchBy: "" }));
 
   }, []);
   const onSelectClick = (evt) => {

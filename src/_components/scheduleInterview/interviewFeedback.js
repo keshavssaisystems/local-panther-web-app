@@ -19,8 +19,9 @@ export function InterviewFeedback({
   postFeedbackData,
   zoomScreen = false,
   onCancel,
-  interviewDetails
-  , externalName, externalEmail
+  interviewDetails, 
+  externalName, 
+  externalEmail,
 }) {
   const interviewStatus = useSelector(
     (state) => state.scheduleInterview.interviewStatus

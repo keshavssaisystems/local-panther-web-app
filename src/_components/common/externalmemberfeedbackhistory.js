@@ -11,7 +11,7 @@ export const ExternalMemberFeedbackHistTable = (props) => {
     const interviewStatusList = useSelector((state) => state.scheduleInterview.interviewStatus);
     const interviewRoundList = useSelector((state) => state.dropdown.interviewRounds);
 
-    const columns = memoize((clickHandler, statusList, roundList) => [
+    const columns = memoize((statusList, roundList) => [
         {
             name: <span className="table-title">Round</span>,
             id: "Round",
@@ -81,17 +81,13 @@ export const ExternalMemberFeedbackHistTable = (props) => {
         }
     ]);
 
-    const handleButtonClick = () => {
-        console.log("clicked");
-    };
-
     return (
         <div className="hist-cont">
             <Row>
                 <Col>
                     <DataTable
                         data={props?.externalFeedbackList}
-                        columns={columns(handleButtonClick, interviewStatusList, interviewRoundList)}
+                        columns={columns(interviewStatusList, interviewRoundList)}
                         persistTableHead
                     // pagination
                     />

@@ -203,6 +203,7 @@ const scheduleInterviewSlice = createSlice({
     loading: false,
     interviewHistoryList: [],
     externalMemberFeedbacks: [],
+    error: null,
   },
   reducers: {
     feedback: (state, action) => {
