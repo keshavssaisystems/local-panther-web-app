@@ -71,6 +71,7 @@ import {
   setEndDate
 } from "_store/commonCustFiltersSlice";
 import { CandidateInterviewHistoryModal } from "_components/modal/candidateinterviewhistorymodal";
+import { ExternalMemberFeedbackModal } from "_components/modal/externalmemberfeedbackmodal";
 export default function CustomerCandidateLists(props) {
   const { id, jobPostedbyId, type: typeParam } = useParams();
   const [activeTab, setActiveTab] = useState(props.type || typeParam || "matched");
@@ -105,6 +106,8 @@ export default function CustomerCandidateLists(props) {
   const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
   const [candidateInterviewList, setCandidateInterviewList] = useState([]);
   const [showCandidateInterviewHistoryModal, setShowCandidateInterviewHistoryModal] = useState(false);
+  const [showExternalFeedbackModal, setShowExternalFeedbackModal] = useState(false);
+  const [externalMemberFeedbacks, setExternalMemberFeedbacks] = useState([]);
   let [startDate1, setStartDate1] = useState();
   let [endDate1, setEndDate1] = useState();
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
@@ -166,6 +169,7 @@ export default function CustomerCandidateLists(props) {
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+    dispatch(dropdownActions.getInterviewRoundListThunk({ searchText: "interviewRound", commonId: 0, searchBy: "" }));
     getCandidateOfflineStatusesDropdown();
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -512,8 +516,26 @@ export default function CustomerCandidateLists(props) {
       setCandidateInterviewList([]);
       setShowCandidateInterviewHistoryModal(false);
     }
+  };
 
+  const onExternalMemberFeedbackClick = async (candidateId, row) => {
+    const interviews = row?.scheduledInterviewDtos;
+    if (!interviews || interviews.length === 0) return;
+    setCandidateName(row?.firstname + " " + row?.lastname);
 
+    // Fetch feedback for every interview round and combine into one flat list
+    const requests = interviews
+      .map((iv) => iv?.scheduleinterviewid)
+      .filter(Boolean)
+      .map((sid) =>
+        dispatch(scheduleInterviewActions.getExternalMemberFeedbacksByScheduleIdThunk(sid))
+      );
+
+    const results = await Promise.all(requests);
+    const allFeedbacks = results.flatMap((res) => res?.payload?.data || []);
+
+    setExternalMemberFeedbacks(allFeedbacks);
+    setShowExternalFeedbackModal(true);
   };
 
   const handleInterviewFilters = async () => {
@@ -1425,6 +1447,9 @@ export default function CustomerCandidateLists(props) {
                           onCandidateInterviewHistory={(candidateId, row) =>
                             onCandidateInterviewHistoryClick(candidateId, row)
                           }
+                          onExternalMemberFeedback={(candidateId, row) =>
+                            onExternalMemberFeedbackClick(candidateId, row)
+                          }
                           isStaffingFirm={isStaffingFirm}
                           offlineStatuses={offlineStatuses}
                           onShowOHModal={(row) => onShowOHModal(row)}
@@ -1632,6 +1657,9 @@ export default function CustomerCandidateLists(props) {
                           isStaffingFirm={isStaffingFirm}
                           onCandidateInterviewHistory={(candidateId, row) =>
                             onCandidateInterviewHistoryClick(candidateId, row)
+                          }
+                          onExternalMemberFeedback={(candidateId, row) =>
+                            onExternalMemberFeedbackClick(candidateId, row)
                           }
                         />
                         {totalRecords > listPageSize ? (
@@ -2026,6 +2054,19 @@ export default function CustomerCandidateLists(props) {
           </>
         ) : (
           <></>
+        )}
+      </>
+      <>
+        {showExternalFeedbackModal && (
+          <ExternalMemberFeedbackModal
+            isOpen={showExternalFeedbackModal}
+            onClose={() => {
+              setShowExternalFeedbackModal(false);
+              setExternalMemberFeedbacks([]);
+            }}
+            feedbacks={externalMemberFeedbacks}
+            interviewTitle={candidateName}
+          />
         )}
       </>
     </>

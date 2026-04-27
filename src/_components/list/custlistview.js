@@ -816,6 +816,11 @@ export const CustCandidateListView = (props) => {
                 <i className="dropdown-icon lnr-layers"></i>
                 <span>Interview History</span>
               </DropdownItem>)}
+            {(props.type === "scheduled" || props.type === "presented") &&
+              (<DropdownItem onClick={() => props.onExternalMemberFeedback(candidateid, row)}>
+                <i className="dropdown-icon lnr-users"></i>
+                <span>External Member Feedbacks</span>
+              </DropdownItem>)}
 
           </DropdownMenu>
         </UncontrolledButtonDropdown>

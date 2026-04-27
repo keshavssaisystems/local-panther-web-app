@@ -156,23 +156,57 @@ export const ZoomVideoScreen = (props) => {
   };
 
   const postFeedbackData = async (payload) => {
-    let res = await dispatch(
-      scheduleInterviewActions.interviewFeedbackThunk({
-        scheduleinterviewid: payload.scheduleinterviewid,
-        payload,
-      })
+    const isExternalSubmission = !!(
+      payload?.Name || payload?.name || payload?.Email || payload?.email || payload?.isExternal
     );
-    if (res.payload) {
-      setShowFBModal(false);
-      navigate("/scheduled-interview");
-    } else if (res.error) {
-      setShowFBModal(false);
-      showSweetAlert({
-        title: res?.error?.message
-          ? res?.error?.message
-          : "Something went wrong, please try later!!",
-        type: "error",
-      });
+
+    if (isExternalSubmission) {
+      const name = payload?.Name || payload?.name || localStorage.getItem("externalMemberName") || localStorage.getItem("externalName") || "";
+      const email = payload?.Email || payload?.email || localStorage.getItem("externalMemberEmail") || localStorage.getItem("externalEmail") || "";
+      const feedbackText = payload?.interviewfeedback || payload?.interviewFeedback || payload?.interviewfeedbacktext || "";
+
+      const externalPayload = {
+        Scheduleinterviewid: Number(payload.scheduleinterviewid),
+        Interviewstatusid: payload?.interviewstatusid || null,
+        Name: name,
+        Email: email,
+        Feedback: feedbackText,
+      };
+
+      let res = await dispatch(
+        scheduleInterviewActions.postExternalMemberInterviewFeedbackThunk(externalPayload)
+      );
+      if (res.payload) {
+        setShowFBModal(false);
+        navigate("/scheduled-interview");
+      } else if (res.error) {
+        setShowFBModal(false);
+        showSweetAlert({
+          title: res?.error?.message
+            ? res?.error?.message
+            : "Something went wrong, please try later!!",
+          type: "error",
+        });
+      }
+    } else {
+      let res = await dispatch(
+        scheduleInterviewActions.interviewFeedbackThunk({
+          scheduleinterviewid: payload.scheduleinterviewid,
+          payload,
+        })
+      );
+      if (res.payload) {
+        setShowFBModal(false);
+        navigate("/scheduled-interview");
+      } else if (res.error) {
+        setShowFBModal(false);
+        showSweetAlert({
+          title: res?.error?.message
+            ? res?.error?.message
+            : "Something went wrong, please try later!!",
+          type: "error",
+        });
+      }
     }
   };
 

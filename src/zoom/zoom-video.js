@@ -4,7 +4,7 @@ import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { authActions, scheduleInterviewActions, dropdownActions } from "_store";
+import { authActions, scheduleInterviewActions, dropdownActions, customerCandidateListsActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
 import {
@@ -54,6 +54,7 @@ export default function ZoomVideoScreen(props) {
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [hostLeave, setIsHostLeave] = useState(false);
+  const [externalMemberData, setExternalMemberData] = useState(null);
   const sessionInterviewAccessData = useSelector(state => state.auth?.interviewSessionAccess);
   console.log(participantData);
   let urlParams = rest["*"] ? rest["*"] : "";
@@ -333,6 +334,9 @@ export default function ZoomVideoScreen(props) {
       (userRoleId === "2" || userRoleId === "4")
     ) {
       setShowFBModal(true);
+    } else if (!userRoleId && externalMemberData?.name && externalMemberData?.email) {
+      // External member (no ATS login) — show feedback popup same as host
+      setShowFBModal(true);
     } else {
       navigate(`/`);
     }
@@ -412,23 +416,60 @@ export default function ZoomVideoScreen(props) {
   };
 
   const postFeedbackData = async (payload) => {
-    let res = await dispatch(
-      scheduleInterviewActions.interviewFeedbackThunk({
-        scheduleinterviewid: payload.scheduleinterviewid,
-        payload,
-      })
+    // detect external submission by name/email or explicit flag
+    const isExternalSubmission = !!(
+      payload?.Name || payload?.name || payload?.Email || payload?.email || payload?.isExternal
     );
-    if (res.payload) {
-      setShowFBModal(false);
-      navigate("/scheduled-interview");
-    } else if (res.error) {
-      setShowFBModal(false);
-      showSweetAlert({
-        title: res?.error?.message
-          ? res?.error?.message
-          : "Something went wrong, please try later!!",
-        type: "error",
-      });
+
+    if (isExternalSubmission) {
+      const name = payload?.Name || payload?.name || localStorage.getItem("externalMemberName") || localStorage.getItem("externalName") || "";
+      const email = payload?.Email || payload?.email || localStorage.getItem("externalMemberEmail") || localStorage.getItem("externalEmail") || "";
+      const feedbackText = payload?.interviewfeedback || payload?.interviewFeedback || payload?.interviewfeedbacktext || "";
+
+      const externalPayload = {
+        Scheduleinterviewid: Number(payload.scheduleinterviewid),
+        Interviewstatusid: payload?.interviewstatusid || null,
+        Name: name,
+        Email: email,
+        Feedback: feedbackText,
+        Interviewroundid: payload?.interviewroundid ? Number(payload.interviewroundid) : null,
+      };
+
+      let res = await dispatch(
+        scheduleInterviewActions.postExternalMemberInterviewFeedbackThunk(externalPayload)
+      );
+
+      if (res.payload) {
+        setShowFBModal(false);
+        navigate("/"); // External members are not ATS users — send them home
+      } else if (res.error) {
+        setShowFBModal(false);
+        showSweetAlert({
+          title: res?.error?.message
+            ? res?.error?.message
+            : "Something went wrong, please try later!!",
+          type: "error",
+        });
+      }
+    } else {
+      let res = await dispatch(
+        scheduleInterviewActions.interviewFeedbackThunk({
+          scheduleinterviewid: payload.scheduleinterviewid,
+          payload,
+        })
+      );
+      if (res.payload) {
+        setShowFBModal(false);
+        navigate("/scheduled-interview");
+      } else if (res.error) {
+        setShowFBModal(false);
+        showSweetAlert({
+          title: res?.error?.message
+            ? res?.error?.message
+            : "Something went wrong, please try later!!",
+          type: "error",
+        });
+      }
     }
   };
 
@@ -437,8 +478,17 @@ export default function ZoomVideoScreen(props) {
     console.log("getScheduleIVList response in parent", res);
   };
 
-  const submitGuestUserData = (data) => {
+  const submitGuestUserData = async (data) => {
     setParticipantData([data]);
+    // Store external member's identity so we can show the feedback modal after session ends
+    setExternalMemberData({ name: data.name, email: data.email });
+    // Load the interview status dropdown so the feedback form renders correctly for external members
+    dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+    // Load interview details (including interviewroundid) the same way the host does
+    const res = await dispatch(customerCandidateListsActions.getScheduleIVList(id));
+    if (res?.payload?.data?.scheduledInterviewList?.[0]) {
+      setInterviewDetails(res.payload.data.scheduledInterviewList[0]);
+    }
     let ind = fbUsersData.findIndex(
       (d) => d.email === data.email && d.isJoined && d.isAllowed && !d.isDenied
     );
@@ -633,6 +683,8 @@ export default function ZoomVideoScreen(props) {
                   routeToHome();
                 }}
                 interviewDetails={interviewDetails}
+                externalName={externalMemberData?.name}
+                externalEmail={externalMemberData?.email}
               ></InterviewFeedback>
             </ModalBody>
           </Modal>

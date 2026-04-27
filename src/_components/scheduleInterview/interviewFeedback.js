@@ -19,7 +19,9 @@ export function InterviewFeedback({
   postFeedbackData,
   zoomScreen = false,
   onCancel,
-  interviewDetails
+  interviewDetails, 
+  externalName, 
+  externalEmail,
 }) {
   const interviewStatus = useSelector(
     (state) => state.scheduleInterview.interviewStatus
@@ -68,10 +70,16 @@ export function InterviewFeedback({
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const getFormData = (event) => {
     event.preventDefault();
+    const name = externalName || localStorage.getItem("externalMemberName") || localStorage.getItem("externalName") || "";
+    const email = externalEmail || localStorage.getItem("externalMemberEmail") || localStorage.getItem("externalEmail") || "";
     let data = {
       scheduleinterviewid: interviewId ? Number(interviewId) : 0,
       interviewfeedback: event.target.elements.interviewFeedback.value,
       interviewstatusid: Number(event.target.elements.interviewStatus.value),
+      interviewroundid: interviewDetails?.interviewroundid ? Number(interviewDetails.interviewroundid) : null,
+      Name: name,
+      Email: email,
+      isExternal: !!(name || email),
     };
     postFeedbackData(data);
     setShowSuccessMessage(true);
@@ -151,4 +159,7 @@ InterviewFeedback.propTypes = {
     round: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     roundname: PropTypes.string,
   }),
+  externalName: PropTypes.string,
+  externalEmail: PropTypes.string,
+  
 };
