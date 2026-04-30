@@ -51,7 +51,11 @@ export const Notifications = () => {
         history.navigate("/job-list-interview");
       } else if (
         item?.notificationmessage?.toLowerCase() === "interview rescheduled"
-      ) {
+       ) {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase().includes("interview cancelled")
+       ) {
         history.navigate("/job-list-interview");
       } else if (
         item?.notificationmessage?.toLowerCase() === "offer received" ||
@@ -59,6 +63,10 @@ export const Notifications = () => {
       ) {
         history.navigate("/job-list-offers");
       } else if (item?.notificationmessage?.toLowerCase() === "match job") {
+        history.navigate("/job-list-matched");
+      } else if (
+        item?.notificationmessage?.toLowerCase().includes("liked by employer")
+      ) {
         history.navigate("/job-list-matched");
       } else if (
         item?.notificationmessage?.toLowerCase() === "incomplete profile" ||
