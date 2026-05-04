@@ -34,8 +34,8 @@ export const postScheduleInterviewThunk = createAsyncThunk(
 // getUpcomingInterviewListThunk thunk
 export const getUpcomingInterviewListThunk = createAsyncThunk(
   `${name}/getUpcomingInterviewListThunk`,
-  async ({ pageNo, start, end, userList }) => {
-    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=5&pageNumber=${pageNo}&isActive=true&startDate=${start}&endDate=${end}&userList=${userList}`;
+  async ({ pageNo, start, end, userList, viewAllCompanyJobs = false }) => {
+    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=5&pageNumber=${pageNo}&isActive=true&startDate=${start}&endDate=${end}&userList=${userList}&viewAllCompanyJobs=${viewAllCompanyJobs}`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT);
   }
 );
@@ -91,9 +91,8 @@ export const updateScheduledInterviewThunk = createAsyncThunk(
 // getUpcomingInterviewListWOPaginationThunk thunk
 export const getAllInterviewThunk = createAsyncThunk(
   `${name}/getAllInterviewThunk`,
-  async (userList) => {
-
-    const UPCOMING_INTEVRIEW_END_POINT_V3 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&isPaginationRequired=false&userList=${userList}`;
+  async ({ userList, viewAllCompanyJobs = false }) => {
+    const UPCOMING_INTEVRIEW_END_POINT_V3 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&isPaginationRequired=false&userList=${userList}&viewAllCompanyJobs=${viewAllCompanyJobs}`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V3);
   }
 );

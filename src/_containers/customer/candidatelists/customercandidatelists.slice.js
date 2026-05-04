@@ -100,7 +100,8 @@ function createExtraActions() {
         interviewStatusId,
         candidateInterviewStatusId,
         interviewScheduleDateStart,
-        interviewScheduleDateEnd
+        interviewScheduleDateEnd,
+        viewAllCompanyJobs = false
       }) => {
         let recommendedStatus = "";
         let isCandidate = "";
@@ -144,11 +145,11 @@ function createExtraActions() {
         }
         if (jobId !== undefined) {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}${actionBy}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
           );
         } else {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}${actionBy}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
           );
         }
       }
@@ -309,10 +310,10 @@ function createExtraActions() {
   function getCandidateCardCount() {
     return createAsyncThunk(
       `${name}/getReportBySP`,
-      async ({ jobId, userId, searchText }) => {
+      async ({ jobId, userId, searchText, viewAllCompanyJobs = false }) => {
         const jobIdToUse = (jobId === undefined || jobId === null || jobId === "") ? null : jobId;
 
-        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId},@searchText='${searchText}'`;
+        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId},@searchText='${searchText}',@viewAllCompanyJobs=${viewAllCompanyJobs ? 1 : 0}`;
         return await fetchWrapper.get(REPORT_API_URL);
       }
     );

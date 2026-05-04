@@ -16,7 +16,7 @@ import { NoDataFound } from "_components/common/nodatafound";
 import moment from "moment/moment";
 import { analytics } from "../../../firebase/index";
 import { CommonFilters } from "../../../_components/common/commonFilters";
-import { setJobStatus, setHiringManagerId, setSearchText } from "_store/commonCustFiltersSlice";
+import { setJobStatus, setHiringManagerId, setSearchText, setSeeAllHiringManagerJobs } from "_store/commonCustFiltersSlice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { FaThLarge, FaList } from "react-icons/fa";
@@ -61,13 +61,17 @@ export default function CustJobList() {
     current++;
   }
 
-  const { selectedOpt, searchText, jobStatus, hiringManagerId } = useSelector(
+  const { selectedOpt, searchText, jobStatus, hiringManagerId, seeAllHiringManagerJobs } = useSelector(
     (state) => state.commonCustFilters
   );
 
   const hiringManagers = useSelector(
     (state) => state?.customerReportReducer?.companyHiringManagers || []
   );
+
+  // Detect company admin: userroleid=4 (Company/Staffing Admin) OR isCompanyAdmin flag for role 2
+  const isCompanyAdmin = Number(localStorage.getItem("userroleid")) === 4 ||
+    localStorage.getItem("isCompanyAdmin") === "true";
 
   useEffect(() => {
     dispatch(createjobActions.getCustomerDetailsThunk(userDetails?.InternalUserId));
@@ -88,10 +92,11 @@ export default function CustJobList() {
         searchType: selectedOpt,
         jobStatus: jobStatus,
         hiringManagerId: hiringManagerId || userId,
+        viewAllCompanyJobs: seeAllHiringManagerJobs,
       };
       dispatch(custJobListActions.getJobList(filterObj));
     }
-  }, [jobStatus, hiringManagerId]);
+  }, [jobStatus, hiringManagerId, seeAllHiringManagerJobs]);
 
   // useEffect(() => {
   //   //setHiringMangerId(localStorage.getItem("userId"));
@@ -122,6 +127,7 @@ export default function CustJobList() {
       searchType: selectedOpt,
       jobStatus: jobStatus,
       hiringManagerId: hiringManagerId,
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     };
     getJobList(filterOnPageChange);
   };
@@ -353,6 +359,7 @@ export default function CustJobList() {
           selectedJobsCount={selectedJobs.length}
           onAssignClick={handleAssignClick}
           viewType={viewType}
+          showSeeAllHMToggle={isCompanyAdmin}
         />
       </Row>
       <Row>
