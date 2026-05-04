@@ -135,7 +135,7 @@ export default function CustomerDashboard() {
     getDashboardCounts();
     getDashboardJobsDataCount();
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(localStorage.getItem("userId")));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: localStorage.getItem("userId"), viewAllCompanyJobs: false }));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
     dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid") || 0)

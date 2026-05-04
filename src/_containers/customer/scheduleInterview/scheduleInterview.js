@@ -117,8 +117,20 @@ export function ScheduleInterview({ fromDashboard }) {
   const hiringManagerDownList = useSelector(
     (state) => state?.customerReportReducer?.assignHiringManagers
   );
+  const allCompanyHiringManagers = useSelector(
+    (state) => state?.customerReportReducer?.companyHiringManagers || []
+  );
+  const seeAllHiringManagerJobs = useSelector(
+    (state) => state?.commonCustFilters?.seeAllHiringManagerJobs
+  );
+  const isCompanyAdmin = Number(localStorage.getItem("userroleid")) === 4 ||
+    localStorage.getItem("isCompanyAdmin") === "true";
+
+  const activeHiringManagerList = seeAllHiringManagerJobs
+    ? allCompanyHiringManagers
+    : hiringManagerDownList;
   const getUpdatedScheduleList = () => {
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     getUpcomingData({
@@ -126,6 +138,7 @@ export function ScheduleInterview({ fromDashboard }) {
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
       userList: hiringManagerId === undefined ? '' : hiringManagerId.toString(),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -292,7 +305,7 @@ export function ScheduleInterview({ fromDashboard }) {
         autoCloseDelay: 2000,
         maxWidth: 500,
       }));
-      dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+      dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     }
     // setUpdateSuccess(true);
 
@@ -335,7 +348,8 @@ export function ScheduleInterview({ fromDashboard }) {
       pageNo: page,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString()
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString(),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     };
     getUpcomingData(filterOnPageChange);
     setSelectedJobData({});
@@ -343,7 +357,7 @@ export function ScheduleInterview({ fromDashboard }) {
 
   const onCloseIdModal = () => {
     setOpenModal(false);
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
   };
   const handleSelectEvent = useCallback((event) => {
     if (event.data.isclosed === false) {
@@ -377,12 +391,13 @@ export function ScheduleInterview({ fromDashboard }) {
         notesdata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-      userList: ""
+      userList: "",
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -404,11 +419,12 @@ export function ScheduleInterview({ fromDashboard }) {
         invitedata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -434,11 +450,12 @@ export function ScheduleInterview({ fromDashboard }) {
       })
     );
     onCloseIdModal();
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -637,7 +654,7 @@ export function ScheduleInterview({ fromDashboard }) {
 
   useEffect(() => {
     upData = [];
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
   }, [dispatch, hiringManagerId]);
 
   const hiringManagerIdRef = useRef(hiringManagerId);
@@ -721,7 +738,7 @@ export function ScheduleInterview({ fromDashboard }) {
             autoCloseDelay: 3000,
             maxWidth: 500,
           }));
-          dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+          dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
           //props.updateList();
         } else {
           dispatch(showSnackbar({
@@ -744,7 +761,7 @@ export function ScheduleInterview({ fromDashboard }) {
   };
 
   const closeOfferModal = () => {
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
   }
 
   return (
@@ -873,7 +890,8 @@ export function ScheduleInterview({ fromDashboard }) {
                 lg={4}
                 xl={4}
                 className="mb-3 right-align"
-              >  <Input
+              >
+                <Input
                 type="select"
                 title="Hiring Manger"
                 value={hiringManagerId}
@@ -887,8 +905,8 @@ export function ScheduleInterview({ fromDashboard }) {
                 }}
               >
                   <option value={""}>Select a Hiring Manger</option>
-                  {hiringManagerDownList?.length > 0 ? (
-                    hiringManagerDownList.map((data) => (
+                  {activeHiringManagerList?.length > 0 ? (
+                    activeHiringManagerList.map((data) => (
                       <option value={data.id} key={data.id}>
                         {data.name}
                       </option>
