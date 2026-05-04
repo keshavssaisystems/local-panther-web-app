@@ -37,6 +37,8 @@ export function CustJobDetail({
   let internalUserId = JSON.parse(
     localStorage.getItem("userDetails")
   ).InternalUserId;
+  // Always ensure a valid userId in navigation URLs — fall back to current user if HM filter is empty
+  const effectiveHMId = hiringManagerId || internalUserId;
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const shiftsOption = useSelector((state) => state.dropdown.shift);
@@ -303,7 +305,7 @@ export function CustJobDetail({
         jobDetail?.totalRecommendedCandidates === null
           ? 0
           : jobDetail?.totalRecommendedCandidates,
-      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: matchedIcon,
     },
     {
@@ -312,7 +314,7 @@ export function CustJobDetail({
         jobDetail?.totalMaybeCandidates === null
           ? 0
           : jobDetail?.totalMaybeCandidates,
-      action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: maybeIcon,
     },
     {
@@ -321,7 +323,7 @@ export function CustJobDetail({
         jobDetail?.totalLikedCandidates === null
           ? 0
           : jobDetail?.totalLikedCandidates,
-      action: `/customer-candidate-liked/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-liked/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: likedIcon,
     },
     {
@@ -330,7 +332,7 @@ export function CustJobDetail({
         jobDetail?.totalAppliedCandidates === null
           ? 0
           : jobDetail?.totalAppliedCandidates,
-      action: `/customer-candidate-applied/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-applied/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: appliedIcon,
     },
     ...(isStaffingFirm === true ? [{
@@ -339,7 +341,7 @@ export function CustJobDetail({
         jobDetail?.totalpresentedcandidates === null || jobDetail?.totalpresentedcandidates === undefined || jobDetail?.totalpresentedcandidates === 0
           ? 0
           : jobDetail?.totalpresentedcandidates,
-      action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: presentIcon,
     }] : []),
     {
@@ -348,7 +350,7 @@ export function CustJobDetail({
         jobDetail?.totalScheduledCandidates === null
           ? 0
           : jobDetail?.totalScheduledCandidates,
-      action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: scheduledIcon,
     },
     {
@@ -357,7 +359,7 @@ export function CustJobDetail({
         jobDetail?.totalOfferedCandidates === null
           ? 0
           : jobDetail?.totalOfferedCandidates,
-      action: `/customer-candidate-offers/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-offers/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: offersIcon,
     },
     {
@@ -366,7 +368,7 @@ export function CustJobDetail({
         jobDetail?.totalAcceptedCandidates === null
           ? 0
           : jobDetail?.totalAcceptedCandidates,
-      action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: acceptedIcon,
     },
     {
@@ -375,7 +377,7 @@ export function CustJobDetail({
         jobDetail?.totalRejectedCandidates === null
           ? 0
           : jobDetail?.totalRejectedCandidates,
-      action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}/${effectiveHMId}`,
       icon: rejectedIcon,
     },
   ];

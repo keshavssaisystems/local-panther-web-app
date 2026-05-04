@@ -66,7 +66,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     );
 
     // Active dropdown list: toggle ON → all company HMs, toggle OFF → assigned HMs
-    const activeHiringManagerList = (showSeeAllHMToggle && seeAllHiringManagerJobs)
+    const activeHiringManagerList = seeAllHiringManagerJobs
         ? allCompanyHiringManagers
         : hiringManagerDownList;
 
@@ -75,7 +75,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         const companyId = Number(localStorage.getItem("companyid"));
         dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'assignUserListByCompany' }));
         // If toggle is already ON (e.g. user navigated away and came back), also load all-HM list
-        if (showSeeAllHMToggle && seeAllHiringManagerJobs) {
+        if (seeAllHiringManagerJobs) {
             dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'allUserListByCompany' }));
         }
         if (!hiringManagerId) {

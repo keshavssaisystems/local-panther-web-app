@@ -92,9 +92,12 @@ export default function CustomerCandidateLists(props) {
   // const [searchText, setSearchText] = useState("");
   // const [actionbyId, setActionbyId] = useState();
   // const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
-  const { searchText, hiringManagerId, interviewFeedbackStatusId, startDate, endDate } = useSelector(
+  const { searchText, hiringManagerId, interviewFeedbackStatusId, startDate, endDate, seeAllHiringManagerJobs } = useSelector(
     (state) => state.commonCustFilters
   );
+
+  const isCompanyAdmin = Number(localStorage.getItem("userroleid")) === 4 ||
+    localStorage.getItem("isCompanyAdmin") === "true";
 
   const [candidateHistoryList, setCandidateHistoryList] = useState([]);
   const [interviewFeedbackStatusId1, setInterviewFeedbackStatusId1] = useState(0);
@@ -204,9 +207,10 @@ export default function CustomerCandidateLists(props) {
       setShowSearch(false);
       setShowClearButtonAtEnd(false);
       setPageNo(1);
-      let pageno = 1;
-      onGetPageList(pageno, props.type || activeTab, id);
-
+      // Pass jobPostedbyId directly so the first API call uses the correct userId
+      // without waiting for the Redux setHiringManagerId dispatch to settle
+      const userId = jobPostedbyId || hiringManagerId || undefined;
+      onGetPageList(1, props.type || activeTab, id, false, userId);
     }
   }, [props.type, id, hiringManagerId, selectedJobId]);
 
@@ -255,18 +259,22 @@ export default function CustomerCandidateLists(props) {
     }
   };
 
-  const onGetCandidatesCount = (id, clearText = false) => {
-    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: hiringManagerId, searchText: clearText ? "" : searchText ? searchText : "" }));
+  // userId param lets callers bypass the Redux hiringManagerId timing gap
+  // (e.g. when jobPostedbyId from URL is known before Redux is updated)
+  const onGetCandidatesCount = (id, clearText = false, userId = null) => {
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: userId || hiringManagerId, searchText: clearText ? "" : searchText ? searchText : "", viewAllCompanyJobs: seeAllHiringManagerJobs }));
   }
 
-  const onGetPageList = (pageNo, type, id, clearText = false) => {
+  const onGetPageList = (pageNo, type, id, clearText = false, userId = null) => {
+    const actionbyId = userId || hiringManagerId;
     let candObj = {
       pageNumber: pageNo,
       pageSize: type === "matched" ? cardPageSize : listPageSize,
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
       searchText: clearText ? "" : searchText ? searchText : "",
-      actionbyId: hiringManagerId
+      actionbyId,
+      viewAllCompanyJobs: seeAllHiringManagerJobs
     };
 
     if (type === 'scheduled') {
@@ -283,12 +291,12 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, clearText);
+      if (pageNo === 1) onGetCandidatesCount(id, clearText, actionbyId);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, clearText);
+    if (pageNo === 1) onGetCandidatesCount(id, clearText, actionbyId);
   };
 
   const handlePageChange = (page) => {
@@ -778,8 +786,8 @@ export default function CustomerCandidateLists(props) {
         interviewFeedbackStatus={interviewFeedbackStatus}
         showInterviewFeedbackStatus={showInterviewFeedbackStatusFilter}
         showFromDateToDate={showFromToDateFilter}
-        showSearch={true}
-        showClearButtonAtEnd={true}
+        showSearch={showSearch}
+        showClearButtonAtEnd={showClearButtonAtEnd}
         onClearFilters={() => onClearFilters()}
       />
       <Row className="customercandidatelist">
