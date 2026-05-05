@@ -198,7 +198,7 @@ export default function CustomerCandidateLists(props) {
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, "");
     }
-  }, [props.type, hiringManagerId, selectedJobId]);
+  }, [props.type, hiringManagerId, selectedJobId, seeAllHiringManagerJobs]);
 
   useEffect(() => {
     if (id) {
@@ -212,7 +212,7 @@ export default function CustomerCandidateLists(props) {
       const userId = jobPostedbyId || hiringManagerId || undefined;
       onGetPageList(1, props.type || activeTab, id, false, userId);
     }
-  }, [props.type, id, hiringManagerId, selectedJobId]);
+  }, [props.type, id, hiringManagerId, selectedJobId, seeAllHiringManagerJobs]);
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
@@ -789,6 +789,7 @@ export default function CustomerCandidateLists(props) {
         showSearch={showSearch}
         showClearButtonAtEnd={showClearButtonAtEnd}
         onClearFilters={() => onClearFilters()}
+        showSeeAllHMToggle={isCompanyAdmin}
       />
       <Row className="customercandidatelist">
         <div
