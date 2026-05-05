@@ -44,6 +44,8 @@ import { use, useRef } from "react";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { setSeeAllHiringManagerJobs } from "_store/commonCustFiltersSlice";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -146,6 +148,17 @@ export function ScheduleInterview({ fromDashboard }) {
       moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
+
+  const handleSeeAllToggle = (e) => {
+    const isOn = e.target.checked;
+    const companyId = Number(localStorage.getItem("companyid"));
+    dispatch(setSeeAllHiringManagerJobs(isOn));
+    setHiringManagerId(Number(localStorage.getItem("userId")));
+    if (isOn) {
+      dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+    }
+  };
+
   const getUpcomingData = async function (filterdata) {
     await dispatch(
       scheduleInterviewActions.getUpcomingInterviewListThunk(filterdata)
@@ -655,7 +668,7 @@ export function ScheduleInterview({ fromDashboard }) {
   useEffect(() => {
     upData = [];
     dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
-  }, [dispatch, hiringManagerId]);
+  }, [dispatch, hiringManagerId, seeAllHiringManagerJobs]);
 
   const hiringManagerIdRef = useRef(hiringManagerId);
   useEffect(() => {
@@ -889,30 +902,49 @@ export function ScheduleInterview({ fromDashboard }) {
                 md={4}
                 lg={4}
                 xl={4}
-                className="mb-3 right-align"
+                className="mb-3"
               >
-                <Input
-                type="select"
-                title="Hiring Manger"
-                value={hiringManagerId}
-                name="hiringmanagerId"
-                id="hiringmanagerId"
-                placeholder="Hiring Manger"
-                style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
-                onChange={(e) => {
-                  console.log("Selected:", e.target.value);
-                  setHiringManagerId(Number(e.target.value));
-                }}
-              >
-                  <option value={""}>Select a Hiring Manger</option>
-                  {activeHiringManagerList?.length > 0 ? (
-                    activeHiringManagerList.map((data) => (
-                      <option value={data.id} key={data.id}>
-                        {data.name}
-                      </option>
-                    ))
-                  ) : null}
-                </Input></Col>)}
+                <div className="d-flex align-items-center justify-content-end gap-2">
+                  {isCompanyAdmin && (
+                    <div className="form-check form-switch mb-0">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="seeAllHMToggleCalendar"
+                        checked={seeAllHiringManagerJobs}
+                        onChange={handleSeeAllToggle}
+                      />
+                      <SafeUncontrolledTooltip
+                        placement="top"
+                        target="seeAllHMToggleCalendar"
+                      >
+                        See all hiring managers jobs
+                      </SafeUncontrolledTooltip>
+                    </div>
+                  )}
+                  <Input
+                    type="select"
+                    title="Hiring Manger"
+                    value={hiringManagerId}
+                    name="hiringmanagerId"
+                    id="hiringmanagerId"
+                    placeholder="Hiring Manger"
+                    style={{ minWidth: 200, maxWidth: 220 }}
+                    onChange={(e) => {
+                      setHiringManagerId(Number(e.target.value));
+                    }}
+                  >
+                    <option value={""}>Select a Hiring Manger</option>
+                    {activeHiringManagerList?.length > 0 ? (
+                      activeHiringManagerList.map((data) => (
+                        <option value={data.id} key={data.id}>
+                          {data.name}
+                        </option>
+                      ))
+                    ) : null}
+                  </Input>
+                </div>
+              </Col>)}
             </Row>
 
             {toggleVar === "availabilty" && (
