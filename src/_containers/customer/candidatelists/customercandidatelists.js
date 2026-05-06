@@ -193,7 +193,7 @@ export default function CustomerCandidateLists(props) {
   // }, [id, selectedJobId, actionbyId, dispatch]);
 
   useEffect(() => {
-    if (window?.location?.pathname?.includes("candidate-list")) {
+    if (!id) {
       setPageNo(1);
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, "");
