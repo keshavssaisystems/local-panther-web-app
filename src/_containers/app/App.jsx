@@ -188,7 +188,7 @@ export function App() {
         <b>{payload.notification.title}</b>
       </p>
       <p>{payload.notification.body}</p>
-      {payload?.data?.type === "Resume_Notification" && isProfilePage ? (
+      {payload?.notification?.title?.toLowerCase() === "resume parsed" && isProfilePage ? (
         <p>
           Updated resume data available
           <Button color="link" onClick={() => { window.location.reload(); }} >REFRESH </Button>

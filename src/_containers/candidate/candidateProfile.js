@@ -83,16 +83,9 @@ export function CandidateProfile() {
     },
   });
 
-  const [profileData, setProfileData] = useState({
-    personalInfo: {},
-    resumeInfo: {},
-    skillsInfo: [],
-    qualificationsInfo: [],
-    certificationsInfo: [],
-    educationInfo: [],
-    additionalInfo: [],
-    jobPreferenceInfo: [],
-  });
+  // Read profileData directly from Redux so any dispatch of getCandidate
+  // (poller, FCM trigger, or loadPage) immediately updates the UI.
+  const profileData = useSelector((state) => state.getProfile.profileData);
 
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   const [popularSkills, setPopularSkills] = useState([]);
@@ -153,56 +146,9 @@ export function CandidateProfile() {
       : userDetails.InternalUserId;
     let response = await dispatch(getProfileActions.getCandidate(candidateid));
     let filter_data = response.payload;
-    let organization = filter_data?.candidateQualificationsDtos?.filter(
-      (x) => x.iscurrentlyworking == true
-    );
 
-    let data = {
-      position: organization?.length > 0 ? organization[0].jobtitle : "",
-      organization:
-        organization?.length > 0 ? organization[0].company : "Not Working",
-      eligibility: dropdownLists?.eligibilityDropDown?.find(
-        (x) => x.id == filter_data?.employmenteligiblity
-      )?.name,
-      readyToWork: filter_data?.isreadytoworkimmediately ? "Yes" : "No",
-      phonenumber: filter_data?.phonenumber,
-      email: filter_data?.email,
-      state: filter_data?.statename,
-      city: filter_data?.cityname,
-      country: filter_data?.countryname,
-      dob: new Date(),
-      gender: filter_data?.gendername,
-      race: filter_data?.ethnicityname,
-
-      candidateid: 0,
-      firstname: filter_data?.firstname,
-      lastname: filter_data?.lastname,
-      genderid: filter_data?.genderid,
-      cityid: filter_data?.cityid,
-      stateid: filter_data?.stateid,
-      countryid: filter_data?.countryid,
-      zipcode: filter_data?.zipcode,
-      ethnicityid: filter_data?.ethnicityid,
-      ethnicity: filter_data?.ethnicity,
-      employmenteligiblity: filter_data?.employmenteligiblity,
-      isreadytoworkimmediately: filter_data?.isreadytoworkimmediately,
-      isactive: true,
-      userid: 0,
-      currentUserId: 0,
-    };
-    let new_data = { ...profileData };
-    new_data.personalInfo = data;
-    new_data.skillsInfo = filter_data?.candidateSkillDtos;
-    new_data.resumeInfo = filter_data?.candidateResumeDto;
-    new_data.qualificationsInfo = filter_data?.candidateQualificationsDtos;
-    new_data.educationInfo = filter_data?.candidateEducationDtos;
-    new_data.certificationsInfo = filter_data?.candidateCertificationDtos;
-    new_data.additionalInfo = filter_data?.candidateAdditionalInformationDtos;
-    new_data.jobPreferenceInfo = filter_data?.candidateJobPreferenceDtos;
-    setProfileData(new_data);
-
+    // Only update local dropdown selection state — profileData now comes from Redux.
     let dropdown_selected = { ...dropdownLists };
-
     dropdown_selected.selectedCity = {
       value: filter_data?.cityid,
       label: `${filter_data?.cityname + ", " + filter_data?.statename}`,
@@ -303,14 +249,6 @@ export function CandidateProfile() {
     }
     setStringValue(stringArray.toString());
   }, [profileData]);
-  const notifications = useSelector(
-    (state) => state.candidateDashboard.alertsList
-  );
-  useEffect(() => {
-    if (notifications?.[0]?.notificationmessage === "Resume Parsed") {
-      loadPage();
-    }
-  }, [notifications]);
 
   const setEmployementEligibility = (type) => {
     updateEmploymentEligibility(type);

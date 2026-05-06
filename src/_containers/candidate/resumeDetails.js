@@ -19,7 +19,7 @@ import {
 } from "reactstrap";
 import classnames from "classnames";
 import { formatDate } from "_helpers/helper";
-import { profileActions } from "_store";
+import { profileActions, getProfileActions } from "_store";
 import { useDispatch, useSelector } from "react-redux";
 import { BsDownload, BsTrash3, BsUpload, BsInfoCircle } from "react-icons/bs";
 import axios from "axios";
@@ -37,9 +37,6 @@ import { OpenWorXResume } from "./openWorxResume";
 
 export function ResumeDetails(props) {
   const dispatch = useDispatch();
-  const notifications = useSelector(
-    (state) => state.candidateDashboard.alertsList
-  );
   const resumeDetails = useSelector(
     (state) => state.getProfile.profileData.resumeInfo
   );
@@ -60,26 +57,68 @@ export function ResumeDetails(props) {
   const [activeTab, setActiveTab] = useState("1");
   const [selectedFile, setSelectedFile] = useState();
   const [showUpload, setShowUpload] = useState(true);
+  const pollerRef = useRef(null);
+  // Tracks the previous value of isparsed so we detect the false→true transition
+  // only, regardless of what notifications exist in the list from prior sessions.
+  const prevIsParsedRef = useRef(null);
 
   let url = `${process.env.REACT_APP_MAIN_API_URL}`;
+
+  // Cleanup poller on unmount
+  useEffect(() => {
+    return () => {
+      if (pollerRef.current) clearInterval(pollerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     getFileName();
   }, [resumeDetails]);
 
+  // Primary trigger: detects the exact false→true transition of isparsed.
+  // This is the ONLY reliable signal — it does not depend on notification history
+  // or whether isParsing is still active, so stale "Resume Parsed" notifications
+  // from prior sessions cannot cause a false positive or consume the trigger early.
   useEffect(() => {
-    if (notifications?.[0]?.notificationmessage === "Resume Parsed") {
-      setShowUpload(true);
-    }
-  }, [notifications]);
+    const currentIsParsed = resumeDetails?.isparsed ?? null;
+    const prev = prevIsParsedRef.current;
 
-  useEffect(() => {
-    if (resumeDetails?.isparsed || resumeDetails === null) {
+    if (currentIsParsed === true && prev === false) {
+      // isparsed just flipped false→true: parsing is complete, refresh everything.
+      if (pollerRef.current) {
+        clearInterval(pollerRef.current);
+        pollerRef.current = null;
+      }
       setShowUpload(true);
-    } else {
+      props.onCallBack();
+    } else if (currentIsParsed === true) {
+      // Already parsed on page load — just show upload, no refresh needed.
+      setShowUpload(true);
+    } else if (currentIsParsed === false) {
       setShowUpload(false);
     }
+
+    prevIsParsedRef.current = currentIsParsed;
   }, [resumeDetails]);
+
+  const startParsingPoller = () => {
+    if (pollerRef.current) clearInterval(pollerRef.current);
+    let attempts = 0;
+    const maxAttempts = 8; // ~80 seconds at 10s intervals
+    const candidateid =
+      localStorage.getItem("admcandid") ||
+      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId;
+    pollerRef.current = setInterval(() => {
+      attempts++;
+      // Poll getCandidate directly — isparsed flag is the source of truth.
+      // Does not hit the notification cache, so detection is immediate.
+      dispatch(getProfileActions.getCandidate(candidateid));
+      if (attempts >= maxAttempts) {
+        clearInterval(pollerRef.current);
+        pollerRef.current = null;
+      }
+    }, 10000);
+  };
 
   const addEditResumeDetails = function () {
     setModal(true);
@@ -138,6 +177,7 @@ export function ResumeDetails(props) {
             }));
             closeModal();
             setShowUpload(false);
+            startParsingPoller();
           } else {
             // setError(true);
             dispatch(showSnackbar({
@@ -183,6 +223,7 @@ export function ResumeDetails(props) {
                 maxWidth: 500,
               }));
               setShowUpload(false);
+              startParsingPoller();
             } else {
               // setError(true);
               dispatch(showSnackbar({
