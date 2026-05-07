@@ -285,6 +285,12 @@
   height: 1rem;
 }
 
+.form-switch-lg {
+  transform: scale(1.4);
+  transform-origin: left center;
+  margin-left: 4px;
+}
+
 // No-data image helper (responsive, max size based on Figma)
 .no-data-image {
   width: 100%;
