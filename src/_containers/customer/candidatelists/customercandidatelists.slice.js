@@ -312,8 +312,8 @@ function createExtraActions() {
       `${name}/getReportBySP`,
       async ({ jobId, userId, searchText, viewAllCompanyJobs = false }) => {
         const jobIdToUse = (jobId === undefined || jobId === null || jobId === "") ? null : jobId;
-
-        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId},@searchText='${searchText}',@viewAllCompanyJobs=${viewAllCompanyJobs ? 1 : 0}`;
+        const userIdToUse = (userId === undefined || userId === null || userId === "") ? null : userId;
+        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userIdToUse},@searchText='${searchText}',@viewAllCompanyJobs=${viewAllCompanyJobs ? 1 : 0}`;
         return await fetchWrapper.get(REPORT_API_URL);
       }
     );
