@@ -44,12 +44,44 @@ test('login with test account', async ({ page }) => {
   const profile = page.getByRole('link', { name: /profile|my\s?account/i });
 
   if ((await logout.count()) === 0 && (await profile.count()) === 0) {
-    // Detect MFA / code verification dialog (e.g., phone/OTP prompt) and skip if present
-    const mfaDialog = page.getByText(/enter code|to proceed, please enter the code/i);
-    if ((await mfaDialog.count()) > 0) {
-      test.skip(true, 'MFA required; interactive code verification shown');
+    // Detect MFA / code verification dialog (e.g., phone/OTP prompt)
+    const mfaPrompt = page.getByText(/enter code|to proceed, please enter the code|verification code|enter the verification code/i);
+    if ((await mfaPrompt.count()) > 0) {
+      const mfaCode = process.env.PLAYWRIGHT_TEST_MFA_CODE;
+      if (!mfaCode) {
+        test.skip(true, 'MFA required; set PLAYWRIGHT_TEST_MFA_CODE to run');
+      }
+      const code = mfaCode.trim();
+      const digits = code.split('');
+      const otpSelectors = [
+        'dialog input',
+        'input[name*="code"]',
+        'input[placeholder*="code"]',
+        'input[aria-label*="code"]',
+        'input[aria-label*="OTP"]',
+        'input[type="tel"]',
+        'input[type="number"]',
+        'input[type="text"]'
+      ].join(',');
+      const inputs = page.locator(otpSelectors);
+      if ((await inputs.count()) >= digits.length) {
+        for (let i = 0; i < digits.length; i++) {
+          await inputs.nth(i).fill(digits[i]);
+        }
+      } else if ((await inputs.count()) > 0) {
+        await inputs.first().fill(code);
+      } else {
+        test.skip(true, 'MFA present but no OTP inputs found to fill');
+      }
+      const verifyBtn = page.getByRole('button', { name: /submit|verify|continue|confirm/i }).first();
+      if ((await verifyBtn.count()) > 0) {
+        await verifyBtn.click();
+      } else {
+        await page.keyboard.press('Enter');
+      }
+      await page.waitForLoadState('networkidle');
     }
-    await expect(page).not.toHaveURL(/\/login|\/auth|\/signin/i, { timeout: 10000 });
+    await expect(page).not.toHaveURL(/\/login|\/auth|\/signin/i, { timeout: 20000 });
   } else {
     if ((await logout.count()) > 0) await expect(logout.first()).toBeVisible({ timeout: 10000 });
     if ((await profile.count()) > 0) await expect(profile.first()).toBeVisible({ timeout: 10000 });
