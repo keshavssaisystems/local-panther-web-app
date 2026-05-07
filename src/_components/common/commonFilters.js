@@ -218,7 +218,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                             Filters:
                             {/* See All Hiring Managers Jobs Toggle — only visible to company admins */}
                             {showSeeAllHMToggle && (
-                                <div className="form-check form-switch mb-0">
+                                <div className="form-check form-switch mb-0 form-switch-lg">
                                     <input
                                         className="form-check-input"
                                         type="checkbox"
