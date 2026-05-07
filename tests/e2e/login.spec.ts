@@ -31,11 +31,18 @@ test('login with test account', async ({ page }) => {
   await email.first().fill(process.env.PLAYWRIGHT_TEST_USER!);
   await password.first().fill(process.env.PLAYWRIGHT_TEST_PASSWORD!);
 
-  const submit = page.getByRole('button', { name: /sign\s?in|log\s?in|login|submit/i }).first();
-  if ((await submit.count()) === 0) {
-    await page.locator('button[type="submit"]').first().click();
+  // Click the 'Sign in' button explicitly after filling credentials
+  const signInBtn = page.getByRole('button', { name: /sign\s?in|log\s?in|login|submit/i }).first();
+  if ((await signInBtn.count()) === 0) {
+    const fallback = page.locator('button[type="submit"], input[type="submit"]');
+    if ((await fallback.count()) > 0) {
+      await fallback.first().click();
+    } else {
+      // last resort: press Enter to submit
+      await page.keyboard.press('Enter');
+    }
   } else {
-    await submit.click();
+    await signInBtn.click();
   }
   await page.waitForLoadState('networkidle');
 
