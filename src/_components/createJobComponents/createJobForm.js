@@ -248,7 +248,36 @@ export const CreateJob = forwardRef(
           value: hiringManagerDto?.id,
           label: hiringManagerDto?.name,
         };
-        if (found) setHiringManagerValue(found);
+        if (found) {
+          setHiringManagerValue(found);
+          setDefaultHiringManagerValue(found);
+        }
+      } else if (customerDetails?.isatsenable === true) {
+        // Fetch and auto-select the default contact on mount
+        const companyIdForDefault =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "ClientContact",
+            commonId: companyIdForDefault,
+            searchBy: "",
+          })
+        ).then((response) => {
+          const users =
+            response?.payload?.data ||
+            response?.payload?.data?.data ||
+            response?.payload ||
+            [];
+          const userOptions = (users || []).map((user) => ({
+            value: user.id,
+            label: user.name,
+          }));
+          setHiringManagerOptions(userOptions);
+          if (userOptions.length > 0) {
+            setHiringManagerValue(userOptions[0]);
+            setDefaultHiringManagerValue(userOptions[0]);
+          }
+        });
       }
 
       const recruiterDto =
@@ -331,6 +360,8 @@ export const CreateJob = forwardRef(
     const [clientCompanyValue, setClientCompanyValue] = useState(null);
     const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
     const [hiringManagerValue, setHiringManagerValue] = useState(null);
+    const [defaultHiringManagerValue, setDefaultHiringManagerValue] = useState(null);
+    const [hiringManagerInputDirty, setHiringManagerInputDirty] = useState(false);
 
     const customStyles = {
       valueContainer: (provided, state) => ({
@@ -1985,6 +2016,7 @@ export const CreateJob = forwardRef(
           value: user.id,
           label: user.name,
         }));
+        setHiringManagerOptions(userOptions);
         return userOptions;
       } catch (err) {
         // keep silent or console.log(err) for debugging
@@ -2144,9 +2176,21 @@ export const CreateJob = forwardRef(
                                 onChange={(val) => {
                                   setHiringManagerValue(val);
                                   setHiringmanagerValidation(false);
-                                  // if you need to persist selection to the form submission,
-                                  // write the selected id into a hidden input or local state used by saveData
-                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                  setHiringManagerInputDirty(false);
+                                }}
+                                onMenuOpen={() => {
+                                  setHiringManagerInputDirty(false);
+                                }}
+                                onInputChange={(val) => {
+                                  if (val) setHiringManagerInputDirty(true);
+                                }}
+                                onMenuClose={() => {
+                                  if (defaultHiringManagerValue) {
+                                    if (hiringManagerInputDirty || !hiringManagerValue) {
+                                      setHiringManagerValue(defaultHiringManagerValue);
+                                    }
+                                  }
+                                  setHiringManagerInputDirty(false);
                                 }}
                                 isMulti={false}
                                 styles={customStyles}
