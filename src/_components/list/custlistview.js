@@ -11,6 +11,9 @@ import {
   Button,
   ButtonGroup,
   Input,
+  Modal,
+  ModalHeader,
+  ModalBody,
 } from "reactstrap";
 import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import { BsXCircle } from "react-icons/bs";
@@ -42,6 +45,7 @@ import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constant
 import { showSnackbar } from "_store/snackbar.slice";
 import { is } from "date-fns/locale";
 import { OfflineInterviewModal } from "_components/scheduleInterview/offlineInterviewModal";
+import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
 import { OfflineOffer } from "_components/modal/offlineOffer";
 import { ViewDocumentModal } from "_components/modal/viewdocumentmodal";
 
@@ -67,6 +71,9 @@ export const CustCandidateListView = (props) => {
   const [jdLoading, setJdLoading] = useState(false);
   const atsEnableStatus = localStorage.getItem("atsEnableStatus");
   const [roundOptions, setRoundOptions] = useState([]);
+  const [showFeedbackPendingModal, setShowFeedbackPendingModal] = useState(false);
+  const [feedbackPendingRow, setFeedbackPendingRow] = useState(null);
+  const [feedbackSubmitLoading, setFeedbackSubmitLoading] = useState(false);
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -97,9 +104,13 @@ export const CustCandidateListView = (props) => {
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
+  const interviewStatus = useSelector(
+    (state) => state.scheduleInterview.interviewStatus
+  );
 
   useEffect(() => {
     getRoundsDropdown();
+    dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
   }, [dispatch]);
 
   const onAcceptClick = async (row) => {
@@ -347,6 +358,49 @@ export const CustCandidateListView = (props) => {
     console.log("completedRounds", completedRounds, "roundOptions.length", roundOptions.length, roundOptions);
     return completedRounds >= roundOptions.length;
   }
+
+  const onFeedbackPendingClick = (row) => {
+    setFeedbackPendingRow(row);
+    setShowFeedbackPendingModal(true);
+  };
+
+  const postFeedbackPendingData = async (data) => {
+    setFeedbackSubmitLoading(true);
+    const scheduleinterviewid =
+      feedbackPendingRow?.scheduledInterviewDtos?.[0]?.scheduleinterviewid;
+    const res = await dispatch(
+      scheduleInterviewActions.interviewFeedbackThunk({
+        scheduleinterviewid,
+        payload: data,
+      })
+    );
+    setFeedbackSubmitLoading(false);
+    if (res.payload?.statusCode === 204 || res.payload?.statusCode === 200) {
+      setShowFeedbackPendingModal(false);
+      props.updateList();
+      dispatch(
+        showSnackbar({
+          message: "Interview feedback submitted successfully!",
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        })
+      );
+    } else {
+      dispatch(
+        showSnackbar({
+          message: res.payload?.message || "Failed to submit feedback.",
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        })
+      );
+    }
+  };
 
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
@@ -2133,26 +2187,31 @@ export const CustCandidateListView = (props) => {
         {
           name: <span className="table-title">Interview feedback status</span>,
           sortable: true,
-          cell: (row) => (
-            <span
-              title={
-                row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-                  ? row?.scheduledInterviewDtos[0]?.interviewstatus ===
-                    '' ||
-                    row?.scheduledInterviewDtos[0]?.interviewstatus ===
-                    undefined
-                    ? row?.scheduledInterviewDtos[0]?.interviewstatus : ""
-                  : ""
-              }
-            >              {row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-              ? row?.scheduledInterviewDtos[0]?.interviewstatus ===
-                '' ||
-                row?.scheduledInterviewDtos[0]?.interviewstatus ===
-                undefined
-                ? "" : row?.scheduledInterviewDtos[0]?.interviewstatus
-              : ""}
-            </span >
-          ),
+          cell: (row) => {
+            const interview = row?.scheduledInterviewDtos?.[0];
+            const hasFeedback = interview?.interviewstatus && interview.interviewstatus !== '';
+            // feedbackPending: interview is active, accepted by candidate, and interviewstatusid is 0/null/undefined (no feedback submitted yet)
+            const feedbackPending = (!interview?.interviewstatusid || Number(interview?.interviewstatusid) === 0)
+              && !hasFeedback;
+            return (
+              <span title={hasFeedback ? interview.interviewstatus : feedbackPending ? "Interview Feedback Pending" : ""}>
+                {hasFeedback
+                  ? interview.interviewstatus
+                  : feedbackPending
+                    ? (
+                      <Button
+                        color="link"
+                        className="p-0 text-primary"
+                        style={{ fontSize: "inherit" }}
+                        onClick={() => onFeedbackPendingClick(row)}
+                      >
+                        <u>Feedback Pending</u>
+                      </Button>
+                    )
+                    : ""}
+              </span>
+            );
+          },
           selector: (row) =>
             row?.scheduledInterviewDtos &&
               row?.scheduledInterviewDtos?.length > 0
@@ -2703,6 +2762,22 @@ export const CustCandidateListView = (props) => {
         )}
       </>
       <ViewDocumentModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)} url={documentUrl} />
+      <>
+        {showFeedbackPendingModal && (
+          <Modal isOpen={showFeedbackPendingModal} toggle={() => setShowFeedbackPendingModal(false)} backdrop="static" size="md">
+            <ModalHeader toggle={() => setShowFeedbackPendingModal(false)}>Submit Interview Feedback</ModalHeader>
+            <ModalBody>
+              <InterviewFeedback
+                interviewId={feedbackPendingRow?.scheduledInterviewDtos?.[0]?.scheduleinterviewid}
+                interviewDetails={feedbackPendingRow?.scheduledInterviewDtos?.[0]}
+                postFeedbackData={(data) => postFeedbackPendingData(data)}
+                zoomScreen={true}
+                onCancel={() => setShowFeedbackPendingModal(false)}
+              />
+            </ModalBody>
+          </Modal>
+        )}
+      </>
     </>
   );
 };
