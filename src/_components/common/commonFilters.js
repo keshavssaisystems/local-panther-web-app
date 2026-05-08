@@ -136,40 +136,52 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         dispatch(setInterviewFeedbackStatusId(value));
     }
     const searchOptionDropdown = async (option) => {
-        if (selectedOpt !== "JobTitle") {
+        if (selectedOpt !== "JobTitle" && selectedOpt !== "ClientCompany") {
             // Handle other search options
             return;
         }
         if (option?.length >= 2) {
-            let companyId = Number(localStorage.getItem("companyid"));
-            let filter = {
-                companyId: companyId,
-                isClose: 0,
-                searchText: option.replaceAll(" ", "_"),
+            if (selectedOpt === "JobTitle") {
+                let companyId = Number(localStorage.getItem("companyid"));
+                let filter = {
+                    companyId: companyId,
+                    isClose: 0,
+                    searchText: option.replaceAll(" ", "_"),
+                };
+                let response = await dispatch(dropdownActions.getJobsListThunk(filter));
+                setFilteredItems(response?.payload || []);
+            } else if (selectedOpt === "ClientCompany") {
+                const companyId = Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+                let response = await dispatch(
+                    dropdownActions.getDropdownListThunk({
+                        searchText: "ClientCompany",
+                        commonId: companyId,
+                        searchBy: option,
+                    })
+                );
+                const companies = response?.payload?.data || response?.payload || [];
+                setFilteredItems(companies.map((c) => ({ id: c.id, name: c.name })));
             }
-            let response = await dispatch(dropdownActions.getJobsListThunk(filter));
-            if (response?.payload) {
-                setFilteredItems(response.payload);
-            }
-            else {
-                setFilteredItems([]);
-            }
+        } else {
+            setFilteredItems([]);
         }
     };
 
     const handleSelectSearch = (value) => {
-        dispatch(setSearchText(value.jobtitle));
-
+        dispatch(setSearchText(selectedOpt === "ClientCompany" ? value.name : value.jobtitle));
         setFilteredItems([]); // close suggestions
     };
 
     const searchOptions = showOnlyJobTitle
-        ? [{ value: "JobTitle", label: "Job Title" }]
+        ? [{ value: "JobTitle", label: "Job Title" },
+           { value: "ClientCompany", label: "Client Company" }
+        ]
         : [
             { value: "JobTitle", label: "Job Title" },
             { value: "State", label: "State" },
             { value: "City", label: "City" },
             { value: "Skills", label: "Skill" },
+            { value: "ClientCompany", label: "Client Company" },
         ];
 
     const [interviewStatusId, setInterviewStatusId] = useState("");
@@ -416,7 +428,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                             style={{ padding: "6px", cursor: "pointer" }}
                                                             onClick={() => handleSelectSearch(item)}
                                                         >
-                                                            {item.jobtitle}
+                                                            {selectedOpt === "ClientCompany" ? item.name : item.jobtitle}
                                                         </li>
                                                     ))}
                                                 </ul>
