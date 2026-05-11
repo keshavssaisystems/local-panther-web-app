@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "start": "react-scripts start",
+        "prebuild": "node src/_helpers/generate-build-info.js",
         "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
         "eject": "react-scripts eject",
         "test:e2e": "playwright test --reporter=html",
