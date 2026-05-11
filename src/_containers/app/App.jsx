@@ -70,6 +70,7 @@ const AIJobOffCanvas = React.lazy(() =>
 const Support = React.lazy(() => import("_containers/static/support"));
 const PrivacyPolicy = React.lazy(() => import("_containers/static/privacy"));
 const TermsAndConditions = React.lazy(() => import("_containers/static/terms"));
+const BuildInfo = React.lazy(() => import("_components/common/BuildInfo"));
 const ForgotPassword = React.lazy(() =>
   import("_containers/forgotpassword/forgotPassword")
 );
@@ -1004,6 +1005,7 @@ export function App() {
                   <EnhancedSnackbar />
                   <Routes forceRefresh={true}>
                     {renderRoutes(userroleid)}
+                    <Route path="/build-info" element={<BuildInfo />} />
                     <Route
                       path="/security"
                       element={
