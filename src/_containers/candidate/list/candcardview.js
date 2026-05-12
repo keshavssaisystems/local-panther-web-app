@@ -256,7 +256,7 @@ export function CandCardView({
                   </Col>
                   <Col md={6} lg={6}>
                     <div className="muted-name mt-2">
-                      {getTimezoneDateTime(createdDate, "MM/DD/YYYY hh:mm A")}
+                      {getTimezoneDateTime(additionalData?.jobpublishdatetime, "MM/DD/YYYY hh:mm A")}
                     </div>
                   </Col>
                   <Col md={6} lg={6}>

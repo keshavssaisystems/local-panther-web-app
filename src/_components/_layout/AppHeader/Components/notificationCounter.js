@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AlertModal } from "_components/modal/alertModal";
 import { history } from "_helpers";
+import { isInternalUrl } from "_helpers/helper";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 
@@ -93,12 +94,34 @@ export const NotificationCounter = () => {
       dispatch(candidateDashboardActions.readNotification({ id }));
     }
 
+    // Prefer routing based on metadata saved by backend when available
+    try {
+      if (item?.notificationresponse) {
+        const meta = JSON.parse(item.notificationresponse);
+        if (meta?.groupId) {
+          setTimeout(() => history.navigate(`/chat?groupId=${encodeURIComponent(meta.groupId)}`), 0);
+          return;
+        }
+        if (meta?.redirectUrl && isInternalUrl(meta.redirectUrl)) {
+          history.navigate(meta.redirectUrl);
+          return;
+        }
+        // ignore external or invalid redirectUrl values
+      }
+    } catch (e) {
+      // ignore and fall back to legacy routing
+    }
+
     if (localStorage.getItem("userroleid") === "3") {
       if (item?.notificationmessage?.toLowerCase() === "interview scheduled") {
         history.navigate("/job-list-interview");
       } else if (
         item?.notificationmessage?.toLowerCase() === "interview rescheduled"
       ) {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase().includes("interview cancelled")
+       ) {
         history.navigate("/job-list-interview");
       } else if (
         item?.notificationmessage?.toLowerCase() === "offer received" ||
@@ -108,10 +131,32 @@ export const NotificationCounter = () => {
       } else if (item?.notificationmessage?.toLowerCase() === "match job") {
         history.navigate("/job-list-matched");
       } else if (
+        item?.notificationmessage?.toLowerCase().includes("liked by employer")
+      ) {
+        history.navigate("/job-list-matched");
+      } else if (
         item?.notificationmessage?.toLowerCase() === "incomplete profile" ||
         item?.notificationmessage?.toLowerCase() === "resume parsed"
       ) {
         history.navigate("/profile");
+      }
+    } else {
+      if (item?.notificationmessage?.toLowerCase().includes("job offer accepted")) {
+        history.navigate("/customer-candidate-accepted");
+      } else if (item?.notificationmessage?.toLowerCase().includes("job offer declined")
+        || item?.notificationmessage?.toLowerCase().includes("job offer rejected")) {
+        history.navigate("/customer-candidate-rejected");
+      } else if (item?.notificationmessage?.toLowerCase().includes("reschedule interview request")) {
+        history.navigate("/customer-candidate-scheduled");
+      } else if (item?.notificationmessage?.toLowerCase().includes("declined interview")
+        || item?.notificationmessage?.toLowerCase().includes("accepted interview")) {
+        history.navigate("/customer-candidate-scheduled");
+      } else if (item?.notificationmessage?.toLowerCase().includes("applied for the")) {
+        history.navigate("/customer-candidate-applied");
+      } else if (item?.notificationmessage?.toLowerCase().includes("rejected interview")) {
+        history.navigate("/customer-candidate-scheduled");
+      } else {
+        history.navigate("/candidate-list");
       }
     }
   };

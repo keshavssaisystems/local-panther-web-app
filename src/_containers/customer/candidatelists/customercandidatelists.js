@@ -71,10 +71,10 @@ import {
   setEndDate
 } from "_store/commonCustFiltersSlice";
 import { CandidateInterviewHistoryModal } from "_components/modal/candidateinterviewhistorymodal";
+import { ExternalMemberFeedbackModal } from "_components/modal/externalmemberfeedbackmodal";
 export default function CustomerCandidateLists(props) {
-  const { id } = useParams();
-  const { jobPostedbyId } = useParams();
-  const [activeTab, setActiveTab] = useState(props.type || "matched");
+  const { id, jobPostedbyId, type: typeParam } = useParams();
+  const [activeTab, setActiveTab] = useState(props.type || typeParam || "matched");
   const [pageNo, setPageNo] = useState(1);
 
   const [selectedJobId, setSelectedJobId] = useState(id || "");
@@ -92,9 +92,12 @@ export default function CustomerCandidateLists(props) {
   // const [searchText, setSearchText] = useState("");
   // const [actionbyId, setActionbyId] = useState();
   // const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
-  const { searchText, hiringManagerId, interviewFeedbackStatusId, startDate, endDate } = useSelector(
+  const { searchText, hiringManagerId, interviewFeedbackStatusId, startDate, endDate, seeAllHiringManagerJobs } = useSelector(
     (state) => state.commonCustFilters
   );
+
+  const isCompanyAdmin = Number(localStorage.getItem("userroleid")) === 4 ||
+    localStorage.getItem("isCompanyAdmin") === "true";
 
   const [candidateHistoryList, setCandidateHistoryList] = useState([]);
   const [interviewFeedbackStatusId1, setInterviewFeedbackStatusId1] = useState(0);
@@ -106,6 +109,8 @@ export default function CustomerCandidateLists(props) {
   const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
   const [candidateInterviewList, setCandidateInterviewList] = useState([]);
   const [showCandidateInterviewHistoryModal, setShowCandidateInterviewHistoryModal] = useState(false);
+  const [showExternalFeedbackModal, setShowExternalFeedbackModal] = useState(false);
+  const [externalMemberFeedbacks, setExternalMemberFeedbacks] = useState([]);
   let [startDate1, setStartDate1] = useState();
   let [endDate1, setEndDate1] = useState();
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
@@ -167,6 +172,7 @@ export default function CustomerCandidateLists(props) {
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+    dispatch(dropdownActions.getInterviewRoundListThunk({ searchText: "interviewRound", commonId: 0, searchBy: "" }));
     getCandidateOfflineStatusesDropdown();
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -187,12 +193,12 @@ export default function CustomerCandidateLists(props) {
   // }, [id, selectedJobId, actionbyId, dispatch]);
 
   useEffect(() => {
-    if (window?.location?.pathname?.includes("candidate-list")) {
+    if (!id) {
       setPageNo(1);
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, "");
     }
-  }, [props.type, hiringManagerId, selectedJobId]);
+  }, [props.type, hiringManagerId, selectedJobId, seeAllHiringManagerJobs]);
 
   useEffect(() => {
     if (id) {
@@ -201,11 +207,12 @@ export default function CustomerCandidateLists(props) {
       setShowSearch(false);
       setShowClearButtonAtEnd(false);
       setPageNo(1);
-      let pageno = 1;
-      onGetPageList(pageno, props.type || activeTab, id);
-
+      // Pass jobPostedbyId directly so the first API call uses the correct userId
+      // without waiting for the Redux setHiringManagerId dispatch to settle
+      const userId = jobPostedbyId || hiringManagerId || undefined;
+      onGetPageList(1, props.type || activeTab, id, false, userId);
     }
-  }, [props.type, id, hiringManagerId, selectedJobId]);
+  }, [props.type, id, hiringManagerId, selectedJobId, seeAllHiringManagerJobs]);
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
@@ -224,6 +231,13 @@ export default function CustomerCandidateLists(props) {
       dispatch(setSearchText(jobDetail[0]?.jobtitle));
     }
   }, [jobDetail])
+
+  useEffect(() => {
+    // setPageNo(1);
+    // let pageno = 1;
+    // onGetPageList(pageno, props.type || activeTab, "");    
+    setActiveTab(props.type || 'matched');
+  }, [props.type])
 
   const returnStatusId = (type) => {
     if (type === "liked") {
@@ -245,18 +259,22 @@ export default function CustomerCandidateLists(props) {
     }
   };
 
-  const onGetCandidatesCount = (id, clearText = false) => {
-    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: hiringManagerId, searchText: clearText ? "" : searchText ? searchText : "" }));
+  // userId param lets callers bypass the Redux hiringManagerId timing gap
+  // (e.g. when jobPostedbyId from URL is known before Redux is updated)
+  const onGetCandidatesCount = (id, clearText = false, userId = null) => {
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: userId || hiringManagerId, searchText: clearText ? "" : searchText ? searchText : "", viewAllCompanyJobs: seeAllHiringManagerJobs }));
   }
 
-  const onGetPageList = (pageNo, type, id, clearText = false) => {
+  const onGetPageList = (pageNo, type, id, clearText = false, userId = null) => {
+    const actionbyId = userId || hiringManagerId;
     let candObj = {
       pageNumber: pageNo,
       pageSize: type === "matched" ? cardPageSize : listPageSize,
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
       searchText: clearText ? "" : searchText ? searchText : "",
-      actionbyId: hiringManagerId
+      actionbyId,
+      viewAllCompanyJobs: seeAllHiringManagerJobs
     };
 
     if (type === 'scheduled') {
@@ -273,12 +291,12 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
-      if (pageNo === 1) onGetCandidatesCount(id, clearText);
+      if (pageNo === 1) onGetCandidatesCount(id, clearText, actionbyId);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    if (pageNo === 1) onGetCandidatesCount(id, clearText);
+    if (pageNo === 1) onGetCandidatesCount(id, clearText, actionbyId);
   };
 
   const handlePageChange = (page) => {
@@ -506,8 +524,26 @@ export default function CustomerCandidateLists(props) {
       setCandidateInterviewList([]);
       setShowCandidateInterviewHistoryModal(false);
     }
+  };
 
+  const onExternalMemberFeedbackClick = async (candidateId, row) => {
+    const interviews = row?.scheduledInterviewDtos;
+    if (!interviews || interviews.length === 0) return;
+    setCandidateName(row?.firstname + " " + row?.lastname);
 
+    // Fetch feedback for every interview round and combine into one flat list
+    const requests = interviews
+      .map((iv) => iv?.scheduleinterviewid)
+      .filter(Boolean)
+      .map((sid) =>
+        dispatch(scheduleInterviewActions.getExternalMemberFeedbacksByScheduleIdThunk(sid))
+      );
+
+    const results = await Promise.all(requests);
+    const allFeedbacks = results.flatMap((res) => res?.payload?.data || []);
+
+    setExternalMemberFeedbacks(allFeedbacks);
+    setShowExternalFeedbackModal(true);
   };
 
   const handleInterviewFilters = async () => {
@@ -750,9 +786,10 @@ export default function CustomerCandidateLists(props) {
         interviewFeedbackStatus={interviewFeedbackStatus}
         showInterviewFeedbackStatus={showInterviewFeedbackStatusFilter}
         showFromDateToDate={showFromToDateFilter}
-        showSearch={true}
-        showClearButtonAtEnd={true}
+        showSearch={showSearch}
+        showClearButtonAtEnd={showClearButtonAtEnd}
         onClearFilters={() => onClearFilters()}
+        showSeeAllHMToggle={isCompanyAdmin}
       />
       <Row className="customercandidatelist">
         <div
@@ -1419,6 +1456,9 @@ export default function CustomerCandidateLists(props) {
                           onCandidateInterviewHistory={(candidateId, row) =>
                             onCandidateInterviewHistoryClick(candidateId, row)
                           }
+                          onExternalMemberFeedback={(candidateId, row) =>
+                            onExternalMemberFeedbackClick(candidateId, row)
+                          }
                           isStaffingFirm={isStaffingFirm}
                           offlineStatuses={offlineStatuses}
                           onShowOHModal={(row) => onShowOHModal(row)}
@@ -1626,6 +1666,9 @@ export default function CustomerCandidateLists(props) {
                           isStaffingFirm={isStaffingFirm}
                           onCandidateInterviewHistory={(candidateId, row) =>
                             onCandidateInterviewHistoryClick(candidateId, row)
+                          }
+                          onExternalMemberFeedback={(candidateId, row) =>
+                            onExternalMemberFeedbackClick(candidateId, row)
                           }
                         />
                         {totalRecords > listPageSize ? (
@@ -2020,6 +2063,19 @@ export default function CustomerCandidateLists(props) {
           </>
         ) : (
           <></>
+        )}
+      </>
+      <>
+        {showExternalFeedbackModal && (
+          <ExternalMemberFeedbackModal
+            isOpen={showExternalFeedbackModal}
+            onClose={() => {
+              setShowExternalFeedbackModal(false);
+              setExternalMemberFeedbacks([]);
+            }}
+            feedbacks={externalMemberFeedbacks}
+            interviewTitle={candidateName}
+          />
         )}
       </>
     </>

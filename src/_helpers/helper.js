@@ -343,12 +343,18 @@ export function convertDateToYYYMMDD(dateStr) {
 }
 
 export const USPhoneNumber = function (inputValue) {
-  if (inputValue.length === 10) {
-    let USNumber = inputValue.match(/(\d{3})(\d{3})(\d{4})/);
-    return "(" + USNumber[1] + ")-" + USNumber[2] + "-" + USNumber[3];
-  } else {
-    return inputValue;
+  if (!inputValue) return inputValue;
+  // Strip everything except digits
+  let digits = inputValue.replace(/\D/g, "");
+  // Remove leading country code '1' if present and result is 11 digits
+  if (digits.length === 11 && digits.startsWith("1")) {
+    digits = digits.slice(1);
   }
+  if (digits.length === 10) {
+    return "(" + digits.slice(0, 3) + ")-" + digits.slice(3, 6) + "-" + digits.slice(6);
+  }
+  // Not a standard US number — return original value unchanged
+  return inputValue;
 };
 
 export const updateMonthstoYears = (months) => {
@@ -409,6 +415,15 @@ export function calculateEndTime(startTime, duration) {
 
   return endTime;
 }
+
+export const isInternalUrl = function (url) {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed.startsWith("/")) return false;
+  if (trimmed.startsWith("//")) return false;
+  if (/^[a-zA-Z]+:\/\//.test(trimmed)) return false;
+  return true;
+};
 
 export function checkDateValidation(data) {
   if (

@@ -5,11 +5,12 @@ const initialState = {
     selectedOpt: "JobTitle",
     searchText: "",
     hiringManagerId: "",
-    jobStatus: "",
+    jobStatus: "Publish",
     placeHolder: "Search job title",
     interviewFeedbackStatusId: "",
     startDate: null,
-    endDate: null
+    endDate: null,
+    seeAllHiringManagerJobs: false
 };
 
 const commonCustFiltersSlice = createSlice({
@@ -40,19 +41,23 @@ const commonCustFiltersSlice = createSlice({
         setEndDate: (state, action) => {
             state.endDate = action.payload;
         },
+        setSeeAllHiringManagerJobs: (state, action) => {
+            state.seeAllHiringManagerJobs = action.payload;
+        },
         clearFilters: (state) => {
             state.selectedOpt = "JobTitle";
             state.searchText = "";
             state.hiringManagerId = localStorage.getItem("userId") || "";
-            state.jobStatus = "";
+            state.jobStatus = "Publish";
             state.placeHolder = "Search job title";
             state.interviewFeedbackStatusId = "";
             state.startDate = null;
             state.endDate = null;
+            state.seeAllHiringManagerJobs = false;
         },
         clearFiltersOnPageLoad: (state) => {
             state.searchText = "";
-            state.jobStatus = "";
+            state.jobStatus = "Publish";
             state.placeHolder = "Search job title";
             state.interviewFeedbackStatusId = "";
             state.startDate = null;
@@ -72,6 +77,7 @@ export const {
     setStartDate,
     setEndDate,
     setInterviewFeedbackStatusId,
+    setSeeAllHiringManagerJobs,
     clearFiltersOnPageLoad
 } = commonCustFiltersSlice.actions;
 

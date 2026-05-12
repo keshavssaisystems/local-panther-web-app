@@ -471,7 +471,7 @@ export const AddEditUser = (props) => {
                         value={options.userroleid}
                         style={{
                           display:
-                            options.userroleid === 2 || options.userroleid === 3
+                            options.userroleid === 3
                               ? "none"
                               : "",
                         }}
@@ -521,7 +521,7 @@ export const AddEditUser = (props) => {
                     setCompanyValue(val);
                     setCompanyValidation(false);
                     setValue("companyId", val?.value);
-                    handleCompanyChange(val?.value);
+                    setCompanyDomain(val?.companyDomain || "");
                   }}
                   isMulti={false}
                   styles={customStyles}

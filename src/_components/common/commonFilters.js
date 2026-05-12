@@ -20,7 +20,8 @@ import {
     clearFilters,
     setInterviewFeedbackStatusId,
     setStartDate,
-    setEndDate
+    setEndDate,
+    setSeeAllHiringManagerJobs
 } from "_store/commonCustFiltersSlice";
 import DatePicker from "react-datepicker";
 import {
@@ -29,7 +30,7 @@ import {
     faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Tooltip } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
     showJobStatus = true,
     showSearch = true,
@@ -43,13 +44,14 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     showAssignButton = false,
     selectedJobsCount = 0,
     onAssignClick = null,
-    viewType=null
+    viewType=null,
+    showSeeAllHMToggle = false
 }) => {
     const dispatch = useDispatch();
 
     const [filteredItems, setFilteredItems] = useState([]);
     // 🔹 Redux state for filters
-    const { selectedOpt, searchText, hiringManagerId, jobStatus, placeHolder, startDate, endDate, interviewFeedbackStatusId } = useSelector(
+    const { selectedOpt, searchText, hiringManagerId, jobStatus, placeHolder, startDate, endDate, interviewFeedbackStatusId, seeAllHiringManagerJobs } = useSelector(
         (state) => state.commonCustFilters
     );
 
@@ -58,10 +60,24 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         (state) => state?.customerReportReducer?.assignHiringManagers
     );
 
+    // 🔹 All company hiring managers (used when toggle is ON)
+    const allCompanyHiringManagers = useSelector(
+        (state) => state?.customerReportReducer?.companyHiringManagers || []
+    );
+
+    // Active dropdown list: toggle ON → all company HMs, toggle OFF → assigned HMs
+    const activeHiringManagerList = seeAllHiringManagerJobs
+        ? allCompanyHiringManagers
+        : hiringManagerDownList;
+
     // 🔹 Fetch hiring managers
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
         dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'assignUserListByCompany' }));
+        // If toggle is already ON (e.g. user navigated away and came back), also load all-HM list
+        if (seeAllHiringManagerJobs) {
+            dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'allUserListByCompany' }));
+        }
         if (!hiringManagerId) {
             dispatch(setHiringManagerId(localStorage.getItem("userId")));
         }
@@ -90,6 +106,17 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     const handleHiringManagerChange = (value) => {
         dispatch(setHiringManagerId(value));
         //if (onJobHiringMangerChange) onJobHiringMangerChange(value);
+    };
+
+    // 🔹 Handle "See all hiring managers jobs" toggle
+    const handleSeeAllToggle = (e) => {
+        const isOn = e.target.checked;
+        const companyId = Number(localStorage.getItem("companyid"));
+        dispatch(setSeeAllHiringManagerJobs(isOn));
+        dispatch(setHiringManagerId(""));  // reset selected HM so list re-fetches fresh
+        if (isOn) {
+            dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+        }
     };
 
     // 🔹 Clear filters
@@ -175,9 +202,6 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
 
     const onInterviewSearchClear = () => { };
 
-    const [tooltipOpen, setTooltipOpen] = useState(false);
-    const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
-
     // Reset hiring manager to default when viewType changes to "list"
     useEffect(() => {
         if (viewType === "list") {
@@ -190,7 +214,29 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
             <Card className="main-card mb-3 card-filter filter-toolbar">
                 <CardBody>
                     <div className="filter-toolbar-inner">
-                        <div className="filter-label">Filters:</div>
+                        <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            Filters:
+                            {/* See All Hiring Managers Jobs Toggle — only visible to company admins */}
+                            {showSeeAllHMToggle && (
+                                <div className="form-check form-switch mb-0 form-switch-lg">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="seeAllHiringManagersToggle"
+                                        checked={seeAllHiringManagerJobs}
+                                        onChange={handleSeeAllToggle}
+                                        disabled={viewType === "list"}
+                                    />
+                                    <SafeUncontrolledTooltip
+                                        placement="top"
+                                        target="seeAllHiringManagersToggle"
+                                    >
+                                        See all hiring managers jobs
+                                    </SafeUncontrolledTooltip>
+                                </div>
+                            )}
+                        </div>
+
                         <div className="filter-controls">
                             <Row className="gx-2 gy-3 align-items-center filter-row">
                                 {/* Hiring Manager */}
@@ -206,8 +252,8 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                         disabled={viewType === "list"}
                                     >
                                         <option value={""}>Select a Hiring Manager</option>
-                                        {hiringManagerDownList?.length > 0 &&
-                                            hiringManagerDownList.map((data) => (
+                                        {activeHiringManagerList?.length > 0 &&
+                                            activeHiringManagerList.map((data) => (
                                                 <option value={data.id} key={data.id}>
                                                     {data.name}
                                                 </option>
@@ -435,25 +481,21 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                             </Button>
                                         </span> 
                                         {selectedJobsCount === 0 && viewType === "list" && (
-                                            <Tooltip
+                                            <SafeUncontrolledTooltip
                                                 placement="left"
-                                                isOpen={tooltipOpen}
                                                 target="assignTooltipWrapper"
-                                                toggle={toggleTooltip}
                                             >
                                                 Select one or more jobs to assign to a manager.
-                                            </Tooltip>
+                                            </SafeUncontrolledTooltip>
                                         )}
                                         {viewType === "block" && (
-                                            <Tooltip
+                                            <SafeUncontrolledTooltip
                                                 placement="left"
-                                                isOpen={tooltipOpen}
                                                 target="assignTooltipWrapper"
-                                                toggle={toggleTooltip}
                                                 style={{maxWidth: "250px"}}
                                             >
                                                 Switch to List View to assign jobs to Hiring Managers.
-                                            </Tooltip>
+                                            </SafeUncontrolledTooltip>
                                         )}
                                         
                                     </Col>

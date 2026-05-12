@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     getDashboardCounts();
     getStatistics();
     getAnalyiticalCounts();
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(JSON.parse(localStorage.getItem("userDetails")).UserId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: JSON.parse(localStorage.getItem("userDetails")).UserId, viewAllCompanyJobs: false }));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
     if (analytics) {
       analytics.logEvent("page_visit", {

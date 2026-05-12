@@ -29,6 +29,7 @@ function createInitialState() {
     prescreenQues: [],
     custOfferHistory: [],
     offerLetterTemplates: [],
+    promptMessageTemplate: [],
     reportData: null, // New state variable to store report data
   };
 }
@@ -38,6 +39,7 @@ function createExtraActions() {
   return {
     getDrpDwnJobLists: getDrpDwnJobLists(),
     getRejectDropDown: getRejectDropDown(),
+    getPromptMessage: getPromptMessage(),
     getCandidateLists: getCandidateLists(),
     putLikedCandidate: putLikedCandidate(),
     putMayBeCandidate: putMayBeCandidate(),
@@ -98,7 +100,8 @@ function createExtraActions() {
         interviewStatusId,
         candidateInterviewStatusId,
         interviewScheduleDateStart,
-        interviewScheduleDateEnd
+        interviewScheduleDateEnd,
+        viewAllCompanyJobs = false
       }) => {
         let recommendedStatus = "";
         let isCandidate = "";
@@ -142,11 +145,11 @@ function createExtraActions() {
         }
         if (jobId !== undefined) {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}${actionBy}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
           );
         } else {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}${actionBy}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
           );
         }
       }
@@ -210,6 +213,14 @@ function createExtraActions() {
         await fetchWrapper.get(
           `${newUrl}/Common/GetCommonDropdown?searchText=duration`
         )
+    );
+  }
+
+  function getPromptMessage() {
+    return createAsyncThunk(
+      `${name}/getPromptMessage`,
+      async () =>
+        await fetchWrapper.get(`${newUrl}/Common/GetCommonDropdown?searchText=PromptMessageForInterview`)
     );
   }
 
@@ -299,10 +310,10 @@ function createExtraActions() {
   function getCandidateCardCount() {
     return createAsyncThunk(
       `${name}/getReportBySP`,
-      async ({ jobId, userId, searchText }) => {
+      async ({ jobId, userId, searchText, viewAllCompanyJobs = false }) => {
         const jobIdToUse = (jobId === undefined || jobId === null || jobId === "") ? null : jobId;
-
-        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId},@searchText='${searchText}'`;
+        const userIdToUse = (userId === undefined || userId === null || userId === "") ? null : userId;
+        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userIdToUse},@searchText='${searchText}',@viewAllCompanyJobs=${viewAllCompanyJobs ? 1 : 0}`;
         return await fetchWrapper.get(REPORT_API_URL);
       }
     );
@@ -383,6 +394,7 @@ function createExtraReducers() {
     getCustOfferHistory();
     getofferLetterTemplate();
     getInterviewSlots();
+    getPromptMessage();
     getCandidateCardCount(); // Register the new report action
     getPresentedCandidateLists();
     putPresentCandidate();
@@ -642,6 +654,20 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           state.interviewSlots = [];
+        });
+    }
+
+    function getPromptMessage() {
+      let { pending, fulfilled, rejected } = extraActions.getPromptMessage;
+      builder
+        .addCase(pending, (state) => {
+          
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.promptMessageTemplate = action?.payload?.data ? action.payload.data : [];
+        })
+        .addCase(rejected, (state, action) => {
+          state.promptMessageTemplate = [];
         });
     }
 

@@ -5,12 +5,16 @@ export const fetchWrapper = {
   post: request("POST"),
   put: request("PUT"),
   delete: request("DELETE"),
+  postForm: requestForm("POST"),
+  putForm: requestForm("PUT"),
 };
 
 const memoryCache = {};
 const inflightRequests = {};
 const EXCLUDED_DROPDOWN_KEYS = [
   'userListByCompany',
+  'assignUserListByCompany',
+  'allUserListByCompany',
   'ScheduledCandidatesForCustomer',
   'ScheduledCandidateListByUserId',
 ];
@@ -80,6 +84,18 @@ function request(method) {
   };
 }
 
+
+function requestForm(method) {
+  return (url, formData) => {
+    url = url.replace('api//', 'api/');
+    const requestOptions = {
+      method,
+      headers: authHeader(url),
+      body: formData,
+    };
+    return fetch(url, requestOptions).then(handleResponse);
+  };
+}
 
 // helper functions
 

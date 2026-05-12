@@ -8,6 +8,9 @@ env:
   HEAD_BRANCH: presentation-branch
   BASE_BRANCHES: |
     prod-deployment-latest
+    openworx-uat
+    openworx-deploy
+    openworx-demo-env
 
 jobs:
   create-pull-requests:

@@ -26,7 +26,8 @@ import {
   scheduleInterviewActions,
   graphActions,
   getJobDetail,
-  getHiringMangersList
+  getHiringMangersList,
+  dropdownActions
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { getTimezoneDateTime } from "_helpers/helper";
@@ -43,6 +44,8 @@ import { use, useRef } from "react";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { setSeeAllHiringManagerJobs } from "_store/commonCustFiltersSlice";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -84,6 +87,7 @@ export function ScheduleInterview({ fromDashboard }) {
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(getHiringMangersList({ companyId: Number(localStorage.getItem("companyid")), endpoint: 'assignUserListByCompany' }));
+    dispatch(dropdownActions.getInterviewRoundListThunk({ searchText: "interviewRound", commonId: 0, searchBy: "" }));
 
   }, []);
   const onSelectClick = (evt) => {
@@ -115,8 +119,20 @@ export function ScheduleInterview({ fromDashboard }) {
   const hiringManagerDownList = useSelector(
     (state) => state?.customerReportReducer?.assignHiringManagers
   );
+  const allCompanyHiringManagers = useSelector(
+    (state) => state?.customerReportReducer?.companyHiringManagers || []
+  );
+  const seeAllHiringManagerJobs = useSelector(
+    (state) => state?.commonCustFilters?.seeAllHiringManagerJobs
+  );
+  const isCompanyAdmin = Number(localStorage.getItem("userroleid")) === 4 ||
+    localStorage.getItem("isCompanyAdmin") === "true";
+
+  const activeHiringManagerList = seeAllHiringManagerJobs
+    ? allCompanyHiringManagers
+    : hiringManagerDownList;
   const getUpdatedScheduleList = () => {
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     getUpcomingData({
@@ -124,6 +140,7 @@ export function ScheduleInterview({ fromDashboard }) {
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
       userList: hiringManagerId === undefined ? '' : hiringManagerId.toString(),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -131,6 +148,17 @@ export function ScheduleInterview({ fromDashboard }) {
       moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
+
+  const handleSeeAllToggle = (e) => {
+    const isOn = e.target.checked;
+    const companyId = Number(localStorage.getItem("companyid"));
+    dispatch(setSeeAllHiringManagerJobs(isOn));
+    setHiringManagerId(Number(localStorage.getItem("userId")));
+    if (isOn) {
+      dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+    }
+  };
+
   const getUpcomingData = async function (filterdata) {
     await dispatch(
       scheduleInterviewActions.getUpcomingInterviewListThunk(filterdata)
@@ -290,7 +318,7 @@ export function ScheduleInterview({ fromDashboard }) {
         autoCloseDelay: 2000,
         maxWidth: 500,
       }));
-      dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+      dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     }
     // setUpdateSuccess(true);
 
@@ -333,7 +361,8 @@ export function ScheduleInterview({ fromDashboard }) {
       pageNo: page,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString()
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString(),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     };
     getUpcomingData(filterOnPageChange);
     setSelectedJobData({});
@@ -341,7 +370,7 @@ export function ScheduleInterview({ fromDashboard }) {
 
   const onCloseIdModal = () => {
     setOpenModal(false);
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
   };
   const handleSelectEvent = useCallback((event) => {
     if (event.data.isclosed === false) {
@@ -375,12 +404,13 @@ export function ScheduleInterview({ fromDashboard }) {
         notesdata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-      userList: ""
+      userList: "",
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -402,11 +432,12 @@ export function ScheduleInterview({ fromDashboard }) {
         invitedata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -432,11 +463,12 @@ export function ScheduleInterview({ fromDashboard }) {
       })
     );
     onCloseIdModal();
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      viewAllCompanyJobs: seeAllHiringManagerJobs,
     });
     getCandidateList(
       selectedJobId,
@@ -579,29 +611,64 @@ export function ScheduleInterview({ fromDashboard }) {
   };
   const postFeedbackData = async (event) => {
     let scheduleinterviewid = event.scheduleinterviewid;
-    let payload = event;
-    await dispatch(
-      scheduleInterviewActions.interviewFeedbackThunk({
-        scheduleinterviewid,
-        payload,
-      })
+
+    // Detect external-member feedback by presence of name/email or explicit flag
+    const isExternalSubmission = !!(
+      event?.Name || event?.name || event?.Email || event?.email || event?.isExternal
     );
-    await dispatch(
-      scheduleInterviewActions.feedback({
-        scheduleInterviewList: candidateList,
-        upcomingInterviewList: upcomingInterviews?.scheduledInterviewList,
-        allInterviewList: allInterviews,
-        scheduleinterviewid: scheduleinterviewid,
-        interviewstatusid: event.interviewstatusid,
-        interviewfeedback: event.interviewfeedback,
-      })
-    );
+
+    if (isExternalSubmission) {
+      const name = event?.Name || event?.name || localStorage.getItem("externalMemberName") || localStorage.getItem("externalName") || "";
+      const email = event?.Email || event?.email || localStorage.getItem("externalMemberEmail") || localStorage.getItem("externalEmail") || "";
+      const feedbackText = event?.interviewfeedback || event?.interviewFeedback || event?.interviewfeedbacktext || "";
+
+      const externalPayload = {
+        Scheduleinterviewid: Number(scheduleinterviewid),
+        Interviewstatusid: event?.interviewstatusid || null,
+        Name: name,
+        Email: email,
+        Feedback: feedbackText,
+      };
+
+      await dispatch(
+        scheduleInterviewActions.postExternalMemberInterviewFeedbackThunk(externalPayload)
+      );
+
+      await dispatch(
+        scheduleInterviewActions.feedback({
+          scheduleInterviewList: candidateList,
+          upcomingInterviewList: upcomingInterviews?.scheduledInterviewList,
+          allInterviewList: allInterviews,
+          scheduleinterviewid: scheduleinterviewid,
+          interviewstatusid: event.interviewstatusid,
+          interviewfeedback: feedbackText,
+        })
+      );
+    } else {
+      let payload = event;
+      await dispatch(
+        scheduleInterviewActions.interviewFeedbackThunk({
+          scheduleinterviewid,
+          payload,
+        })
+      );
+      await dispatch(
+        scheduleInterviewActions.feedback({
+          scheduleInterviewList: candidateList,
+          upcomingInterviewList: upcomingInterviews?.scheduledInterviewList,
+          allInterviewList: allInterviews,
+          scheduleinterviewid: scheduleinterviewid,
+          interviewstatusid: event.interviewstatusid,
+          interviewfeedback: event.interviewfeedback,
+        })
+      );
+    }
   };
 
   useEffect(() => {
     upData = [];
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
-  }, [dispatch, hiringManagerId]);
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
+  }, [dispatch, hiringManagerId, seeAllHiringManagerJobs]);
 
   const hiringManagerIdRef = useRef(hiringManagerId);
   useEffect(() => {
@@ -684,7 +751,7 @@ export function ScheduleInterview({ fromDashboard }) {
             autoCloseDelay: 3000,
             maxWidth: 500,
           }));
-          dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+          dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
           //props.updateList();
         } else {
           dispatch(showSnackbar({
@@ -707,7 +774,7 @@ export function ScheduleInterview({ fromDashboard }) {
   };
 
   const closeOfferModal = () => {
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
   }
 
   return (
@@ -835,29 +902,49 @@ export function ScheduleInterview({ fromDashboard }) {
                 md={4}
                 lg={4}
                 xl={4}
-                className="mb-3 right-align"
-              >  <Input
-                type="select"
-                title="Hiring Manger"
-                value={hiringManagerId}
-                name="hiringmanagerId"
-                id="hiringmanagerId"
-                placeholder="Hiring Manger"
-                style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
-                onChange={(e) => {
-                  console.log("Selected:", e.target.value);
-                  setHiringManagerId(Number(e.target.value));
-                }}
+                className="mb-3"
               >
-                  <option value={""}>Select a Hiring Manger</option>
-                  {hiringManagerDownList?.length > 0 ? (
-                    hiringManagerDownList.map((data) => (
-                      <option value={data.id} key={data.id}>
-                        {data.name}
-                      </option>
-                    ))
-                  ) : null}
-                </Input></Col>)}
+                <div className="d-flex align-items-center justify-content-end gap-2">
+                  {isCompanyAdmin && (
+                    <div className="form-check form-switch mb-0 form-switch-lg">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="seeAllHMToggleCalendar"
+                        checked={seeAllHiringManagerJobs}
+                        onChange={handleSeeAllToggle}
+                      />
+                      <SafeUncontrolledTooltip
+                        placement="top"
+                        target="seeAllHMToggleCalendar"
+                      >
+                        See all hiring managers jobs
+                      </SafeUncontrolledTooltip>
+                    </div>
+                  )}
+                  <Input
+                    type="select"
+                    title="Hiring Manger"
+                    value={hiringManagerId}
+                    name="hiringmanagerId"
+                    id="hiringmanagerId"
+                    placeholder="Hiring Manger"
+                    style={{ minWidth: 200, maxWidth: 220 }}
+                    onChange={(e) => {
+                      setHiringManagerId(Number(e.target.value));
+                    }}
+                  >
+                    <option value={""}>Select a Hiring Manger</option>
+                    {activeHiringManagerList?.length > 0 ? (
+                      activeHiringManagerList.map((data) => (
+                        <option value={data.id} key={data.id}>
+                          {data.name}
+                        </option>
+                      ))
+                    ) : null}
+                  </Input>
+                </div>
+              </Col>)}
             </Row>
 
             {toggleVar === "availabilty" && (

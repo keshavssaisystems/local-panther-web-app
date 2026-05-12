@@ -179,7 +179,8 @@ const candidateDashboardSlice = createSlice({
     },
     [getAlerts.pending]: (state) => {
       state.alertsLoader = true;
-      state.alertsList = [];
+      // Do not clear alertsList here — it causes double renders on all
+      // subscribers and flickers notification counts while polling.
     },
     [getAlerts.fulfilled]: (state, action) => {
       state.alertsList = action.payload.data;
