@@ -60,6 +60,7 @@ import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
 import { assign } from "lodash";
 import AddClient from "_containers/customer/atscompanylist/addclient";
+import axios from "axios";
 
 export const CreateJob = forwardRef(
   (
@@ -1349,9 +1350,76 @@ export const CreateJob = forwardRef(
     const locationZipCode = useSelector(
       (state) => state.location?.location[0]?.name
     );
+    const extractSkillsFromJDDebounced = useCallback(
+      debounce((description) => {
+        extractSkillsFromJD(description);
+      }, 1500),
+      []
+    );
+
     const setupDescriptionData = (event) => {
       setDescriptionData(event);
       setDescriptionValidation(false);
+      extractSkillsFromJDDebounced(event);
+    };
+
+    const extractSkillsFromJD = async (description) => {
+      if (!description || description.trim() === "") {
+        setKeyQual1([]);
+        setPrevKey([]);
+        setKeyQual2([]);
+        setPrevKey2([]);
+        return;
+      }
+      try {
+        const authData = localStorage.getItem("token") || "";
+        const baseURI = `${process.env.REACT_APP_AI_JD}`;
+        const config = {
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${authData}`,
+          },
+        };
+        const payload = { description };
+        const response = await axios.post(
+          `${baseURI}/extract_skills_from_jd`,
+          payload,
+          config
+        );
+        console.log("[extractSkillsFromJD] API response:", response.data);
+
+        const { Status, must_have_skills_data = [], nice_to_have_skills_data = [] } = response.data;
+        if (Status !== "Success") return;
+
+        // Map to the { value: "skillid, skillname", label: "skillname" } format used by the form
+        const toSkillOption = ({ skillid, skillname }) => ({
+          value: `${skillid}, ${skillname}`,
+          label: skillname,
+        });
+
+        const mustHave = must_have_skills_data
+          .filter((s) => s.skillname && s.skillname.trim() !== "")
+          .map(toSkillOption);
+
+        const niceToHave = nice_to_have_skills_data
+          .filter((s) => s.skillname && s.skillname.trim() !== "")
+          .map(toSkillOption);
+
+        if (mustHave.length > 0) {
+          setKeyQual1(mustHave);
+          setPrevKey(mustHave);
+          setMustHaveValidation(false);
+          setKeyQualifucationChange(true);
+        }
+
+        if (niceToHave.length > 0) {
+          setKeyQual2(niceToHave);
+          setPrevKey2(niceToHave);
+          setKeyQualifucationChange(true);
+        }
+      } catch (error) {
+        console.error("[extractSkillsFromJD] API error:", error);
+      }
     };
     const getEducationFormData = (eventData) => {
       let postEducationData = [];
