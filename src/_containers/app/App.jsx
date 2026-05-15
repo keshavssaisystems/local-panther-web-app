@@ -47,6 +47,7 @@ const Notifications = React.lazy(() => import("_containers/notifications/notific
 const AtsUnified = React.lazy(() => import("_components/unifiedApp/atsUnified"));
 const ATSCandidateList = React.lazy(() => import("_containers/customer/atscustomercandidatelist/atscandidatelist"));
 const ATSGenericList = React.lazy(() => import("_containers/generic/atsgeneric"));
+const OAuthSuccess = React.lazy(() => import("_containers/generic/oauthSuccess"));
 const ChatInterface = React.lazy(() => import("_containers/common/chats/chatInterface").then(m => ({ default: m.ChatInterface })));
 
 const CandidateSchedules = React.lazy(() => import("_containers/candidate/calendar/candidateSchedules").then(m => ({ default: m.CandidateSchedules }))
@@ -70,7 +71,6 @@ const AIJobOffCanvas = React.lazy(() =>
 const Support = React.lazy(() => import("_containers/static/support"));
 const PrivacyPolicy = React.lazy(() => import("_containers/static/privacy"));
 const TermsAndConditions = React.lazy(() => import("_containers/static/terms"));
-const BuildInfo = React.lazy(() => import("_components/common/BuildInfo"));
 const ForgotPassword = React.lazy(() =>
   import("_containers/forgotpassword/forgotPassword")
 );
@@ -236,7 +236,7 @@ export function App() {
   history.navigate = useNavigate();
   const location = useLocation();
   history.location = useLocation();
-  const excludedPaths = ["/terms", "/privacy", "/contact", "/support"];
+  const excludedPaths = ["/terms", "/privacy", "/contact", "/support", "/oauth-success"];
   const isExcludedPath = excludedPaths.includes(location.pathname);
   console.log(isExcludedPath);
   useEffect(() => {
@@ -970,6 +970,7 @@ export function App() {
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsAndConditions />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/oauth-success" element={<OAuthSuccess />} />
             </Routes>
           </>
         ) : (
@@ -1005,7 +1006,6 @@ export function App() {
                   <EnhancedSnackbar />
                   <Routes forceRefresh={true}>
                     {renderRoutes(userroleid)}
-                    <Route path="/build-info" element={<BuildInfo />} />
                     <Route
                       path="/security"
                       element={
