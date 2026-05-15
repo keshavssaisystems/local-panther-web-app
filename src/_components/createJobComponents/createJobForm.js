@@ -59,6 +59,7 @@ import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
 import { assign } from "lodash";
+import AddClient from "_containers/customer/atscompanylist/addclient";
 
 export const CreateJob = forwardRef(
   (
@@ -358,6 +359,7 @@ export const CreateJob = forwardRef(
     const [assignedToValue, setAssignedToValue] = useState(null);
     const [clientCompanyOptions, setClientCompanyOptions] = useState([]);
     const [clientCompanyValue, setClientCompanyValue] = useState(null);
+    const [showAddClientCompany, setShowAddClientCompany] = useState(false);
     const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
     const [hiringManagerValue, setHiringManagerValue] = useState(null);
     const [defaultHiringManagerValue, setDefaultHiringManagerValue] = useState(null);
@@ -2131,6 +2133,13 @@ export const CreateJob = forwardRef(
                             <FormGroup>
                               <Label className="fw-semi-bold">
                                 Client company<span style={{ color: "red" }}>* </span>
+                                <a
+                                  className="float-end ms-2" 
+                                  href="#"
+                                  onClick={(e) => { e.preventDefault(); setShowAddClientCompany(true); }}
+                                >
+                                  +Add Client Company
+                                </a>
                               </Label>
                               <AsyncSelect
                                 name={"clientCompany"}
@@ -3637,6 +3646,11 @@ export const CreateJob = forwardRef(
             </Button>
           </Form>
         </div>
+        <AddClient
+          isOpen={showAddClientCompany}
+          onClose={() => setShowAddClientCompany(false)}
+          onSuccess={() => getClientCompany("")}
+        />
       </>
     );
   }
