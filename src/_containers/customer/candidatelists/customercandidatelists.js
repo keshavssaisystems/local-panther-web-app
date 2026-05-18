@@ -92,7 +92,7 @@ export default function CustomerCandidateLists(props) {
   // const [searchText, setSearchText] = useState("");
   // const [actionbyId, setActionbyId] = useState();
   // const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
-  const { searchText, hiringManagerId, interviewFeedbackStatusId, startDate, endDate, seeAllHiringManagerJobs } = useSelector(
+  const { selectedOpt, searchText, hiringManagerId, interviewFeedbackStatusId, startDate, endDate, seeAllHiringManagerJobs } = useSelector(
     (state) => state.commonCustFilters
   );
 
@@ -262,7 +262,7 @@ export default function CustomerCandidateLists(props) {
   // userId param lets callers bypass the Redux hiringManagerId timing gap
   // (e.g. when jobPostedbyId from URL is known before Redux is updated)
   const onGetCandidatesCount = (id, clearText = false, userId = null) => {
-    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: userId || hiringManagerId, searchText: clearText ? "" : searchText ? searchText : "", viewAllCompanyJobs: seeAllHiringManagerJobs }));
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: userId || hiringManagerId, searchText: clearText ? "" : searchText ? searchText : "", searchType: clearText ? "" : selectedOpt, viewAllCompanyJobs: seeAllHiringManagerJobs }));
   }
 
   const onGetPageList = (pageNo, type, id, clearText = false, userId = null) => {
@@ -273,6 +273,7 @@ export default function CustomerCandidateLists(props) {
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
       searchText: clearText ? "" : searchText ? searchText : "",
+      searchType: selectedOpt,
       actionbyId,
       viewAllCompanyJobs: seeAllHiringManagerJobs
     };
@@ -555,6 +556,7 @@ export default function CustomerCandidateLists(props) {
       customerRecommendedJobStatusId: returnStatusId(activeTab),
       jobId: id || "",
       searchText: searchText ? searchText : "",
+      searchType: selectedOpt,
       actionbyId: hiringManagerId,
       interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
       candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
@@ -586,6 +588,7 @@ export default function CustomerCandidateLists(props) {
       customerRecommendedJobStatusId: returnStatusId(activeTab),
       jobId: id || "",
       searchText: searchText ? searchText : "",
+      searchType: selectedOpt,
       actionbyId: hiringManagerId
     };
 
@@ -642,6 +645,7 @@ export default function CustomerCandidateLists(props) {
       customerRecommendedJobStatusId: returnStatusId(activeTab),
       jobId: id || "",
       searchText: searchText ? searchText : "",
+      searchType: selectedOpt,
       actionbyId: hiringManagerId,
       interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
       candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
@@ -660,6 +664,7 @@ export default function CustomerCandidateLists(props) {
       customerRecommendedJobStatusId: returnStatusId(activeTab),
       jobId: id || "",
       searchText: searchText ? searchText : "",
+      searchType: selectedOpt,
       actionbyId: hiringManagerId,
       interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
       candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
