@@ -92,7 +92,9 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         const placeholderText =
             value === "JobTitle"
                 ? "Search job title"
-                : "Search " + value.toLowerCase();
+                : value === "ClientCompany"
+                    ? "Search client company"
+                    : "Search " + value.toLowerCase();
         dispatch(setPlaceHolder(placeholderText));
     };
 
@@ -226,7 +228,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
             <Card className="main-card mb-3 card-filter filter-toolbar">
                 <CardBody>
                     <div className="filter-toolbar-inner">
-                        <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "8px" }}>
                             Filters:
                             {/* See All Hiring Managers Jobs Toggle — only visible to company admins */}
                             {showSeeAllHMToggle && (
