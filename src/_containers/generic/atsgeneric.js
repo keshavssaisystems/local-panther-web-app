@@ -13,7 +13,7 @@ import {
 
 } from "reactstrap";
 
-import { fetchATSGenericList } from "_store/atsgeneric.slice";
+import { fetchATSGenericList, setATSDefault } from "_store/atsgeneric.slice";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atsgeneric.css"; 
@@ -22,7 +22,6 @@ import { useLocation } from "react-router-dom";
 import AddClient from "_containers/customer/atscompanylist/addclient";
 
 function ATSGenericList() {
-    console.log("ATS Hiring Contact List component rendered");
     let isCompanyAdmin = true;
 
     const icon = "mdi mdi-account-multiple-outline";
@@ -50,14 +49,23 @@ function ATSGenericList() {
     const title =  titleMap[path] || "ATS";
     //for entity
     const entityMap = {
-      "ats/atscompany": "atscompany",
-      "ats/atscontact": "atscontact",
-      "ats/atsassignee":"atsassignee",
+      "/ats/atscompany": "atscompany",
+      "/ats/atscontact": "atscontact",
+      "/ats/atsassignee": "atsassignee",
     };
     let entity = entityMap[path];
 
+    // config for Set_ATS_Default endpoint per entity
+    const defaultEntityConfig = {
+      "/ats/atscompany":  { entityType: "ClientCompany", pkField: "pkatscompanyid",       rowField: "ID" },
+      "/ats/atscontact":  { entityType: "Contact",       pkField: "hiringmanagercontactid", rowField: "hiringmanagercontactid" },
+      "/ats/atsassignee": { entityType: "AssignedTo",    pkField: "employeeassignedusersid", rowField: "employeeassignedusersid" },
+    };
+    const entityConfig = defaultEntityConfig[path];
+
     //add user
     const [showAddClient, setShowAddClient] = useState(false);
+    const [togglingId, setTogglingId] = useState(null);
 
     
     // pagination state
@@ -69,16 +77,67 @@ function ATSGenericList() {
     const setSearchText = (text) => {
         setSearchData(text);
     };
-    const generateColumns = (rows,headerWidths={}) => {
+    const generateColumns = (rows, headerWidths = {}) => {
         if (!rows || rows.length === 0) return [];
 
         const sample = rows[0]; // take first row keys
+        // Only render columns that BE explicitly declared in the header widths config.
+        // This automatically hides PK fields (e.g. hiringmanagercontactid) and any
+        // other internal fields that have no width entry.
+        // 'is_default' is handled inline with a toggle cell renderer.
 
-        return Object.keys(sample).map((key) => {
-            const width = headerWidths[key]; // setwidth from api
-            return {
-                     name: key.replace(/([A-Z])/g, "$1")       // convert camelCase 
-                        .replace(/_/g, " ")              // convert snake_case
+        return Object.keys(sample)
+            .filter((key) => headerWidths.hasOwnProperty(key))
+            .map((key) => {
+                const width = headerWidths[key];
+
+                if (key === "is_default") {
+                    return {
+                        name: "Is Default",
+                        selector: (row) => row.is_default,
+                        cell: (row) => {
+                            const pkValue = row[entityConfig?.rowField];
+                            const isActive = !!row.is_default;
+                            const isToggling = togglingId === pkValue;
+                            return (
+                                <div
+                                    onClick={() => !isToggling && handleToggleDefault(row)}
+                                    title={isActive ? "Default" : "Set as Default"}
+                                    style={{
+                                        width: "40px",
+                                        height: "20px",
+                                        borderRadius: "10px",
+                                        background: isActive ? "#2f479b" : "#ccc",
+                                        position: "relative",
+                                        cursor: isToggling ? "not-allowed" : "pointer",
+                                        transition: "background 0.2s",
+                                        opacity: isToggling ? 0.5 : 1,
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    <div style={{
+                                        position: "absolute",
+                                        top: "2px",
+                                        left: isActive ? "22px" : "2px",
+                                        width: "16px",
+                                        height: "16px",
+                                        borderRadius: "50%",
+                                        background: "#fff",
+                                        transition: "left 0.2s",
+                                    }} />
+                                </div>
+                            );
+                        },
+                        wrap: false,
+                        sortable: false,
+                        width: width ? `${width}%` : "auto",
+                        center: true,
+                    };
+                }
+
+                return {
+                    name: key.replace(/([A-Z])/g, "$1")       // convert camelCase
+                        .replace(/_/g, " ")                   // convert snake_case
                         .replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize words
                     selector: (row) => {
                         if (key === "isactive") {
@@ -86,14 +145,30 @@ function ATSGenericList() {
                         }
                         return row[key] ?? "-";
                     },
-                    
-                     wrap :true,
-                     sortable: true ,
-                     width: width ? `${width}%` : "auto"
-            }
-        });
-    };  
-     const dynamicColumns = generateColumns(data,header);
+                    wrap: true,
+                    sortable: true,
+                    width: width ? `${width}%` : "auto",
+                };
+            });
+    };
+
+    const handleToggleDefault = async (row) => {
+        if (!entityConfig) return;
+        const { entityType, pkField, rowField } = entityConfig;
+        const pkValue = row[rowField];
+        if (pkValue === undefined || pkValue === null) return;
+        setTogglingId(pkValue);
+        try {
+            await dispatch(setATSDefault({ entityType, pkField, pkValue }));
+            fetchData(currentPage, perPage, statusFilter, searchData);
+        } catch (err) {
+            // silent
+        } finally {
+            setTogglingId(null);
+        }
+    };
+
+    const columns = generateColumns(data, header);
    // fetch helper - requests server with paging params and updates local totalRows
     const fetchData =async (page = 1, pageSize = perPage, statusFilter, searchText = "") => {
          try {
@@ -103,11 +178,10 @@ function ATSGenericList() {
                 currentpage: page,
                 PageSize: pageSize,
                 };
-                await dispatch(fetchATSGenericList({endpoint,params}));
+                const result = await dispatch(fetchATSGenericList({endpoint,params}));
                 
             } 
             catch (error) {
-                    console.error("ATS Hiring Contact list fetch failed", error);
             }
 };
 
@@ -148,6 +222,13 @@ function ATSGenericList() {
                 fontFamily: "Capitana",
                 fontSize: "16px",
                 fontWeight: "400",
+            },
+        },
+        cells: {
+            style: {
+                padding: "8px 16px",
+                display: "flex",
+                alignItems: "center",
             },
         },
     };
@@ -246,7 +327,7 @@ function ATSGenericList() {
                                     
                                     <DataTable
                                         data={data}
-                                        columns={dynamicColumns}
+                                        columns={columns}
                                         pagination
                                         paginationServer
                                         paginationTotalRows={totalRows}

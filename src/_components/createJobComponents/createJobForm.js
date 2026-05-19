@@ -293,7 +293,34 @@ export const CreateJob = forwardRef(
           value: recruiterDto?.id,
           label: recruiterDto?.name,
         };
-        if (found1) setAssignedToValue(found1);
+        if (found1) {
+          setAssignedToValue(found1);
+          setDefaultAssignedToValue(found1);
+        }
+      } else if (customerDetails?.isatsenable === true) {
+        const companyIdForDefault =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "AssignedTo",
+            commonId: companyIdForDefault,
+            searchBy: "",
+          })
+        ).then((response) => {
+          const users =
+            response?.payload?.data ||
+            response?.payload?.data?.data ||
+            response?.payload ||
+            [];
+          const options = (users || []).map((u) => ({ value: u.id, label: u.name }));
+          setAssignedToUserOptions(options);
+          if (options.length > 0) {
+            const defaultUser = users.find((u) => u.is_default === true) || users[0];
+            const defaultOption = { value: defaultUser.id, label: defaultUser.name };
+            setAssignedToValue(defaultOption);
+            setDefaultAssignedToValue(defaultOption);
+          }
+        });
       }
 
       const clientCompanyDto =
@@ -308,7 +335,34 @@ export const CreateJob = forwardRef(
           value: clientCompanyDto?.id,
           label: clientCompanyDto?.name,
         };
-        if (found) setClientCompanyValue(found);
+        if (found) {
+          setClientCompanyValue(found);
+          setDefaultClientCompanyValue(found);
+        }
+      } else if (customerDetails?.isatsenable === true) {
+        const companyIdForDefault =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "ClientCompany",
+            commonId: companyIdForDefault,
+            searchBy: "",
+          })
+        ).then((response) => {
+          const companies =
+            response?.payload?.data ||
+            response?.payload?.data?.data ||
+            response?.payload ||
+            [];
+          const options = (companies || []).map((c) => ({ value: c.id, label: c.name }));
+          setClientCompanyOptions(options);
+          if (options.length > 0) {
+            const defaultCompany = companies.find((c) => c.is_default === true) || companies[0];
+            const defaultOption = { value: defaultCompany.id, label: defaultCompany.name };
+            setClientCompanyValue(defaultOption);
+            setDefaultClientCompanyValue(defaultOption);
+          }
+        });
       }
 
     }, []);
@@ -358,8 +412,12 @@ export const CreateJob = forwardRef(
     const [niceToHaveSkills, setNiceToHaveSkills] = useState([]);
     const [assignedToUserOptions, setAssignedToUserOptions] = useState([]);
     const [assignedToValue, setAssignedToValue] = useState(null);
+    const [defaultAssignedToValue, setDefaultAssignedToValue] = useState(null);
+    const [assignedToInputDirty, setAssignedToInputDirty] = useState(false);
     const [clientCompanyOptions, setClientCompanyOptions] = useState([]);
     const [clientCompanyValue, setClientCompanyValue] = useState(null);
+    const [defaultClientCompanyValue, setDefaultClientCompanyValue] = useState(null);
+    const [clientCompanyInputDirty, setClientCompanyInputDirty] = useState(false);
     const [showAddClientCompany, setShowAddClientCompany] = useState(false);
     const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
     const [hiringManagerValue, setHiringManagerValue] = useState(null);
@@ -2219,9 +2277,21 @@ export const CreateJob = forwardRef(
                                 onChange={(val) => {
                                   setClientCompanyValue(val);
                                   setClientCompanyValidation(false);
-                                  // if you need to persist selection to the form submission,
-                                  // write the selected id into a hidden input or local state used by saveData
-                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                  setClientCompanyInputDirty(false);
+                                }}
+                                onMenuOpen={() => {
+                                  setClientCompanyInputDirty(false);
+                                }}
+                                onInputChange={(val) => {
+                                  if (val) setClientCompanyInputDirty(true);
+                                }}
+                                onMenuClose={() => {
+                                  if (defaultClientCompanyValue) {
+                                    if (clientCompanyInputDirty || !clientCompanyValue) {
+                                      setClientCompanyValue(defaultClientCompanyValue);
+                                    }
+                                  }
+                                  setClientCompanyInputDirty(false);
                                 }}
                                 isMulti={false}
                                 styles={customStyles}
@@ -2559,9 +2629,21 @@ export const CreateJob = forwardRef(
                               onChange={(val) => {
                                 setAssignedToValue(val);
                                 setRecruiterIdValidation(false);
-                                // if you need to persist selection to the form submission,
-                                // write the selected id into a hidden input or local state used by saveData
-                                // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                setAssignedToInputDirty(false);
+                              }}
+                              onMenuOpen={() => {
+                                setAssignedToInputDirty(false);
+                              }}
+                              onInputChange={(val) => {
+                                if (val) setAssignedToInputDirty(true);
+                              }}
+                              onMenuClose={() => {
+                                if (defaultAssignedToValue) {
+                                  if (assignedToInputDirty || !assignedToValue) {
+                                    setAssignedToValue(defaultAssignedToValue);
+                                  }
+                                }
+                                setAssignedToInputDirty(false);
                               }}
                               isMulti={false}
                               styles={customStyles}
