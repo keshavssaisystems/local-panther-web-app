@@ -32,3 +32,17 @@
   left: 215px !important;
   top: 18px !important;
 }
+
+/* Neutralise Bootstrap form-switch spacing inside DataTable cells so the
+   toggle column looks visually consistent with plain-text columns */
+.rdt_TableCell .form-switch {
+  margin-bottom: 0;
+  padding-left: 2.5em;
+  display: flex;
+  align-items: center;
+}
+
+.rdt_TableCell .form-switch .form-check-input {
+  margin-left: -2.5em;
+  flex-shrink: 0;
+}
