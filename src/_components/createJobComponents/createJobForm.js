@@ -339,30 +339,35 @@ export const CreateJob = forwardRef(
           setClientCompanyValue(found);
           setDefaultClientCompanyValue(found);
         }
-      } else if (customerDetails?.isatsenable === true) {
-        const companyIdForDefault =
-          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
-        dispatch(
-          dropdownActions.getDropdownListThunk({
-            searchText: "ClientCompany",
-            commonId: companyIdForDefault,
-            searchBy: "",
-          })
-        ).then((response) => {
-          const companies =
-            response?.payload?.data ||
-            response?.payload?.data?.data ||
-            response?.payload ||
-            [];
-          const options = (companies || []).map((c) => ({ value: c.id, label: c.name }));
-          setClientCompanyOptions(options);
-          if (options.length > 0) {
-            const defaultCompany = companies.find((c) => c.is_default === true) || companies[0];
-            const defaultOption = { value: defaultCompany.id, label: defaultCompany.name };
-            setClientCompanyValue(defaultOption);
-            setDefaultClientCompanyValue(defaultOption);
-          }
-        });
+      } else {
+        const isStaffingFirmCheck = localStorage.getItem("companyList")
+          ? JSON.parse(localStorage.getItem("companyList"))?.some((c) => c.isstaffingfirm === true)
+          : false;
+        if (isStaffingFirmCheck) {
+          const companyIdForDefault =
+            Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+          dispatch(
+            dropdownActions.getDropdownListThunk({
+              searchText: "ClientCompany",
+              commonId: companyIdForDefault,
+              searchBy: "",
+            })
+          ).then((response) => {
+            const companies =
+              response?.payload?.data ||
+              response?.payload?.data?.data ||
+              response?.payload ||
+              [];
+            const options = (companies || []).map((c) => ({ value: c.id, label: c.name }));
+            setClientCompanyOptions(options);
+            if (options.length > 0) {
+              const defaultCompany = companies.find((c) => c.is_default === true) || companies[0];
+              const defaultOption = { value: defaultCompany.id, label: defaultCompany.name };
+              setClientCompanyValue(defaultOption);
+              setDefaultClientCompanyValue(defaultOption);
+            }
+          });
+        }
       }
 
     }, []);
@@ -1135,7 +1140,7 @@ export const CreateJob = forwardRef(
         event.target.elements.maximumAmount.value !== "" &&
         (event.target.elements.mustHave.value !== "" ||
           event.target.elements.mustHave?.length > 0) &&
-        (customerDetails?.isatsenable === true ? (event.target.elements.clientCompany.value !== "" ||
+        (isStaffingFirm === true ? (event.target.elements.clientCompany.value !== "" ||
           event.target.elements.clientCompany?.length > 0) : true) &&
         (customerDetails?.isatsenable === true ? (event.target.elements.recruiterid.value !== "" ||
           event.target.elements.recruiterid?.length > 0) : true)
