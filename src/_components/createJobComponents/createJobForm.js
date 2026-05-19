@@ -59,6 +59,8 @@ import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
 import { assign } from "lodash";
+import AddClient from "_containers/customer/atscompanylist/addclient";
+import axios from "axios";
 
 export const CreateJob = forwardRef(
   (
@@ -291,7 +293,34 @@ export const CreateJob = forwardRef(
           value: recruiterDto?.id,
           label: recruiterDto?.name,
         };
-        if (found1) setAssignedToValue(found1);
+        if (found1) {
+          setAssignedToValue(found1);
+          setDefaultAssignedToValue(found1);
+        }
+      } else if (customerDetails?.isatsenable === true) {
+        const companyIdForDefault =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "AssignedTo",
+            commonId: companyIdForDefault,
+            searchBy: "",
+          })
+        ).then((response) => {
+          const users =
+            response?.payload?.data ||
+            response?.payload?.data?.data ||
+            response?.payload ||
+            [];
+          const options = (users || []).map((u) => ({ value: u.id, label: u.name }));
+          setAssignedToUserOptions(options);
+          if (options.length > 0) {
+            const defaultUser = users.find((u) => u.is_default === true) || users[0];
+            const defaultOption = { value: defaultUser.id, label: defaultUser.name };
+            setAssignedToValue(defaultOption);
+            setDefaultAssignedToValue(defaultOption);
+          }
+        });
       }
 
       const clientCompanyDto =
@@ -306,7 +335,39 @@ export const CreateJob = forwardRef(
           value: clientCompanyDto?.id,
           label: clientCompanyDto?.name,
         };
-        if (found) setClientCompanyValue(found);
+        if (found) {
+          setClientCompanyValue(found);
+          setDefaultClientCompanyValue(found);
+        }
+      } else {
+        const isStaffingFirmCheck = localStorage.getItem("companyList")
+          ? JSON.parse(localStorage.getItem("companyList"))?.some((c) => c.isstaffingfirm === true)
+          : false;
+        if (isStaffingFirmCheck) {
+          const companyIdForDefault =
+            Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+          dispatch(
+            dropdownActions.getDropdownListThunk({
+              searchText: "ClientCompany",
+              commonId: companyIdForDefault,
+              searchBy: "",
+            })
+          ).then((response) => {
+            const companies =
+              response?.payload?.data ||
+              response?.payload?.data?.data ||
+              response?.payload ||
+              [];
+            const options = (companies || []).map((c) => ({ value: c.id, label: c.name }));
+            setClientCompanyOptions(options);
+            if (options.length > 0) {
+              const defaultCompany = companies.find((c) => c.is_default === true) || companies[0];
+              const defaultOption = { value: defaultCompany.id, label: defaultCompany.name };
+              setClientCompanyValue(defaultOption);
+              setDefaultClientCompanyValue(defaultOption);
+            }
+          });
+        }
       }
 
     }, []);
@@ -356,8 +417,13 @@ export const CreateJob = forwardRef(
     const [niceToHaveSkills, setNiceToHaveSkills] = useState([]);
     const [assignedToUserOptions, setAssignedToUserOptions] = useState([]);
     const [assignedToValue, setAssignedToValue] = useState(null);
+    const [defaultAssignedToValue, setDefaultAssignedToValue] = useState(null);
+    const [assignedToInputDirty, setAssignedToInputDirty] = useState(false);
     const [clientCompanyOptions, setClientCompanyOptions] = useState([]);
     const [clientCompanyValue, setClientCompanyValue] = useState(null);
+    const [defaultClientCompanyValue, setDefaultClientCompanyValue] = useState(null);
+    const [clientCompanyInputDirty, setClientCompanyInputDirty] = useState(false);
+    const [showAddClientCompany, setShowAddClientCompany] = useState(false);
     const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
     const [hiringManagerValue, setHiringManagerValue] = useState(null);
     const [defaultHiringManagerValue, setDefaultHiringManagerValue] = useState(null);
@@ -1074,7 +1140,7 @@ export const CreateJob = forwardRef(
         event.target.elements.maximumAmount.value !== "" &&
         (event.target.elements.mustHave.value !== "" ||
           event.target.elements.mustHave?.length > 0) &&
-        (customerDetails?.isatsenable === true ? (event.target.elements.clientCompany.value !== "" ||
+        (isStaffingFirm === true ? (event.target.elements.clientCompany.value !== "" ||
           event.target.elements.clientCompany?.length > 0) : true) &&
         (customerDetails?.isatsenable === true ? (event.target.elements.recruiterid.value !== "" ||
           event.target.elements.recruiterid?.length > 0) : true)
@@ -1347,9 +1413,76 @@ export const CreateJob = forwardRef(
     const locationZipCode = useSelector(
       (state) => state.location?.location[0]?.name
     );
+    const extractSkillsFromJDDebounced = useCallback(
+      debounce((description) => {
+        extractSkillsFromJD(description);
+      }, 1500),
+      []
+    );
+
     const setupDescriptionData = (event) => {
       setDescriptionData(event);
       setDescriptionValidation(false);
+      extractSkillsFromJDDebounced(event);
+    };
+
+    const extractSkillsFromJD = async (description) => {
+      if (!description || description.trim() === "") {
+        setKeyQual1([]);
+        setPrevKey([]);
+        setKeyQual2([]);
+        setPrevKey2([]);
+        return;
+      }
+      try {
+        const authData = localStorage.getItem("token") || "";
+        const baseURI = `${process.env.REACT_APP_AI_JD}`;
+        const config = {
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${authData}`,
+          },
+        };
+        const payload = { description };
+        const response = await axios.post(
+          `${baseURI}/extract_skills_from_jd`,
+          payload,
+          config
+        );
+        console.log("[extractSkillsFromJD] API response:", response.data);
+
+        const { Status, must_have_skills_data = [], nice_to_have_skills_data = [] } = response.data;
+        if (Status !== "Success") return;
+
+        // Map to the { value: "skillid, skillname", label: "skillname" } format used by the form
+        const toSkillOption = ({ skillid, skillname }) => ({
+          value: `${skillid}, ${skillname}`,
+          label: skillname,
+        });
+
+        const mustHave = must_have_skills_data
+          .filter((s) => s.skillname && s.skillname.trim() !== "")
+          .map(toSkillOption);
+
+        const niceToHave = nice_to_have_skills_data
+          .filter((s) => s.skillname && s.skillname.trim() !== "")
+          .map(toSkillOption);
+
+        if (mustHave.length > 0) {
+          setKeyQual1(mustHave);
+          setPrevKey(mustHave);
+          setMustHaveValidation(false);
+          setKeyQualifucationChange(true);
+        }
+
+        if (niceToHave.length > 0) {
+          setKeyQual2(niceToHave);
+          setPrevKey2(niceToHave);
+          setKeyQualifucationChange(true);
+        }
+      } catch (error) {
+        console.error("[extractSkillsFromJD] API error:", error);
+      }
     };
     const getEducationFormData = (eventData) => {
       let postEducationData = [];
@@ -2131,6 +2264,13 @@ export const CreateJob = forwardRef(
                             <FormGroup>
                               <Label className="fw-semi-bold">
                                 Client company<span style={{ color: "red" }}>* </span>
+                                <a
+                                  className="float-end ms-2" 
+                                  href="#"
+                                  onClick={(e) => { e.preventDefault(); setShowAddClientCompany(true); }}
+                                >
+                                  +Add Client Company
+                                </a>
                               </Label>
                               <AsyncSelect
                                 name={"clientCompany"}
@@ -2142,9 +2282,21 @@ export const CreateJob = forwardRef(
                                 onChange={(val) => {
                                   setClientCompanyValue(val);
                                   setClientCompanyValidation(false);
-                                  // if you need to persist selection to the form submission,
-                                  // write the selected id into a hidden input or local state used by saveData
-                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                  setClientCompanyInputDirty(false);
+                                }}
+                                onMenuOpen={() => {
+                                  setClientCompanyInputDirty(false);
+                                }}
+                                onInputChange={(val) => {
+                                  if (val) setClientCompanyInputDirty(true);
+                                }}
+                                onMenuClose={() => {
+                                  if (defaultClientCompanyValue) {
+                                    if (clientCompanyInputDirty || !clientCompanyValue) {
+                                      setClientCompanyValue(defaultClientCompanyValue);
+                                    }
+                                  }
+                                  setClientCompanyInputDirty(false);
                                 }}
                                 isMulti={false}
                                 styles={customStyles}
@@ -2482,9 +2634,21 @@ export const CreateJob = forwardRef(
                               onChange={(val) => {
                                 setAssignedToValue(val);
                                 setRecruiterIdValidation(false);
-                                // if you need to persist selection to the form submission,
-                                // write the selected id into a hidden input or local state used by saveData
-                                // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                setAssignedToInputDirty(false);
+                              }}
+                              onMenuOpen={() => {
+                                setAssignedToInputDirty(false);
+                              }}
+                              onInputChange={(val) => {
+                                if (val) setAssignedToInputDirty(true);
+                              }}
+                              onMenuClose={() => {
+                                if (defaultAssignedToValue) {
+                                  if (assignedToInputDirty || !assignedToValue) {
+                                    setAssignedToValue(defaultAssignedToValue);
+                                  }
+                                }
+                                setAssignedToInputDirty(false);
                               }}
                               isMulti={false}
                               styles={customStyles}
@@ -3637,6 +3801,11 @@ export const CreateJob = forwardRef(
             </Button>
           </Form>
         </div>
+        <AddClient
+          isOpen={showAddClientCompany}
+          onClose={() => setShowAddClientCompany(false)}
+          onSuccess={() => getClientCompany("")}
+        />
       </>
     );
   }
