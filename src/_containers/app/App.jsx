@@ -236,7 +236,7 @@ export function App() {
   history.navigate = useNavigate();
   const location = useLocation();
   history.location = useLocation();
-  const excludedPaths = ["/terms", "/privacy", "/contact", "/support"];
+  const excludedPaths = ["/terms", "/privacy", "/contact"];
   const isExcludedPath = excludedPaths.includes(location.pathname);
   console.log(isExcludedPath);
   useEffect(() => {
@@ -476,7 +476,7 @@ export function App() {
           key={6}
         />
          <Route
-          path="/feedback"
+          path="/support"
           element={
             <PrivateRoute>
               <FeedBack />
@@ -784,7 +784,7 @@ export function App() {
           key={6}
         />
         <Route
-          path="/feedback"
+          path="/support"
           element={
             <PrivateRoute>
               <FeedBack />
@@ -916,7 +916,7 @@ export function App() {
           key={6}
         />
         <Route
-          path="/feedback"
+          path="/support"
           element={
             <PrivateRoute>
               <FeedBack />

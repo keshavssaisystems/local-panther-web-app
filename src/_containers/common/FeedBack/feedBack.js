@@ -121,6 +121,18 @@ const FeedBack = () => {
 ];
 
   if (userroleid === "1") {
+    columns.splice(0, 0,
+      {
+        name: "Submitter Name",
+        selector: (row) => row.submittername || "",
+        cell: (row) => <span title={row.submittername}>{row.submittername || "-"}</span>,
+      },
+      {
+        name: "Submitter Email",
+        selector: (row) => row.submitteremail || "",
+        cell: (row) => <span title={row.submitteremail}>{row.submitteremail || "-"}</span>,
+      }
+    );
     columns.push({
       name: "Add Response",
       cell: (row) => (
