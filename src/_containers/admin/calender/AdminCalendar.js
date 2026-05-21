@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageTitle from "../../../_components/common/pagetitle";
-
+import Select, { components } from "react-select";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import { ReactBigCalender } from "_widgets";
@@ -33,9 +33,11 @@ export function AdminCalendar({ title }) {
     (state) => state.adminReportReducer
   );
 
-  const { candidateList = [] } = useSelector(
+  const { candidateList = [], candidateListLoading, candidateListHasMore } = useSelector(
     (state) => state.adminReportReducer
   );
+
+  const [candidatePage, setCandidatePage] = useState(1);
 
   const [filter, setFilter] = useState({});
   const [customerId, setCustomerId] = useState();
@@ -66,11 +68,11 @@ export function AdminCalendar({ title }) {
     setFirstDate(formattedFirstDay);
     setLastDate(formattedLastDay);
     getUpcomingData({
-      candidateId: userDetails.InternalUserId,
-      start: formattedFirstDay,
-      end: formattedLastDay,
+      startDate: formattedFirstDay,
+      endDate: formattedLastDay,
     });
-    dispatch(getCandidateDropdownList());
+    dispatch(getCandidateDropdownList(1));
+    setCandidatePage(1);
     dispatch(getCustomerDropdownList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (analytics) {
@@ -172,33 +174,123 @@ export function AdminCalendar({ title }) {
     setFirstDate(formattedFirstDay);
     setLastDate(formattedLastDay);
     getUpcomingData({
-      candidateId: userDetails.InternalUserId,
-      start: formattedFirstDay,
-      end: formattedLastDay,
+      startDate: formattedFirstDay,
+      endDate: formattedLastDay,
+      companyId: customerId ? customerId : "",
+      candidateId: candidateId ? candidateId : "",
     });
   };
 
   const onSubmitClear = () => {
     setFilter({});
-
     setCandidateId("");
     setCustomerId("");
+    setCandidatePage(1);
+    dispatch(getCandidateDropdownList(1));
     getUpcomingData({
-      candidateId: userDetails.InternalUserId,
-      start: firstDate,
-      end: lastDate,
+      startDate: firstDate,
+      endDate: lastDate,
     });
   };
 
   const onSubmitHandler = () => {
     getUpcomingData({
-      candidateId: userDetails.InternalUserId,
-      start: firstDate,
-      end: lastDate,
+      startDate: firstDate,
+      endDate: lastDate,
       companyId: customerId ? customerId : "",
-      candidateId2: candidateId ? candidateId : "",
+      candidateId: candidateId ? candidateId : "",
     });
   };
+
+  const BootstrapArrow = (props) => (
+    <components.DropdownIndicator {...props}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="12">
+        <path fill="none" stroke="#343a40" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m2 5 6 6 6-6" />
+      </svg>
+    </components.DropdownIndicator>
+  );
+
+  const candidateSelectStyles = {
+    container: (base) => ({ ...base, width: "100%" }),
+    control: (base, state) => ({
+      ...base,
+      width: "100%",
+      height: 35,
+      minHeight: 34,
+      backgroundColor: "#fff",
+      border: "1px solid #dee2e6",
+      borderRadius: "0.375rem",
+      boxShadow: "none",
+      outline: 0,
+      lineHeight: "1.5",
+      color: "#54595e",
+      cursor: "default",
+      flexWrap: "nowrap",
+      "&:hover": { borderColor: "#dee2e6" },
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      height: 36,
+      padding: "0 0 0 0.75rem",
+      flexWrap: "nowrap",
+      overflow: "hidden",
+    }),
+    indicatorsContainer: (base) => ({
+      ...base,
+      height: 36,
+      paddingRight: "0.75rem",
+    }),
+    singleValue: (base) => ({ ...base, color: "#51575e", fontWeight: "400", margin: 0 }),
+    placeholder: (base) => ({ ...base, color: "#212529",  margin: 0 }),
+    input: (base) => ({
+      ...base,
+      color: "#212529",
+      fontSize: "1rem",
+      fontWeight: "400",
+      margin: 0,
+      padding: 0,
+    }),
+    indicatorSeparator: () => ({ display: "none" }),
+    dropdownIndicator: (base) => ({ ...base, padding: "0", color: "#343a40" }),
+    menu: (base) => ({
+      ...base,
+      backgroundColor: "#fff",
+      border: "1px solid #dee2e6",
+      borderRadius: "0.375rem",
+      boxShadow: "none",
+      zIndex: 9999,
+      marginTop: "2px",
+    }),
+    menuList: (base) => ({ ...base, padding: 0, overflowX: "hidden" }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isFocused ? "#6e7377" : "#fff",
+      color: state.isFocused ? "#fff" : "#51575e",
+      padding: "0.375rem 0.75rem",
+      cursor: "default",
+      whiteSpace: "normal",
+      wordBreak: "break-word",
+    }),
+  };
+
+  const onCandidateMenuScrollToBottom = () => {
+    if (!candidateListLoading && candidateListHasMore) {
+      const nextPage = candidatePage + 1;
+      setCandidatePage(nextPage);
+      dispatch(getCandidateDropdownList(nextPage));
+    }
+  };
+
+  const candidateOptions = [
+    { value: "", label: "Select Candidate" },
+    ...candidateList.map((data) => ({
+      value: data.id ? data.id : data.candidateid,
+      label: data.name ? data.name : data.firstname + " " + data.lastname,
+    })),
+  ];
+
+  const selectedCandidateOption =
+    candidateOptions.find((o) => String(o.value) === String(candidateId)) || candidateOptions[0];
 
   const handleChange = (name, value) => {
     setFilter({
@@ -216,33 +308,21 @@ export function AdminCalendar({ title }) {
             <Col xl="5" lg="5" md="3" sm="12"></Col>
             <Col xl="2" lg="2" md="3" sm="12">
               <FormGroup>
-                <Input
-                  type="select"
-                  value={candidateId}
-                  name="candidateid"
-                  id="candidateid"
-                  placeholder="Candidate Id"
-                  onChange={(e) => {
-                    handleChange("candidateid", e.target.value);
-                    setCandidateId(e.target.value);
+                <Select
+                  options={candidateOptions}
+                  value={selectedCandidateOption}
+                  isLoading={candidateListLoading}
+                  isSearchable={true}
+                  isClearable={false}
+                  onMenuScrollToBottom={onCandidateMenuScrollToBottom}
+                  components={{ DropdownIndicator: BootstrapArrow }}
+                  styles={candidateSelectStyles}
+                  onChange={(selected) => {
+                    const val = selected ? selected.value : "";
+                    handleChange("candidateid", val);
+                    setCandidateId(val);
                   }}
-                >
-                  <option value={""}>Select Candidate</option>
-                  {candidateList?.length > 0 ? (
-                    candidateList.map((data) => (
-                      <option
-                        value={data.id ? data.id : data.candidateid}
-                        key={data.id ? data.id : data.candidateid}
-                      >
-                        {data.name
-                          ? data.name
-                          : data.firstname + " " + data.lastname}
-                      </option>
-                    ))
-                  ) : (
-                    <></>
-                  )}
-                </Input>
+                />
               </FormGroup>
             </Col>
             <Col xl="2" lg="2" md="3" sm="12" sx="12">
