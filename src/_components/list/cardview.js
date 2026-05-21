@@ -44,6 +44,7 @@ import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constant
 import { showSnackbar } from "_store/snackbar.slice";
 import { fetchWrapper } from "_helpers/fetch-wrapper";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import ComposeEmailModal from "_components/modal/composeEmailModal";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -59,8 +60,159 @@ export const CandidateCardView = (props) => {
   const [assignedCompanyName, setAssignedCompanyName] = useState(null);
   const [showJDModal, setShowJDModal] = useState(false);
   const [jobDetail, setJobDetail] = useState([]);
+  const [showComposeModal, setShowComposeModal] = useState(false);
+  const [isConnectingOAuth, setIsConnectingOAuth] = useState(false);
+  const [connectedEmail, setConnectedEmail] = useState("");
   const isStaffingFirm = props.isStaffingFirm;
   const dispatch = useDispatch();
+
+  const API_BASE = process.env.REACT_APP_NEW_API_URL;
+
+  /**
+   * Opens the Microsoft OAuth consent window as a popup.
+   * After 5s checks status from parent and closes popup if connected.
+   * Also watches for manual popup close as fallback.
+   */
+  const openOAuthPopup = (authUrl) =>
+    new Promise((resolve, reject) => {
+      const width = 600;
+      const height = 700;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+      const popup = window.open(
+        authUrl,
+        "oauth-popup",
+        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+      );
+
+      if (!popup) {
+        reject(new Error("Popup blocked. Please allow popups for this site."));
+        return;
+      }
+
+      let resolved = false;
+
+      const finish = async () => {
+        if (resolved) return;
+        resolved = true;
+        clearInterval(watchClose);
+        clearInterval(checkStatus);
+        try {
+          const res = await fetchWrapper.get(`${API_BASE}/OAuth/status`);
+          if (res?.statusCode === 200 && res.data?.connected) {
+            if (!popup.closed) popup.close();
+            resolve(res.data);
+          } else {
+            if (!popup.closed) popup.close();
+            reject(new Error("Authentication window was closed before completing."));
+          }
+        } catch (_) {
+          reject(new Error("Authentication window was closed before completing."));
+        }
+      };
+
+      // Watch for user manually closing popup
+      const watchClose = setInterval(() => {
+        if (popup.closed) finish();
+      }, 500);
+
+      // Every 5s check status from parent side and close popup if connected
+      const checkStatus = setInterval(async () => {
+        if (resolved) return;
+        try {
+          const res = await fetchWrapper.get(`${API_BASE}/OAuth/status`);
+          if (res?.statusCode === 200 && res.data?.connected) {
+            finish();
+          }
+        } catch (_) {}
+      }, 5000);
+    });
+
+  /**
+   * Checks OAuth connection status. Returns { connected, connectedEmail } or null on error.
+   */
+  const checkOAuthStatus = async () => {
+    try {
+      const res = await fetchWrapper.get(`${API_BASE}/OAuth/status`);
+      if (res?.statusCode === 200) {
+        if (res.data?.connected && res.data?.connectedEmail) {
+          setConnectedEmail(res.data.connectedEmail);
+        }
+        return res.data;
+      }
+    } catch (_) {}
+    return null;
+  };
+
+  /**
+   * Fetches the Microsoft OAuth auth URL from the API.
+   */
+  const getOAuthConnectUrl = async () => {
+    try {
+      const res = await fetchWrapper.get(`${API_BASE}/OAuth/connect?provider=outlook`);
+      if (res?.statusCode === 200) return res.data?.authUrl ?? null;
+    } catch (_) {}
+    return null;
+  };
+
+  /**
+   * Handles the full Present button click:
+   * 1. Check OAuth status
+   * 2. If not connected → open consent popup
+   * 3. Open compose email modal
+   */
+  const handlePresentButtonClick = async () => {
+    setIsConnectingOAuth(true);
+    try {
+      const status = await checkOAuthStatus();
+
+      if (!status?.connected) {
+        const authUrl = await getOAuthConnectUrl();
+        if (!authUrl) {
+          dispatch(
+            showSnackbar({
+              message: "Unable to get email authentication URL. Please try again.",
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 4000,
+              maxWidth: 500,
+            })
+          );
+          return;
+        }
+
+        try {
+          await openOAuthPopup(authUrl);
+        } catch (err) {
+          dispatch(
+            showSnackbar({
+              message: err.message || "Email authentication failed. Please try again.",
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 4000,
+              maxWidth: 500,
+            })
+          );
+          return;
+        }
+      }
+
+      // OAuth is connected – open the compose email modal
+      setShowComposeModal(true);
+    } finally {
+      setIsConnectingOAuth(false);
+    }
+  };
+
+  /**
+   * Called when the email is sent successfully.
+   * Also marks the candidate as presented in the parent list.
+   */
+  const handleEmailSendSuccess = () => {
+    onActionClick("presented");
+  };
 
   const openJobDetails = async (jobId) => {
     const res = await fetchWrapper.get(`${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDetails/${jobId}`);
@@ -755,11 +907,24 @@ export const CandidateCardView = (props) => {
                   title="present"
                   className="btn-icon mb-1"
                   color="primary"
-                  onClick={() => onActionClick("presented")}
+                  onClick={handlePresentButtonClick}
                   size="sm"
-                  disabled={props?.data?.ispresented}
+                  disabled={props?.data?.ispresented || isConnectingOAuth}
                 >
-                  <BsCheckCircle/> {props?.data?.ispresented ? "Presented" : "Present"}
+                  {isConnectingOAuth ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                      Connecting…
+                    </>
+                  ) : (
+                    <>
+                      <BsCheckCircle /> {props?.data?.ispresented ? "Presented" : "Present"}
+                    </>
+                  )}
                 </Button>
               )}
               <Button
@@ -881,6 +1046,14 @@ export const CandidateCardView = (props) => {
           <></>
         )}
       </>
+      <ComposeEmailModal
+        isOpen={showComposeModal}
+        onClose={() => setShowComposeModal(false)}
+        candidateData={props.data}
+        connectedEmail={connectedEmail}
+        onEmailConnectionChange={(email) => setConnectedEmail(email)}
+        onSendSuccess={handleEmailSendSuccess}
+      />
     </>
   );
 };
