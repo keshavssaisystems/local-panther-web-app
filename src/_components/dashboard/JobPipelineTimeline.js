@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setSeeAllHiringManagerJobs } from "_store/commonCustFiltersSlice";
 import { getTimezoneDateTime } from "_helpers/helper";
 import publishedIcon from "assets/utils/images/job-detail-icons/published.svg";
 import matchedIcon from "assets/utils/images/job-detail-icons/matched.svg";
@@ -23,8 +25,9 @@ import "../../_containers/customer/newjobs/newjobs.scss";
  *  - job            {object} Full job-detail object (jobDetail[0] from Redux)
  *  - hiringManagerId {string} Used in navigation URLs
  */
-export function JobPipelineTimeline({ job, hiringManagerId }) {
+export function JobPipelineTimeline({ job, hiringManagerId, viewAllCompanyJobs = false }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   if (!job) return null;
 
@@ -115,7 +118,10 @@ export function JobPipelineTimeline({ job, hiringManagerId }) {
 
   // ---------- renderSteps (mirrors custjobdetails exactly) ----------
   const navigateTo = (action) => {
-    if (action) navigate(action);
+    if (action) {
+      dispatch(setSeeAllHiringManagerJobs(viewAllCompanyJobs));
+      navigate(action);
+    }
   };
 
   const renderSteps = () =>

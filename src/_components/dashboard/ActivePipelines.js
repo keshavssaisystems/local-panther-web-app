@@ -1,8 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Card, CardBody, Button } from "reactstrap";
+import { Card, CardBody, Button, Form, Input, InputGroup, Row, Col } from "reactstrap";
+import { useDispatch, useSelector } from "react-redux";
 import Loader from "react-loaders";
 import { JobPipelineTimeline } from "_components/dashboard/JobPipelineTimeline";
 import customerIcons from "assets/utils/images/customer";
+import { getHiringMangersList, dropdownActions } from "_store";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 
 export const ActivePipelines = ({
   pipelineJobList = [],
@@ -16,13 +19,144 @@ export const ActivePipelines = ({
   currentPage = 1,
   pageSize = 10,
   onLoadNextPage = () => {},
+  onFilterChange = () => {},
+  isCompanyAdmin = false,
 }) => {
+  const dispatch = useDispatch();
+
+  // ── Pipeline-local filter state ──────────────────────────────────────────
+  const [filterSearchType, setFilterSearchType] = useState("JobTitle");
+  const [filterSearchText, setFilterSearchText] = useState("");
+  const [filterHiringManagerId, setFilterHiringManagerId] = useState("");
+  const [filterSeeAllHM, setFilterSeeAllHM] = useState(false);
+
+  // Hiring manager lists from Redux (same store slices used by CommonFilters)
+  const assignedHiringManagers = useSelector(
+    (state) => state?.customerReportReducer?.assignHiringManagers || []
+  );
+  const allCompanyHiringManagers = useSelector(
+    (state) => state?.customerReportReducer?.companyHiringManagers || []
+  );
+  const activeHiringManagerList = filterSeeAllHM
+    ? allCompanyHiringManagers
+    : assignedHiringManagers;
+
+  // Load hiring managers once on mount
+  useEffect(() => {
+    const companyId = Number(localStorage.getItem("companyid"));
+    dispatch(getHiringMangersList({ companyId, endpoint: "assignUserListByCompany" }));
+  }, [dispatch]);
+
+  // Immediately reload when HM changes — mirrors custjobs.js useEffect([hiringManagerId])
+  const handleHMChange = (value) => {
+    setFilterHiringManagerId(value);
+    onFilterChange({
+      searchText: filterSearchText,
+      searchType: filterSearchType,
+      hiringManagerId: value,
+      viewAllCompanyJobs: filterSeeAllHM,
+    });
+  };
+
+  // When toggle is turned on, fetch all company HMs and immediately reload
+  // mirrors custjobs.js useEffect([seeAllHiringManagerJobs])
+  const handleSeeAllToggle = (e) => {
+    const isOn = e.target.checked;
+    setFilterSeeAllHM(isOn);
+    setFilterHiringManagerId(""); // reset selected HM
+    if (isOn) {
+      const companyId = Number(localStorage.getItem("companyid"));
+      dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
+    }
+    // Trigger immediate re-fetch with new toggle value
+    onFilterChange({
+      searchText: filterSearchText,
+      searchType: filterSearchType,
+      hiringManagerId: "",
+      viewAllCompanyJobs: isOn,
+    });
+  };
+
+  const handlePipelineSearch = (e) => {
+    e.preventDefault();
+    onFilterChange({
+      searchText: filterSearchText,
+      searchType: filterSearchType,
+      hiringManagerId: filterHiringManagerId,
+      viewAllCompanyJobs: filterSeeAllHM,
+    });
+  };
+
+  const handlePipelineClear = () => {
+    setFilterSearchType("JobTitle");
+    setFilterSearchText("");
+    setFilterHiringManagerId("");
+    setFilterSeeAllHM(false);
+    setFilteredItems([]);
+    onFilterChange({
+      searchText: "",
+      searchType: "JobTitle",
+      hiringManagerId: "",
+      viewAllCompanyJobs: false,
+    });
+  };
+
+  // Autocomplete suggestions — mirrors commonFilters.js searchOptionDropdown
+  const [filteredItems, setFilteredItems] = useState([]);
+
+  const searchOptionDropdown = async (option) => {
+    if (filterSearchType !== "JobTitle" && filterSearchType !== "ClientCompany") {
+      setFilteredItems([]);
+      return;
+    }
+    if (option?.length >= 2) {
+      if (filterSearchType === "JobTitle") {
+        const companyId = Number(localStorage.getItem("companyid"));
+        const filter = {
+          companyId,
+          isClose: 0,
+          searchText: option.replaceAll(" ", "_"),
+        };
+        const response = await dispatch(dropdownActions.getJobsListThunk(filter));
+        setFilteredItems(response?.payload || []);
+      } else if (filterSearchType === "ClientCompany") {
+        const companyId = Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const response = await dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "ClientCompany",
+            commonId: companyId,
+            searchBy: option,
+          })
+        );
+        const companies = response?.payload?.data || response?.payload || [];
+        setFilteredItems(companies.map((c) => ({ id: c.id, name: c.name })));
+      }
+    } else {
+      setFilteredItems([]);
+    }
+  };
+
+  const handleSelectSearch = (value) => {
+    const text = filterSearchType === "ClientCompany" ? value.name : value.jobtitle;
+    setFilterSearchText(text);
+    setFilteredItems([]);
+  };
   const tabScrollRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [allJobs, setAllJobs] = useState([]);
   const prevPageRef = useRef(0);
   const isLoadingMoreRef = useRef(false);
+
+  // Clear accumulated jobs when a fresh page-1 load begins (filter changed)
+  // Fixes: pipelineJobList becomes [] during loading so the guard below won't fire
+  useEffect(() => {
+    if (JobListloader && currentPage === 1) {
+      setAllJobs([]);
+      prevPageRef.current = 0;
+      isLoadingMoreRef.current = false;
+    }
+  }, [JobListloader, currentPage]);
 
   // Accumulate pages — append new records instead of replacing
   useEffect(() => {
@@ -70,7 +204,7 @@ export const ActivePipelines = ({
 
   const handleTabRef = (el) => {
     tabScrollRef.current = el;
-    if (el) setShowRightArrow(el.scrollWidth > el.clientWidth);
+    // if (el) setShowRightArrow(el.scrollWidth > el.clientWidth);
   };
 
   const handleRightArrowClick = () => {
@@ -95,6 +229,119 @@ export const ActivePipelines = ({
         <h6 className="fw-semibold mb-2 main-title" style={{ color: "#2f2e2e", fontSize: "64px" }}>
           <img src={customerIcons.anticlockFrame} alt="Pipeline Icon" /> Active Pipelines
         </h6>
+
+        {/* Pipeline Filters — layout mirrors CommonFilters used in custjobs.js */}
+        <div className="main-card card-filter filter-toolbar mb-3" style={{ padding: "10px 12px", border: "1px solid #e9ecef", borderRadius: "6px", background: "#f9f9f9" }}>
+          <div className="filter-toolbar-inner">
+            <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "8px" }}>
+              Filters:
+              {/* See-all-HM toggle — company admins only, mirrors CommonFilters showSeeAllHMToggle */}
+              {isCompanyAdmin && (
+                <div className="form-check form-switch mb-0 form-switch-lg">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="pipelineSeeAllHMToggle"
+                    checked={filterSeeAllHM}
+                    onChange={handleSeeAllToggle}
+                  />
+                  <SafeUncontrolledTooltip placement="top" target="pipelineSeeAllHMToggle">
+                    See all hiring managers jobs
+                  </SafeUncontrolledTooltip>
+                </div>
+              )}
+            </div>
+            <div className="filter-controls">
+              <Row className="gx-2 gy-2 align-items-center filter-row">
+                {/* Hiring Manager — change triggers immediate reload like custjobs useEffect([hiringManagerId]) */}
+                <Col xs={12} sm={6} md={4} lg={3}>
+                  <Input
+                    type="select"
+                    value={filterHiringManagerId}
+                    onChange={(e) => handleHMChange(e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="">Select Hiring Manager</option>
+                    {activeHiringManagerList.map((hm) => (
+                      <option key={hm.id} value={hm.id}>{hm.name}</option>
+                    ))}
+                  </Input>
+                </Col>
+                {/* Search — type dropdown + text input + Search/Clear buttons */}
+                <Col xs={12} sm={12} md={8} lg={9}>
+                  <Form onSubmit={handlePipelineSearch}>
+                    <InputGroup className="filter-search-group1" style={{ position: "relative" }}>
+                      <Input
+                        type="select"
+                        className="fw-bold search-dropdown"
+                        value={filterSearchType}
+                        onChange={(e) => { setFilterSearchType(e.target.value); setFilterSearchText(""); setFilteredItems([]); }}
+                      >
+                        <option value="JobTitle">Job Title</option>
+                        <option value="ClientCompany">Client Company</option>
+                      </Input>
+                      <Input
+                        type="search"
+                        placeholder={filterSearchType === "JobTitle" ? "Search job title" : "Search client company"}
+                        value={filterSearchText}
+                        onChange={(e) => {
+                          setFilterSearchText(e.target.value);
+                          searchOptionDropdown(e.target.value);
+                        }}
+                        className="filter-search-input"
+                      />
+                      {filteredItems.length > 0 && (
+                        <ul
+                          style={{
+                            listStyle: "none",
+                            margin: 0,
+                            padding: "4px",
+                            border: "1px solid #ccc",
+                            borderTop: "none",
+                            position: "absolute",
+                            top: "100%",
+                            left: 0,
+                            right: 0,
+                            background: "#fff",
+                            zIndex: 1000,
+                            maxHeight: "150px",
+                            overflowY: "auto",
+                          }}
+                        >
+                          {filteredItems.map((item, index) => (
+                            <li
+                              key={index}
+                              style={{ padding: "6px", cursor: "pointer" }}
+                              onClick={() => handleSelectSearch(item)}
+                            >
+                              {filterSearchType === "ClientCompany" ? item.name : item.jobtitle}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <Button
+                        style={{ background: "rgb(47 71 155)" }}
+                        className="input-group-text search-icon"
+                        color="primary"
+                        type="submit"
+                      >
+                        Search
+                      </Button>
+                      <Button
+                        color="link"
+                        type="button"
+                        className="input-group-text filter-search-btn"
+                        onClick={handlePipelineClear}
+                      >
+                        Clear
+                      </Button>
+                    </InputGroup>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
+          </div>
+        </div>
 
         {/* Job title tabs with horizontal scroll arrows */}
         {allJobs.length > 0 && (
@@ -173,10 +420,11 @@ export const ActivePipelines = ({
             type="line-scale-pulse-out-rapid"
             className="d-flex justify-content-center"
           />
-        ) : pipelineJobDetail?.length > 0 ? (
+        ) : allJobs.length > 0 && pipelineJobDetail?.length > 0 ? (
           <JobPipelineTimeline
             job={pipelineJobDetail[0]}
-            hiringManagerId={userId}
+            hiringManagerId={filterHiringManagerId || userId}
+            viewAllCompanyJobs={filterSeeAllHM}
           />
         ) : null}
       </CardBody>

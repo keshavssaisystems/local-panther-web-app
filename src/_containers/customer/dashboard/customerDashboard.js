@@ -31,6 +31,12 @@ export default function CustomerDashboard() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState(null);
   const [jobListPage, setJobListPage] = useState(1);
+  const [pipelineFilters, setPipelineFilters] = useState({
+    searchText: "",
+    searchType: "JobTitle",
+    hiringManagerId: "",
+    viewAllCompanyJobs: false,
+  });
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -87,14 +93,20 @@ export default function CustomerDashboard() {
     setShowPaymentModal(true);
   };
 
-  const loadJobListPage = (pageNumber) => {
+  const loadJobListPage = (pageNumber, filters) => {
     const dashUserId = localStorage.getItem("userId");
-    if (dashUserId ) {
+    const dashCompanyId = localStorage.getItem("companyid");
+    const activeFilters = filters || pipelineFilters;
+    if (dashUserId) {
       dispatch(
         custJobListActions.getJobs({
           pageSize: 15,
           pageNumber: pageNumber,
-          companyId: null,
+          companyId: dashCompanyId,
+          searchText: activeFilters.searchText || "",
+          searchType: activeFilters.searchType || "JobTitle",
+          hiringManagerId: activeFilters.hiringManagerId || dashUserId,
+          viewAllCompanyJobs: activeFilters.viewAllCompanyJobs || false,
         })
       );
       setJobListPage(pageNumber);
@@ -114,6 +126,12 @@ export default function CustomerDashboard() {
   );
   const handleLoadNextPage = () => {
     loadJobListPage(jobListPage + 1);
+  };
+
+  const handlePipelineFilterChange = (filters) => {
+    setPipelineFilters(filters);
+    setSelectedJobId(null);
+    loadJobListPage(1, filters);
   };
 
   useEffect(() => {
@@ -386,6 +404,8 @@ export default function CustomerDashboard() {
               currentPage={jobListPage}
               pageSize={10}
               onLoadNextPage={handleLoadNextPage}
+              onFilterChange={handlePipelineFilterChange}
+              isCompanyAdmin={isCompanyAdmin}
             />
           </Col>
         </Row>

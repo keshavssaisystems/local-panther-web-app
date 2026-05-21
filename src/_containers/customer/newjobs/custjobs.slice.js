@@ -64,10 +64,14 @@ export const getJobs= createAsyncThunk(
     pageSize,
     pageNumber,
     companyId,
-    userId = null,
+    searchText = null,
+    searchType = "JobTitle",
+    jobStatus = "",
+    hiringManagerId = null,
+    viewAllCompanyJobs = false,
     jobId = null
   }) => {
-    const LIST_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Fetch_Jobs_List?parameter=@jobid=${jobId},@companyid=${companyId},@isactive=1,@currentpage=${pageNumber},@pagesize=${pageSize},@userid=${userId},@totalrows=0`;
+    const LIST_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Fetch_Jobs_List?parameter=@jobid=${jobId},@companyid=${companyId},@isactive=1,@currentpage=${pageNumber},@pagesize=${pageSize},@userid=${hiringManagerId},@totalrows=0,@searchType=${searchType || ""},@searchtext='${searchText || ""}',@viewAllCompanyJobs=${viewAllCompanyJobs ? 1 : 0}`;
     return await fetchWrapper.get(LIST_JOB_END_POINT);
   }
 );
