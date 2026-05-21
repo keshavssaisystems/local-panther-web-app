@@ -1426,8 +1426,29 @@ export const CreateJob = forwardRef(
       extractSkillsFromJDDebounced(event);
     };
 
+    // Returns a new array containing all items from `existing` plus any
+    // items from `incoming` whose skillid is not already present.
+    // Compares by skillid only (the numeric part before ", " in value)
+    // to avoid false duplicates from name casing/spacing differences.
+    const mergeSkills = (existing, incoming) => {
+      const seenIds = new Set(existing.map((s) => s.value.split(", ")[0]));
+      return [...existing, ...incoming.filter((s) => !seenIds.has(s.value.split(", ")[0]))];
+    };
+
+    const stripHtml = (html) => {
+      if (!html) return "";
+      return html
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .trim();
+    };
+
     const extractSkillsFromJD = async (description) => {
-      if (!description || description.trim() === "") {
+      const plainText = stripHtml(description);
+      if (!plainText) {
         setKeyQual1([]);
         setPrevKey([]);
         setKeyQual2([]);
@@ -1443,7 +1464,7 @@ export const CreateJob = forwardRef(
             Authorization: `Bearer ${authData}`,
           },
         };
-        const payload = { description };
+        const payload = { description: plainText };
         const response = await axios.post(
           `${baseURI}/extract_skills_from_jd`,
           payload,
@@ -1468,22 +1489,42 @@ export const CreateJob = forwardRef(
           .filter((s) => s.skillname && s.skillname.trim() !== "")
           .map(toSkillOption);
 
+        const isEditMode = previousStep === 1;
+
         if (mustHave.length > 0) {
-          setKeyQual1(mustHave);
-          setPrevKey(mustHave);
+          if (isEditMode) {
+            setKeyQual1((prev) => mergeSkills(prev, mustHave));
+            setPrevKey((prev) => mergeSkills(prev, mustHave));
+          } else {
+            setKeyQual1(mustHave);
+            setPrevKey(mustHave);
+          }
           setMustHaveValidation(false);
           setKeyQualifucationChange(true);
         }
 
         if (niceToHave.length > 0) {
-          setKeyQual2(niceToHave);
-          setPrevKey2(niceToHave);
+          if (isEditMode) {
+            setKeyQual2((prev) => mergeSkills(prev, niceToHave));
+            setPrevKey2((prev) => mergeSkills(prev, niceToHave));
+          } else {
+            setKeyQual2(niceToHave);
+            setPrevKey2(niceToHave);
+          }
           setKeyQualifucationChange(true);
         }
       } catch (error) {
         console.error("[extractSkillsFromJD] API error:", error);
       }
     };
+
+    // Auto-call on mount when editing an existing job (previousStep === 1)
+    useEffect(() => {
+      if (previousStep === 1 && previousData?.description) {
+        extractSkillsFromJD(previousData.description);
+      }
+    }, []);
+
     const getEducationFormData = (eventData) => {
       let postEducationData = [];
       let educationArray = eventData?.target?.elements?.levelofeducationids;
