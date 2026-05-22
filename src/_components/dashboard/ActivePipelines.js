@@ -79,6 +79,16 @@ export const ActivePipelines = ({
 
   const handlePipelineSearch = (e) => {
     e.preventDefault();
+    // Only treat this as a fresh search (clear cached pages) when the
+    // user explicitly provided non-empty search text and clicked Search.
+    if ((filterSearchText || "").trim() !== "") {
+      pagesRef.current = {};
+      setAllJobs([]);
+      prevPageRef.current = 0;
+      isLoadingMoreRef.current = false;
+      filtersSignatureRef.current = JSON.stringify({ filterHiringManagerId, filterSeeAllHM });
+    }
+
     onFilterChange({
       searchText: filterSearchText,
       searchType: filterSearchType,
@@ -93,6 +103,13 @@ export const ActivePipelines = ({
     setFilterHiringManagerId("");
     setFilterSeeAllHM(false);
     setFilteredItems([]);
+    // Clear cached pages because filters were reset
+    pagesRef.current = {};
+    setAllJobs([]);
+    prevPageRef.current = 0;
+    isLoadingMoreRef.current = false;
+    filtersSignatureRef.current = JSON.stringify({ filterHiringManagerId: "", filterSeeAllHM: false });
+
     onFilterChange({
       searchText: "",
       searchType: "JobTitle",
@@ -147,34 +164,54 @@ export const ActivePipelines = ({
   const [allJobs, setAllJobs] = useState([]);
   const prevPageRef = useRef(0);
   const isLoadingMoreRef = useRef(false);
+  // Persist per-page results so we can show previously-loaded pages
+  // (prevents losing page-1 when the parent temporarily provides an empty list)
+  const pagesRef = useRef({});
+  const filtersSignatureRef = useRef(null);
 
-  // Clear accumulated jobs when a fresh page-1 load begins (filter changed)
-  // Fixes: pipelineJobList becomes [] during loading so the guard below won't fire
+  // When hiring-manager or see-all toggle changes, reset stored pages so
+  // results from a different view are not reused. We deliberately DO NOT
+  // reset when the search input or search type change — the user must
+  // click Search to apply a new text search.
   useEffect(() => {
-    if (JobListloader && currentPage === 1) {
+    const sig = JSON.stringify({ filterHiringManagerId });
+    if (filtersSignatureRef.current !== sig) {
+      filtersSignatureRef.current = sig;
+      pagesRef.current = {};
       setAllJobs([]);
       prevPageRef.current = 0;
       isLoadingMoreRef.current = false;
     }
-  }, [JobListloader, currentPage]);
+  }, [filterHiringManagerId]);
 
-  // Accumulate pages — append new records instead of replacing
+  // Store incoming page results and rebuild the accumulated list from stored
+  // pages so temporary empty `pipelineJobList` states don't remove already-
+  // loaded pages.
   useEffect(() => {
-    if (pipelineJobList?.length > 0) {
-      if (currentPage === 1 || currentPage <= prevPageRef.current) {
-        // Fresh load or reset: replace
-        setAllJobs(pipelineJobList);
-      } else {
-        // Next page loaded: append, avoid duplicates
-        setAllJobs((prev) => {
-          const existingIds = new Set(prev.map((j) => j.jobid));
-          const newJobs = pipelineJobList.filter((j) => !existingIds.has(j.jobid));
-          return [...prev, ...newJobs];
-        });
+    if (pipelineJobList && pipelineJobList.length > 0) {
+      pagesRef.current[currentPage] = pipelineJobList;
+
+      // Merge pages in ascending page order while avoiding duplicate jobids
+      const pageNumbers = Object.keys(pagesRef.current).map(Number).sort((a, b) => a - b);
+      const combined = [];
+      const seen = new Set();
+      for (const p of pageNumbers) {
+        const items = pagesRef.current[p] || [];
+        for (const it of items) {
+          if (!seen.has(it.jobid)) {
+            seen.add(it.jobid);
+            combined.push(it);
+          }
+        }
       }
-      prevPageRef.current = currentPage;
+
+      setAllJobs(combined);
+      prevPageRef.current = Math.max(prevPageRef.current, currentPage);
       isLoadingMoreRef.current = false;
     }
+    // Intentionally do nothing when pipelineJobList is empty — keep previously
+    // stored pages until new results arrive (prevents UI from clearing on
+    // transient empty states during loading).
   }, [pipelineJobList, currentPage]);
 
   // Recalculate arrow visibility whenever the accumulated list changes
