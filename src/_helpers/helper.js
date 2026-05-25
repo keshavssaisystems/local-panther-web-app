@@ -367,6 +367,35 @@ export const updateMonthstoYears = (months) => {
   }
 };
 
+/**
+ * Calculates the experience duration between startdate and enddate.
+ * Returns a human-readable string like "4 yr", "3 yr 6 mo", "8 mo", "< 1 mo".
+ * @param {string} startdate
+ * @param {string|null} enddate
+ * @param {boolean} iscurrentlyworking
+ * @param {number} index - position in list; index 0 with null enddate treated as current
+ */
+export const getExperienceDuration = (startdate, enddate, iscurrentlyworking, index) => {
+  if (!startdate) return "";
+  const start = moment(startdate);
+  if (!start.isValid()) return "";
+  const end =
+    iscurrentlyworking || (enddate === null && index === 0)
+      ? moment()
+      : enddate
+      ? moment(enddate)
+      : null;
+  if (!end) return "";
+  if (!end.isValid()) return "";
+  if (end.isBefore(start)) return "";
+  const years = end.diff(start, "years");
+  const months = end.diff(start, "months") % 12;
+  if (years === 0 && months === 0) return "< 1 mo";
+  if (years === 0) return `${months} mo`;
+  if (months === 0) return `${years} yr`;
+  return `${years} yr ${months} mo`;
+};
+
 export const getTimezoneDateTime = (
   dateTime,
   format = "MM/DD/YYYY hh:mm A"

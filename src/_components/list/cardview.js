@@ -35,7 +35,7 @@ import "./cardview.scss";
 import { ProgressCircle } from "_components/common/progress";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
-import { getTimezoneDateTime } from "_helpers/helper";
+import { getTimezoneDateTime, getExperienceDuration } from "_helpers/helper";
 import { ScorePopup } from "./scorePopup";
 import SweetAlert from "react-bootstrap-sweetalert";
 import AssigneeAtsCandidate from "_containers/customer/atscustomercandidatelist/AssigneeAtsCandidate";
@@ -366,38 +366,47 @@ export const CandidateCardView = (props) => {
       return (
         <Row>
           {props.data.candidateQualificationsDtos.map((data, index) => {
-            return (
-              <>
-                <Col sm={12} md={12} lg={12} xl={12} className="card-details">
-                  {data.jobtitle ? data.jobtitle : "-"}
-                </Col>
-                <Col sm={8} md={8} lg={8} xl={8} className="card-details-op">
-                  {data.company ? data.company : "-"}
-                </Col>
-                <Col
-                  sm={4}
-                  md={4}
-                  lg={4}
-                  xl={4}
-                  className="right-align card-details-op pl-0"
-                >
-                  {" "}
-                  {data.iscurrentlyworking
-                    ? `${data.startdate === null
-                      ? "NA"
-                      : moment(data.startdate).format("YYYY")
-                    } - Present`
-                    : `${data.startdate === null
-                      ? "NA"
-                      : moment(data.startdate).format("YYYY")
-                    } - ${data.enddate === null
+            const hasStartDate = !!data.startdate;
+            const yearRange = hasStartDate
+              ? data.iscurrentlyworking
+                ? `${moment(data.startdate).format("YYYY")} - Present`
+                : `${moment(data.startdate).format("YYYY")} - ${
+                    data.enddate === null
                       ? index === 0
                         ? "Present"
                         : "NA"
                       : moment(data.enddate).format("YYYY")
-                    }`}
+                  }`
+              : null;
+            const duration = getExperienceDuration(data.startdate, data.enddate, data.iscurrentlyworking, index);
+            const hasCompany = !!data.company;
+            const dateSpan = (yearRange || duration) ? (
+              <span className="card-details-op" style={{ whiteSpace: "nowrap", flex: "0 0 auto" }}>
+                {yearRange}
+                {duration ? ` · ${duration}` : ""}
+              </span>
+            ) : null;
+            return (
+              <React.Fragment key={data.candidatequalificationid ?? index}>
+                <Col sm={12} md={12} lg={12} xl={12} className="card-details">
+                  <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                    <span style={{ flex: "1 1 auto", minWidth: 0, wordBreak: "break-word" }}>
+                      {data.jobtitle ? data.jobtitle : "-"}
+                    </span>
+                    {!hasCompany && dateSpan}
+                  </span>
                 </Col>
-              </>
+                {hasCompany && (
+                  <Col sm={12} md={12} lg={12} xl={12} className="card-details-op"
+                    style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}
+                  >
+                    <span style={{ flex: "1 1 auto", minWidth: 0, wordBreak: "break-word" }}>
+                      {data.company}
+                    </span>
+                    {dateSpan}
+                  </Col>
+                )}
+              </React.Fragment>
             );
           })}
         </Row>
