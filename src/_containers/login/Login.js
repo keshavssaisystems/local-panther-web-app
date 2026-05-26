@@ -39,7 +39,11 @@ export function Login() {
   const dispatch = useDispatch();
   const location = useLocation();
   const emailFromState = location.state?.email || "";
-  const redirectUrl = location.state?.redirect || "/";
+  const navigate = useNavigate();
+  const urlParams = new URLSearchParams(location.search);
+  const redirectQuery = urlParams.get("redirect");
+  const decodedRedirectQuery = redirectQuery ? decodeURIComponent(redirectQuery) : null;
+  const redirectUrl = location.state?.redirect || decodedRedirectQuery || "/";
 
 
   const authUser = useSelector((x) => x?.auth?.token);
@@ -372,6 +376,8 @@ export function Login() {
         title: response.payload.message,
         type: "success",
       });
+      setShowEPModal(false);
+      navigate(redirectUrl || "/");
     } else {
       showSweetAlert({
         title: response.error.message,
