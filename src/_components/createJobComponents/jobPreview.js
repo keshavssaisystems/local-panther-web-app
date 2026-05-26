@@ -650,7 +650,10 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   </h6>
                   <ul>
                     {previewData.preScreen?.length > 0 &&
-                      previewData.preScreen?.map((options) => (
+                      [
+                        ...(previewData.preScreen?.filter(o => !o.iscustomquestion) ?? []),
+                        ...(previewData.preScreen?.filter(o => o.iscustomquestion) ?? []),
+                      ].map((options) => (
                         <li className="mb-0 mt-2 mr-1">
                           <b>
                             {options.iscustomquestion === true
