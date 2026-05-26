@@ -33,7 +33,7 @@ import {
 } from "_store";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { findRestrictedWords } from "_helpers/helper";
-import { BsPlusSquare } from "react-icons/bs";
+import { BsPlusSquare, BsDashSquare } from "react-icons/bs";
 import { locationActions } from "_store";
 import debounce from "lodash/debounce";
 
@@ -955,16 +955,18 @@ export const CreateJob = forwardRef(
         prevDataArr.push(element.prescreenquestion);
       });
     }
-    const [restrictionValidation1, setRestrictionValidation1] = useState(false);
-    const [restrictionValidation2, setRestrictionValidation2] = useState(false);
-    const [restrictionValidation3, setRestrictionValidation3] = useState(false);
-    const [restrictionWord1, setRestrictionWord1] = useState([]);
-    const [restrictionWord2, setRestrictionWord2] = useState([]);
-    const [restrictionWord3, setRestrictionWord3] = useState([]);
+    const [restrictionValidations, setRestrictionValidations] = useState({});
+    const [restrictionWords, setRestrictionWords] = useState({});
+    const [removedPreQuestionIds, setRemovedPreQuestionIds] = useState([]);
+    const removePreQuestion = (id) => {
+      setRemovedPreQuestionIds((prev) => [...prev, id]);
+    };
+    const _uidCounter = React.useRef(1);
+    const nextUid = () => { _uidCounter.current += 1; return _uidCounter.current; };
     const inputArr = [
       {
         type: "text",
-        id: 1,
+        uid: 0,
         value: "",
       },
     ];
@@ -985,15 +987,20 @@ export const CreateJob = forwardRef(
     }
     const [customQuestionInput, setCustomQuestionInput] = useState(inputArr);
     const addInput = () => {
-      setCustomQuestionInput((s) => {
-        return [
-          ...s,
-          {
-            type: "text",
-            value: "",
-          },
-        ];
-      });
+      const uid = nextUid();
+      setCustomQuestionInput((s) => [
+        ...s,
+        {
+          type: "text",
+          uid,
+          value: "",
+        },
+      ]);
+    };
+    const removeInput = (uid) => {
+      setCustomQuestionInput((s) => s.filter((item) => item.uid !== uid));
+      setRestrictionValidations((prev) => { const next = { ...prev }; delete next[uid]; return next; });
+      setRestrictionWords((prev) => { const next = { ...prev }; delete next[uid]; return next; });
     };
     const [zipCodeFromCityState, setZipCodeFromCityState] = useState(false);
     const getFormValidation = (event) => {
@@ -1820,35 +1827,11 @@ export const CreateJob = forwardRef(
         return "";
       }
     };
-    const checkRestrictedWord = (fieldName, string) => {
+    const checkRestrictedWord = (uid, string) => {
       if (wordArray?.length > 0) {
-        if (fieldName === "custom_question_1") {
-          let restrictedWords = findRestrictedWords(wordArray, string);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionValidation1(true)
-            : setRestrictionValidation1(false);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionWord1(restrictedWords.wordsArray)
-            : setRestrictionWord1([]);
-        }
-        if (fieldName === "custom_question_2") {
-          let restrictedWords = findRestrictedWords(wordArray, string);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionValidation2(true)
-            : setRestrictionValidation2(false);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionWord2(restrictedWords.wordsArray)
-            : setRestrictionWord2([]);
-        }
-        if (fieldName === "custom_question_3") {
-          let restrictedWords = findRestrictedWords(wordArray, string);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionValidation3(true)
-            : setRestrictionValidation3(false);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionWord3(restrictedWords.wordsArray)
-            : setRestrictionWord3([]);
-        }
+        const restrictedWords = findRestrictedWords(wordArray, string);
+        setRestrictionValidations((prev) => ({ ...prev, [uid]: restrictedWords.wordsCount > 0 }));
+        setRestrictionWords((prev) => ({ ...prev, [uid]: restrictedWords.wordsCount > 0 ? restrictedWords.wordsArray : [] }));
       }
     };
     let securityClearenceRaw =
@@ -1913,10 +1896,13 @@ export const CreateJob = forwardRef(
         });
       }
     }, []);
-    let preScreenQuestionsDataFromPre = jobData?.preScreen;
-    let customQuestionDataFromPre = preScreenQuestionsDataFromPre?.filter(
-      (value) => value.iscustomquestion === true
-    );
+    let preScreenQuestionsDataFromPre =
+      previousStep === 1 && type !== "new_template"
+        ? previousData?.jobPrescreenApplicationDtos
+        : jobData?.preScreen;
+    let customQuestionDataFromPre = preScreenQuestionsDataFromPre
+      ?.filter((value) => value.iscustomquestion === true)
+      ?.filter((value) => !removedPreQuestionIds.includes(value.jobprescreenapplicationid));
     let prescreenTypeVIsibility = false;
     let customCount = 0;
     let customCount1 = 0;
@@ -3655,50 +3641,39 @@ export const CreateJob = forwardRef(
                     </Row>
                     <Row>
                       <Col md={7}>
-                        {customQuestionDataFromPre?.map((item, i) => {
+                        {customQuestionDataFromPre?.map((item) => {
+                          const preUid = "pre_" + item.jobprescreenapplicationid;
                           return (
-                            <FormGroup>
+                            <FormGroup key={preUid}>
                               <Label className="fw-semi-bold">
                                 Custom Question
                               </Label>
-                              <Input
-                                id={i + 1}
-                                name={"custom_question"}
-                                type={item.type}
-                                maxLength="100"
-                                defaultValue={item.prescreenquestion}
-                                onChange={(e) =>
-                                  checkRestrictedWord(
-                                    "custom_question_" + i++,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                              {i === 1 && restrictionValidation1 === true && (
+                              <div className="d-flex align-items-center gap-2">
+                                <Input
+                                  id={preUid}
+                                  name={"custom_question"}
+                                  type={item.type || "text"}
+                                  maxLength="100"
+                                  defaultValue={item.prescreenquestion}
+                                  onChange={(e) =>
+                                    checkRestrictedWord(preUid, e.target.value)
+                                  }
+                                />
+                                <button
+                                  type="button"
+                                  className="custom-remove-button p-0 flex-shrink-0 border-0 bg-transparent"
+                                  onClick={() => removePreQuestion(item.jobprescreenapplicationid)}
+                                >
+                                  <BsDashSquare className="mb-1" /> Remove
+                                </button>
+                              </div>
+                              {restrictionValidations[preUid] === true && (
                                 <FormText
                                   color="danger"
                                   className="custom-question-validation"
                                 >
                                   Your input contains the flagged word '{" "}
-                                  <b>{restrictionWord1.toString()}</b> '.
-                                </FormText>
-                              )}
-                              {i === 2 && restrictionValidation2 === true && (
-                                <FormText
-                                  color="danger"
-                                  className="custom-question-validation"
-                                >
-                                  Your input contains the flagged word '{" "}
-                                  <b>{restrictionWord2.toString()}</b> '.
-                                </FormText>
-                              )}
-                              {i === 3 && restrictionValidation3 === true && (
-                                <FormText
-                                  color="danger"
-                                  className="custom-question-validation"
-                                >
-                                  Your input contains the flagged word '{" "}
-                                  <b>{restrictionWord3.toString()}</b> '.
+                                  <b>{(restrictionWords[preUid] || []).toString()}</b> '.
                                 </FormText>
                               )}
                             </FormGroup>
@@ -3711,47 +3686,35 @@ export const CreateJob = forwardRef(
                         {customQuestionInput?.map((item, i) => {
                           if (i > 0) {
                             return (
-                              <FormGroup>
+                              <FormGroup key={item.uid}>
                                 <Label className="fw-semi-bold">
                                   Custom Question
                                 </Label>
-                                <Input
-                                  id={i}
-                                  name={"custom_question"}
-                                  type={item.type}
-                                  maxLength="100"
-                                  onChange={(e) =>
-                                    checkRestrictedWord(
-                                      "custom_question_" + i,
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                                {i === 1 && restrictionValidation1 === true && (
+                                <div className="d-flex align-items-center gap-2">
+                                  <Input
+                                    id={item.uid}
+                                    name={"custom_question"}
+                                    type={item.type}
+                                    maxLength="100"
+                                    onChange={(e) =>
+                                      checkRestrictedWord(item.uid, e.target.value)
+                                    }
+                                  />
+                                  <button
+                                    type="button"
+                                    className="custom-remove-button p-0 flex-shrink-0 border-0 bg-transparent"
+                                    onClick={() => removeInput(item.uid)}
+                                  >
+                                    <BsDashSquare className="mb-1" /> Remove
+                                  </button>
+                                </div>
+                                {restrictionValidations[item.uid] === true && (
                                   <FormText
                                     color="danger"
                                     className="custom-question-validation"
                                   >
                                     Your input contains the flagged word '{" "}
-                                    <b>{restrictionWord1.toString()}</b> '.
-                                  </FormText>
-                                )}
-                                {i === 2 && restrictionValidation2 === true && (
-                                  <FormText
-                                    color="danger"
-                                    className="custom-question-validation"
-                                  >
-                                    Your input contains the flagged word '{" "}
-                                    <b>{restrictionWord2.toString()}</b> '.
-                                  </FormText>
-                                )}
-                                {i === 3 && restrictionValidation3 === true && (
-                                  <FormText
-                                    color="danger"
-                                    className="custom-question-validation"
-                                  >
-                                    Your input contains the flagged word '{" "}
-                                    <b>{restrictionWord3.toString()}</b> '.
+                                    <b>{(restrictionWords[item.uid] || []).toString()}</b> '.
                                   </FormText>
                                 )}
                               </FormGroup>
@@ -3760,8 +3723,7 @@ export const CreateJob = forwardRef(
                         })}
                       </Col>
                     </Row>
-                    {customCount < 3 && (
-                      <Col md={5}>
+                    <Col md={5}>
                         <Button
                           color="link"
                           onClick={addInput}
@@ -3772,7 +3734,6 @@ export const CreateJob = forwardRef(
                           question
                         </Button>
                       </Col>
-                    )}
 
                     {customCount > 0 && (
                       <Row>
@@ -3791,7 +3752,9 @@ export const CreateJob = forwardRef(
                                     type={"radio"}
                                     value={"Audio"}
                                     defaultChecked={
-                                      jobData?.preCustomScreen === "Audio"
+                                      previousStep === 1
+                                        ? previousData?.customquestionanswertype === "Audio"
+                                        : jobData?.preCustomScreen === "Audio"
                                     }
                                   />{" "}
                                   {"  "}
@@ -3804,7 +3767,9 @@ export const CreateJob = forwardRef(
                                     type={"radio"}
                                     value={"Video"}
                                     defaultChecked={
-                                      jobData?.preCustomScreen === "Video"
+                                      previousStep === 1
+                                        ? previousData?.customquestionanswertype === "Video"
+                                        : jobData?.preCustomScreen === "Video"
                                     }
                                   />{" "}
                                   {"  "}
@@ -3817,7 +3782,9 @@ export const CreateJob = forwardRef(
                                     type={"radio"}
                                     value={"Text"}
                                     defaultChecked={
-                                      jobData?.preCustomScreen === "Text"
+                                      previousStep === 1
+                                        ? previousData?.customquestionanswertype === "Text"
+                                        : jobData?.preCustomScreen === "Text"
                                     }
                                   />{" "}
                                   {"  "}
