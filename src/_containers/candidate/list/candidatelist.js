@@ -590,14 +590,18 @@ export default function CandidateList(props) {
         };
       });
 
-    let res = await dispatch(
-      candidateListActions.postJobPrescreenApplication(nonFileData)
-    );
+    // Capture jobId/candidateId once for the email notification
+    const firstItem = nonFileData[0] || fileData[0];
+    const notifyJobId = firstItem?.jobid;
+    const notifyCandidateId = firstItem?.candidateid;
+    const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
+    const authConfig = { headers: { Authorization: `Bearer ${authData}` } };
+
+    let res = nonFileData.length > 0
+      ? await dispatch(candidateListActions.postJobPrescreenApplication(nonFileData))
+      : { payload: { statusCode: 201, message: "Success" } };
 
     if (res.payload.statusCode === 201) {
-      const authData = localStorage.getItem("token")
-        ? localStorage.getItem("token")
-        : "";
       const config = {
         headers: {
           "content-type": "multipart/form-data",
@@ -632,6 +636,12 @@ export default function CandidateList(props) {
             .then((result) => {
               if (result.data.statusCode == 204) {
                 if (fileData.length - 1 === index) {
+                  // All files uploaded — send email notification once
+                  axios.post(
+                    `${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/SendPrescreenCompleteEmail?jobId=${notifyJobId}&candidateId=${notifyCandidateId}`,
+                    null,
+                    authConfig
+                  ).catch(() => {});
                   setPreScreenLoading(false);
                   setShowPSModal(false);
                   // showSweetAlert({
@@ -666,6 +676,12 @@ export default function CandidateList(props) {
             .catch((error) => { });
         });
       } else {
+        // No files — send email notification once
+        axios.post(
+          `${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/SendPrescreenCompleteEmail?jobId=${notifyJobId}&candidateId=${notifyCandidateId}`,
+          null,
+          authConfig
+        ).catch(() => {});
         setPreScreenLoading(false);
         setShowPSModal(false);
         // showSweetAlert({ title: res.payload.message, type: "success" });
