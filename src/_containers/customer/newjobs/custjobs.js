@@ -360,6 +360,19 @@ export default function CustJobList() {
           onAssignClick={handleAssignClick}
           viewType={viewType}
           showSeeAllHMToggle={isCompanyAdmin}
+          onClearFilters={() => {
+            setPage(1);
+            dispatch(custJobListActions.getJobList({
+              pageSize: custListPageSize,
+              pageNumber: 1,
+              searchText: "",
+              companyId: companyId,
+              searchType: "JobTitle",
+              jobStatus: "Publish",
+              hiringManagerId: userId,
+              viewAllCompanyJobs: false,
+            }));
+          }}
         />
       </Row>
       <Row>
