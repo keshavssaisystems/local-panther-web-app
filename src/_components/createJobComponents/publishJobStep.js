@@ -49,6 +49,7 @@ export default function PublishJobStep({
       hiringmanagerid: String(reqData.basicInformation?.hiringmanagerid),
       clientcompanyid: reqData.basicInformation?.clientcompanyid,
       recruiterid: String(reqData.basicInformation?.recruiterid),
+      isprescreenmandatory: reqData.isprescreenmandatory ?? false,
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,

@@ -17,6 +17,7 @@ import "./prescreen.scss";
 
 export const PrescreenModal = (props) => {
   const [formData, setFormData] = useState([]);
+  const [showValidationBanner, setShowValidationBanner] = useState(false);
 
   useEffect(() => {
     if (props?.data?.length > 0) {
@@ -37,9 +38,12 @@ export const PrescreenModal = (props) => {
     });
     setFormData(newData);
     if (invalid) {
-      //do nothing
-    } else if (!invalid && newData?.length > 0) {
-      props.sendFormData(newData);
+      setShowValidationBanner(true);
+    } else {
+      setShowValidationBanner(false);
+      if (newData?.length > 0) {
+        props.sendFormData(newData);
+      }
     }
   };
 
@@ -51,6 +55,10 @@ export const PrescreenModal = (props) => {
         : e.target.value;
     data[index].error = e.target.value === "";
     setFormData(data);
+    // Clear banner once user starts fixing answers
+    if (e.target.value !== "") {
+      setShowValidationBanner(false);
+    }
   };
 
   const returnAV = (data, index) => {
@@ -132,6 +140,17 @@ export const PrescreenModal = (props) => {
         </h3>
       </ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
+        {showValidationBanner && (
+          <div
+            className="alert alert-danger d-flex align-items-center mb-3"
+            role="alert"
+            style={{ fontSize: "0.875rem" }}
+          >
+            <span>
+              <strong>All questions are required.</strong> Please answer every question before submitting.
+            </span>
+          </div>
+        )}
         {props?.loading ? (
           <div className="prescreen-loading-div">
             <Loader
@@ -153,6 +172,7 @@ export const PrescreenModal = (props) => {
                             <b className="modal-title">
                               {data.prescreenquestion}
                             </b>
+                            <span style={{ color: "red", marginLeft: "3px" }}>*</span>
                           </Label>
                           {data.iscustomquestion ? (
                             <>{returnAV(data, index)}</>

@@ -19,10 +19,14 @@ import { USPhoneNumber } from "_helpers/helper";
 import { useSelector, useDispatch } from "react-redux";
 import customerIcons from "assets/utils/images/customer";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
+import { PrescreenModal } from "_components/modal/prescreenmodal";
 import { scheduleInterviewActions, candidateListActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVideo } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function ScheduleDetails({
   interviewDetail,
@@ -136,7 +140,17 @@ export function ScheduleDetails({
   };
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [rescheduleId, setRescheduleId] = useState("");
+  const [showPSModal, setShowPSModal] = useState(false);
+  const [preScreenLoading, setPreScreenLoading] = useState(false);
+  const [prescreenCompleted, setPrescreenCompleted] = useState(false);
+  const prescreenQues = useSelector(
+    (state) => state.candidateListReducer.prescreenQues
+  );
   const [linkDisabled, setLinkDisabled] = useState(true);
+  const isPreScreenBlocked =
+    !prescreenCompleted &&
+    interviewDetail?.isprescreenmandatory === true &&
+    interviewDetail?.candidateprescreenstatus === "Pending";
   useEffect(() => {
     checkLinkEnableDisable();
     const intervalId = setInterval(() => {
@@ -218,6 +232,107 @@ export function ScheduleDetails({
       setRescheduleId(candidaterecommendedjobid);
     }
   };
+
+  const onPrescreenClickAction = async () => {
+    await dispatch(candidateListActions.getJobPrescreenApplicationQues(interviewDetail.jobid));
+    setShowPSModal(true);
+  };
+
+  const onSendPrescreenData = async (formData) => {
+    setPreScreenLoading(true);
+    const candidateid = parseInt(
+      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+    );
+    const currentUserId = parseInt(
+      JSON.parse(localStorage.getItem("userDetails")).UserId
+    );
+    const authData = localStorage.getItem("token") || "";
+    const authConfig = { headers: { Authorization: `Bearer ${authData}` } };
+
+    const nonFileData = formData
+      .filter((d) => !d.iscustomquestion || d.customquestionanswertype === "Text")
+      .map((d) => ({
+        jobcandidateprescreenapplicationid: 0,
+        jobprescreenapplicationid: d.jobprescreenapplicationid,
+        jobid: d.jobid,
+        candidateid,
+        answer: d.answer,
+        isactive: d.isactive,
+        currentUserId,
+      }));
+
+    const fileData = formData
+      .filter((d) => d.iscustomquestion && d.customquestionanswertype !== "Text")
+      .map((d) => ({
+        jobcandidateprescreenapplicationid: 0,
+        jobprescreenapplicationid: d.jobprescreenapplicationid,
+        jobid: d.jobid,
+        candidateid,
+        answer: d.answer,
+        isactive: d.isactive,
+        currentUserId,
+      }));
+
+    const firstItem = nonFileData[0] || fileData[0];
+    const notifyJobId = firstItem?.jobid;
+    const notifyCandidateId = firstItem?.candidateid;
+
+    const res = nonFileData.length > 0
+      ? await dispatch(candidateListActions.postJobPrescreenApplication(nonFileData))
+      : { payload: { statusCode: 201, message: "Success" } };
+
+    if (res.payload.statusCode === 201) {
+      const fileConfig = {
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Bearer ${authData}`,
+        },
+      };
+      if (fileData?.length > 0) {
+        fileData.forEach(async (i, index) => {
+          const form = new FormData();
+          form.append("jobcandidateprescreenapplicationid", 0);
+          form.append("jobprescreenapplicationid", i.jobprescreenapplicationid);
+          form.append("Jobid", i.jobid);
+          form.append("Candidateid", candidateid);
+          form.append("currentUserId", currentUserId);
+          form.append("Answerfile", i.answer);
+          form.append("Isactive", i.isactive);
+          await axios
+            .post(
+              `${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/CandidatePrecreenAnswerFileUpload`,
+              form,
+              fileConfig
+            )
+            .then((result) => {
+              if (result.data.statusCode == 204) {
+                if (fileData.length - 1 === index) {
+                  axios.post(`${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/SendPrescreenCompleteEmail?jobId=${notifyJobId}&candidateId=${notifyCandidateId}`, null, authConfig).catch(() => {});
+                  setPreScreenLoading(false);
+                  setShowPSModal(false);
+                  setPrescreenCompleted(true);
+                  dispatch(showSnackbar({ message: result.data.message, type: SNACKBAR_TYPES.SUCCESS, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+                }
+              } else {
+                setPreScreenLoading(false);
+                dispatch(showSnackbar({ message: result.data.message || result.data.status, type: SNACKBAR_TYPES.ERROR, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+              }
+            })
+            .catch(() => { setPreScreenLoading(false); });
+        });
+      } else {
+        axios.post(`${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/SendPrescreenCompleteEmail?jobId=${notifyJobId}&candidateId=${notifyCandidateId}`, null, authConfig).catch(() => {});
+        setPreScreenLoading(false);
+        setShowPSModal(false);
+        setPrescreenCompleted(true);
+        dispatch(showSnackbar({ message: res.payload.message, type: SNACKBAR_TYPES.SUCCESS, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+      }
+    } else {
+      setPreScreenLoading(false);
+      dispatch(showSnackbar({ message: res.payload.message || res.payload.status, type: SNACKBAR_TYPES.ERROR, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+    }
+  };
+
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
     data.title = title;
@@ -450,15 +565,14 @@ export function ScheduleDetails({
                                   <div className="p-custom">
                                     <p className="mb-0">
                                       <a
-                                        className={
-                                          linkDisabled ? "no-click" : ""
-                                        }
+                                        className={linkDisabled || isPreScreenBlocked ? "no-click" : ""}
                                         href={interviewDetail.videolink}
                                         target={"_blank"}
                                         rel="noreferrer"
+                                        onClick={isPreScreenBlocked ? (e) => e.preventDefault() : undefined}
                                       >
                                         <Button
-                                          disabled={linkDisabled}
+                                          disabled={linkDisabled || isPreScreenBlocked}
                                           color="success"
                                           size="sm"
                                         >
@@ -472,6 +586,19 @@ export function ScheduleDetails({
                                       </a>{" "}
                                       the interview
                                     </p>
+                                    {isPreScreenBlocked && (
+                                      <p className="mb-0 mt-1 text-danger" style={{ fontSize: "0.8rem" }}>
+                                        <strong>Action required:</strong> Complete your pre-screening questionnaire to unlock this interview.{" "}
+                                        <span
+                                          role="button"
+                                          className="text-primary"
+                                          style={{ cursor: "pointer", textDecoration: "underline" }}
+                                          onClick={onPrescreenClickAction}
+                                        >
+                                          Complete Pre-Screening
+                                        </span>
+                                      </p>
+                                    )}
                                   </div>
                                 )}
                               {interviewDetail.isappvideocall === true &&
@@ -481,18 +608,18 @@ export function ScheduleDetails({
                                   <div className="p-custom">
                                     <p className="mb-0">
                                       <a
-                                        className={
-                                          linkDisabled ? "no-click" : ""
-                                        }
+                                        className={linkDisabled || isPreScreenBlocked ? "no-click" : ""}
                                         href="/"
+                                        onClick={isPreScreenBlocked ? (e) => e.preventDefault() : undefined}
                                       >
                                         <NavLink
-                                          to={`/video-screen/${id}`}
-                                          target="_blank"
+                                          to={isPreScreenBlocked ? "#" : `/video-screen/${id}`}
+                                          target={isPreScreenBlocked ? "_self" : "_blank"}
                                           exact
+                                          onClick={isPreScreenBlocked ? (e) => e.preventDefault() : undefined}
                                         >
                                           <Button
-                                            disabled={linkDisabled}
+                                            disabled={linkDisabled || isPreScreenBlocked}
                                             color="success"
                                             size="sm"
                                           >
@@ -507,9 +634,23 @@ export function ScheduleDetails({
                                       </a>{" "}
                                       the in-app interview
                                     </p>
-                                    <p className="mb-0">
-                                      You can join this call before 15 Min of scheduled time
-                                    </p>
+                                    {isPreScreenBlocked ? (
+                                      <p className="mb-0 mt-1 text-danger" style={{ fontSize: "0.8rem" }}>
+                                        <strong>Action required:</strong> Complete your pre-screening questionnaire to unlock this interview.{" "}
+                                        <span
+                                          role="button"
+                                          className="text-primary"
+                                          style={{ cursor: "pointer", textDecoration: "underline" }}
+                                          onClick={onPrescreenClickAction}
+                                        >
+                                          Complete Pre-Screening
+                                        </span>
+                                      </p>
+                                    ) : (
+                                      <p className="mb-0">
+                                        You can join this call before 15 Min of scheduled time
+                                      </p>
+                                    )}
                                   </div>
                                 )}
                             </>
@@ -608,6 +749,16 @@ export function ScheduleDetails({
         />
         {showAlert.description}
       </>
+      {showPSModal && (
+        <PrescreenModal
+          isOpen={showPSModal}
+          onClose={() => setShowPSModal(false)}
+          data={prescreenQues}
+          sendFormData={(data) => onSendPrescreenData(data)}
+          preScreenType="pending"
+          loading={preScreenLoading}
+        />
+      )}
     </>
   );
 }

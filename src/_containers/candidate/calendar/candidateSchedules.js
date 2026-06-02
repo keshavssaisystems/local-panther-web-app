@@ -7,7 +7,7 @@ import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
-import { scheduleInterviewActions } from "_store";
+import { scheduleInterviewActions, customerCandidateListsActions } from "_store";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import "./calendar.scss";
@@ -145,6 +145,7 @@ export function CandidateSchedules() {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
+  const [eventLoading, setEventLoading] = useState(false);
   const onCloseIdModal = () => {
     setOpenModal(false);
   };
@@ -174,11 +175,22 @@ export function CandidateSchedules() {
       end: formattedLastDay,
     });
   };
-  const handleSelectEvent = useCallback((event) => {
-    setPopupData(event.data);
+  const handleSelectEvent = useCallback(async (event) => {
+    setEventLoading(true);
+    try {
+      const res = await dispatch(
+        customerCandidateListsActions.getScheduleIVList(event.data.scheduleinterviewid)
+      );
+      const fresh = res?.payload?.data?.scheduledInterviewList?.[0];
+      setPopupData(fresh ?? event.data);
+    } catch {
+      setPopupData(event.data);
+    } finally {
+      setEventLoading(false);
+    }
     setOpenModal(true);
     setPopupType(event.format);
-  }, []);
+  }, [dispatch]);
 
   const [view, setView] = useState(Views.MONTH);
 
@@ -261,7 +273,7 @@ export function CandidateSchedules() {
         <Row>
           <Col md="12">
             <Card>
-              <CardBody className="scheduled-calender">
+              <CardBody className="scheduled-calender" style={{ position: "relative" }}>
                 <div className="text-end">
                   <span className="legend">
                     <div className="mb-3 me-0 badge badge-color-yellow">..</div>{" "}
@@ -331,6 +343,14 @@ export function CandidateSchedules() {
                     },
                   }}
                 />
+                {eventLoading && (
+                  <div
+                    className="position-absolute d-flex align-items-center justify-content-center"
+                    style={{ inset: 0, background: "rgba(255,255,255,0.6)", zIndex: 10 }}
+                  >
+                    <span className="spinner-border text-primary" role="status" />
+                  </div>
+                )}
               </CardBody>
             </Card>
           </Col>
