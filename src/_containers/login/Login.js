@@ -34,7 +34,6 @@ import { getPublicIP, detectInputType } from "_helpers/helper";
 import { VerifyEmailPhoneOTPModal } from "_components/modal/verifyEmailPhoneOTP";
 
 import "./login.scss";
-import { use } from "react";
 export function Login() {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -184,105 +183,68 @@ export function Login() {
   const onSubmit = async (payload) => {
     let permission = 'default';
     try {
-
       if ('Notification' in window) {
         // MUST be synchronous to the click
         if (Notification.permission === 'default') {
-          permission = await Notification.requestPermission();
+          permission = await Promise.race([
+            Notification.requestPermission(),
+            new Promise(resolve => setTimeout(() => resolve('default'), 3000)),
+          ]);
         } else {
           permission = Notification.permission;
         }
       }
     } catch (e) { console.log(e) }
-    firebasemessaging(permission, payload);
+    await firebasemessaging(permission, payload);
   }
   const firebasemessaging = async (permission, payload) => {
     if (permission === "granted") {
-      const registration = await navigator.serviceWorker.ready;
-      // Generate Token
       try {
-        const token = await messaging?.getToken({
-          vapidKey: "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
-          serviceWorkerRegistration: registration,
-        });
+        const registration = await Promise.race([
+          navigator.serviceWorker.ready,
+          new Promise((_, reject) => setTimeout(() => reject(new Error("SW timeout")), 3000)),
+        ]);
+        const token = await Promise.race([
+          messaging?.getToken({
+            vapidKey: "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+            serviceWorkerRegistration: registration,
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("getToken timeout")), 5000)),
+        ]);
         payload.firebasetoken = token;
       } catch { }
+    }
 
-      let res = await dispatch(authActions.loginThunk(payload));
+    const res = await dispatch(authActions.loginThunk(payload));
 
-      if (res.payload && companyName) {
-        let companyreferrallogid = localStorage.getItem("companyreferrallogid");
-        const userAgent = navigator.userAgent;
-        let os = "Unknown OS";
-
-        if (userAgent.indexOf("Win") != -1) os = "Windows";
-        if (userAgent.indexOf("Mac") != -1) os = "MacOS";
-        if (userAgent.indexOf("X11") != -1) os = "UNIX";
-        if (userAgent.indexOf("Linux") != -1) os = "Linux";
-        if (userAgent.indexOf("Android") != -1) os = "Android";
-        if (userAgent.indexOf("like Mac") != -1) os = "iOS";
-        let payload = {
-          referralLogUrl: window.location.href,
-          companyName: companyName,
-          // companyid: 0,
-          osversion: "string",
-          ipaddress: localStorage.getItem("publicip")
-            ? localStorage.getItem("publicip")
-            : "Web",
-          loginsource: "Web",
-          logindeviceid: os,
-          logindevice: os,
-          currentUserId: localStorage.getItem("userId")
-            ? Number(localStorage.getItem("userId"))
-            : 0,
-        };
-        console.log(payload);
-        dispatch(
-          authActions.putCompanyReferralLogs({
-            id: companyreferrallogid,
-            payload,
-          })
-        );
-      }
-      // console.log("Token Gen", token);
-      // Send this token  to server ( db)
-    } else {
-      console.log("You denied for the notification");
-      let res = await dispatch(authActions.loginThunk(payload));
-      if (res.payload && companyName) {
-        let companyreferrallogid = localStorage.getItem("companyreferrallogid");
-        const userAgent = navigator.userAgent;
-        let os = "Unknown OS";
-
-        if (userAgent.indexOf("Win") != -1) os = "Windows";
-        if (userAgent.indexOf("Mac") != -1) os = "MacOS";
-        if (userAgent.indexOf("X11") != -1) os = "UNIX";
-        if (userAgent.indexOf("Linux") != -1) os = "Linux";
-        if (userAgent.indexOf("Android") != -1) os = "Android";
-        if (userAgent.indexOf("like Mac") != -1) os = "iOS";
-        let payload = {
-          referralLogUrl: window.location.href,
-          companyName: companyName,
-          // companyid: 0,
-          osversion: "string",
-          ipaddress: localStorage.getItem("publicip")
-            ? localStorage.getItem("publicip")
-            : "Web",
-          loginsource: "Web",
-          logindeviceid: os,
-          logindevice: os,
-          currentUserId: localStorage.getItem("userId")
-            ? Number(localStorage.getItem("userId"))
-            : 0,
-        };
-        console.log(payload);
-        dispatch(
-          authActions.putCompanyReferralLogs({
-            id: companyreferrallogid,
-            payload,
-          })
-        );
-      }
+    if (res.payload && companyName) {
+      const companyreferrallogid = localStorage.getItem("companyreferrallogid");
+      const userAgent = navigator.userAgent;
+      let os = "Unknown OS";
+      if (userAgent.indexOf("Win") !== -1) os = "Windows";
+      if (userAgent.indexOf("Mac") !== -1) os = "MacOS";
+      if (userAgent.indexOf("X11") !== -1) os = "UNIX";
+      if (userAgent.indexOf("Linux") !== -1) os = "Linux";
+      if (userAgent.indexOf("Android") !== -1) os = "Android";
+      if (userAgent.indexOf("like Mac") !== -1) os = "iOS";
+      const referralPayload = {
+        referralLogUrl: window.location.href,
+        companyName: companyName,
+        osversion: "string",
+        ipaddress: localStorage.getItem("publicip") || "Web",
+        loginsource: "Web",
+        logindeviceid: os,
+        logindevice: os,
+        currentUserId: localStorage.getItem("userId")
+          ? Number(localStorage.getItem("userId"))
+          : 0,
+      };
+      dispatch(
+        authActions.putCompanyReferralLogs({
+          id: companyreferrallogid,
+          payload: referralPayload,
+        })
+      );
     }
   };
 
@@ -302,36 +264,45 @@ export function Login() {
     }
 
     if (!isModal) {
-      let permission = 'default';
       try {
+        let permission = 'default';
         if ('Notification' in window) {
-          // MUST be synchronous to the click
           if (Notification.permission === 'default') {
-            permission = await Notification.requestPermission();
+            // Edge can hang forever on requestPermission if popup is blocked — 3s timeout
+            permission = await Promise.race([
+              Notification.requestPermission(),
+              new Promise(resolve => setTimeout(() => resolve('default'), 3000)),
+            ]);
           } else {
             permission = Notification.permission;
           }
         }
-      } catch (e) { console.log(e) }
 
-      let data = await getPublicIP();
-      if (data?.ip) {
-        localStorage.setItem("publicip", data.ip);
-      }
-      if (permission === "granted") {
-        let token = "";
-        // Generate Token
-        try {
-          token = await messaging?.getToken({
-            vapidKey:
-              "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
-          });
-          payload.firebasetoken = token;
+        let data = await getPublicIP();
+        if (data?.ip) {
+          localStorage.setItem("publicip", data.ip);
+        }
 
-        } catch { }
-
-      } else if (permission === "denied") {
-        console.log("You denied for the notification");
+        if (permission === "granted") {
+          // Generate Token
+          try {
+            const registration = await Promise.race([
+              navigator.serviceWorker.ready,
+              new Promise((_, reject) => setTimeout(() => reject(new Error("SW timeout")), 3000)),
+            ]);
+            const token = await Promise.race([
+              messaging?.getToken({
+                vapidKey:
+                  "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+                serviceWorkerRegistration: registration,
+              }),
+              new Promise((_, reject) => setTimeout(() => reject(new Error("getToken timeout")), 5000)),
+            ]);
+            payload.firebasetoken = token;
+          } catch { }
+        }
+      } catch (e) {
+        console.log("Notification/Firebase setup skipped:", e);
       }
     }
     let response = await dispatch(authActions.loginWithOTP(payload));

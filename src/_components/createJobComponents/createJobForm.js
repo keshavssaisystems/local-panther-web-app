@@ -961,6 +961,12 @@ export const CreateJob = forwardRef(
     const removePreQuestion = (id) => {
       setRemovedPreQuestionIds((prev) => [...prev, id]);
     };
+
+    const [isPreScreenMandatory, setIsPreScreenMandatory] = useState(
+      previousStep === 3
+        ? jobData?.basicInformation?.isprescreenmandatory || false
+        : previousData?.isprescreenmandatory || false
+    );
     const _uidCounter = React.useRef(1);
     const nextUid = () => { _uidCounter.current += 1; return _uidCounter.current; };
     const inputArr = [
@@ -1344,6 +1350,7 @@ export const CreateJob = forwardRef(
         keyQualification: keyQualification,
         preScreen: questionArr,
         preCustomScreen: customAnswer === "" ? "Audio" : customAnswer,
+        isprescreenmandatory: isPreScreenMandatory,
       };
 
       JobDataForPreview(data);
@@ -3598,6 +3605,56 @@ export const CreateJob = forwardRef(
                   id="collapseFive"
                 >
                   <CardBody>
+                    <Row className="mb-3">
+                      <Col md={12}>
+                        <FormGroup className="mb-0">
+                          <div className="d-flex align-items-center gap-2">
+                            <div className="form-check form-switch" style={{ display: "flex", alignItems: "center" }}>
+                              <Input
+                                id="prescreenMandatoryToggle"
+                                name="prescreenMandatoryToggle"
+                                type="checkbox"
+                                checked={isPreScreenMandatory}
+                                onChange={(e) => setIsPreScreenMandatory(e.target.checked)}
+                                className="form-check-input"
+                                style={{
+                                  width: "3rem",
+                                  height: "1.5rem",
+                                  cursor: "pointer",
+                                  margin: "0",
+                                  marginRight: "0.5rem",
+                                }}
+                              />
+                              <Label
+                                for="prescreenMandatoryToggle"
+                                className="form-check-label fw-semi-bold mb-0"
+                                style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+                              >
+                                Make pre-screening mandatory for candidates
+                              </Label>
+                            </div>
+                            <span
+                              className="badge rounded-pill"
+                              style={{
+                                backgroundColor: isPreScreenMandatory
+                                  ? "#28a745"
+                                  : "#6c757d",
+                                padding: "0.35rem 0.65rem",
+                                fontSize: "0.875rem",
+                                height: "fit-content",
+                              }}
+                            >
+                              {isPreScreenMandatory ? "Mandatory" : "Optional"}
+                            </span>
+                          </div>
+                        </FormGroup>
+                        <FormText className="mt-2">
+                          When enabled, candidates must complete the pre-screening
+                          questionnaire before proceeding to the next stage.
+                        </FormText>
+                      </Col>
+                    </Row>
+                    <>
                     <Row>
                       <Col>
                         {preScreenQuestionsOption?.length > 0 &&
@@ -3796,6 +3853,7 @@ export const CreateJob = forwardRef(
                         </Col>
                       </Row>
                     )}
+                    </>
                   </CardBody>
                 </Collapse>
               </Card>

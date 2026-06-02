@@ -12,6 +12,7 @@ import {
   PaginationLink,
   Row,
   Col,
+  Button,
 } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -29,9 +30,11 @@ import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
 import personIcon from "../../../assets/utils/images/person-fill.svg";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
+import { PrescreenModal } from "_components/modal/prescreenmodal";
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
-import { customerCandidateListsActions } from "_store";
+import { customerCandidateListsActions, candidateListActions } from "_store";
+import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment-timezone";
@@ -47,9 +50,18 @@ export function UpcomingInterviews() {
   const schedules = useSelector(
     (state) => state.candidateDashboard.dashboardGraphData
   );
+  console.log("Upcoming Interviews Data:", schedules);
   const [showInterviewDetails, setDetails] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [link, setLink] = useState("");
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [showPSModal, setShowPSModal] = useState(false);
+  const [preScreenLoading, setPreScreenLoading] = useState(false);
+  const [psJobId, setPsJobId] = useState(null);
+  const [completedPreScreenJobIds, setCompletedPreScreenJobIds] = useState([]);
+  const prescreenQues = useSelector(
+    (state) => state.candidateListReducer.prescreenQues
+  );
   const loader = useSelector(
     (state) => state.candidateDashboard.schedulesLoader
   );
@@ -173,22 +185,30 @@ export function UpcomingInterviews() {
     return items;
   };
 
-  const onInterviewDetails = async (scheduleInterviewId) => {
-    let res = await dispatch(
-      customerCandidateListsActions.getScheduleIVList(scheduleInterviewId)
-    );
-    if (res.payload) {
-      if (res?.payload?.data?.scheduledInterviewList.length > 0) {
-        setPopupData(res?.payload?.data?.scheduledInterviewList[0]);
-        setDetails(true);
-      } else {
-        showSweetAlert({
-          title: "Something went wrong, please try again later",
-          type: "error",
-        });
+  const onInterviewDetails = async (scheduleInterviewId, rowData) => {
+    setDetailsLoading(true);
+    try {
+      let res = await dispatch(
+        customerCandidateListsActions.getScheduleIVList(scheduleInterviewId)
+      );
+      if (res.payload) {
+        if (res?.payload?.data?.scheduledInterviewList.length > 0) {
+          const detail = res?.payload?.data?.scheduledInterviewList[0];
+          setPopupData({
+            ...detail,
+            isprescreenmandatory: detail?.isprescreenmandatory ?? rowData?.isprescreenmandatory,
+            candidateprescreenstatus: detail?.candidateprescreenstatus ?? rowData?.candidateprescreenstatus,
+          });
+          setDetails(true);
+        } else {
+          showSweetAlert({
+            title: "Something went wrong, please try again later",
+            type: "error",
+          });
+        }
       }
-    } else {
-      //do nothing
+    } finally {
+      setDetailsLoading(false);
     }
   };
 
@@ -200,7 +220,121 @@ export function UpcomingInterviews() {
     SetShowAlert(data);
   };
 
+  const onPrescreenClickAction = async (row) => {
+    setPsJobId(row.jobid);
+    await dispatch(candidateListActions.getJobPrescreenApplicationQues(row.jobid));
+    setShowPSModal(true);
+  };
+
+  const onSendPrescreenData = async (formData) => {
+    setPreScreenLoading(true);
+    const candidateid = parseInt(
+      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+    );
+    const currentUserId = parseInt(
+      JSON.parse(localStorage.getItem("userDetails")).UserId
+    );
+    const authData = localStorage.getItem("token") || "";
+    const authConfig = { headers: { Authorization: `Bearer ${authData}` } };
+
+    const nonFileData = formData
+      .filter((d) => !d.iscustomquestion || d.customquestionanswertype === "Text")
+      .map((d) => ({
+        jobcandidateprescreenapplicationid: 0,
+        jobprescreenapplicationid: d.jobprescreenapplicationid,
+        jobid: d.jobid,
+        candidateid,
+        answer: d.answer,
+        isactive: d.isactive,
+        currentUserId,
+      }));
+
+    const fileData = formData
+      .filter((d) => d.iscustomquestion && d.customquestionanswertype !== "Text")
+      .map((d) => ({
+        jobcandidateprescreenapplicationid: 0,
+        jobprescreenapplicationid: d.jobprescreenapplicationid,
+        jobid: d.jobid,
+        candidateid,
+        answer: d.answer,
+        isactive: d.isactive,
+        currentUserId,
+      }));
+
+    const firstItem = nonFileData[0] || fileData[0];
+    const notifyJobId = firstItem?.jobid;
+    const notifyCandidateId = firstItem?.candidateid;
+
+    const res = nonFileData.length > 0
+      ? await dispatch(candidateListActions.postJobPrescreenApplication(nonFileData))
+      : { payload: { statusCode: 201, message: "Success" } };
+
+    if (res.payload.statusCode === 201) {
+      const fileConfig = {
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Bearer ${authData}`,
+        },
+      };
+      if (fileData?.length > 0) {
+        fileData.forEach(async (i, index) => {
+          const form = new FormData();
+          form.append("jobcandidateprescreenapplicationid", 0);
+          form.append("jobprescreenapplicationid", i.jobprescreenapplicationid);
+          form.append("Jobid", i.jobid);
+          form.append("Candidateid", candidateid);
+          form.append("currentUserId", currentUserId);
+          form.append("Answerfile", i.answer);
+          form.append("Isactive", i.isactive);
+          const fileRes = await axios
+            .post(
+              `${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/CandidatePrecreenAnswerFileUpload`,
+              form,
+              fileConfig
+            )
+            .then((result) => {
+              if (result.data.statusCode == 204) {
+                if (fileData.length - 1 === index) {
+                  axios.post(`${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/SendPrescreenCompleteEmail?jobId=${notifyJobId}&candidateId=${notifyCandidateId}`, null, authConfig).catch(() => {});
+                  setPreScreenLoading(false);
+                  setShowPSModal(false);
+                  if (psJobId) setCompletedPreScreenJobIds((prev) => [...prev, psJobId]);
+                  dispatch(showSnackbar({ message: result.data.message, type: SNACKBAR_TYPES.SUCCESS, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+                }
+              } else {
+                setPreScreenLoading(false);
+                dispatch(showSnackbar({ message: result.data.message || result.data.status, type: SNACKBAR_TYPES.ERROR, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+              }
+            })
+            .catch(() => { setPreScreenLoading(false); });
+        });
+      } else {
+        axios.post(`${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/SendPrescreenCompleteEmail?jobId=${notifyJobId}&candidateId=${notifyCandidateId}`, null, authConfig).catch(() => {});
+        setPreScreenLoading(false);
+        setShowPSModal(false);
+        if (psJobId) setCompletedPreScreenJobIds((prev) => [...prev, psJobId]);
+        dispatch(showSnackbar({ message: res.payload.message, type: SNACKBAR_TYPES.SUCCESS, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+      }
+    } else {
+      setPreScreenLoading(false);
+      dispatch(showSnackbar({ message: res.payload.message || res.payload.status, type: SNACKBAR_TYPES.ERROR, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 3000, maxWidth: 500 }));
+    }
+  };
+
   const checkInterview = function (mode, data) {
+    // Block join if pre-screening is mandatory and not yet completed
+    if (data?.isprescreenmandatory === true && data?.candidateprescreenstatus === "Pending" && !completedPreScreenJobIds.includes(data?.jobid)) {
+      dispatch(showSnackbar({
+        message: "You must complete the pre-screening questionnaire before joining this interview.",
+        type: SNACKBAR_TYPES.WARNING,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 4000,
+        maxWidth: 600,
+      }));
+      return;
+    }
+
     let id = getVideoChannelId(
       data?.jobid,
       data?.scheduleinterviewid,
@@ -337,29 +471,49 @@ export function UpcomingInterviews() {
     SetShowAlert(data);
   };
   const interviewMode = (row) => {
+    const isPreScreenBlocked =
+      row?.isprescreenmandatory === true &&
+      row?.candidateprescreenstatus === "Pending" &&
+      !completedPreScreenJobIds.includes(row?.jobid);
+
     return (
-      <div className="d-block w-100 ">
+      <div className="d-flex align-items-center" style={{ gap: "6px" }}>
         {row.format === "Video" || row.format === "In-person" ? (
           <div
             className="ellipse d-flex justify-content-center align-items-center"
             onClick={() => checkInterview(row.format, row)}
+            title={isPreScreenBlocked ? "Complete pre-screening to join" : ""}
+            style={isPreScreenBlocked ? { cursor: "not-allowed", opacity: 0.45 } : {}}
           >
             <img
-              style={{ cursor: "pointer" }}
+              style={{ cursor: isPreScreenBlocked ? "not-allowed" : "pointer" }}
               src={row.format === "Video" ? videoIcon : personIcon}
               alt="interview-icon"
             />
           </div>
         ) : (
-          <>
-            <div className="ellipse d-flex justify-content-center align-items-center">
-              <BsFillTelephoneFill
-                onClick={() => checkInterview("phone", row)}
-                style={{ cursor: "pointer" }}
-                className="header-icon icon-gradient bg-amy-crisp"
-              />
-            </div>
-          </>
+          <div
+            className="ellipse d-flex justify-content-center align-items-center"
+            title={isPreScreenBlocked ? "Complete pre-screening to join" : ""}
+            style={isPreScreenBlocked ? { cursor: "not-allowed", opacity: 0.45 } : {}}
+          >
+            <BsFillTelephoneFill
+              onClick={() => checkInterview("phone", row)}
+              style={{ cursor: isPreScreenBlocked ? "not-allowed" : "pointer" }}
+              className="header-icon icon-gradient bg-amy-crisp"
+            />
+          </div>
+        )}
+        {isPreScreenBlocked && (
+          <Button
+            color="link"
+            size="sm"
+            className="p-0"
+            style={{ fontSize: "0.75rem" }}
+            onClick={() => onPrescreenClickAction(row)}
+          >
+            Complete Pre-Screening
+          </Button>
         )}
       </div>
     );
@@ -376,9 +530,15 @@ export function UpcomingInterviews() {
             <FontAwesomeIcon icon={faEllipsisV} />
           </DropdownToggle>
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
-            <DropdownItem>
+            <DropdownItem disabled={detailsLoading}>
               <i className="dropdown-icon lnr-license"> </i>
-              <span onClick={() => onInterviewDetails(row.scheduleinterviewid)}>
+              <span
+                onClick={() => !detailsLoading && onInterviewDetails(row.scheduleinterviewid, row)}
+                style={{ display: "flex", alignItems: "center", gap: "6px", cursor: detailsLoading ? "not-allowed" : "pointer" }}
+              >
+                {detailsLoading && (
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                )}
                 Interview details
               </span>
             </DropdownItem>
@@ -469,6 +629,18 @@ export function UpcomingInterviews() {
           </>
         ) : (
           <></>
+        )}
+      </>
+      <>
+        {showPSModal && (
+          <PrescreenModal
+            isOpen={showPSModal}
+            onClose={() => setShowPSModal(false)}
+            data={prescreenQues}
+            sendFormData={(data) => onSendPrescreenData(data)}
+            preScreenType="pending"
+            loading={preScreenLoading}
+          />
         )}
       </>
       <>
