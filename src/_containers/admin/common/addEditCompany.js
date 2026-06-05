@@ -65,6 +65,8 @@ export const AddEditCompany = (props) => {
   const [save, setSave] = useState(false);
   const [isStaffingFirm, setIsStaffingFirm] = useState(data?.isstaffingfirm);
   const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
+  const [emailValidation, setEmailValidation] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   useEffect(() => {
     if (!isAddMode) {
@@ -193,6 +195,17 @@ export const AddEditCompany = (props) => {
       data.noofemployees = parseInt(event.target.value);
     } else if (check === "email") {
       data.contactemail = event.target.value;
+      const emailVal = event.target.value;
+      if (emailVal === "") {
+        setEmailValidation(true);
+        setEmailError("Email is required");
+      } else if (!emailRegex.test(emailVal)) {
+        setEmailValidation(true);
+        setEmailError("Email is not valid");
+      } else {
+        setEmailValidation(false);
+        setEmailError("");
+      }
     } else if (check === "phone") {
       data.contactphonenumber = event.target.value;
     } else if (check === "location") {
@@ -259,10 +272,22 @@ export const AddEditCompany = (props) => {
     event.target.elements.countryid.value === ""
       ? setCountryValidation(true)
       : setCountryValidation(false);
+    const emailVal = event.target.elements.email?.value || "";
+    if (emailVal === "") {
+      setEmailValidation(true);
+      setEmailError("Email is required");
+    } else if (!emailRegex.test(emailVal)) {
+      setEmailValidation(true);
+      setEmailError("Email is not valid");
+    } else {
+      setEmailValidation(false);
+      setEmailError("");
+    }
     if (
       event.target.elements.company.value !== "" &&
       event.target.elements.city.value !== "" &&
-      event.target.elements.countryid.value !== ""
+      event.target.elements.countryid.value !== "" &&
+      emailVal !== "" && emailRegex.test(emailVal)
     ) {
       setSave(false);
       onSubmit();
@@ -544,7 +569,7 @@ export const AddEditCompany = (props) => {
               </Col>
               <Col md={6}>
                 <FormGroup>
-                  <Label for="email">Email</Label>
+                  <Label for="email">Email <span style={{ color: "red" }}>*</span></Label>
                   <input
                     type="email"
                     name="email"
@@ -553,11 +578,11 @@ export const AddEditCompany = (props) => {
                     defaultValue={isAddMode ? "" : data?.contactemail}
                     maxLength={50}
                     placeholder="Enter email"
-                    className={`field-input placeholder-text form-control ${errors?.email ? "is-invalid error-text" : "input-text"
+                    className={`field-input placeholder-text form-control ${emailValidation ? "is-invalid error-text" : "input-text"
                       }`}
                   />
                   <div className="invalid-feedback">
-                    {errors?.email?.message}
+                    {emailError}
                   </div>
                 </FormGroup>
               </Col>

@@ -2276,7 +2276,7 @@ export const CreateJob = forwardRef(
                       <Col md={6} lg={3}>
                         <FormGroup>
                           <Label className="fw-semi-bold">
-                            Matched Candidate Criteria
+                            Matched candidate criteria
                           </Label>
                           <Input
                             id={"matchedcriteriapercentage"}
