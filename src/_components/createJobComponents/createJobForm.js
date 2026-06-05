@@ -81,6 +81,7 @@ export const CreateJob = forwardRef(
       customerDetails,
       nextPage,
       certificationList,
+      matchedCriteriaOption,
     },
     ref
   ) => {
@@ -636,6 +637,11 @@ export const CreateJob = forwardRef(
           jobData.paymentBenifits.benefits === undefined
           ? ""
           : jobData.paymentBenifits.benefits,
+      matchedcriteriapercentage:
+        jobData.basicInformation === undefined ||
+          jobData.basicInformation.matchedcriteriapercentage === undefined
+          ? 80
+          : jobData.basicInformation.matchedcriteriapercentage,
     };
     let previousValue = {
       companyId: "",
@@ -766,6 +772,12 @@ export const CreateJob = forwardRef(
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].benefits,
+      matchedcriteriapercentage:
+        previousData === undefined ||
+          previousData.matchedcriteriapercentage === undefined ||
+          previousData.matchedcriteriapercentage === null
+          ? 80
+          : previousData.matchedcriteriapercentage,
     };
     let jobLocationRaw =
       previousStep === 3
@@ -774,6 +786,10 @@ export const CreateJob = forwardRef(
     const [jobLocationOption, setJobLocationOption] = useState(
       jobLocationRaw === undefined ? 0 : jobLocationRaw
     );
+    let matchedCriteriaSelected =
+      previousStep === 3
+        ? Number(preValue.matchedcriteriapercentage) || 80
+        : Number(previousValue.matchedcriteriapercentage) || 80;
     useEffect(() => {
       if (previousStep === 3) {
         setZipcodeCityState({
@@ -1233,6 +1249,8 @@ export const CreateJob = forwardRef(
         clientCompanyDto: { id: clientCompanyValue?.value || 0, name: clientCompanyValue?.label || '' },
         recruiterid: assignedToValue?.value || 0,
         recruiterDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
+        matchedcriteriapercentage: Number(eventData.target.elements.matchedcriteriapercentage?.value) || 80,
+        matchedCriteriaOption: matchedCriteriaOption,
 
         // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
@@ -2253,6 +2271,29 @@ export const CreateJob = forwardRef(
                               Please enter company name
                             </FormText>
                           )}
+                        </FormGroup>
+                      </Col>
+                      <Col md={6} lg={3}>
+                        <FormGroup>
+                          <Label className="fw-semi-bold">
+                            Matched Candidate Criteria
+                          </Label>
+                          <Input
+                            id={"matchedcriteriapercentage"}
+                            name={"matchedcriteriapercentage"}
+                            type={"select"}
+                          >
+                            {matchedCriteriaOption?.length > 0 &&
+                              matchedCriteriaOption.map((options) => (
+                                <option
+                                  key={options.id}
+                                  value={Number(options.name)}
+                                  selected={matchedCriteriaSelected === Number(options.name)}
+                                >
+                                  {options.name}%
+                                </option>
+                              ))}
+                          </Input>
                         </FormGroup>
                       </Col>
                       {subsidiaryOption?.length > 0 && (

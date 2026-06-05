@@ -151,6 +151,14 @@ export const getSecurityClearanceListThunk = createAsyncThunk(
     return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
   }
 );
+// getMatchedCriteriaThunk thunk
+export const getMatchedCriteriaThunk = createAsyncThunk(
+  `${name}/getMatchedCriteriaThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=JobPercentage`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
 // getCloseJobReasonListThunk thunk
 export const getCloseJobReasonListThunk = createAsyncThunk(
   `${name}/getCloseJobReasonListThunk`,
@@ -216,6 +224,7 @@ const dropdownSlice = createSlice({
     securityClearanceList: [],
     closeJobReasonList: [],
     flaggedWordsList: [],
+    matchedCriteriaList: [],
     loading: false,
     jobsDropdownList: [],
     interviewRounds: []
@@ -414,6 +423,17 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getMatchedCriteriaThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getMatchedCriteriaThunk.fulfilled]: (state, action) => {
+      state.matchedCriteriaList = action.payload.data;
+      state.loading = false;
+    },
+    [getMatchedCriteriaThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
     [getCloseJobReasonListThunk.pending]: (state) => {
       state.loading = true;
     },
@@ -496,7 +516,8 @@ export const dropdownActions = {
   getFlaggedWordsListThunk,
   getJobsListThunk,
   getDropdownListThunk,
-  getInterviewRoundListThunk
+  getInterviewRoundListThunk,
+  getMatchedCriteriaThunk
 };
 
 export const dropdownReducer = dropdownSlice.reducer;
