@@ -139,6 +139,7 @@ export function CreateJobWizard({ type }) {
   };
   const getOptions = async function () {
     await dispatch(dropdownActions?.getJobLocationTypeThunk());
+    await dispatch(dropdownActions.getMatchedCriteriaThunk());
     await dispatch(dropdownActions.getJobTypeThunk2());
     await dispatch(dropdownActions.getWorkScheduleThunk2());
     await dispatch(dropdownActions.getShiftThunk2());
@@ -150,7 +151,6 @@ export function CreateJobWizard({ type }) {
     await dispatch(dropdownActions?.getLevelOFEducationThunk());
     await dispatch(dropdownActions?.getFlaggedWordsListThunk());
     await dispatch(dropdownActions?.getSecurityClearanceListThunk());
-    await dispatch(dropdownActions.getMatchedCriteriaThunk());
     await dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
     );
