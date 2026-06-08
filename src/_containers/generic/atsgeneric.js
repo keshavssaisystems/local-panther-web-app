@@ -14,6 +14,7 @@ import {
 } from "reactstrap";
 
 import { fetchATSGenericList, setATSDefault } from "_store/atsgeneric.slice";
+import { clearDropdownCache } from "_helpers/fetch-wrapper";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
 import "./atsgeneric.css"; 
@@ -152,6 +153,14 @@ function ATSGenericList() {
             });
     };
 
+    // Maps ATS entityType → the GetCommonDropdown searchText key used on the job post page.
+    // Only these three keys are cleared; all other dropdown caches remain intact.
+    const entityTypeToDropdownKey = {
+      ClientCompany: "ClientCompany",
+      Contact: "ClientContact",
+      AssignedTo: "AssignedTo",
+    };
+
     const handleToggleDefault = async (row) => {
         if (!entityConfig) return;
         const { entityType, pkField, rowField } = entityConfig;
@@ -160,6 +169,13 @@ function ATSGenericList() {
         setTogglingId(pkValue);
         try {
             await dispatch(setATSDefault({ entityType, pkField, pkValue }));
+            // Bust the cache for the matching dropdown so the job post page
+            // reflects the new default immediately instead of waiting for the
+            // 5-minute TTL to expire.
+            const dropdownKey = entityTypeToDropdownKey[entityType];
+            if (dropdownKey) {
+                clearDropdownCache(dropdownKey);
+            }
             fetchData(currentPage, perPage, statusFilter, searchData);
         } catch (err) {
             // silent

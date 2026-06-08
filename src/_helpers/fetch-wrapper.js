@@ -30,6 +30,20 @@ function isCacheableDropdown(url) {
   );
 }
 
+/**
+ * Removes all in-memory cache entries for a specific GetCommonDropdown searchText key.
+ * Call this after changing ATS defaults so the job post page fetches fresh data.
+ * Only the entries whose URL contains searchText=<key> are removed;
+ * every other dropdown cache is left untouched.
+ */
+export function clearDropdownCache(searchTextKey) {
+  Object.keys(memoryCache).forEach((cacheKey) => {
+    if (cacheKey.includes(`searchText=${searchTextKey}`)) {
+      delete memoryCache[cacheKey];
+    }
+  });
+}
+
 function request(method) {
   return async (url, body) => {
     url = url.replace('api//', 'api/'); // Ensure no double slashes in URL
