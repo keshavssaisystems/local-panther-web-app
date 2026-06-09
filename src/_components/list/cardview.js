@@ -68,11 +68,8 @@ export const CandidateCardView = (props) => {
 
   const API_BASE = process.env.REACT_APP_NEW_API_URL;
 
-  /**
-   * Opens the Microsoft OAuth consent window as a popup.
-   * After 5s checks status from parent and closes popup if connected.
-   * Also watches for manual popup close as fallback.
-   */
+  /* ── DISABLED: Compose email / OAuth flow (re-enable when PO approves) ────────
+
   const openOAuthPopup = (authUrl) =>
     new Promise((resolve, reject) => {
       const width = 600;
@@ -128,9 +125,7 @@ export const CandidateCardView = (props) => {
       }, 5000);
     });
 
-  /**
-   * Checks OAuth connection status. Returns { connected, connectedEmail } or null on error.
-   */
+  // Checks OAuth connection status. Returns { connected, connectedEmail } or null on error.
   const checkOAuthStatus = async () => {
     try {
       const res = await fetchWrapper.get(`${API_BASE}/OAuth/status`);
@@ -144,9 +139,7 @@ export const CandidateCardView = (props) => {
     return null;
   };
 
-  /**
-   * Fetches the Microsoft OAuth auth URL from the API.
-   */
+  // Fetches the Microsoft OAuth auth URL from the API.
   const getOAuthConnectUrl = async () => {
     try {
       const res = await fetchWrapper.get(`${API_BASE}/OAuth/connect?provider=outlook`);
@@ -155,12 +148,10 @@ export const CandidateCardView = (props) => {
     return null;
   };
 
-  /**
-   * Handles the full Present button click:
-   * 1. Check OAuth status
-   * 2. If not connected → open consent popup
-   * 3. Open compose email modal
-   */
+  // Handles the full Present button click:
+  // 1. Check OAuth status
+  // 2. If not connected -> open consent popup
+  // 3. Open compose email modal
   const handlePresentButtonClick = async () => {
     setIsConnectingOAuth(true);
     try {
@@ -206,13 +197,11 @@ export const CandidateCardView = (props) => {
     }
   };
 
-  /**
-   * Called when the email is sent successfully.
-   * Also marks the candidate as presented in the parent list.
-   */
   const handleEmailSendSuccess = () => {
     onActionClick("presented");
   };
+
+  ── END DISABLED ──────────────────────────────────────────────────────────── */
 
   const openJobDetails = async (jobId) => {
     const res = await fetchWrapper.get(`${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDetails/${jobId}`);
@@ -911,29 +900,19 @@ export const CandidateCardView = (props) => {
                 <BsHandThumbsUp></BsHandThumbsUp>  Like
               </Button>
               {isStaffingFirm && (
+                // TODO: Compose email flow is temporarily disabled (pending PO approval).
+                // Directly mark the candidate as presented for all users until the flow is approved.
+                // To restore: replace onClick with handlePresentButtonClick and re-enable the disabled block above.
                 <Button
                   outline
                   title="present"
                   className="btn-icon mb-1"
                   color="primary"
-                  onClick={handlePresentButtonClick}
+                  onClick={() => onActionClick("presented")}
                   size="sm"
-                  disabled={props?.data?.ispresented || isConnectingOAuth}
+                  disabled={props?.data?.ispresented}
                 >
-                  {isConnectingOAuth ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-1"
-                        role="status"
-                        aria-hidden="true"
-                      />
-                      Connecting…
-                    </>
-                  ) : (
-                    <>
-                      <BsCheckCircle /> {props?.data?.ispresented ? "Presented" : "Present"}
-                    </>
-                  )}
+                  <BsCheckCircle /> {props?.data?.ispresented ? "Presented" : "Present"}
                 </Button>
               )}
               <Button
@@ -1061,7 +1040,7 @@ export const CandidateCardView = (props) => {
         candidateData={props.data}
         connectedEmail={connectedEmail}
         onEmailConnectionChange={(email) => setConnectedEmail(email)}
-        onSendSuccess={handleEmailSendSuccess}
+        onSendSuccess={() => onActionClick("presented")}
       />
     </>
   );
