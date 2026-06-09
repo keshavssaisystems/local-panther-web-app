@@ -421,7 +421,7 @@ export const AddEditSubsidary = (props) => {
                     name="zipcode"
                     maxLength={50}
                     onInput={(e) => handleInputChange(e, "zipcode")}
-                    placeholder="Enter zipcode"
+                    placeholder="Enter zip code"
                     defaultValue={isAddMode ? "" : data?.zipcode}
                     className={`field-input placeholder-text form-control ${
                       errors?.zipcode ? "is-invalid error-text" : "input-text"
