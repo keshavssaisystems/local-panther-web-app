@@ -24,6 +24,21 @@ export const ActivePipelines = ({
 }) => {
   const dispatch = useDispatch();
 
+  // Read userDetails safely from localStorage and derive an effective admin flag
+  const userDetails = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("userDetails") || "{}");
+    } catch (e) {
+      return {};
+    }
+  })();
+
+  const isCompanyAdminEffective =
+    isCompanyAdmin ||
+    localStorage.getItem("isCompanyAdmin") === "true" ||
+    String(userDetails?.isCompanyAdmin) === "true" ||
+    Number(localStorage.getItem("userroleid")) === 4;
+
   // ── Pipeline-local filter state ──────────────────────────────────────────
   const [filterSearchType, setFilterSearchType] = useState("JobTitle");
   const [filterSearchText, setFilterSearchText] = useState("");
@@ -243,7 +258,7 @@ export const ActivePipelines = ({
     tabScrollRef.current = el;
     // if (el) setShowRightArrow(el.scrollWidth > el.clientWidth);
   };
-
+ 
   const handleRightArrowClick = () => {
     const el = tabScrollRef.current;
     if (!el) return;
@@ -273,7 +288,7 @@ export const ActivePipelines = ({
             <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "8px" }}>
               Filters:
               {/* See-all-HM toggle — company admins only, mirrors CommonFilters showSeeAllHMToggle */}
-              {isCompanyAdmin && (
+              {isCompanyAdminEffective && (
                 <div className="form-check form-switch mb-0 form-switch-lg">
                   <input
                     className="form-check-input"
