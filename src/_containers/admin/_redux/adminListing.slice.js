@@ -299,6 +299,15 @@ export const updateCandidateNameVisibility = createAsyncThunk(
   }
 );
 
+// Update store candidate scan history setting by company id - PUT via V2
+export const updateStoreCandidateScanHistory = createAsyncThunk(
+  `${name}/updateStoreCandidateScanHistory`,
+  async ({ id, payload }) => {
+    const put_url = `${baseUrl}/Company/StoreScanHistory/${id}`;
+    return await fetchWrapper.put(put_url, payload);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
