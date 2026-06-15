@@ -115,6 +115,9 @@ const ReportsList = () => {
     const [customerId, setCustomerId] = useState("");
     const [showJDModal, setShowJDModal] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
+    const [showReportModal, setShowReportModal] = useState(false);
+    const [scoreJson, setScoreJson] = useState(null);
+    const [jobTitle, setJobTitle] = useState(null);
     const [showIDModal, setShowIDModal] = useState(false);
     const [jobStatus, setJobStatus] = useState("");
     const [statusFilter, setStatusFilter] = useState(null);
@@ -324,6 +327,17 @@ const ReportsList = () => {
                                         onClick={() => onCandidateClick(row.candidateid)}
                                     >
                                         {" "}
+                                        {value}
+                                    </Button>
+                                </span>
+                            );
+                        } else if (col.key === "viewreport") {
+                            return (
+                                <span className="table-cell" title={value}>
+                                    <Button
+                                        color="link"
+                                        onClick={() => onViewReportClick(row)}
+                                    >
                                         {value}
                                     </Button>
                                 </span>
@@ -551,6 +565,20 @@ const ReportsList = () => {
         );
         if (response?.payload) {
             setShowProfileModal(true);
+        }
+    };
+
+    const onViewReportClick = async (row) => {
+        const sanitizedScoreJson = row?.scorejson
+            ? (typeof row.scorejson === "string"
+                ? row.scorejson.replace(/'/g, '"').replace(/([a-zA-Z])"([a-zA-Z])/g, "$1'$2")
+                : row.scorejson)
+            : null;
+        setScoreJson(sanitizedScoreJson);
+        setJobTitle(row?.jobtitle || "");
+        const response = await dispatch(getProfileActions.getCandidate(row.candidateid));
+        if (response?.payload) {
+            setShowReportModal(true);
         }
     };
 
@@ -974,6 +1002,14 @@ const ReportsList = () => {
                 <BuildCVModal
                     isOpen={showProfileModal}
                     onClose={() => setShowProfileModal(false)}
+                />
+            ) : null}
+            {showReportModal ? (
+                <BuildCVModal
+                    isOpen={showReportModal}
+                    onClose={() => setShowReportModal(false)}
+                    scoreJson={scoreJson}
+                    jobTitle={jobTitle}
                 />
             ) : null}
             {showIDModal && scheduleInterviewDetail?.length > 0 ? (
