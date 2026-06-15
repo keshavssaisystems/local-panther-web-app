@@ -1,0 +1,47 @@
+name: Manual Storage Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      cleanup_target:
+        description: 'What do you want to clear?'
+        required: true
+        type: choice
+        options:
+          - 'Caches Only'
+          - 'Artifacts Only'
+          - 'Both Caches and Artifacts'
+        default: 'Both Caches and Artifacts'
+
+permissions:
+  actions: write # Grants permission to delete storage items
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Actions Caches
+        if: ${{ github.event.inputs.cleanup_target == 'Caches Only' || github.event.inputs.cleanup_target == 'Both Caches and Artifacts' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh extension install github/gh-actions-cache || true
+          
+          echo "Scanning for active caches..."
+          caches=$(gh actions-cache list --limit 100 --json key -q '.[].key' 2>/dev/null || echo "")
+          
+          if [ -z "$caches" ]; then
+            echo "No caches found to delete."
+          else
+            for cache in $caches; do
+              echo "Deleting cache: $cache"
+              gh actions-cache delete "$cache" --confirm
+            done
+          fi
+
+      - name: Delete Actions Artifacts
+        if: ${{ github.event.inputs.cleanup_target == 'Artifacts Only' || github.event.inputs.cleanup_target == 'Both Caches and Artifacts' }}
+        uses: jimschubert/delete-artifacts-action@v1
+        with:
+          log_level: 'info'
+          min_bytes: '0' # Clears out everything regardless of size
