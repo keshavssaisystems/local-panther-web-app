@@ -17,7 +17,7 @@ import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { dropdownActions, addCustomerActions } from "_store";
-import { getCompanies, updateAllowDataSharing, updateCandidateNameVisibility, setCompanyActive } from "_containers/admin/_redux/adminListing.slice";
+import { getCompanies, updateAllowDataSharing, updateCandidateNameVisibility, updateStoreCandidateScanHistory, setCompanyActive } from "_containers/admin/_redux/adminListing.slice";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
 import { useNavigate } from "react-router-dom";
@@ -54,6 +54,8 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   const [pendingToggle, setPendingToggle] = useState(null);
   const [showCandidateNameModal, setShowCandidateNameModal] = useState(false);
   const [pendingCandidateNameToggle, setPendingCandidateNameToggle] = useState(null);
+  const [showScanHistoryModal, setShowScanHistoryModal] = useState(false);
+  const [pendingScanHistoryToggle, setPendingScanHistoryToggle] = useState(null);
   const [pendingCompanyToggle, setPendingCompanyToggle] = useState(null);
   const [showCompanyConfirmModal, setShowCompanyConfirmModal] = useState(false);
 
@@ -217,6 +219,47 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           sortable: true,
         }
       ] : []),
+      ...((currentRoleId === 1 || currentRoleId === 4 || isCompanyAdmin)
+        ? [
+          {
+            name: "Store Candidate Scan History",
+            cell: (row) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  title="Store Candidate Scan History"
+                  className="switch has-switch"
+                  data-on-label="ON"
+                  data-off-label="OFF"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => openScanHistoryConfirmModal(!row.storecandidatescanhistory, row)}
+                >
+                  <div
+                    className={cx("switch-animate", {
+                      "switch-on": row.storecandidatescanhistory,
+                      "switch-off": !row.storecandidatescanhistory,
+                    })}
+                    size="sm"
+                  >
+                    <input type="checkbox" />
+                    <span className="switch-left">ON</span>
+                    <label>&nbsp;</label>
+                    <span className="switch-right">OFF</span>
+                  </div>
+                </div>
+              </div>
+            ),
+            sortable: false,
+            width: "8%",
+          },
+        ]
+        : []),
     ...( isStaffingFirm===false
       ? [  
       {
@@ -608,11 +651,23 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
     setPendingCandidateNameToggle({ value, row });
   };
 
+  const openScanHistoryConfirmModal = (value, row) => {
+    setShowScanHistoryModal(true);
+    setPendingScanHistoryToggle({ value, row });
+  };
+
   const handleCandidateNameConfirm = async () => {
     if (!pendingCandidateNameToggle) return;
     const { value, row } = pendingCandidateNameToggle;
     await handleToggleCandidateNameVisibility(value, row);
     setShowCandidateNameModal(false);
+  };
+
+  const handleScanHistoryConfirm = async () => {
+    if (!pendingScanHistoryToggle) return;
+    const { value, row } = pendingScanHistoryToggle;
+    await handleToggleStoreScanHistory(value, row);
+    setShowScanHistoryModal(false);
   };
 
   const handleToggleCandidateNameVisibility = async function (value, row) {
@@ -621,6 +676,34 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       iscandidatenamevisible: value ? 1 : 0,
     };
     let response = await dispatch(updateCandidateNameVisibility({ id, payload: data }));
+    if (response.payload) {
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    } else {
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+    getCompanyList(pageSize, pageNo);
+  };
+
+  const handleToggleStoreScanHistory = async function (value, row) {
+    let id = row.companyid;
+    let data = {
+      storecandidatescanhistory: value,
+    };
+    let response = await dispatch(updateStoreCandidateScanHistory({ id, payload: data }));
     if (response.payload) {
       dispatch(showSnackbar({
         message: response.payload.message,
@@ -916,6 +999,29 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         onCancel={() => {
           setShowCandidateNameModal(false);
           setPendingCandidateNameToggle(null);
+        }}
+        zIndex={1050}
+      />
+
+      <ConfirmModal
+        isOpen={showScanHistoryModal}
+        title="Confirm Store Candidate Scan History"
+        icon={info}
+        message={
+          <>
+            <p>This will update whether non-recommended candidate scan results are stored for this company.</p>
+            <p>Do you want to continue?</p>
+          </>
+        }
+        confirmText="Update Setting"
+        cancelText="Cancel"
+        onConfirm={() => {
+          handleScanHistoryConfirm();
+          setPendingScanHistoryToggle(null);
+        }}
+        onCancel={() => {
+          setShowScanHistoryModal(false);
+          setPendingScanHistoryToggle(null);
         }}
         zIndex={1050}
       />
