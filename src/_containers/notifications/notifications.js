@@ -76,7 +76,7 @@ export const Notifications = () => {
       }
     } else {
       if (item?.notificationmessage?.toLowerCase().includes("job offer accepted")) {
-        history.navigate("/customer-candidate-offers");
+        history.navigate("/customer-candidate-accepted");
       } else if (item?.notificationmessage?.toLowerCase().includes("job offer declined")
         || item?.notificationmessage?.toLowerCase().includes("job offer rejected")) {
         history.navigate("/customer-candidate-rejected");

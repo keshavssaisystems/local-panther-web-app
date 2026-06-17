@@ -92,7 +92,9 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         const placeholderText =
             value === "JobTitle"
                 ? "Search job title"
-                : "Search " + value.toLowerCase();
+                : value === "ClientCompany"
+                    ? "Search client company"
+                    : "Search " + value.toLowerCase();
         dispatch(setPlaceHolder(placeholderText));
     };
 
@@ -136,40 +138,52 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         dispatch(setInterviewFeedbackStatusId(value));
     }
     const searchOptionDropdown = async (option) => {
-        if (selectedOpt !== "JobTitle") {
+        if (selectedOpt !== "JobTitle" && selectedOpt !== "ClientCompany") {
             // Handle other search options
             return;
         }
         if (option?.length >= 2) {
-            let companyId = Number(localStorage.getItem("companyid"));
-            let filter = {
-                companyId: companyId,
-                isClose: 0,
-                searchText: option.replaceAll(" ", "_"),
+            if (selectedOpt === "JobTitle") {
+                let companyId = Number(localStorage.getItem("companyid"));
+                let filter = {
+                    companyId: companyId,
+                    isClose: 0,
+                    searchText: option.replaceAll(" ", "_"),
+                };
+                let response = await dispatch(dropdownActions.getJobsListThunk(filter));
+                setFilteredItems(response?.payload || []);
+            } else if (selectedOpt === "ClientCompany") {
+                const companyId = Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+                let response = await dispatch(
+                    dropdownActions.getDropdownListThunk({
+                        searchText: "ClientCompany",
+                        commonId: companyId,
+                        searchBy: option,
+                    })
+                );
+                const companies = response?.payload?.data || response?.payload || [];
+                setFilteredItems(companies.map((c) => ({ id: c.id, name: c.name })));
             }
-            let response = await dispatch(dropdownActions.getJobsListThunk(filter));
-            if (response?.payload) {
-                setFilteredItems(response.payload);
-            }
-            else {
-                setFilteredItems([]);
-            }
+        } else {
+            setFilteredItems([]);
         }
     };
 
     const handleSelectSearch = (value) => {
-        dispatch(setSearchText(value.jobtitle));
-
+        dispatch(setSearchText(selectedOpt === "ClientCompany" ? value.name : value.jobtitle));
         setFilteredItems([]); // close suggestions
     };
 
     const searchOptions = showOnlyJobTitle
-        ? [{ value: "JobTitle", label: "Job Title" }]
+        ? [{ value: "JobTitle", label: "Job Title" },
+           { value: "ClientCompany", label: "Client Company" }
+        ]
         : [
             { value: "JobTitle", label: "Job Title" },
             { value: "State", label: "State" },
             { value: "City", label: "City" },
             { value: "Skills", label: "Skill" },
+            { value: "ClientCompany", label: "Client Company" },
         ];
 
     const [interviewStatusId, setInterviewStatusId] = useState("");
@@ -214,11 +228,11 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
             <Card className="main-card mb-3 card-filter filter-toolbar">
                 <CardBody>
                     <div className="filter-toolbar-inner">
-                        <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "8px" }}>
                             Filters:
                             {/* See All Hiring Managers Jobs Toggle — only visible to company admins */}
                             {showSeeAllHMToggle && (
-                                <div className="form-check form-switch mb-0">
+                                <div className="form-check form-switch mb-0 form-switch-lg">
                                     <input
                                         className="form-check-input"
                                         type="checkbox"
@@ -416,7 +430,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                             style={{ padding: "6px", cursor: "pointer" }}
                                                             onClick={() => handleSelectSearch(item)}
                                                         >
-                                                            {item.jobtitle}
+                                                            {selectedOpt === "ClientCompany" ? item.name : item.jobtitle}
                                                         </li>
                                                     ))}
                                                 </ul>

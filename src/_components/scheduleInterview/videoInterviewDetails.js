@@ -201,6 +201,9 @@ export function VideoInterviewDetails({
       }
     });
   }
+  const hasPendingPrescreen =
+    interviewDetail?.isprescreenmandatory === true &&
+    interviewDetail?.candidateprescreenstatus === "Pending";
   const interviewGuideLink = useSelector(
     (state) => state.scheduleInterview?.interviewGuideList
   );
@@ -339,7 +342,17 @@ export function VideoInterviewDetails({
       <div className="p-custom row">
 
         <div className="col-8">
-          <h6 className="fw-bold job-heading">Status</h6>
+          <h6 className="fw-bold job-heading">
+            Status
+            {hasPendingPrescreen && (
+              <span
+                className="badge bg-warning text-dark ms-2"
+                title="Candidate has unanswered pre-screen questions"
+              >
+                Pre-screen Pending
+              </span>
+            )}
+          </h6>
           <p className="mb-0">
             {interviewDetail?.isreschedulerequested === true
               ? "Requested for reschedule (" +
@@ -631,7 +644,12 @@ export function VideoInterviewDetails({
         )}
       </div>
       <div className="p-3">
-        <h6 className="fw-bold">Pre-screen Questions</h6>
+        <h6 className="fw-bold">
+          Pre-screen Questions
+          {preQuestions.some((q) => !q.answer || q.answer.trim() === "") && (
+            <span className="badge bg-warning text-dark ms-2">Pending</span>
+          )}
+        </h6>
         {preQuestions.length > 0 &&
           preQuestions?.map((preQue) => (
             <>
@@ -646,7 +664,12 @@ export function VideoInterviewDetails({
         )}
       </div>
       <div className="p-3">
-        <h6 className="fw-bold">Pre-screen Custom Questions</h6>
+        <h6 className="fw-bold">
+          Pre-screen Custom Questions
+          {customQuestion.some((q) => !q.answer || q.answer.trim() === "") && (
+            <span className="badge bg-warning text-dark ms-2">Pending</span>
+          )}
+        </h6>
         {customQuestion.length > 0 &&
           customQuestion?.map((preQue) => (
             <>

@@ -906,7 +906,7 @@ export function ScheduleInterview({ fromDashboard }) {
               >
                 <div className="d-flex align-items-center justify-content-end gap-2">
                   {isCompanyAdmin && (
-                    <div className="form-check form-switch mb-0">
+                    <div className="form-check form-switch mb-0 form-switch-lg me-2">
                       <input
                         className="form-check-input"
                         type="checkbox"

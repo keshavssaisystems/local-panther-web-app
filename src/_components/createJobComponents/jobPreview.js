@@ -18,6 +18,13 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
   let experinceLevelData = "-";
   let payPeriodTypeData = "-";
   let securityClearenceData = "-";
+  let matchedCriteriaData = "-";
+  if (
+    previewData.basicInformation.matchedcriteriapercentage !== undefined &&
+    previewData.basicInformation.matchedcriteriapercentage !== null
+  ) {
+    matchedCriteriaData = previewData.basicInformation.matchedcriteriapercentage + "%";
+  }
   if (
     previewData.basicInformation.jobLocation !== "" &&
     previewData.basicInformation.jobLoactionOptions !== undefined
@@ -178,6 +185,12 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                       ? "-"
                       : previewData.basicInformation.companyId}
                   </p>
+                </div>
+              </Col>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Matched Candidate Criteria</h6>
+                  <p className="mb-0 mt-1 mr-1">{matchedCriteriaData}</p>
                 </div>
               </Col>
               {isStaffingFirm === true && (
@@ -650,7 +663,10 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   </h6>
                   <ul>
                     {previewData.preScreen?.length > 0 &&
-                      previewData.preScreen?.map((options) => (
+                      [
+                        ...(previewData.preScreen?.filter(o => !o.iscustomquestion) ?? []),
+                        ...(previewData.preScreen?.filter(o => o.iscustomquestion) ?? []),
+                      ].map((options) => (
                         <li className="mb-0 mt-2 mr-1">
                           <b>
                             {options.iscustomquestion === true

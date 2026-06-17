@@ -72,6 +72,15 @@ export function Chat({ groupId, details }) {
     prevMessageCount.current = 0;
   }, [groupId]);
 
+  // Mark chat as read whenever the user opens or switches to this room.
+  // This cancels any pending delayed email for the current user in this group.
+  useEffect(() => {
+    if (!groupId) return;
+    dispatch(chatActions.markChatAsRead(groupId)).catch(() => {
+      // silently ignore — no tracking row yet is a normal case
+    });
+  }, [groupId]);
+
   useEffect(() => {
     if (!messages || !psContainerRef.current) return;
     const container = psContainerRef.current;
@@ -139,14 +148,21 @@ export function Chat({ groupId, details }) {
           receiverId = doc.candidateId === currentUserId ? doc.customerId : doc.candidateId;
         }
         if (receiverId) {
-          const payload = {
+          // Deep-link used in the push notification (in-app path)
+          const inAppPath = `/chat?groupId=${encodeURIComponent(groupId)}`;
+          const appBase = (process.env.REACT_APP_BASE_URL || window.location.origin).replace(/\/$/, "");
+          const emailRedirectUrl = `${appBase}/login?redirect=${encodeURIComponent(inAppPath)}`;
+          await dispatch(chatActions.sendChatNotification({
             receiverId: Number(receiverId),
             groupId: groupId,
             messagePreview: (formData || "").slice(0, 100),
-            redirectUrl: `/chat?groupId=${encodeURIComponent(groupId)}`,
-          };
-          // Dispatch a Redux thunk and await result so we can observe failures (dev-only logging)
-          await dispatch(chatActions.sendChatNotification(payload));
+            redirectUrl: inAppPath,
+          }));
+          await dispatch(chatActions.trackChatMessage({
+            groupId: groupId,
+            receiverUserId: Number(receiverId),
+            redirectUrl: emailRedirectUrl,
+          }));
         }
       } catch (err) {
         // intentionally swallow notification errors to avoid breaking UI

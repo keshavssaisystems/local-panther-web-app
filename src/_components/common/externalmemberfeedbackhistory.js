@@ -3,6 +3,7 @@ import DataTable from "react-data-table-component";
 import { Row, Col } from "reactstrap";
 import moment from "moment";
 import memoize from "memoize-one";
+import { getTimezoneDateTime } from "_helpers/helper";
 import { useSelector } from "react-redux";
 import "./../common/offerhistory.scss";
 
@@ -72,10 +73,10 @@ export const ExternalMemberFeedbackHistTable = (props) => {
             name: <span className="table-title">Submitted On</span>,
             id: "Submitted On",
             cell: (row) => row?.createddate
-                ? moment(row.createddate).format("MM/DD/YYYY hh:mm A")
+                ? getTimezoneDateTime(moment(row.createddate).format("YYYY-MM-DD HH:mm:ss"))
                 : "-",
             selector: (row) => row?.createddate
-                ? moment(row.createddate).format("MM/DD/YYYY hh:mm A")
+                ? getTimezoneDateTime(moment(row.createddate).format("YYYY-MM-DD HH:mm:ss"))
                 : "-",
             grow: 1
         }

@@ -139,6 +139,7 @@ export function CreateJobWizard({ type }) {
   };
   const getOptions = async function () {
     await dispatch(dropdownActions?.getJobLocationTypeThunk());
+    await dispatch(dropdownActions.getMatchedCriteriaThunk());
     await dispatch(dropdownActions.getJobTypeThunk2());
     await dispatch(dropdownActions.getWorkScheduleThunk2());
     await dispatch(dropdownActions.getShiftThunk2());
@@ -179,6 +180,9 @@ export function CreateJobWizard({ type }) {
   );
   const preScreenQuestionsOption = useSelector(
     (state) => state.dropdown.preScreenQuestion
+  );
+  const matchedCriteriaOption = useSelector(
+    (state) => state.dropdown.matchedCriteriaList
   );
   const jobList = useSelector((state) => state.createJob.previousJobList);
   const recommendedJobList = useSelector(
@@ -237,6 +241,7 @@ export function CreateJobWizard({ type }) {
           jobLocationOptions={jobLocationOptions}
           payPeriodTypeOption={payPeriodTypeOption}
           preScreenQuestionsOption={preScreenQuestionsOption}
+          matchedCriteriaOption={matchedCriteriaOption}
           type={type === "edit" ? "previous_template" : jobType}
           previousStep={previousStep}
           jobData={jobData}

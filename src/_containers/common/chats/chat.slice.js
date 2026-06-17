@@ -54,6 +54,37 @@ export const sendChatNotification = createAsyncThunk(
     }
   }
 );
+
+// trackChatMessage thunk - registers or refreshes a delayed-email tracking row
+export const trackChatMessage = createAsyncThunk(
+  `${name}/trackChatMessage`,
+  async ({ groupId, receiverUserId, redirectUrl }, { rejectWithValue }) => {
+    const END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ChatMessageNotificationTracking`;
+    const payload = {
+      GroupId: groupId,
+      ReceiverUserId: Number(receiverUserId),
+      RedirectUrl: redirectUrl,
+    };
+    try {
+      return await fetchWrapper.post(END_POINT, payload);
+    } catch (err) {
+      return rejectWithValue({ status: "Failed", message: err?.message || "trackChatMessage failed" });
+    }
+  }
+);
+
+// markChatAsRead thunk - cancels a pending delayed email for this chat room.
+export const markChatAsRead = createAsyncThunk(
+  `${name}/markChatAsRead`,
+  async (groupId, { rejectWithValue }) => {
+    const END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ChatMessageNotificationTracking/MarkAsRead?groupId=${encodeURIComponent(groupId)}`;
+    try {
+      return await fetchWrapper.patch(END_POINT);
+    } catch (err) {
+      return rejectWithValue({ status: "Failed", message: err?.message || "markChatAsRead failed" });
+    }
+  }
+);
 // Create the slice
 const chatSlice = createSlice({
   name,
@@ -112,6 +143,8 @@ export const chatActions = {
   getCandidateListThunk,
   getCompletedCustomerListThunk,
   sendChatNotification,
+  trackChatMessage,
+  markChatAsRead,
 };
 
 export const chatReducer = chatSlice.reducer;

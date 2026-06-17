@@ -696,7 +696,7 @@ export function JobPreferences(props) {
     }
 
     if (props.isCompleteProfile) {
-      if (new_data[0].stateid === undefined || new_data[0].stateid === 0 || new_data[0].cityid === undefined || new_data[0].cityid === 0) {
+      if (!selectedLocationCP?.stateid || !selectedLocationCP?.cityid) {
         return;
       }
     }
@@ -773,14 +773,11 @@ export function JobPreferences(props) {
       closeModal();
 
       if (props.isCompleteProfile) {
-        if (new_data[0].stateid === 0 || new_data[0].cityid === 0) {
-          return;
-        }
         let payload = {
           candidateid: localStorage.getItem("admcandid")
             ? localStorage.getItem("admcandid")
             : userDetails?.InternalUserId ?? 0,
-          cityid: new_data[0].cityid,
+          cityid: selectedLocationCP?.cityid,
           countryid: 1,
           currentUserId: Number(localStorage.getItem("userId")),
           email: profileData?.email,
@@ -788,7 +785,7 @@ export function JobPreferences(props) {
           firstname: profileData?.firstname,
           lastname: profileData?.lastname,
           phonenumber: profileData?.phonenumber,
-          stateid: new_data[0].stateid,
+          stateid: selectedLocationCP?.stateid,
           isactive: true,
         };
         await dispatch(jobPreferenceDetailsActions.updateProfileData(payload));

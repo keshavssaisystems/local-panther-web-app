@@ -21,7 +21,7 @@ import logo from "../../assets/utils/images/openworx-blue-logo_w200.svg";
 import "./openWorxResume.scss"; // optional if styles moved here
 import { useSelector } from "react-redux";
 
-import { getDate, getEducText } from "_helpers/helper";
+import { getDate, getEducText, getExperienceDuration } from "_helpers/helper";
 import html2pdf from "html2pdf.js";
 import FairMatchReport from "./fairMatchReport";
 export const OpenWorXResume = forwardRef((props, ref) => {
@@ -263,11 +263,14 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                 Work Experience
                             </h2>
 
-                            {qualificationInfo.map((item, index) => (
+                            {qualificationInfo.map((item, index) => {
+                                const duration = getExperienceDuration(item.startdate, item.enddate, item.iscurrentlyworking, index);
+                                return (
                                 <div key={item.candidatequalificationid} className={`mb-2 pb-1 ${index !== qualificationInfo.length - 1 ? "border-bottom" : ""}`}  >
-                                    {item.startdate && item.enddate && (
+                                    {item.startdate && (
                                         <p className="fw-semibold accent-color m-0">
                                             {getDate(item)}
+                                            {duration ? ` · ${duration}` : ""}
                                         </p>
                                     )}
                                     <h3 className="h5 fw-bold text-dark">{item.jobtitle}</h3>
@@ -287,7 +290,8 @@ export const OpenWorXResume = forwardRef((props, ref) => {
                                     ))}
 
                                 </div>
-                            ))}
+                                );
+                            })}
 
                         </div>
                     </section>

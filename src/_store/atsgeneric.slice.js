@@ -20,6 +20,15 @@ export const deleteAtsAuthorization = createAsyncThunk(
         return await fetchWrapper.delete(TOKEN_END_POINT);
     }
 );
+export const setATSDefault = createAsyncThunk(
+    `${name}/setATSDefault`,
+    async ({ entityType, pkField, pkValue }) => {
+        const parameter = `@entitytype=${entityType},@${pkField}=${pkValue}`;
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/Set_ATS_Default?parameter=${encodeURIComponent(parameter)}`;
+        return await fetchWrapper.get(TOKEN_END_POINT);
+    }
+);
+
 export const fetchATSGenericList = createAsyncThunk(
     `${name}/fetchATSGenericList`,
         async ({ endpoint, params }) => {
@@ -102,6 +111,15 @@ const atsgenericSlice = createSlice({
                                 .addCase(fetchATSGenericList.rejected, (state) => {
                                   
                                     state.loader = false;
+                                })
+                                .addCase(setATSDefault.pending, (state) => {
+                                    state.loader = true;
+                                })
+                                .addCase(setATSDefault.fulfilled, (state) => {
+                                    state.loader = false;
+                                })
+                                .addCase(setATSDefault.rejected, (state) => {
+                                    state.loader = false;
                                 });
     }
 });
@@ -111,7 +129,7 @@ export const atsGenericActions ={
     postAtsAuthorization,
     deleteAtsAuthorization,
     fetchATSGenericList,
-
+    setATSDefault,
 };
 
 export const atsgenericReducer = atsgenericSlice.reducer;

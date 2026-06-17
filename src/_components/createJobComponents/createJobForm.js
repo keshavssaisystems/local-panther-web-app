@@ -33,7 +33,7 @@ import {
 } from "_store";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { findRestrictedWords } from "_helpers/helper";
-import { BsPlusSquare } from "react-icons/bs";
+import { BsPlusSquare, BsDashSquare } from "react-icons/bs";
 import { locationActions } from "_store";
 import debounce from "lodash/debounce";
 
@@ -59,6 +59,8 @@ import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
 import { assign } from "lodash";
+import AddClient from "_containers/customer/atscompanylist/addclient";
+import axios from "axios";
 
 export const CreateJob = forwardRef(
   (
@@ -79,6 +81,7 @@ export const CreateJob = forwardRef(
       customerDetails,
       nextPage,
       certificationList,
+      matchedCriteriaOption,
     },
     ref
   ) => {
@@ -248,7 +251,36 @@ export const CreateJob = forwardRef(
           value: hiringManagerDto?.id,
           label: hiringManagerDto?.name,
         };
-        if (found) setHiringManagerValue(found);
+        if (found) {
+          setHiringManagerValue(found);
+          setDefaultHiringManagerValue(found);
+        }
+      } else if (customerDetails?.isatsenable === true) {
+        // Fetch and auto-select the default contact on mount
+        const companyIdForDefault =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "ClientContact",
+            commonId: companyIdForDefault,
+            searchBy: "",
+          })
+        ).then((response) => {
+          const users =
+            response?.payload?.data ||
+            response?.payload?.data?.data ||
+            response?.payload ||
+            [];
+          const userOptions = (users || []).map((user) => ({
+            value: user.id,
+            label: user.name,
+          }));
+          setHiringManagerOptions(userOptions);
+          if (userOptions.length > 0) {
+            setHiringManagerValue(userOptions[0]);
+            setDefaultHiringManagerValue(userOptions[0]);
+          }
+        });
       }
 
       const recruiterDto =
@@ -262,7 +294,34 @@ export const CreateJob = forwardRef(
           value: recruiterDto?.id,
           label: recruiterDto?.name,
         };
-        if (found1) setAssignedToValue(found1);
+        if (found1) {
+          setAssignedToValue(found1);
+          setDefaultAssignedToValue(found1);
+        }
+      } else if (customerDetails?.isatsenable === true) {
+        const companyIdForDefault =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "AssignedTo",
+            commonId: companyIdForDefault,
+            searchBy: "",
+          })
+        ).then((response) => {
+          const users =
+            response?.payload?.data ||
+            response?.payload?.data?.data ||
+            response?.payload ||
+            [];
+          const options = (users || []).map((u) => ({ value: u.id, label: u.name }));
+          setAssignedToUserOptions(options);
+          if (options.length > 0) {
+            const defaultUser = users.find((u) => u.is_default === true) || users[0];
+            const defaultOption = { value: defaultUser.id, label: defaultUser.name };
+            setAssignedToValue(defaultOption);
+            setDefaultAssignedToValue(defaultOption);
+          }
+        });
       }
 
       const clientCompanyDto =
@@ -277,7 +336,39 @@ export const CreateJob = forwardRef(
           value: clientCompanyDto?.id,
           label: clientCompanyDto?.name,
         };
-        if (found) setClientCompanyValue(found);
+        if (found) {
+          setClientCompanyValue(found);
+          setDefaultClientCompanyValue(found);
+        }
+      } else {
+        const isStaffingFirmCheck = localStorage.getItem("companyList")
+          ? JSON.parse(localStorage.getItem("companyList"))?.some((c) => c.isstaffingfirm === true)
+          : false;
+        if (isStaffingFirmCheck) {
+          const companyIdForDefault =
+            Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+          dispatch(
+            dropdownActions.getDropdownListThunk({
+              searchText: "ClientCompany",
+              commonId: companyIdForDefault,
+              searchBy: "",
+            })
+          ).then((response) => {
+            const companies =
+              response?.payload?.data ||
+              response?.payload?.data?.data ||
+              response?.payload ||
+              [];
+            const options = (companies || []).map((c) => ({ value: c.id, label: c.name }));
+            setClientCompanyOptions(options);
+            if (options.length > 0) {
+              const defaultCompany = companies.find((c) => c.is_default === true) || companies[0];
+              const defaultOption = { value: defaultCompany.id, label: defaultCompany.name };
+              setClientCompanyValue(defaultOption);
+              setDefaultClientCompanyValue(defaultOption);
+            }
+          });
+        }
       }
 
     }, []);
@@ -327,10 +418,17 @@ export const CreateJob = forwardRef(
     const [niceToHaveSkills, setNiceToHaveSkills] = useState([]);
     const [assignedToUserOptions, setAssignedToUserOptions] = useState([]);
     const [assignedToValue, setAssignedToValue] = useState(null);
+    const [defaultAssignedToValue, setDefaultAssignedToValue] = useState(null);
+    const [assignedToInputDirty, setAssignedToInputDirty] = useState(false);
     const [clientCompanyOptions, setClientCompanyOptions] = useState([]);
     const [clientCompanyValue, setClientCompanyValue] = useState(null);
+    const [defaultClientCompanyValue, setDefaultClientCompanyValue] = useState(null);
+    const [clientCompanyInputDirty, setClientCompanyInputDirty] = useState(false);
+    const [showAddClientCompany, setShowAddClientCompany] = useState(false);
     const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
     const [hiringManagerValue, setHiringManagerValue] = useState(null);
+    const [defaultHiringManagerValue, setDefaultHiringManagerValue] = useState(null);
+    const [hiringManagerInputDirty, setHiringManagerInputDirty] = useState(false);
 
     const customStyles = {
       valueContainer: (provided, state) => ({
@@ -539,6 +637,11 @@ export const CreateJob = forwardRef(
           jobData.paymentBenifits.benefits === undefined
           ? ""
           : jobData.paymentBenifits.benefits,
+      matchedcriteriapercentage:
+        jobData.basicInformation === undefined ||
+          jobData.basicInformation.matchedcriteriapercentage === undefined
+          ? 80
+          : jobData.basicInformation.matchedcriteriapercentage,
     };
     let previousValue = {
       companyId: "",
@@ -669,6 +772,12 @@ export const CreateJob = forwardRef(
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].benefits,
+      matchedcriteriapercentage:
+        previousData === undefined ||
+          previousData.matchedcriteriapercentage === undefined ||
+          previousData.matchedcriteriapercentage === null
+          ? 80
+          : previousData.matchedcriteriapercentage,
     };
     let jobLocationRaw =
       previousStep === 3
@@ -677,6 +786,10 @@ export const CreateJob = forwardRef(
     const [jobLocationOption, setJobLocationOption] = useState(
       jobLocationRaw === undefined ? 0 : jobLocationRaw
     );
+    let matchedCriteriaSelected =
+      previousStep === 3
+        ? Number(preValue.matchedcriteriapercentage) || 80
+        : Number(previousValue.matchedcriteriapercentage) || 80;
     useEffect(() => {
       if (previousStep === 3) {
         setZipcodeCityState({
@@ -858,16 +971,24 @@ export const CreateJob = forwardRef(
         prevDataArr.push(element.prescreenquestion);
       });
     }
-    const [restrictionValidation1, setRestrictionValidation1] = useState(false);
-    const [restrictionValidation2, setRestrictionValidation2] = useState(false);
-    const [restrictionValidation3, setRestrictionValidation3] = useState(false);
-    const [restrictionWord1, setRestrictionWord1] = useState([]);
-    const [restrictionWord2, setRestrictionWord2] = useState([]);
-    const [restrictionWord3, setRestrictionWord3] = useState([]);
+    const [restrictionValidations, setRestrictionValidations] = useState({});
+    const [restrictionWords, setRestrictionWords] = useState({});
+    const [removedPreQuestionIds, setRemovedPreQuestionIds] = useState([]);
+    const removePreQuestion = (id) => {
+      setRemovedPreQuestionIds((prev) => [...prev, id]);
+    };
+
+    const [isPreScreenMandatory, setIsPreScreenMandatory] = useState(
+      previousStep === 3
+        ? jobData?.basicInformation?.isprescreenmandatory || false
+        : previousData?.isprescreenmandatory || false
+    );
+    const _uidCounter = React.useRef(1);
+    const nextUid = () => { _uidCounter.current += 1; return _uidCounter.current; };
     const inputArr = [
       {
         type: "text",
-        id: 1,
+        uid: 0,
         value: "",
       },
     ];
@@ -888,15 +1009,20 @@ export const CreateJob = forwardRef(
     }
     const [customQuestionInput, setCustomQuestionInput] = useState(inputArr);
     const addInput = () => {
-      setCustomQuestionInput((s) => {
-        return [
-          ...s,
-          {
-            type: "text",
-            value: "",
-          },
-        ];
-      });
+      const uid = nextUid();
+      setCustomQuestionInput((s) => [
+        ...s,
+        {
+          type: "text",
+          uid,
+          value: "",
+        },
+      ]);
+    };
+    const removeInput = (uid) => {
+      setCustomQuestionInput((s) => s.filter((item) => item.uid !== uid));
+      setRestrictionValidations((prev) => { const next = { ...prev }; delete next[uid]; return next; });
+      setRestrictionWords((prev) => { const next = { ...prev }; delete next[uid]; return next; });
     };
     const [zipCodeFromCityState, setZipCodeFromCityState] = useState(false);
     const getFormValidation = (event) => {
@@ -1043,7 +1169,7 @@ export const CreateJob = forwardRef(
         event.target.elements.maximumAmount.value !== "" &&
         (event.target.elements.mustHave.value !== "" ||
           event.target.elements.mustHave?.length > 0) &&
-        (customerDetails?.isatsenable === true ? (event.target.elements.clientCompany.value !== "" ||
+        (isStaffingFirm === true ? (event.target.elements.clientCompany.value !== "" ||
           event.target.elements.clientCompany?.length > 0) : true) &&
         (customerDetails?.isatsenable === true ? (event.target.elements.recruiterid.value !== "" ||
           event.target.elements.recruiterid?.length > 0) : true)
@@ -1123,6 +1249,8 @@ export const CreateJob = forwardRef(
         clientCompanyDto: { id: clientCompanyValue?.value || 0, name: clientCompanyValue?.label || '' },
         recruiterid: assignedToValue?.value || 0,
         recruiterDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
+        matchedcriteriapercentage: Number(eventData.target.elements.matchedcriteriapercentage?.value) || 80,
+        matchedCriteriaOption: matchedCriteriaOption,
 
         // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
@@ -1240,6 +1368,7 @@ export const CreateJob = forwardRef(
         keyQualification: keyQualification,
         preScreen: questionArr,
         preCustomScreen: customAnswer === "" ? "Audio" : customAnswer,
+        isprescreenmandatory: isPreScreenMandatory,
       };
 
       JobDataForPreview(data);
@@ -1316,10 +1445,118 @@ export const CreateJob = forwardRef(
     const locationZipCode = useSelector(
       (state) => state.location?.location[0]?.name
     );
+    const extractSkillsFromJDDebounced = useCallback(
+      debounce((description) => {
+        extractSkillsFromJD(description);
+      }, 1500),
+      []
+    );
+
     const setupDescriptionData = (event) => {
       setDescriptionData(event);
       setDescriptionValidation(false);
+      extractSkillsFromJDDebounced(event);
     };
+
+    // Returns a new array containing all items from `existing` plus any
+    // items from `incoming` whose skillid is not already present.
+    // Compares by skillid only (the numeric part before ", " in value)
+    // to avoid false duplicates from name casing/spacing differences.
+    const mergeSkills = (existing, incoming) => {
+      const seenIds = new Set(existing.map((s) => s.value.split(", ")[0]));
+      return [...existing, ...incoming.filter((s) => !seenIds.has(s.value.split(", ")[0]))];
+    };
+
+    const stripHtml = (html) => {
+      if (!html) return "";
+      return html
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .trim();
+    };
+
+    const extractSkillsFromJD = async (description) => {
+      const plainText = stripHtml(description);
+      if (!plainText) {
+        setKeyQual1([]);
+        setPrevKey([]);
+        setKeyQual2([]);
+        setPrevKey2([]);
+        return;
+      }
+      try {
+        const authData = localStorage.getItem("token") || "";
+        const baseURI = `${process.env.REACT_APP_AI_JD}`;
+        const config = {
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${authData}`,
+          },
+        };
+        const payload = { description: plainText };
+        const response = await axios.post(
+          `${baseURI}/extract_skills_from_jd`,
+          payload,
+          config
+        );
+        console.log("[extractSkillsFromJD] API response:", response.data);
+
+        const { Status, must_have_skills_data = [], nice_to_have_skills_data = [] } = response.data;
+        if (Status !== "Success") return;
+
+        // Map to the { value: "skillid, skillname", label: "skillname" } format used by the form
+        const toSkillOption = ({ skillid, skillname }) => ({
+          value: `${skillid}, ${skillname}`,
+          label: skillname,
+        });
+
+        const mustHave = must_have_skills_data
+          .filter((s) => s.skillname && s.skillname.trim() !== "")
+          .map(toSkillOption);
+
+        const niceToHave = nice_to_have_skills_data
+          .filter((s) => s.skillname && s.skillname.trim() !== "")
+          .map(toSkillOption);
+
+        const isEditMode = previousStep === 1;
+
+        if (mustHave.length > 0) {
+          if (isEditMode) {
+            setKeyQual1((prev) => mergeSkills(prev, mustHave));
+            setPrevKey((prev) => mergeSkills(prev, mustHave));
+          } else {
+            setKeyQual1(mustHave);
+            setPrevKey(mustHave);
+          }
+          setMustHaveValidation(false);
+          setKeyQualifucationChange(true);
+        }
+
+        if (niceToHave.length > 0) {
+          if (isEditMode) {
+            setKeyQual2((prev) => mergeSkills(prev, niceToHave));
+            setPrevKey2((prev) => mergeSkills(prev, niceToHave));
+          } else {
+            setKeyQual2(niceToHave);
+            setPrevKey2(niceToHave);
+          }
+          setKeyQualifucationChange(true);
+        }
+      } catch (error) {
+        console.error("[extractSkillsFromJD] API error:", error);
+      }
+    };
+
+    // Auto-call on mount when editing an existing job (previousStep === 1)
+    useEffect(() => {
+      if (previousStep === 1 && previousData?.description) {
+        extractSkillsFromJD(previousData.description);
+      }
+    }, []);
+
     const getEducationFormData = (eventData) => {
       let postEducationData = [];
       let educationArray = eventData?.target?.elements?.levelofeducationids;
@@ -1615,35 +1852,11 @@ export const CreateJob = forwardRef(
         return "";
       }
     };
-    const checkRestrictedWord = (fieldName, string) => {
+    const checkRestrictedWord = (uid, string) => {
       if (wordArray?.length > 0) {
-        if (fieldName === "custom_question_1") {
-          let restrictedWords = findRestrictedWords(wordArray, string);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionValidation1(true)
-            : setRestrictionValidation1(false);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionWord1(restrictedWords.wordsArray)
-            : setRestrictionWord1([]);
-        }
-        if (fieldName === "custom_question_2") {
-          let restrictedWords = findRestrictedWords(wordArray, string);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionValidation2(true)
-            : setRestrictionValidation2(false);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionWord2(restrictedWords.wordsArray)
-            : setRestrictionWord2([]);
-        }
-        if (fieldName === "custom_question_3") {
-          let restrictedWords = findRestrictedWords(wordArray, string);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionValidation3(true)
-            : setRestrictionValidation3(false);
-          restrictedWords.wordsCount > 0
-            ? setRestrictionWord3(restrictedWords.wordsArray)
-            : setRestrictionWord3([]);
-        }
+        const restrictedWords = findRestrictedWords(wordArray, string);
+        setRestrictionValidations((prev) => ({ ...prev, [uid]: restrictedWords.wordsCount > 0 }));
+        setRestrictionWords((prev) => ({ ...prev, [uid]: restrictedWords.wordsCount > 0 ? restrictedWords.wordsArray : [] }));
       }
     };
     let securityClearenceRaw =
@@ -1708,10 +1921,13 @@ export const CreateJob = forwardRef(
         });
       }
     }, []);
-    let preScreenQuestionsDataFromPre = jobData?.preScreen;
-    let customQuestionDataFromPre = preScreenQuestionsDataFromPre?.filter(
-      (value) => value.iscustomquestion === true
-    );
+    let preScreenQuestionsDataFromPre =
+      previousStep === 1 && type !== "new_template"
+        ? previousData?.jobPrescreenApplicationDtos
+        : jobData?.preScreen;
+    let customQuestionDataFromPre = preScreenQuestionsDataFromPre
+      ?.filter((value) => value.iscustomquestion === true)
+      ?.filter((value) => !removedPreQuestionIds.includes(value.jobprescreenapplicationid));
     let prescreenTypeVIsibility = false;
     let customCount = 0;
     let customCount1 = 0;
@@ -1985,6 +2201,7 @@ export const CreateJob = forwardRef(
           value: user.id,
           label: user.name,
         }));
+        setHiringManagerOptions(userOptions);
         return userOptions;
       } catch (err) {
         // keep silent or console.log(err) for debugging
@@ -2056,6 +2273,29 @@ export const CreateJob = forwardRef(
                           )}
                         </FormGroup>
                       </Col>
+                      <Col md={6} lg={3}>
+                        <FormGroup>
+                          <Label className="fw-semi-bold">
+                            Matched candidate criteria
+                          </Label>
+                          <Input
+                            id={"matchedcriteriapercentage"}
+                            name={"matchedcriteriapercentage"}
+                            type={"select"}
+                          >
+                            {matchedCriteriaOption?.length > 0 &&
+                              matchedCriteriaOption.map((options) => (
+                                <option
+                                  key={options.id}
+                                  value={Number(options.name)}
+                                  selected={matchedCriteriaSelected === Number(options.name)}
+                                >
+                                  {options.name}%
+                                </option>
+                              ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
                       {subsidiaryOption?.length > 0 && (
                         <Col md={6} lg={3}>
                           <FormGroup>
@@ -2099,6 +2339,13 @@ export const CreateJob = forwardRef(
                             <FormGroup>
                               <Label className="fw-semi-bold">
                                 Client company<span style={{ color: "red" }}>* </span>
+                                <a
+                                  className="float-end ms-2" 
+                                  href="#"
+                                  onClick={(e) => { e.preventDefault(); setShowAddClientCompany(true); }}
+                                >
+                                  +Add Client Company
+                                </a>
                               </Label>
                               <AsyncSelect
                                 name={"clientCompany"}
@@ -2110,9 +2357,21 @@ export const CreateJob = forwardRef(
                                 onChange={(val) => {
                                   setClientCompanyValue(val);
                                   setClientCompanyValidation(false);
-                                  // if you need to persist selection to the form submission,
-                                  // write the selected id into a hidden input or local state used by saveData
-                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                  setClientCompanyInputDirty(false);
+                                }}
+                                onMenuOpen={() => {
+                                  setClientCompanyInputDirty(false);
+                                }}
+                                onInputChange={(val) => {
+                                  if (val) setClientCompanyInputDirty(true);
+                                }}
+                                onMenuClose={() => {
+                                  if (defaultClientCompanyValue) {
+                                    if (clientCompanyInputDirty || !clientCompanyValue) {
+                                      setClientCompanyValue(defaultClientCompanyValue);
+                                    }
+                                  }
+                                  setClientCompanyInputDirty(false);
                                 }}
                                 isMulti={false}
                                 styles={customStyles}
@@ -2144,9 +2403,21 @@ export const CreateJob = forwardRef(
                                 onChange={(val) => {
                                   setHiringManagerValue(val);
                                   setHiringmanagerValidation(false);
-                                  // if you need to persist selection to the form submission,
-                                  // write the selected id into a hidden input or local state used by saveData
-                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                  setHiringManagerInputDirty(false);
+                                }}
+                                onMenuOpen={() => {
+                                  setHiringManagerInputDirty(false);
+                                }}
+                                onInputChange={(val) => {
+                                  if (val) setHiringManagerInputDirty(true);
+                                }}
+                                onMenuClose={() => {
+                                  if (defaultHiringManagerValue) {
+                                    if (hiringManagerInputDirty || !hiringManagerValue) {
+                                      setHiringManagerValue(defaultHiringManagerValue);
+                                    }
+                                  }
+                                  setHiringManagerInputDirty(false);
                                 }}
                                 isMulti={false}
                                 styles={customStyles}
@@ -2438,9 +2709,21 @@ export const CreateJob = forwardRef(
                               onChange={(val) => {
                                 setAssignedToValue(val);
                                 setRecruiterIdValidation(false);
-                                // if you need to persist selection to the form submission,
-                                // write the selected id into a hidden input or local state used by saveData
-                                // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                setAssignedToInputDirty(false);
+                              }}
+                              onMenuOpen={() => {
+                                setAssignedToInputDirty(false);
+                              }}
+                              onInputChange={(val) => {
+                                if (val) setAssignedToInputDirty(true);
+                              }}
+                              onMenuClose={() => {
+                                if (defaultAssignedToValue) {
+                                  if (assignedToInputDirty || !assignedToValue) {
+                                    setAssignedToValue(defaultAssignedToValue);
+                                  }
+                                }
+                                setAssignedToInputDirty(false);
                               }}
                               isMulti={false}
                               styles={customStyles}
@@ -3363,6 +3646,56 @@ export const CreateJob = forwardRef(
                   id="collapseFive"
                 >
                   <CardBody>
+                    <Row className="mb-3">
+                      <Col md={12}>
+                        <FormGroup className="mb-0">
+                          <div className="d-flex align-items-center gap-2">
+                            <div className="form-check form-switch" style={{ display: "flex", alignItems: "center" }}>
+                              <Input
+                                id="prescreenMandatoryToggle"
+                                name="prescreenMandatoryToggle"
+                                type="checkbox"
+                                checked={isPreScreenMandatory}
+                                onChange={(e) => setIsPreScreenMandatory(e.target.checked)}
+                                className="form-check-input"
+                                style={{
+                                  width: "3rem",
+                                  height: "1.5rem",
+                                  cursor: "pointer",
+                                  margin: "0",
+                                  marginRight: "0.5rem",
+                                }}
+                              />
+                              <Label
+                                for="prescreenMandatoryToggle"
+                                className="form-check-label fw-semi-bold mb-0"
+                                style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+                              >
+                                Make pre-screening mandatory for candidates
+                              </Label>
+                            </div>
+                            <span
+                              className="badge rounded-pill"
+                              style={{
+                                backgroundColor: isPreScreenMandatory
+                                  ? "#28a745"
+                                  : "#6c757d",
+                                padding: "0.35rem 0.65rem",
+                                fontSize: "0.875rem",
+                                height: "fit-content",
+                              }}
+                            >
+                              {isPreScreenMandatory ? "Mandatory" : "Optional"}
+                            </span>
+                          </div>
+                        </FormGroup>
+                        <FormText className="mt-2">
+                          When enabled, candidates must complete the pre-screening
+                          questionnaire before proceeding to the next stage.
+                        </FormText>
+                      </Col>
+                    </Row>
+                    <>
                     <Row>
                       <Col>
                         {preScreenQuestionsOption?.length > 0 &&
@@ -3406,50 +3739,39 @@ export const CreateJob = forwardRef(
                     </Row>
                     <Row>
                       <Col md={7}>
-                        {customQuestionDataFromPre?.map((item, i) => {
+                        {customQuestionDataFromPre?.map((item) => {
+                          const preUid = "pre_" + item.jobprescreenapplicationid;
                           return (
-                            <FormGroup>
+                            <FormGroup key={preUid}>
                               <Label className="fw-semi-bold">
                                 Custom Question
                               </Label>
-                              <Input
-                                id={i + 1}
-                                name={"custom_question"}
-                                type={item.type}
-                                maxLength="100"
-                                defaultValue={item.prescreenquestion}
-                                onChange={(e) =>
-                                  checkRestrictedWord(
-                                    "custom_question_" + i++,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                              {i === 1 && restrictionValidation1 === true && (
+                              <div className="d-flex align-items-center gap-2">
+                                <Input
+                                  id={preUid}
+                                  name={"custom_question"}
+                                  type={item.type || "text"}
+                                  maxLength="100"
+                                  defaultValue={item.prescreenquestion}
+                                  onChange={(e) =>
+                                    checkRestrictedWord(preUid, e.target.value)
+                                  }
+                                />
+                                <button
+                                  type="button"
+                                  className="custom-remove-button p-0 flex-shrink-0 border-0 bg-transparent"
+                                  onClick={() => removePreQuestion(item.jobprescreenapplicationid)}
+                                >
+                                  <BsDashSquare className="mb-1" /> Remove
+                                </button>
+                              </div>
+                              {restrictionValidations[preUid] === true && (
                                 <FormText
                                   color="danger"
                                   className="custom-question-validation"
                                 >
                                   Your input contains the flagged word '{" "}
-                                  <b>{restrictionWord1.toString()}</b> '.
-                                </FormText>
-                              )}
-                              {i === 2 && restrictionValidation2 === true && (
-                                <FormText
-                                  color="danger"
-                                  className="custom-question-validation"
-                                >
-                                  Your input contains the flagged word '{" "}
-                                  <b>{restrictionWord2.toString()}</b> '.
-                                </FormText>
-                              )}
-                              {i === 3 && restrictionValidation3 === true && (
-                                <FormText
-                                  color="danger"
-                                  className="custom-question-validation"
-                                >
-                                  Your input contains the flagged word '{" "}
-                                  <b>{restrictionWord3.toString()}</b> '.
+                                  <b>{(restrictionWords[preUid] || []).toString()}</b> '.
                                 </FormText>
                               )}
                             </FormGroup>
@@ -3462,47 +3784,35 @@ export const CreateJob = forwardRef(
                         {customQuestionInput?.map((item, i) => {
                           if (i > 0) {
                             return (
-                              <FormGroup>
+                              <FormGroup key={item.uid}>
                                 <Label className="fw-semi-bold">
                                   Custom Question
                                 </Label>
-                                <Input
-                                  id={i}
-                                  name={"custom_question"}
-                                  type={item.type}
-                                  maxLength="100"
-                                  onChange={(e) =>
-                                    checkRestrictedWord(
-                                      "custom_question_" + i,
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                                {i === 1 && restrictionValidation1 === true && (
+                                <div className="d-flex align-items-center gap-2">
+                                  <Input
+                                    id={item.uid}
+                                    name={"custom_question"}
+                                    type={item.type}
+                                    maxLength="100"
+                                    onChange={(e) =>
+                                      checkRestrictedWord(item.uid, e.target.value)
+                                    }
+                                  />
+                                  <button
+                                    type="button"
+                                    className="custom-remove-button p-0 flex-shrink-0 border-0 bg-transparent"
+                                    onClick={() => removeInput(item.uid)}
+                                  >
+                                    <BsDashSquare className="mb-1" /> Remove
+                                  </button>
+                                </div>
+                                {restrictionValidations[item.uid] === true && (
                                   <FormText
                                     color="danger"
                                     className="custom-question-validation"
                                   >
                                     Your input contains the flagged word '{" "}
-                                    <b>{restrictionWord1.toString()}</b> '.
-                                  </FormText>
-                                )}
-                                {i === 2 && restrictionValidation2 === true && (
-                                  <FormText
-                                    color="danger"
-                                    className="custom-question-validation"
-                                  >
-                                    Your input contains the flagged word '{" "}
-                                    <b>{restrictionWord2.toString()}</b> '.
-                                  </FormText>
-                                )}
-                                {i === 3 && restrictionValidation3 === true && (
-                                  <FormText
-                                    color="danger"
-                                    className="custom-question-validation"
-                                  >
-                                    Your input contains the flagged word '{" "}
-                                    <b>{restrictionWord3.toString()}</b> '.
+                                    <b>{(restrictionWords[item.uid] || []).toString()}</b> '.
                                   </FormText>
                                 )}
                               </FormGroup>
@@ -3511,8 +3821,7 @@ export const CreateJob = forwardRef(
                         })}
                       </Col>
                     </Row>
-                    {customCount < 3 && (
-                      <Col md={5}>
+                    <Col md={5}>
                         <Button
                           color="link"
                           onClick={addInput}
@@ -3523,7 +3832,6 @@ export const CreateJob = forwardRef(
                           question
                         </Button>
                       </Col>
-                    )}
 
                     {customCount > 0 && (
                       <Row>
@@ -3542,7 +3850,9 @@ export const CreateJob = forwardRef(
                                     type={"radio"}
                                     value={"Audio"}
                                     defaultChecked={
-                                      jobData?.preCustomScreen === "Audio"
+                                      previousStep === 1
+                                        ? previousData?.customquestionanswertype === "Audio"
+                                        : jobData?.preCustomScreen === "Audio"
                                     }
                                   />{" "}
                                   {"  "}
@@ -3555,7 +3865,9 @@ export const CreateJob = forwardRef(
                                     type={"radio"}
                                     value={"Video"}
                                     defaultChecked={
-                                      jobData?.preCustomScreen === "Video"
+                                      previousStep === 1
+                                        ? previousData?.customquestionanswertype === "Video"
+                                        : jobData?.preCustomScreen === "Video"
                                     }
                                   />{" "}
                                   {"  "}
@@ -3568,7 +3880,9 @@ export const CreateJob = forwardRef(
                                     type={"radio"}
                                     value={"Text"}
                                     defaultChecked={
-                                      jobData?.preCustomScreen === "Text"
+                                      previousStep === 1
+                                        ? previousData?.customquestionanswertype === "Text"
+                                        : jobData?.preCustomScreen === "Text"
                                     }
                                   />{" "}
                                   {"  "}
@@ -3580,6 +3894,7 @@ export const CreateJob = forwardRef(
                         </Col>
                       </Row>
                     )}
+                    </>
                   </CardBody>
                 </Collapse>
               </Card>
@@ -3593,6 +3908,11 @@ export const CreateJob = forwardRef(
             </Button>
           </Form>
         </div>
+        <AddClient
+          isOpen={showAddClientCompany}
+          onClose={() => setShowAddClientCompany(false)}
+          onSuccess={() => getClientCompany("")}
+        />
       </>
     );
   }

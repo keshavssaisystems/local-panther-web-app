@@ -275,9 +275,13 @@ export function CustJobDetail({
       jobDetail?.jobPrescreenApplicationDtos &&
       jobDetail?.jobPrescreenApplicationDtos?.length > 0
     ) {
+      const sortedPrescreen = [
+        ...jobDetail.jobPrescreenApplicationDtos.filter(i => !i.iscustomquestion),
+        ...jobDetail.jobPrescreenApplicationDtos.filter(i => i.iscustomquestion),
+      ];
       return (
         <ul>
-          {jobDetail?.jobPrescreenApplicationDtos.map((item) => (
+          {sortedPrescreen.map((item) => (
             <li key={item.jobprescreenapplicationid}>
               {item.prescreenquestion}
             </li>

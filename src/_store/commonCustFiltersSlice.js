@@ -56,6 +56,7 @@ const commonCustFiltersSlice = createSlice({
             state.seeAllHiringManagerJobs = false;
         },
         clearFiltersOnPageLoad: (state) => {
+            state.selectedOpt = "JobTitle";
             state.searchText = "";
             state.jobStatus = "Publish";
             state.placeHolder = "Search job title";

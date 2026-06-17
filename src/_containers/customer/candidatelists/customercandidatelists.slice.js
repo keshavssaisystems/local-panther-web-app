@@ -96,6 +96,7 @@ function createExtraActions() {
         customerRecommendedJobStatusId,
         jobId,
         searchText,
+        searchType = "",
         actionbyId = "",
         interviewStatusId,
         candidateInterviewStatusId,
@@ -145,11 +146,11 @@ function createExtraActions() {
         }
         if (jobId !== undefined) {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}${searchType ? `&searchType=${searchType}` : ""}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
           );
         } else {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}${searchType ? `&searchType=${searchType}` : ""}${actionBy}&viewAllCompanyJobs=${viewAllCompanyJobs}`
           );
         }
       }
@@ -310,10 +311,11 @@ function createExtraActions() {
   function getCandidateCardCount() {
     return createAsyncThunk(
       `${name}/getReportBySP`,
-      async ({ jobId, userId, searchText, viewAllCompanyJobs = false }) => {
+      async ({ jobId, userId, searchText, searchType = "", viewAllCompanyJobs = false }) => {
         const jobIdToUse = (jobId === undefined || jobId === null || jobId === "") ? null : jobId;
-
-        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId},@searchText='${searchText}',@viewAllCompanyJobs=${viewAllCompanyJobs ? 1 : 0}`;
+        const userIdToUse = (userId === undefined || userId === null || userId === "") ? null : userId;
+        const searchTypeParam = searchType ? `,@searchType='${searchType}'` : "";
+        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userIdToUse},@searchText='${searchText}'${searchTypeParam},@viewAllCompanyJobs=${viewAllCompanyJobs ? 1 : 0}`;
         return await fetchWrapper.get(REPORT_API_URL);
       }
     );
@@ -328,6 +330,7 @@ function createExtraActions() {
         pageSize,
         jobId,
         searchText,
+        searchType = "",
         actionbyId = ""
       }) => {
         let parameters = "";
@@ -338,6 +341,7 @@ function createExtraActions() {
         parameters += `,@pagesize=${pageSize}`;
         parameters += `,@currentpage=${pageNumber}`;
         if (searchText) parameters += `,@searchtext='${searchText}'`;
+        if (searchType) parameters += `,@searchtype='${searchType}'`;
         if (jobId) parameters += `,@jobid=${jobId}`;
 
         return await fetchWrapper.get(`${newUrl}/V2/Get_Presented_candidate_list?parameter=${parameters}`);

@@ -47,6 +47,7 @@ const Notifications = React.lazy(() => import("_containers/notifications/notific
 const AtsUnified = React.lazy(() => import("_components/unifiedApp/atsUnified"));
 const ATSCandidateList = React.lazy(() => import("_containers/customer/atscustomercandidatelist/atscandidatelist"));
 const ATSGenericList = React.lazy(() => import("_containers/generic/atsgeneric"));
+const OAuthSuccess = React.lazy(() => import("_containers/generic/oauthSuccess"));
 const ChatInterface = React.lazy(() => import("_containers/common/chats/chatInterface").then(m => ({ default: m.ChatInterface })));
 
 const CandidateSchedules = React.lazy(() => import("_containers/candidate/calendar/candidateSchedules").then(m => ({ default: m.CandidateSchedules }))
@@ -188,7 +189,7 @@ export function App() {
         <b>{payload.notification.title}</b>
       </p>
       <p>{payload.notification.body}</p>
-      {payload?.data?.type === "Resume_Notification" && isProfilePage ? (
+      {payload?.notification?.title?.toLowerCase() === "resume parsed" && isProfilePage ? (
         <p>
           Updated resume data available
           <Button color="link" onClick={() => { window.location.reload(); }} >REFRESH </Button>
@@ -235,7 +236,7 @@ export function App() {
   history.navigate = useNavigate();
   const location = useLocation();
   history.location = useLocation();
-  const excludedPaths = ["/terms", "/privacy", "/contact", "/support"];
+  const excludedPaths = ["/terms", "/privacy", "/contact", "/oauth-success"];
   const isExcludedPath = excludedPaths.includes(location.pathname);
   console.log(isExcludedPath);
   useEffect(() => {
@@ -475,7 +476,7 @@ export function App() {
           key={6}
         />
          <Route
-          path="/feedback"
+          path="/support"
           element={
             <PrivateRoute>
               <FeedBack />
@@ -783,7 +784,7 @@ export function App() {
           key={6}
         />
         <Route
-          path="/feedback"
+          path="/support"
           element={
             <PrivateRoute>
               <FeedBack />
@@ -915,7 +916,7 @@ export function App() {
           key={6}
         />
         <Route
-          path="/feedback"
+          path="/support"
           element={
             <PrivateRoute>
               <FeedBack />
@@ -969,6 +970,7 @@ export function App() {
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsAndConditions />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/oauth-success" element={<OAuthSuccess />} />
             </Routes>
           </>
         ) : (

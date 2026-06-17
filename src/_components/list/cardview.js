@@ -35,7 +35,7 @@ import "./cardview.scss";
 import { ProgressCircle } from "_components/common/progress";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
-import { getTimezoneDateTime } from "_helpers/helper";
+import { getTimezoneDateTime, getExperienceDuration } from "_helpers/helper";
 import { ScorePopup } from "./scorePopup";
 import SweetAlert from "react-bootstrap-sweetalert";
 import AssigneeAtsCandidate from "_containers/customer/atscustomercandidatelist/AssigneeAtsCandidate";
@@ -44,6 +44,7 @@ import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constant
 import { showSnackbar } from "_store/snackbar.slice";
 import { fetchWrapper } from "_helpers/fetch-wrapper";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import ComposeEmailModal from "_components/modal/composeEmailModal";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -59,8 +60,148 @@ export const CandidateCardView = (props) => {
   const [assignedCompanyName, setAssignedCompanyName] = useState(null);
   const [showJDModal, setShowJDModal] = useState(false);
   const [jobDetail, setJobDetail] = useState([]);
+  const [showComposeModal, setShowComposeModal] = useState(false);
+  const [isConnectingOAuth, setIsConnectingOAuth] = useState(false);
+  const [connectedEmail, setConnectedEmail] = useState("");
   const isStaffingFirm = props.isStaffingFirm;
   const dispatch = useDispatch();
+
+  const API_BASE = process.env.REACT_APP_NEW_API_URL;
+
+  /* ── DISABLED: Compose email / OAuth flow (re-enable when PO approves) ────────
+
+  const openOAuthPopup = (authUrl) =>
+    new Promise((resolve, reject) => {
+      const width = 600;
+      const height = 700;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+      const popup = window.open(
+        authUrl,
+        "oauth-popup",
+        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+      );
+
+      if (!popup) {
+        reject(new Error("Popup blocked. Please allow popups for this site."));
+        return;
+      }
+
+      let resolved = false;
+
+      const finish = async () => {
+        if (resolved) return;
+        resolved = true;
+        clearInterval(watchClose);
+        clearInterval(checkStatus);
+        try {
+          const res = await fetchWrapper.get(`${API_BASE}/OAuth/status`);
+          if (res?.statusCode === 200 && res.data?.connected) {
+            if (!popup.closed) popup.close();
+            resolve(res.data);
+          } else {
+            if (!popup.closed) popup.close();
+            reject(new Error("Authentication window was closed before completing."));
+          }
+        } catch (_) {
+          reject(new Error("Authentication window was closed before completing."));
+        }
+      };
+
+      // Watch for user manually closing popup
+      const watchClose = setInterval(() => {
+        if (popup.closed) finish();
+      }, 500);
+
+      // Every 5s check status from parent side and close popup if connected
+      const checkStatus = setInterval(async () => {
+        if (resolved) return;
+        try {
+          const res = await fetchWrapper.get(`${API_BASE}/OAuth/status`);
+          if (res?.statusCode === 200 && res.data?.connected) {
+            finish();
+          }
+        } catch (_) {}
+      }, 5000);
+    });
+
+  // Checks OAuth connection status. Returns { connected, connectedEmail } or null on error.
+  const checkOAuthStatus = async () => {
+    try {
+      const res = await fetchWrapper.get(`${API_BASE}/OAuth/status`);
+      if (res?.statusCode === 200) {
+        if (res.data?.connected && res.data?.connectedEmail) {
+          setConnectedEmail(res.data.connectedEmail);
+        }
+        return res.data;
+      }
+    } catch (_) {}
+    return null;
+  };
+
+  // Fetches the Microsoft OAuth auth URL from the API.
+  const getOAuthConnectUrl = async () => {
+    try {
+      const res = await fetchWrapper.get(`${API_BASE}/OAuth/connect?provider=outlook`);
+      if (res?.statusCode === 200) return res.data?.authUrl ?? null;
+    } catch (_) {}
+    return null;
+  };
+
+  // Handles the full Present button click:
+  // 1. Check OAuth status
+  // 2. If not connected -> open consent popup
+  // 3. Open compose email modal
+  const handlePresentButtonClick = async () => {
+    setIsConnectingOAuth(true);
+    try {
+      const status = await checkOAuthStatus();
+
+      if (!status?.connected) {
+        const authUrl = await getOAuthConnectUrl();
+        if (!authUrl) {
+          dispatch(
+            showSnackbar({
+              message: "Unable to get email authentication URL. Please try again.",
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 4000,
+              maxWidth: 500,
+            })
+          );
+          return;
+        }
+
+        try {
+          await openOAuthPopup(authUrl);
+        } catch (err) {
+          dispatch(
+            showSnackbar({
+              message: err.message || "Email authentication failed. Please try again.",
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 4000,
+              maxWidth: 500,
+            })
+          );
+          return;
+        }
+      }
+
+      // OAuth is connected – open the compose email modal
+      setShowComposeModal(true);
+    } finally {
+      setIsConnectingOAuth(false);
+    }
+  };
+
+  const handleEmailSendSuccess = () => {
+    onActionClick("presented");
+  };
+
+  ── END DISABLED ──────────────────────────────────────────────────────────── */
 
   const openJobDetails = async (jobId) => {
     const res = await fetchWrapper.get(`${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDetails/${jobId}`);
@@ -214,38 +355,47 @@ export const CandidateCardView = (props) => {
       return (
         <Row>
           {props.data.candidateQualificationsDtos.map((data, index) => {
-            return (
-              <>
-                <Col sm={12} md={12} lg={12} xl={12} className="card-details">
-                  {data.jobtitle ? data.jobtitle : "-"}
-                </Col>
-                <Col sm={8} md={8} lg={8} xl={8} className="card-details-op">
-                  {data.company ? data.company : "-"}
-                </Col>
-                <Col
-                  sm={4}
-                  md={4}
-                  lg={4}
-                  xl={4}
-                  className="right-align card-details-op pl-0"
-                >
-                  {" "}
-                  {data.iscurrentlyworking
-                    ? `${data.startdate === null
-                      ? "NA"
-                      : moment(data.startdate).format("YYYY")
-                    } - Present`
-                    : `${data.startdate === null
-                      ? "NA"
-                      : moment(data.startdate).format("YYYY")
-                    } - ${data.enddate === null
+            const hasStartDate = !!data.startdate;
+            const yearRange = hasStartDate
+              ? data.iscurrentlyworking
+                ? `${moment(data.startdate).format("YYYY")} - Present`
+                : `${moment(data.startdate).format("YYYY")} - ${
+                    data.enddate === null
                       ? index === 0
                         ? "Present"
                         : "NA"
                       : moment(data.enddate).format("YYYY")
-                    }`}
+                  }`
+              : null;
+            const duration = getExperienceDuration(data.startdate, data.enddate, data.iscurrentlyworking, index);
+            const hasCompany = !!data.company;
+            const dateSpan = (yearRange || duration) ? (
+              <span className="card-details-op" style={{ whiteSpace: "nowrap", flex: "0 0 auto" }}>
+                {yearRange}
+                {duration ? ` · ${duration}` : ""}
+              </span>
+            ) : null;
+            return (
+              <React.Fragment key={data.candidatequalificationid ?? index}>
+                <Col sm={12} md={12} lg={12} xl={12} className="card-details">
+                  <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                    <span style={{ flex: "1 1 auto", minWidth: 0, wordBreak: "break-word" }}>
+                      {data.jobtitle ? data.jobtitle : "-"}
+                    </span>
+                    {!hasCompany && dateSpan}
+                  </span>
                 </Col>
-              </>
+                {hasCompany && (
+                  <Col sm={12} md={12} lg={12} xl={12} className="card-details-op"
+                    style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}
+                  >
+                    <span style={{ flex: "1 1 auto", minWidth: 0, wordBreak: "break-word" }}>
+                      {data.company}
+                    </span>
+                    {dateSpan}
+                  </Col>
+                )}
+              </React.Fragment>
             );
           })}
         </Row>
@@ -750,6 +900,9 @@ export const CandidateCardView = (props) => {
                 <BsHandThumbsUp></BsHandThumbsUp>  Like
               </Button>
               {isStaffingFirm && (
+                // TODO: Compose email flow is temporarily disabled (pending PO approval).
+                // Directly mark the candidate as presented for all users until the flow is approved.
+                // To restore: replace onClick with handlePresentButtonClick and re-enable the disabled block above.
                 <Button
                   outline
                   title="present"
@@ -759,7 +912,7 @@ export const CandidateCardView = (props) => {
                   size="sm"
                   disabled={props?.data?.ispresented}
                 >
-                  <BsCheckCircle/> {props?.data?.ispresented ? "Presented" : "Present"}
+                  <BsCheckCircle /> {props?.data?.ispresented ? "Presented" : "Present"}
                 </Button>
               )}
               <Button
@@ -881,6 +1034,14 @@ export const CandidateCardView = (props) => {
           <></>
         )}
       </>
+      <ComposeEmailModal
+        isOpen={showComposeModal}
+        onClose={() => setShowComposeModal(false)}
+        candidateData={props.data}
+        connectedEmail={connectedEmail}
+        onEmailConnectionChange={(email) => setConnectedEmail(email)}
+        onSendSuccess={() => onActionClick("presented")}
+      />
     </>
   );
 };

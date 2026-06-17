@@ -4,6 +4,7 @@ export const fetchWrapper = {
   get: request("GET"),
   post: request("POST"),
   put: request("PUT"),
+  patch: request("PATCH"),
   delete: request("DELETE"),
   postForm: requestForm("POST"),
   putForm: requestForm("PUT"),
@@ -27,6 +28,20 @@ function isCacheableDropdown(url) {
   return !EXCLUDED_DROPDOWN_KEYS.some(key =>
     url.includes(`searchText=${key}`)
   );
+}
+
+/**
+ * Removes all in-memory cache entries for a specific GetCommonDropdown searchText key.
+ * Call this after changing ATS defaults so the job post page fetches fresh data.
+ * Only the entries whose URL contains searchText=<key> are removed;
+ * every other dropdown cache is left untouched.
+ */
+export function clearDropdownCache(searchTextKey) {
+  Object.keys(memoryCache).forEach((cacheKey) => {
+    if (cacheKey.includes(`searchText=${searchTextKey}`)) {
+      delete memoryCache[cacheKey];
+    }
+  });
 }
 
 function request(method) {

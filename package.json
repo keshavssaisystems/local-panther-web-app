@@ -4,8 +4,11 @@
     "private": true,
     "scripts": {
         "start": "react-scripts start",
+        "prebuild": "node src/_helpers/generate-build-info.js",
         "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "test:e2e": "playwright test --reporter=html",
+        "test:e2e:ci": "npx playwright install --with-deps && npx playwright test --reporter=github"
     },
     "dependencies": {
         "@babel/core": "^7.22.10",
@@ -190,5 +193,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.59.1"
     }
 }

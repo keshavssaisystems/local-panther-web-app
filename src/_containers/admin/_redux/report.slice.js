@@ -83,9 +83,10 @@ export const getCustomerDropdownList = createAsyncThunk(
 // get candidate list
 export const getCandidateDropdownList = createAsyncThunk(
   `${name}/getCandidateDropdownList`,
-  async () => {
-    const CANDIDATE_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Candidate/GetCandidateDropdown`;
-    return await fetchWrapper.get(CANDIDATE_LIST_END_POINT);
+  async (page = 1) => {
+    const CANDIDATE_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Candidate/GetCandidateDropdown?page=${page}&pageSize=20`;
+    const response = await fetchWrapper.get(CANDIDATE_LIST_END_POINT);
+    return { ...response, page };
   }
 );
 
@@ -126,6 +127,8 @@ const adminReportSlice = createSlice({
     reportData: [],
     customerList: [],
     candidateList: [],
+    candidateListLoading: false,
+    candidateListHasMore: true,
     jobDetail: [],
     subsidiaryList: [],
     bullhornCandidateData: [],
@@ -216,12 +219,17 @@ const adminReportSlice = createSlice({
 
     // cadidate list
     [getCandidateDropdownList.pending]: (state) => {
-      state.candidateList = [];
+      state.candidateListLoading = true;
     },
     [getCandidateDropdownList.fulfilled]: (state, { payload = {} }) => {
-      state.candidateList = payload.data ? payload.data : [];
+      const newItems = payload.data ? payload.data : [];
+      state.candidateListLoading = false;
+      state.candidateList = payload.page === 1 ? newItems : [...state.candidateList, ...newItems];
+      state.candidateListHasMore = newItems.length === 20;
     },
-    [getCandidateDropdownList.rejected]: (state, action) => {},
+    [getCandidateDropdownList.rejected]: (state, action) => {
+      state.candidateListLoading = false;
+    },
     // admin report job detail
     [getAdminReportJobDetail.pending]: (state) => {
       state.jobDetail = [];
