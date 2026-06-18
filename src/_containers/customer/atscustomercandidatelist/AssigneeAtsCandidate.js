@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateAtsCandidateDetails } from "../../../_store/ats.slice";
+import { updateAtsCandidateDetails, postOpenworxAssignment, putOpenworxAssignment } from "../../../_store/ats.slice";
 import { dropdownActions } from "../createJob/dropdown.slice"; 
 import {
     Modal,
@@ -20,7 +20,7 @@ import { showSnackbar } from "_store/snackbar.slice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION } from "_constants/snackbarMessages";
 
 
-function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,assignedCompanyName, assignmentStartDate, assignmentEndDate, isOpen, onClose, onRefresh }) {
+function AssigneeAtsCandidate ({ candidateType = "ATS", candidateId, atsCandidateId, assignmentId, isAssigned, assignedCompanyId, assignedCompanyName, assignmentStartDate, assignmentEndDate, isOpen, onClose, onRefresh }) {
     const dispatch = useDispatch();
     
     const [formData, setFormData] = useState({
@@ -115,37 +115,63 @@ function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,a
 
     const handleSaveAssignment = async (e) => {
         e.preventDefault();
-        const payload = {
-            atscandidateid: atsCandidateId,
-            clientcompanyid: formData.clientCompany?.value || null, 
-            assignmentstartdate: formData.assignmentStartDate
-                ? new Date(formData.assignmentStartDate).toISOString()
-                : null,
-            assignmentenddate: formData.assignmentEndDate
-                ? new Date(formData.assignmentEndDate).toISOString()
-                : null,
-            assignedby: 0, 
-            isassigned: true,
-        };
+        const companyId = Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const userId = Number(localStorage.getItem("userId")) || 0;
 
         try {
-            await  dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            if (candidateType === "OpenWorX") {
+                const basePayload = {
+                    CandidateId: candidateId,
+                    Companyid: companyId,
+                    AssignedCompanyId: formData.clientCompany?.value || null,
+                    AssignedCompanyName: formData.clientCompany?.label || null,
+                    AssignmentStartDate: formData.assignmentStartDate
+                        ? new Date(formData.assignmentStartDate).toISOString()
+                        : null,
+                    AssignmentEndDate: formData.assignmentEndDate
+                        ? new Date(formData.assignmentEndDate).toISOString()
+                        : null,
+                    AssignedBy: userId,
+                    IsAssigned: true,
+                };
+                
+                if (assignmentId) {
+                    await dispatch(putOpenworxAssignment({ id: assignmentId, ...basePayload })).unwrap();
+                } else {
+                    await dispatch(postOpenworxAssignment(basePayload)).unwrap();
+                }
+            } else {
+                // ATS candidate
+                const payload = {
+                    atscandidateid: atsCandidateId,
+                    clientcompanyid: formData.clientCompany?.value || null,
+                    assignmentstartdate: formData.assignmentStartDate
+                        ? new Date(formData.assignmentStartDate).toISOString()
+                        : null,
+                    assignmentenddate: formData.assignmentEndDate
+                        ? new Date(formData.assignmentEndDate).toISOString()
+                        : null,
+                    assignedby: 0,
+                    isassigned: true,
+                };
+                await dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            }
+
             if (onRefresh && typeof onRefresh === "function") {
                 onRefresh();
             }
             onClose();
             dispatch(showSnackbar({
-                message: "Assignment Updated",
+                message: assignmentId ? "Assignment Updated" : "Assignment Saved",
                 type: SNACKBAR_TYPES.SUCCESS,
                 position: SNACKBAR_POSITION.TOP_CENTER,
                 autoClose: true,
                 autoCloseDelay: 3000,
                 maxWidth: 500,
             }));
-           
         } catch (error) {
-             dispatch(showSnackbar({
-                message:"Failed to update assignment",
+            dispatch(showSnackbar({
+                message: "Failed to save assignment",
                 type: SNACKBAR_TYPES.ERROR,
                 position: SNACKBAR_POSITION.TOP_CENTER,
                 autoClose: true,
@@ -157,22 +183,43 @@ function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,a
 
     const handleRemoveAssignment = async(e) => {
         e.preventDefault();
-        const payload = {
-            atscandidateid: atsCandidateId,
-            clientcompanyid: null, 
-            assignmentstartdate: null,
-            assignmentenddate: null,
-            assignedby: 0, 
-            isassigned: false,
-        };
+        const companyId = Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const userId = Number(localStorage.getItem("userId")) || 0;
 
         try {
-            await dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            if (candidateType === "OpenWorX") {
+                if (!assignmentId) return;
+                await dispatch(
+                    putOpenworxAssignment({
+                        id: assignmentId,
+                        CandidateId: candidateId,
+                        Companyid: companyId,
+                        AssignedCompanyId: null,
+                        AssignedCompanyName: null,
+                        AssignmentStartDate: null,
+                        AssignmentEndDate: null,
+                        AssignedBy: userId,
+                        IsAssigned: false,
+                    })
+                ).unwrap();
+            } else {
+                // ATS candidate
+                const payload = {
+                    atscandidateid: atsCandidateId,
+                    clientcompanyid: null,
+                    assignmentstartdate: null,
+                    assignmentenddate: null,
+                    assignedby: 0,
+                    isassigned: false,
+                };
+                await dispatch(updateAtsCandidateDetails(payload)).unwrap();
+            }
+
             if (onRefresh && typeof onRefresh === "function") {
-              onRefresh();
+                onRefresh();
             }
             onClose();
-             dispatch(showSnackbar({
+            dispatch(showSnackbar({
                 message: "Assignment Removed",
                 type: SNACKBAR_TYPES.SUCCESS,
                 position: SNACKBAR_POSITION.TOP_CENTER,
@@ -180,7 +227,6 @@ function AssigneeAtsCandidate ({ atsCandidateId, isAssigned, assignedCompanyId,a
                 autoCloseDelay: 3000,
                 maxWidth: 500,
             }));
-            
         } catch (error) {
             dispatch(showSnackbar({
                 message: "Failed to remove assignment",
