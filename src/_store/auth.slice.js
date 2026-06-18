@@ -30,7 +30,10 @@ const handleLoginSuccess = (state, data) => {
   localStorage.setItem("logo", decodedData?.role?.toLowerCase() === "candidate" ? "" : cmpLogo?.length > 0 ? cmpLogo
     : companyLogo?.length > 0 ? companyLogo[0]?.appconfigurationvalue : defLogo?.length > 0 ? defLogo[0]?.appconfigurationvalue : "");
   localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
-  if (decodedData?.UserroleId === "2") {
+  if (decodedData?.UserroleId === "4") {
+    localStorage.setItem("isCompanyAdmin", "true");
+    state.isCompanyAdmin = true;
+  } else if (decodedData?.UserroleId === "2") {
     localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin === true ? "true" : "false");
     state.isCompanyAdmin = data?.isCompanyAdmin === true;
   } else {
@@ -517,7 +520,9 @@ const authSlice = createSlice({
           "emailnotification",
           decodedData?.Emailnotification?.toLowerCase() === "true"
         );
-        if (decodedData?.UserroleId === "2") {
+        if (decodedData?.UserroleId === "4") {
+          localStorage.setItem("isCompanyAdmin", "true");
+        } else if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
         }
         localStorage.setItem(

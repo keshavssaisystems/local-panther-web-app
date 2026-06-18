@@ -158,6 +158,8 @@ export default function CustomerDashboard() {
         setShowRemModal(true);
       }
     }
+    // Return the resolved companyId so callers don't have to re-read localStorage
+    return res?.payload?.data?.companyid || Number(localStorage.getItem("companyid") || 0);
   };
   const getDashboardJobsDataCount = async function () {
     await dispatch(
@@ -240,13 +242,13 @@ export default function CustomerDashboard() {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: localStorage.getItem("userId"), viewAllCompanyJobs: false }));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
-    dispatch(
-      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid") || 0)
-    );
     dispatch(customerCandidateListsActions.getDurationOptions());
-    // Load all hiring managers in the company for the dropdown
-    const companyId = Number(localStorage.getItem("companyid") || 0);
-    dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+    // Wait for getCompanyDetails to resolve so localStorage.companyid is populated
+    // before dispatching APIs that depend on it.
+    getCompanyDetails().then((resolvedCompanyId) => {
+      dispatch(dropdownActions.getSubsidiaryListThunk(resolvedCompanyId || 0));
+      dispatch(getHiringMangersList({ companyId: resolvedCompanyId || 0, endpoint: 'allUserListByCompany' }));
+    });
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "Employer dashboard",
