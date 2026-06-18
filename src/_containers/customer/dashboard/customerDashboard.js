@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Row, Col } from "reactstrap";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { WidgetCard } from "_components/dashboard/widgetCard";
@@ -11,6 +11,8 @@ import {
   customerCandidateListsActions,
   candidateDashboardActions,
   custJobListActions,
+  authActions,
+  getHiringMangersList,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
@@ -44,9 +46,6 @@ export default function CustomerDashboard() {
     title: "",
     description: "",
   });
-  const [isCompanyAdmin, setIsCompanyAdmin] = useState(
-    JSON.parse(localStorage.getItem("userDetails"))?.isCompanyAdmin || JSON.parse(localStorage.getItem("userDetails"))?.UserroleId === "4" || false
-  );
   const [confAlert, SetConfAlert] = useState({
     show: false,
     type: "success",
@@ -54,6 +53,92 @@ export default function CustomerDashboard() {
     description: "",
     id: "",
   });
+
+  // Read from Redux — correctly set on login and preserved during HM context switches
+  const isCompanyAdmin = useSelector((state) => state.auth.isCompanyAdmin);
+  const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
+  const isSwitching = useSelector((state) => state.auth.isSwitching);
+  const hiringManagers = useSelector((state) => state.customerReportReducer?.companyHiringManagers || []);
+
+  // Local state for the dropdown — updated immediately on selection to avoid
+  // the controlled-component "stuck" issue where React won't fire onChange
+  // if value hasn't changed in state yet.
+  const [dropdownValue, setDropdownValue] = useState(
+    localStorage.getItem("selectedHiringManagerId") || "all"
+  );
+
+  // Track whether this is the initial mount. On reload, dropdownValue is already
+  // correctly seeded from localStorage — we must not let the useEffect override it
+  // with "all" in case Redux selectedHiringManagerId is momentarily null.
+  const isFirstRender = useRef(true);
+
+  // Keep local dropdown value in sync when Redux state changes AFTER initial mount
+  // (e.g. after a switch completes or a switch-back completes).
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (selectedHiringManagerId) {
+      setDropdownValue(String(selectedHiringManagerId));
+    } else {
+      setDropdownValue("all");
+    }
+  }, [selectedHiringManagerId]);
+
+  const reloadDashboardData = () => {
+    getDashboardCounts();
+    getDashboardJobsDataCount();
+    getDashboardGraphData();
+    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: localStorage.getItem("userId"), viewAllCompanyJobs: false }));
+    const dashUserId = localStorage.getItem("userId");
+    if (dashUserId) {
+      loadJobListPage(1);
+    }
+  };
+
+  const handleHiringManagerChange = async (e) => {
+    const value = e.target.value;
+
+    // No-op: user re-selected the already active option
+    if (value === dropdownValue) return;
+
+    // Snapshot previous value before any state changes — used to revert on failure
+    const previousValue = dropdownValue;
+
+    // Persist selected HM name so the dropdown has a matching option on next reload
+    if (value === "all") {
+      localStorage.removeItem("selectedHiringManagerName");
+    } else {
+      const selectedHM = hiringManagers.find(hm => String(hm.id) === value);
+      if (selectedHM) localStorage.setItem("selectedHiringManagerName", selectedHM.name);
+    }
+
+    // Update local state immediately so the dropdown never appears frozen
+    setDropdownValue(value);
+
+    const originalAdminUserId = localStorage.getItem("adminOriginalUserId");
+
+    if (!value || value === "all") {
+      // "All Users" — restore original admin context
+      if (originalAdminUserId) {
+        const result = await dispatch(authActions.switchBackToAdminThunk());
+        if (result?.error) {
+          setDropdownValue(previousValue);
+          return;
+        }
+      }
+    } else {
+      // Switch to the selected user (including admin's own entry)
+      const result = await dispatch(authActions.switchToHiringManagerThunk(parseInt(value)));
+      if (result?.error) {
+        setDropdownValue(previousValue);
+        return;
+      }
+    }
+    reloadDashboardData();
+  };
   const getDashboardCounts = async function () {
     await dispatch(customerDashboardActions.getCustomerDashboardThunk());
   };
@@ -159,6 +244,9 @@ export default function CustomerDashboard() {
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid") || 0)
     );
     dispatch(customerCandidateListsActions.getDurationOptions());
+    // Load all hiring managers in the company for the dropdown
+    const companyId = Number(localStorage.getItem("companyid") || 0);
+    dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "Employer dashboard",
@@ -368,6 +456,40 @@ export default function CustomerDashboard() {
   return (
     <>
       <div>
+        {isCompanyAdmin && <Row className="mb-3">
+          <Col sm="12" md="4" lg="3">
+            <div className="d-flex align-items-center">
+              <label className="me-2 mb-0 text-nowrap" style={{ fontWeight: 500 }}>
+                View data for:
+              </label>
+              <select
+                className="form-select form-control"
+                value={dropdownValue}
+                onChange={handleHiringManagerChange}
+                disabled={isSwitching}
+                style={{ minWidth: 200 }}
+              >
+                <option value="all">Select a Hiring Manager</option>
+                {/* Pre-populate the selected option while the full list is loading on reload,
+                    so the controlled <select> always has a matching <option> and never
+                    visually falls back to "All Users" during the async load. */}
+                {dropdownValue !== "all" && !hiringManagers.some(hm => String(hm.id) === dropdownValue) && (
+                  <option value={dropdownValue}>
+                    {localStorage.getItem("selectedHiringManagerName") || dropdownValue}
+                  </option>
+                )}
+                {hiringManagers.map((hm) => (
+                  <option key={hm.id} value={hm.id}>
+                    {hm.name}
+                  </option>
+                ))}
+              </select>
+              {isSwitching && (
+                <span className="ms-2 spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true" />
+              )}
+            </div>
+          </Col>
+        </Row>}
         <Row>
           <Col sm="12" md="12" lg="12">
             <WidgetCard

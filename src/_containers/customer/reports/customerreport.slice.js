@@ -236,9 +236,18 @@ export const getHiringMangerListDynamic = createAsyncThunk(
 export const getHiringMangersList  = createAsyncThunk(
   `${name}/getHiringMangersList`,
   async ({companyId, endpoint = 'userListByCompany'}) => {
-    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
-      }Common/GetCommonDropdown?searchText=${endpoint}&commonId=${companyId}`;
-    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+    const url = `${process.env.REACT_APP_NEW_API_URL}Common/GetCommonDropdown?searchText=${endpoint}&commonId=${companyId}`;
+    // When a context switch is active, localStorage.token belongs to the switched user.
+    // Always use the original admin's token (if available) so the full user list is
+    // returned regardless of what permissions the switched user has.
+    const adminToken = localStorage.getItem("adminOriginalToken");
+    if (adminToken) {
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${adminToken}`, "Content-Type": "application/json" },
+      });
+      return await response.json();
+    }
+    return await fetchWrapper.get(url);
   }
 );
 
