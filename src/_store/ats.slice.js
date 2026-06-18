@@ -106,6 +106,27 @@ export const getAtsCandidateAssignedDetail = createAsyncThunk(
             return await fetchWrapper.put(TOKEN_END_POINT, payload);
         }
     );
+
+export const postOpenworxAssignment = createAsyncThunk(
+    `${name}/postOpenworxAssignment`,
+    async (payload) => {
+        return await fetchWrapper.post(
+            `${process.env.REACT_APP_NEW_API_URL}V2/OpenworxCandidateAssignment`,
+            payload
+        );
+    }
+);
+
+export const putOpenworxAssignment = createAsyncThunk(
+    `${name}/putOpenworxAssignment`,
+    async ({ id, ...payload }) => {
+        return await fetchWrapper.put(
+            `${process.env.REACT_APP_NEW_API_URL}V2/OpenworxCandidateAssignment/${id}`,
+            payload
+        );
+    }
+);
+
 // Create the slice
 const atsSlice = createSlice({
     name,
@@ -239,6 +260,26 @@ const atsSlice = createSlice({
             })
             .addCase(updateAtsCandidateDetails.rejected, (state) => {
                 state.loader = false;
+            })
+            .addCase(postOpenworxAssignment.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(postOpenworxAssignment.fulfilled, (state, action) => {
+                state.loader = false;
+                state.data = action.payload;
+            })
+            .addCase(postOpenworxAssignment.rejected, (state) => {
+                state.loader = false;
+            })
+            .addCase(putOpenworxAssignment.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(putOpenworxAssignment.fulfilled, (state, action) => {
+                state.loader = false;
+                state.data = action.payload;
+            })
+            .addCase(putOpenworxAssignment.rejected, (state) => {
+                state.loader = false;
             });
     },
 });
@@ -255,7 +296,8 @@ export const atsActions = {
     fetchATSCompanyList,
     getAtsCandidateAssignedDetail,
     updateAtsCandidateDetails,
-
+    postOpenworxAssignment,
+    putOpenworxAssignment,
 };
 
 export const atsReducer = atsSlice.reducer;
