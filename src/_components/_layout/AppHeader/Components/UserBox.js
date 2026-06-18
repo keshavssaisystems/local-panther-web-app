@@ -68,7 +68,9 @@ export function UserBox() {
     description: "",
   });
   const [rejectReasonModal, setRejectReasonModal] = useState(false);
-  const personalInfo_temp = localStorage.getItem("profileImage");
+  const personalInfo_temp = localStorage.getItem("adminOriginalUserDetails")
+    ? JSON.parse(localStorage.getItem("adminOriginalUserDetails"))?.Profilephotopath
+    : localStorage.getItem("profileImage");
 
   const [profileImg, setProfileImg] = useState("");
   const [message, setMessage] = useState();
@@ -79,7 +81,10 @@ export function UserBox() {
   // const [showBilling, setShowBilling] = useState(false);
   const dispatch = useDispatch();
   const logout = () => {
-    let userLoginInfoId = localStorage.getItem("userLoginInfoId");
+    // Use the original admin's userLoginInfoId if a context switch is active,
+    // so the correct session is terminated on the backend.
+    const userLoginInfoId = localStorage.getItem("adminOriginalUserLoginInfoId")
+      || localStorage.getItem("userLoginInfoId");
     if (userLoginInfoId) {
       dispatch(authActions.logoutThunk(userLoginInfoId));
     } else {
@@ -87,7 +92,9 @@ export function UserBox() {
     }
   };
   useEffect(() => {
-    const detail = JSON.parse(localStorage.getItem("userDetails")) || {};
+    // Always show the original logged-in user's details, not the switched user's.
+    const rawDetail = localStorage.getItem("adminOriginalUserDetails") || localStorage.getItem("userDetails");
+    const detail = JSON.parse(rawDetail) || {};
     setUserDetail({ ...detail });
 
     if (Number(detail.UserroleId) === 2 || Number(detail.UserroleId) === 4) {

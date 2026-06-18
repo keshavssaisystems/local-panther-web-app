@@ -219,7 +219,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           sortable: true,
         }
       ] : []),
-      ...((currentRoleId === 1 || currentRoleId === 4 || isCompanyAdmin)
+      ...((currentRoleId === 1 || currentRoleId === 4 )
         ? [
           {
             name: "Store Candidate Scan History",

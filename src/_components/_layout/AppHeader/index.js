@@ -27,9 +27,9 @@ export function AppHeader({
 }) {
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [showCPModal, setShowCPModal] = useState(false);
-  let userDetail = localStorage.getItem("userDetails")
-    ? JSON.parse(localStorage.getItem("userDetails"))
-    : {};
+  // Always show the original logged-in admin's name, not the switched user's name.
+  const rawUserDetail = localStorage.getItem("adminOriginalUserDetails") || localStorage.getItem("userDetails");
+  let userDetail = rawUserDetail ? JSON.parse(rawUserDetail) : {};
   let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
     ? localStorage.getItem("isCompanyAdmin") === "true"
     : false;

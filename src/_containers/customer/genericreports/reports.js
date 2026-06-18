@@ -123,6 +123,9 @@ const ReportsList = () => {
     const [statusFilter, setStatusFilter] = useState(null);
     const [profileStatusFilter, setProfileStatusFilter] = useState(null);
     const [profileSourceFilter, setProfileSourceFilter] = useState(null);
+    const [minMatch, setMinMatch] = useState(null);
+    const [maxMatch, setMaxMatch] = useState(null);
+    const [showCustomMatch, setShowCustomMatch] = useState(false);
     let [isexport, setIsExport] = useState(0);
     const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
     const [interviewFeedbackStatusId, setInterviewFeedbackStatusId] = useState(0);
@@ -227,7 +230,7 @@ const ReportsList = () => {
     const handleexportToExcel = () => {
         data = []; // to avoid export with current data, as we are fetching new data with isexport flag
         fetchData(1, 10000, startDate, endDate, searchData, candidateSelected, subsidiaryId, company,
-            hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter).then(() => {
+            hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, minMatch, maxMatch, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter).then(() => {
                 setIsExport(1)
             });
     };
@@ -236,7 +239,7 @@ const ReportsList = () => {
             exportToExcel(excelData, `${title || "Report"}_Export`, true);
         }
         if (isexport === 1 && data.length > 0 && excelData && excelData.length > 0 && excelData[0].details && excelData[0].details.length > 0) {
-            fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
+            fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, minMatch, maxMatch, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
             setIsExport(0); // reset export flag after export is done
         }
     }, [isexport]);
@@ -421,6 +424,8 @@ const ReportsList = () => {
         profileSourceFilter_,
         recommStatusId_,
         jobId_,
+        minMatch_,
+        maxMatch_,
         interviewFeedbackStatusId_ = 0,
         offerStatusId_ = "",
         prescreenStatusFilter_ = "",
@@ -443,6 +448,8 @@ const ReportsList = () => {
             filter.profileSource === 1 && (profileSourceFilter_ !== null && profileSourceFilter_ !== '' && profileSourceFilter_ !== "") && parameterParts.push(`@profilesource=${profileSourceFilter_}`);
             filter.recommendedStatus === 1 && (recommStatusId_ !== null && recommStatusId_ !== '' && recommStatusId_ !== "") && parameterParts.push(`@recommendedjobstatusid=${recommStatusId_ || null}`);
             filter.jobFilter === 1 && jobId_ && parameterParts.push(`@jobid=${jobId_}`);
+            filter.matchPercentageFilter === 1 && (minMatch_ !== null && minMatch_ !== undefined) && parameterParts.push(`@minmatch=${minMatch_}`);
+            filter.matchPercentageFilter === 1 && (maxMatch_ !== null && maxMatch_ !== undefined) && parameterParts.push(`@maxmatch=${maxMatch_}`);
             filter.interviewFeedbackStatus === 1 && interviewFeedbackStatusId_ && Number(interviewFeedbackStatusId_) !== 0 && parameterParts.push(`@interviewfeedbackstatusid=${interviewFeedbackStatusId_}`);
             filter.offerStatus === 1 && offerStatusId_ !== "" && offerStatusId_ !== null && parameterParts.push(`@offerstatusid=${offerStatusId_}`);
             filter.prescreenStatus === 1 && prescreenStatusFilter_ !== "" && prescreenStatusFilter_ !== null && parameterParts.push(`@prescreenStatus=${prescreenStatusFilter_}`);
@@ -481,7 +488,7 @@ const ReportsList = () => {
         // new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hmId }, resolve));
         setJobSelected(null);
         setOfferStatusId("");
-        fetchData(1, 10, startdate, enddate, "", candidateSelected, subsidiaryId, null, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, null, 0, "", "");
+        fetchData(1, 10, startdate, enddate, "", candidateSelected, subsidiaryId, null, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, null, null, null, 0, "", "");
         // handleClear();
     }, [path]);
 
@@ -508,18 +515,18 @@ const ReportsList = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        fetchData(page, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
+        fetchData(page, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, minMatch, maxMatch, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
     };
 
     const handlePerRowsChange = (newPerPage, page) => {
         setPerPage(newPerPage);
         setCurrentPage(page);
-        fetchData(page, newPerPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
+        fetchData(page, newPerPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, minMatch, maxMatch, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
     };
 
     const handleSearch = () => {
         // setPerPage(perPage);
-        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
+        fetchData(currentPage, perPage, startDate, endDate, searchData, candidateSelected, subsidiaryId, company, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, jobId, minMatch, maxMatch, interviewFeedbackStatusId, offerStatusId, prescreenStatusFilter);
     };
     const handleClear = () => {
         // Reset all local state variables
@@ -540,6 +547,9 @@ const ReportsList = () => {
         setPrescreenStatusFilter("");
         setHiringMangerId(null);
         setCompany([]);
+        setMinMatch(null);
+        setMaxMatch(null);
+        setShowCustomMatch(false);
         setCurrentPage(1);
         setPerPage(10);
         new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hiringmanagerId }, resolve));
@@ -548,7 +558,7 @@ const ReportsList = () => {
         setJobStatus("");
 
         // Fetch data with no filters
-        fetchData(1, 10, null, null, "", null, "", [], "", null, null, null, null, null, 0, 0, "", ""); // Reset to first page with current perPage
+        fetchData(1, 10, null, null, "", null, "", [], null, "", null, null, null, null, null, null, null, 0, "", ""); // Reset to first page with current perPage
     };
 
     const openJobDetails = async (jobId) => {
@@ -774,6 +784,69 @@ const ReportsList = () => {
                                                 />
                                             </FormGroup>
                                         </Col>
+                                    )}
+
+                                    {filter.matchPercentageFilter == 1 && (
+                                        <Col lg="2" md="4" sm="12" xs={12}>
+                                            <FormGroup>
+                                                <Input
+                                                    type="select"
+                                                    value={showCustomMatch ? 'custom' : (minMatch !== null && maxMatch !== null ? `${minMatch}-${maxMatch}` : '')}
+                                                    onChange={(e) => {
+                                                        const v = e.target.value;
+                                                        if (!v) {
+                                                            setMinMatch(null);
+                                                            setMaxMatch(null);
+                                                            setShowCustomMatch(false);
+                                                        } else if (v === 'custom') {
+                                                            setShowCustomMatch(true);
+                                                            setMinMatch(null);
+                                                            setMaxMatch(null);
+                                                        } else {
+                                                            setShowCustomMatch(false);
+                                                            const parts = v.split('-');
+                                                            setMinMatch(parts[0] ? Number(parts[0]) : null);
+                                                            setMaxMatch(parts[1] ? Number(parts[1]) : null);
+                                                        }
+                                                    }}
+                                                >
+                                                    <option value="">Match% Range</option>
+                                                    <option value="40-70">40% to 70%</option>
+                                                    <option value="70-90">70% to 90%</option>
+                                                    <option value="90-100">90% to 100%</option>
+                                                    {/* <option value="custom">Custom</option> */}
+                                                </Input>
+                                            </FormGroup>
+                                        </Col>
+                                    )}
+
+                                    {showCustomMatch && (
+                                        <>
+                                            <Col lg="1" md="2" sm="6" xs={6}>
+                                                <FormGroup>
+                                                    <Input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        placeholder="Min %"
+                                                        value={minMatch ?? ''}
+                                                        onChange={(e) => setMinMatch(e.target.value ? Number(e.target.value) : null)}
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col lg="1" md="2" sm="6" xs={6}>
+                                                <FormGroup>
+                                                    <Input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        placeholder="Max %"
+                                                        value={maxMatch ?? ''}
+                                                        onChange={(e) => setMaxMatch(e.target.value ? Number(e.target.value) : null)}
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </>
                                     )}
 
                                     {filter.candidateFilter == 1 && (

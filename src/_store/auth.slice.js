@@ -30,7 +30,12 @@ const handleLoginSuccess = (state, data) => {
   localStorage.setItem("logo", decodedData?.role?.toLowerCase() === "candidate" ? "" : cmpLogo?.length > 0 ? cmpLogo
     : companyLogo?.length > 0 ? companyLogo[0]?.appconfigurationvalue : defLogo?.length > 0 ? defLogo[0]?.appconfigurationvalue : "");
   localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
-  if (decodedData?.UserroleId === "2") { localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin); }
+  if (decodedData?.UserroleId === "2") {
+    localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin === true ? "true" : "false");
+    state.isCompanyAdmin = data?.isCompanyAdmin === true;
+  } else {
+    state.isCompanyAdmin = false;
+  }
   localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
   // get return url from location state or default to home page
   const { from } = history.location.state || { from: { pathname: "/" }, };
@@ -38,6 +43,18 @@ const handleLoginSuccess = (state, data) => {
   if (companyList && companyList.length > 0) {
     localStorage.setItem("companyList", JSON.stringify(companyList));
   }
+  // Always reset switch context on login so a new user starts with no active HM switch
+  localStorage.removeItem("selectedHiringManagerId");
+  localStorage.removeItem("selectedHiringManagerName");
+  localStorage.removeItem("adminOriginalUserId");
+  localStorage.removeItem("adminOriginalToken");
+  localStorage.removeItem("adminOriginalRefreshToken");
+  localStorage.removeItem("adminOriginalUserDetails");
+  localStorage.removeItem("adminOriginalUserLoginInfoId");
+  localStorage.removeItem("adminOriginalIsCompanyAdmin");
+  state.selectedHiringManagerId = null;
+  state.isSwitching = false;
+  state.switchError = null;
   state.loader = false;
   history.navigate(from);
 }
@@ -46,6 +63,10 @@ const handleLogoutSuccess = (state) => {
   state.user = {};
   state.token = null;
   state.loader = false;
+  state.selectedHiringManagerId = null;
+  state.isSwitching = false;
+  state.switchError = null;
+  state.isCompanyAdmin = false;
   let logo = localStorage.getItem("logo");
   localStorage.removeItem("user");
   localStorage.removeItem("token");
@@ -219,6 +240,97 @@ export const postInterviewSessionAccess = createAsyncThunk(
   }
 );
 
+// Helper: always call SwitchToHiringManager using the original admin's token.
+// This guarantees A→B→C→D chains always use A's authorization regardless of
+// which switched token is currently active in localStorage.
+const callSwitchAPI = async (hiringManagerUserId) => {
+  const SWITCH_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/SwitchToHiringManager`;
+  // adminOriginalToken is set on first switch and never changes until logout.
+  // Falls back to current token only on the very first switch (before it is saved).
+  const token = localStorage.getItem("adminOriginalToken") || localStorage.getItem("token");
+  if (!token) throw new Error("No authentication token available");
+
+  const response = await fetch(SWITCH_END_POINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ hiringManagerUserId }),
+  });
+
+  let body;
+  try {
+    body = await response.json();
+  } catch {
+    throw new Error(`SwitchToHiringManager: invalid JSON response (HTTP ${response.status})`);
+  }
+
+  // Validate both HTTP status and API-level status code
+  if (!response.ok || body?.statusCode !== 200 || !body?.data?.token) {
+    throw new Error(body?.message || `SwitchToHiringManager failed (HTTP ${response.status})`);
+  }
+
+  return body;
+};
+
+// Switch to a specific hiring manager's context (Company Admin only)
+export const switchToHiringManagerThunk = createAsyncThunk(
+  `${name}/switchToHiringManagerThunk`,
+  async (hiringManagerUserId, { rejectWithValue }) => {
+    try {
+      return await callSwitchAPI(hiringManagerUserId);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+// Switch back to the original admin context
+export const switchBackToAdminThunk = createAsyncThunk(
+  `${name}/switchBackToAdminThunk`,
+  async (_, { rejectWithValue }) => {
+    const originalAdminUserId = localStorage.getItem("adminOriginalUserId");
+    if (!originalAdminUserId) throw new Error("No original admin session found");
+    try {
+      return await callSwitchAPI(parseInt(originalAdminUserId));
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+// Helper to apply a switch-context response to state and localStorage
+const handleSwitchContext = (state, data) => {
+  const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
+  state.menuList = menuDtoList;
+  state.user = data;
+  state.token = token;
+  const companyLogo = data.appConfigurationDtoList?.filter(d => d?.appconfigurationkey === "CompanyLogo") || "";
+  const defLogo = data.appConfigurationDtoList?.filter(d => d?.appconfigurationkey === "DefaultLogo") || "";
+  const cmpLogo = data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
+  localStorage.setItem("menuList", JSON.stringify(menuDtoList));
+  localStorage.setItem("token", token);
+  localStorage.setItem("refreshToken", refreshToken);
+  const decodedData = jwtDecode(token);
+  localStorage.setItem("userId", decodedData.UserId);
+  localStorage.setItem("profileImage", decodedData.Profilephotopath);
+  localStorage.setItem("userLoginInfoId", userLoginInfoId);
+  localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
+  state.userroleid = parseInt(decodedData.UserroleId);
+  localStorage.setItem("userDetails", JSON.stringify(decodedData));
+  localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
+  localStorage.setItem("logo", decodedData?.role?.toLowerCase() === "candidate" ? "" : cmpLogo?.length > 0 ? cmpLogo
+    : companyLogo?.length > 0 ? companyLogo[0]?.appconfigurationvalue : defLogo?.length > 0 ? defLogo[0]?.appconfigurationvalue : "");
+  localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
+  // Note: isCompanyAdmin is intentionally NOT updated here.
+  // switchToHiringManagerThunk and switchBackToAdminThunk manage it explicitly.
+  if (companyList && companyList.length > 0) {
+    localStorage.setItem("companyList", JSON.stringify(companyList));
+  }
+  state.loader = false;
+};
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -234,13 +346,25 @@ const authSlice = createSlice({
     error: null,
     shareJobDetail: [],
     loader: false,
-    interviewSessionAccess: null
+    interviewSessionAccess: null,
+    selectedHiringManagerId: localStorage.getItem("selectedHiringManagerId")
+      ? parseInt(localStorage.getItem("selectedHiringManagerId"))
+      : null,
+    isSwitching: false,
+    switchError: null,
+    isCompanyAdmin: localStorage.getItem("adminOriginalIsCompanyAdmin") !== null
+      ? localStorage.getItem("adminOriginalIsCompanyAdmin") === "true"
+      : localStorage.getItem("isCompanyAdmin") === "true",
   },
   reducers: {
     logout: (state, { payload }) => {
       state.user = {};
       state.token = null;
       state.loader = false;
+      state.selectedHiringManagerId = null;
+      state.isSwitching = false;
+      state.switchError = null;
+      state.isCompanyAdmin = false;
       let logo = localStorage.getItem("logo");
       localStorage.removeItem("user");
       localStorage.removeItem("token");
@@ -551,6 +675,79 @@ const authSlice = createSlice({
       state.interviewSessionAccess = payload.data;
     },
     [postInterviewSessionAccess.rejected]: (state, action) => { },
+    [switchToHiringManagerThunk.pending]: (state) => {
+      state.isSwitching = true;
+      state.switchError = null;
+    },
+    [switchToHiringManagerThunk.fulfilled]: (state, action) => {
+      const { data = {} } = action.payload || {};
+      // action.meta.arg is the hiringManagerUserId passed to the thunk —
+      // safer than decoding the JWT inside a reducer.
+      const hiringManagerUserId = action.meta.arg;
+
+      // Persist the original admin session on the FIRST switch only.
+      // These keys are immutable until logout — every subsequent switch
+      // still uses adminOriginalToken for the API call via callSwitchAPI.
+      if (!localStorage.getItem("adminOriginalUserId")) {
+        localStorage.setItem("adminOriginalUserId", localStorage.getItem("userId"));
+        localStorage.setItem("adminOriginalToken", localStorage.getItem("token"));
+        localStorage.setItem("adminOriginalRefreshToken", localStorage.getItem("refreshToken"));
+        localStorage.setItem("adminOriginalUserDetails", localStorage.getItem("userDetails"));
+        localStorage.setItem("adminOriginalUserLoginInfoId", localStorage.getItem("userLoginInfoId"));
+        // Freeze isCompanyAdmin — the admin flag belongs to the original user,
+        // not to whoever is currently being impersonated.
+        localStorage.setItem("adminOriginalIsCompanyAdmin", localStorage.getItem("isCompanyAdmin"));
+      }
+
+      localStorage.setItem("selectedHiringManagerId", String(hiringManagerUserId));
+      state.selectedHiringManagerId = hiringManagerUserId;
+      handleSwitchContext(state, data);
+
+      // Restore isCompanyAdmin to the original admin's value — handleSwitchContext
+      // would otherwise reflect the switched user's value.
+      const originalIsCompanyAdmin = localStorage.getItem("adminOriginalIsCompanyAdmin");
+      localStorage.setItem("isCompanyAdmin", originalIsCompanyAdmin);
+      state.isCompanyAdmin = originalIsCompanyAdmin === "true";
+
+      state.isSwitching = false;
+    },
+    [switchToHiringManagerThunk.rejected]: (state, action) => {
+      state.isSwitching = false;
+      state.switchError = action.payload || action.error?.message;
+    },
+    [switchBackToAdminThunk.pending]: (state) => {
+      state.isSwitching = true;
+      state.switchError = null;
+    },
+    [switchBackToAdminThunk.fulfilled]: (state, action) => {
+      const { data = {} } = action.payload || {};
+
+      // Only apply the context update if we received a valid token.
+      // If not, we still clear the switch state so the UI isn't stuck.
+      if (data?.token) {
+        handleSwitchContext(state, data);
+      }
+
+      // Always clean up switch context — admin is back to their own session.
+      localStorage.removeItem("adminOriginalUserId");
+      localStorage.removeItem("adminOriginalToken");
+      localStorage.removeItem("adminOriginalRefreshToken");
+      localStorage.removeItem("adminOriginalUserDetails");
+      localStorage.removeItem("adminOriginalUserLoginInfoId");
+      localStorage.removeItem("adminOriginalIsCompanyAdmin");
+      localStorage.removeItem("selectedHiringManagerId");
+      localStorage.removeItem("selectedHiringManagerName");
+
+      state.selectedHiringManagerId = null;
+      // isCompanyAdmin is now read from the restored localStorage value set
+      // by handleSwitchContext (admin's own data) or preserved from login.
+      state.isCompanyAdmin = localStorage.getItem("isCompanyAdmin") === "true";
+      state.isSwitching = false;
+    },
+    [switchBackToAdminThunk.rejected]: (state, action) => {
+      state.isSwitching = false;
+      state.switchError = action.payload || action.error?.message;
+    },
   },
 });
 
@@ -573,7 +770,9 @@ export const authActions = {
   candRegisterOTPThunk,
   postCompanyReferralLogs,
   putCompanyReferralLogs,
-  postInterviewSessionAccess
+  postInterviewSessionAccess,
+  switchToHiringManagerThunk,
+  switchBackToAdminThunk,
 };
 
 export const authReducer = authSlice.reducer;

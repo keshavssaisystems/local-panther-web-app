@@ -58,6 +58,9 @@ export const CandidateCardView = (props) => {
   const [assignmentStartDate, setAssignmentStartDate] = useState(null);
   const [assignmentEndDate, setAssignmentEndDate] = useState(null);
   const [assignedCompanyName, setAssignedCompanyName] = useState(null);
+  const [candidateType, setCandidateType] = useState("ATS");
+  const [candidateId, setCandidateId] = useState(null);
+  const [assignmentId, setAssignmentId] = useState(null);
   const [showJDModal, setShowJDModal] = useState(false);
   const [jobDetail, setJobDetail] = useState([]);
   const [showComposeModal, setShowComposeModal] = useState(false);
@@ -457,8 +460,17 @@ export const CandidateCardView = (props) => {
     props.onPresentClick(props?.data?.candidaterecommendedjobid);
   };
 
-  const updateAssignedDetail = (atsCandidateId, isAssigned, assignedCompanyId, assignedCompanyName, assignmentStartDate, assignmentEndDate) => {
-    setAtsCandidateId(atsCandidateId);
+  const handleRefreshData = () => {
+    if (props.updateList && typeof props.updateList === "function") {
+      props.updateList();
+    }
+  };
+
+  const updateAssignedDetail = (type, candId, atsId, assignId, isAssigned, assignedCompanyId, assignedCompanyName, assignmentStartDate, assignmentEndDate) => {
+    setCandidateType(type);
+    setCandidateId(candId);
+    setAtsCandidateId(atsId);
+    setAssignmentId(assignId);
     setIsAssigned(isAssigned);
     setAssignedCompanyId(assignedCompanyId);
     setAssignedCompanyName(assignedCompanyName);
@@ -470,12 +482,8 @@ export const CandidateCardView = (props) => {
   const onCloseBDModal = () => {
     setOpenBDModal(false);
     setAtsCandidateId(null);
-  };
-
-  const handleRefreshData = () => {
-    if (props.updateList && typeof props.updateList === "function") {
-      props.updateList();
-    }
+    setCandidateId(null);
+    setAssignmentId(null);
   };
 
   return (
@@ -781,7 +789,8 @@ export const CandidateCardView = (props) => {
                     </Row>
                   </p>
                 </Col>
-                {props.data.assignedInfoDTO?.[0]?.isassigned === true && 
+                {//props.data.assignedInfoDTO?.[0]?.isassigned === true 
+                  props.data?.isatscandidate === true && 
                 (<Col className="col-12"> 
                     <div className="card-details"> 
                       <Row> 
@@ -800,24 +809,30 @@ export const CandidateCardView = (props) => {
                         <Col md="11" lg="11">
                           <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "space-between" }}>
                             <div>
-                              <b>Assignment Status</b> 
-                              <div>On Assignment / Already Working</div>
-                                <div className="d-flex flex-column gap-1">
-                                  <div className="d-flex align-items-center">
-                                    <span>
-                                      {props.data.assignedInfoDTO?.[0]?.assignmentstartdate
-                                        ? 
-                                        moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentstartdate ).format("MM/DD/YYYY")
-                                         : "-"}
-                                    </span>
-                                       {" - "}
-                                    <span>
-                                      {props.data.assignedInfoDTO?.[0]?.assignmentenddate
-                                        ? moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentenddate ).format("MM/DD/YYYY")
-                                         : "-"}
-                                    </span>
+                              <b>Assignment Status</b>
+                              {props.data.assignedInfoDTO?.[0]?.isassigned === true ? (
+                                <>
+                                  <div>On Assignment / Already Working</div>
+                                  <div className="d-flex flex-column gap-1">
+                                    <div className="d-flex align-items-center">
+                                      <span>
+                                        {props.data.assignedInfoDTO?.[0]?.assignmentstartdate
+                                          ? 
+                                          moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentstartdate ).format("MM/DD/YYYY")
+                                           : "-"}
+                                      </span>
+                                         {" - "}
+                                      <span>
+                                        {props.data.assignedInfoDTO?.[0]?.assignmentenddate
+                                          ? moment.utc(props.data.assignedInfoDTO?.[0]?.assignmentenddate ).format("MM/DD/YYYY")
+                                           : "-"}
+                                      </span>
+                                    </div>
                                   </div>
-                              </div>
+                                </>
+                              ) : (
+                                <div>Not on Assignment</div>
+                              )}
                             </div>
                             <div className="me-3 float-end">
                                 <BsPencil
@@ -827,7 +842,10 @@ export const CandidateCardView = (props) => {
                                     onClick={() => {
                                       const atsDetail = props.data.assignedInfoDTO?.[0];
                                       updateAssignedDetail(
+                                          "ATS",
+                                          null,
                                           atsDetail?.atscandidateid,
+                                          null,
                                           atsDetail?.isassigned,
                                           atsDetail?.assignedcompanyid,
                                           atsDetail?.assignedcompanyname,
@@ -842,6 +860,76 @@ export const CandidateCardView = (props) => {
                       </Row> 
                     </div> 
                 </Col> )}
+                {props.data?.isatscandidate === false && (
+                  <Col className="col-12">
+                    <div className="card-details">
+                      <Row>
+                        <Col md="1" lg="1">
+                          <span className="pe-2">
+                            <img
+                              src={customerIcons.On_Assignment}
+                              alt="On assignment"
+                              width="16"
+                              height="auto"
+                              style={{ verticalAlign: "middle", objectFit: "contain" }}
+                            />
+                          </span>
+                        </Col>
+                        <Col md="11" lg="11">
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "space-between" }}>
+                            <div>
+                              <b>Assignment Status</b>
+                              {props.data.openworxCandidateAssignedInfoDTO?.[0]?.isassigned === true ? (
+                                <>
+                                  <div>On Assignment / Already Working</div>
+                                  <div className="d-flex flex-column gap-1">
+                                    <div className="d-flex align-items-center">
+                                      <span>
+                                        {props.data.openworxCandidateAssignedInfoDTO?.[0]?.assignmentstartdate
+                                          ? moment.utc(props.data.openworxCandidateAssignedInfoDTO?.[0]?.assignmentstartdate).format("MM/DD/YYYY")
+                                          : "-"}
+                                      </span>
+                                      {" - "}
+                                      <span>
+                                        {props.data.openworxCandidateAssignedInfoDTO?.[0]?.assignmentenddate
+                                          ? moment.utc(props.data.openworxCandidateAssignedInfoDTO?.[0]?.assignmentenddate).format("MM/DD/YYYY")
+                                          : "-"}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </>
+                              ) : (
+                                <div>Not on Assignment</div>
+                              )}
+                            </div>
+                            <div className="me-3 float-end">
+                              <BsPencil
+                                className="edit-icon"
+                                size={16}
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  const owDetail = props.data.openworxCandidateAssignedInfoDTO?.[0];
+                                  const candidateId = props.data.recommendedationCandidateShortList?.[0]?.candidateid;
+                                  updateAssignedDetail(
+                                    "OpenWorX",
+                                    candidateId,
+                                    null,
+                                    owDetail?.openworxcandidateassignmentid || null,
+                                    owDetail?.isassigned || false,
+                                    owDetail?.assignedcompanyid || null,
+                                    owDetail?.assignedcompanyname || null,
+                                    owDetail?.assignmentstartdate || null,
+                                    owDetail?.assignmentenddate || null
+                                  );
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                  </Col>
+                )}
               </>)}
           </Row>
           <Row className="mt-2">
@@ -1021,7 +1109,10 @@ export const CandidateCardView = (props) => {
         {openBDModal ? (
           <AssigneeAtsCandidate
             isOpen={openBDModal}
+            candidateType={candidateType}
+            candidateId={candidateId}
             atsCandidateId={atsCandidateId}
+            assignmentId={assignmentId}
             isAssigned={isAssigned}
             assignedCompanyId={assignedCompanyId}
             assignedCompanyName={assignedCompanyName}
