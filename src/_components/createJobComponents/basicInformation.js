@@ -272,11 +272,12 @@ export function BasicInformation({
     event.target.elements.openPositions.value === ""
       ? setOpenPositionValidation(true)
       : setOpenPositionValidation(false);
+    Number(jobLocationOption) !== 1 &&
     event.target.elements.city.value ===
     "undefined, undefined, undefined, undefined"
       ? setCityValidation(true)
       : setCityValidation(false);
-    event.target.elements.zipCode.value === ""
+    Number(jobLocationOption) !== 1 && event.target.elements.zipCode.value === ""
       ? setZipCodeValidation(true)
       : setZipCodeValidation(false);
     event.target.elements.address.value === ""
@@ -321,9 +322,9 @@ export function BasicInformation({
       event.target.elements.companyName.value !== "" &&
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.openPositions.value !== "" &&
-      event.target.elements.zipCode.value !== "" &&
-      event.target.elements.city.value !==
-        "undefined, undefined, undefined, undefined" &&
+      (Number(jobLocationOption) === 1 || event.target.elements.zipCode.value !== "") &&
+      (Number(jobLocationOption) === 1 || event.target.elements.city.value !==
+        "undefined, undefined, undefined, undefined") &&
       descriptionData !== "" &&
       checkJobLocationCondition === true &&
       checkSecurity === true
@@ -623,7 +624,7 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
-                City, State<span style={{ color: "red" }}>* </span>
+                City, State{Number(jobLocationOption) !== 1 && <span style={{ color: "red" }}>* </span>}
               </Label>
               <AsyncSelect
                 name={"city"}
@@ -707,7 +708,7 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="zipCode" className="fw-semi-bold">
-                Zip code<span style={{ color: "red" }}>* </span>
+                Zip code{Number(jobLocationOption) !== 1 && <span style={{ color: "red" }}>* </span>}
               </Label>
               <InputMask
                 className={
