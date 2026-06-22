@@ -5,6 +5,7 @@ import Loader from "react-loaders";
 import { JobPipelineTimeline } from "_components/dashboard/JobPipelineTimeline";
 import customerIcons from "assets/utils/images/customer";
 import { getHiringMangersList, dropdownActions } from "_store";
+import { setHiringManagerId, setSeeAllHiringManagerJobs } from "_store/commonCustFiltersSlice";
 import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 
 export const ActivePipelines = ({
@@ -42,8 +43,21 @@ export const ActivePipelines = ({
   // ── Pipeline-local filter state ──────────────────────────────────────────
   const [filterSearchType, setFilterSearchType] = useState("JobTitle");
   const [filterSearchText, setFilterSearchText] = useState("");
-  const [filterHiringManagerId, setFilterHiringManagerId] = useState("");
-  const [filterSeeAllHM, setFilterSeeAllHM] = useState(false);
+  // Shared across screens via Redux — syncs with Job List and Schedule Interview
+  const filterHiringManagerId = useSelector((state) => state.commonCustFilters.hiringManagerId);
+  const filterSeeAllHM = useSelector((state) => state.commonCustFilters.seeAllHiringManagerJobs);
+
+  // Single guard: set to true before ANY AP-initiated Redux dispatch so the
+  // external-sync useEffect knows to skip that render cycle.
+  const apSelfChangeRef = useRef(false);
+  // Previous filter values — null on first render, enabling a first-run skip
+  // without a separate boolean ref.
+  const prevFiltersRef = useRef(null);
+  // Callback ref — always holds the latest onFilterChange so stale closures
+  // inside effects that have narrow dependency arrays can still call the
+  // current version without needing to re-run the effect.
+  const onFilterChangeRef = useRef(onFilterChange);
+  useEffect(() => { onFilterChangeRef.current = onFilterChange; }); // no deps — runs after every render
 
   // Hiring manager lists from Redux (same store slices used by CommonFilters)
   const assignedHiringManagers = useSelector(
@@ -62,9 +76,42 @@ export const ActivePipelines = ({
     dispatch(getHiringMangersList({ companyId, endpoint: "assignUserListByCompany" }));
   }, [dispatch]);
 
-  // Immediately reload when HM changes — mirrors custjobs.js useEffect([hiringManagerId])
+  // Auto-sync when admin switches "View data for" context on the dashboard
+  const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
+  const selectedHMSyncedRef = useRef(false);
+  useEffect(() => {
+    if (selectedHiringManagerId) {
+      selectedHMSyncedRef.current = true;
+      const companyId = Number(localStorage.getItem("companyid"));
+      apSelfChangeRef.current = true;
+      dispatch(setSeeAllHiringManagerJobs(true));
+      dispatch(setHiringManagerId(String(selectedHiringManagerId)));
+      dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
+      onFilterChange({
+        searchText: filterSearchText,
+        searchType: filterSearchType,
+        hiringManagerId: String(selectedHiringManagerId),
+        viewAllCompanyJobs: true,
+      });
+    } else if (selectedHMSyncedRef.current) {
+      // Switched back to "Select a Hiring Manager" — reset toggle and HM filter
+      selectedHMSyncedRef.current = false;
+      apSelfChangeRef.current = true;
+      dispatch(setSeeAllHiringManagerJobs(false));
+      dispatch(setHiringManagerId(""));
+      onFilterChange({
+        searchText: filterSearchText,
+        searchType: filterSearchType,
+        hiringManagerId: "",
+        viewAllCompanyJobs: false,
+      });
+    }
+  }, [selectedHiringManagerId, dispatch]);
+
+  // Immediately reload when HM changes
   const handleHMChange = (value) => {
-    setFilterHiringManagerId(value);
+    apSelfChangeRef.current = true;
+    dispatch(setHiringManagerId(value));
     onFilterChange({
       searchText: filterSearchText,
       searchType: filterSearchType,
@@ -73,17 +120,15 @@ export const ActivePipelines = ({
     });
   };
 
-  // When toggle is turned on, fetch all company HMs and immediately reload
-  // mirrors custjobs.js useEffect([seeAllHiringManagerJobs])
   const handleSeeAllToggle = (e) => {
     const isOn = e.target.checked;
-    setFilterSeeAllHM(isOn);
-    setFilterHiringManagerId(""); // reset selected HM
+    apSelfChangeRef.current = true;
+    dispatch(setSeeAllHiringManagerJobs(isOn));
+    dispatch(setHiringManagerId(""));
     if (isOn) {
       const companyId = Number(localStorage.getItem("companyid"));
       dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
     }
-    // Trigger immediate re-fetch with new toggle value
     onFilterChange({
       searchText: filterSearchText,
       searchType: filterSearchType,
@@ -115,8 +160,9 @@ export const ActivePipelines = ({
   const handlePipelineClear = () => {
     setFilterSearchType("JobTitle");
     setFilterSearchText("");
-    setFilterHiringManagerId("");
-    setFilterSeeAllHM(false);
+    apSelfChangeRef.current = true;
+    dispatch(setHiringManagerId(""));
+    dispatch(setSeeAllHiringManagerJobs(false));
     setFilteredItems([]);
     // Clear cached pages because filters were reset
     pagesRef.current = {};
@@ -189,7 +235,7 @@ export const ActivePipelines = ({
   // reset when the search input or search type change — the user must
   // click Search to apply a new text search.
   useEffect(() => {
-    const sig = JSON.stringify({ filterHiringManagerId });
+    const sig = JSON.stringify({ filterHiringManagerId, filterSeeAllHM });
     if (filtersSignatureRef.current !== sig) {
       filtersSignatureRef.current = sig;
       pagesRef.current = {};
@@ -197,7 +243,56 @@ export const ActivePipelines = ({
       prevPageRef.current = 0;
       isLoadingMoreRef.current = false;
     }
-  }, [filterHiringManagerId]);
+  }, [filterHiringManagerId, filterSeeAllHM]);
+
+  // Unified external-sync effect: fires when either filter changes from any source.
+  // - Skips first render via null-initialized prevFiltersRef (no separate boolean needed).
+  // - Skips AP-initiated changes via apSelfChangeRef (one ref, all handlers).
+  // - React 18 batches simultaneous dispatches, so both values arrive in one effect run.
+  useEffect(() => {
+    const curr = { hm: filterHiringManagerId, toggle: filterSeeAllHM };
+    const prev = prevFiltersRef.current;
+    prevFiltersRef.current = curr; // always update so next run has correct baseline
+
+    if (prev === null) {
+      // First render after mount — load the HM dropdown options if needed so the
+      // dropdown has entries, and ensure toggle is on when an HM was pre-selected.
+      // The job list fetch itself is handled by customerDashboard's
+      // useEffect([sharedHiringManagerId, sharedSeeAllHM]) — no onFilterChange needed here.
+      if (curr.hm || curr.toggle) {
+        const companyId = Number(localStorage.getItem("companyid"));
+        dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
+        if (curr.hm && !curr.toggle) {
+          // HM set but toggle off — turn toggle on so the HM is visible in dropdown.
+          apSelfChangeRef.current = true;
+          dispatch(setSeeAllHiringManagerJobs(true));
+        }
+      }
+      return;
+    }
+    if (apSelfChangeRef.current) { apSelfChangeRef.current = false; return; } // own change
+    if (selectedHiringManagerId) return; // view-as manages this separately
+
+    // External change from another screen
+    const companyId = Number(localStorage.getItem("companyid"));
+    if (curr.hm && !curr.toggle) {
+      // HM was set externally but toggle is still off — enable toggle so the
+      // HM option is visible in the dropdown, then guard the resulting re-run.
+      apSelfChangeRef.current = true;
+      dispatch(setSeeAllHiringManagerJobs(true));
+      dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
+    } else if (curr.toggle && !prev.toggle) {
+      // Toggle just turned on externally — ensure all-HM list is loaded.
+      dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
+    }
+
+    onFilterChangeRef.current({
+      searchText: filterSearchText,
+      searchType: filterSearchType,
+      hiringManagerId: curr.hm,
+      viewAllCompanyJobs: curr.toggle || !!curr.hm,
+    });
+  }, [filterHiringManagerId, filterSeeAllHM]);
 
   // Store incoming page results and rebuild the accumulated list from stored
   // pages so temporary empty `pipelineJobList` states don't remove already-
@@ -288,36 +383,61 @@ export const ActivePipelines = ({
             <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "8px" }}>
               Filters:
               {/* See-all-HM toggle — company admins only, mirrors CommonFilters showSeeAllHMToggle */}
-              {isCompanyAdminEffective && (
-                <div className="form-check form-switch mb-0 form-switch-lg">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="pipelineSeeAllHMToggle"
-                    checked={filterSeeAllHM}
-                    onChange={handleSeeAllToggle}
-                  />
-                  <SafeUncontrolledTooltip placement="top" target="pipelineSeeAllHMToggle">
-                    See all hiring managers jobs
-                  </SafeUncontrolledTooltip>
-                </div>
-              )}
+              {isCompanyAdminEffective && (() => {
+                const viewAsActive = !!selectedHiringManagerId;
+                return (
+                  <span id="apSeeAllToggleWrapper" style={{ display: "inline-flex", cursor: viewAsActive ? "not-allowed" : "default" }}>
+                    <div
+                      className="form-check form-switch mb-0 form-switch-lg"
+                      style={viewAsActive ? { pointerEvents: "none", opacity: 0.5 } : {}}
+                    >
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="pipelineSeeAllHMToggle"
+                        checked={filterSeeAllHM}
+                        onChange={handleSeeAllToggle}
+                        disabled={viewAsActive}
+                      />
+                    </div>
+                    <SafeUncontrolledTooltip placement="top" target="apSeeAllToggleWrapper">
+                      {viewAsActive
+                        ? 'Not available while "View as" is active'
+                        : 'See all hiring managers jobs'}
+                    </SafeUncontrolledTooltip>
+                  </span>
+                );
+              })()}
             </div>
             <div className="filter-controls">
               <Row className="gx-2 gy-2 align-items-center filter-row">
                 {/* Hiring Manager — change triggers immediate reload like custjobs useEffect([hiringManagerId]) */}
                 <Col xs={12} sm={6} md={4} lg={3}>
-                  <Input
-                    type="select"
-                    value={filterHiringManagerId}
-                    onChange={(e) => handleHMChange(e.target.value)}
-                    className="filter-select"
-                  >
-                    <option value="">Select Hiring Manager</option>
-                    {activeHiringManagerList.map((hm) => (
-                      <option key={hm.id} value={hm.id}>{hm.name}</option>
-                    ))}
-                  </Input>
+                  {(() => {
+                    const viewAsActive = !!selectedHiringManagerId;
+                    return (
+                      <span id="apHMSelectWrapper" style={{ display: "block", cursor: viewAsActive ? "not-allowed" : "default" }}>
+                        <Input
+                          type="select"
+                          value={filterHiringManagerId}
+                          onChange={(e) => handleHMChange(e.target.value)}
+                          className="filter-select"
+                          disabled={viewAsActive}
+                          style={viewAsActive ? { pointerEvents: "none", opacity: 0.6 } : {}}
+                        >
+                          <option value="">Select Hiring Manager</option>
+                          {activeHiringManagerList.map((hm) => (
+                            <option key={hm.id} value={hm.id}>{hm.name}</option>
+                          ))}
+                        </Input>
+                        {viewAsActive && (
+                          <SafeUncontrolledTooltip placement="top" target="apHMSelectWrapper">
+                            Controlled by &quot;View as&quot;
+                          </SafeUncontrolledTooltip>
+                        )}
+                      </span>
+                    );
+                  })()}
                 </Col>
                 {/* Search — type dropdown + text input + Search/Clear buttons */}
                 <Col xs={12} sm={12} md={8} lg={9}>

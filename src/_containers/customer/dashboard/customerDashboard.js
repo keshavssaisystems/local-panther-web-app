@@ -26,6 +26,7 @@ import { history } from "_helpers";
 import { isInternalUrl } from "_helpers/helper";
 import { PaymentModal } from "_components/modal/paymentmodal";
 import { ActivePipelines } from "_components/dashboard/ActivePipelines";
+import { setHiringManagerId as setSharedHMId } from "_store/commonCustFiltersSlice";
 import { createAuthLink } from "_components/unifiedApp/unifiedApp";
 
 export default function CustomerDashboard() {
@@ -33,11 +34,11 @@ export default function CustomerDashboard() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState(null);
   const [jobListPage, setJobListPage] = useState(1);
+  // Intentionally no lazy-init from Redux here — pipelineFilters drives the UI
+  // search/type inputs. The HM filter is read directly from Redux in loadJobListPage.
   const [pipelineFilters, setPipelineFilters] = useState({
     searchText: "",
     searchType: "JobTitle",
-    hiringManagerId: "",
-    viewAllCompanyJobs: false,
   });
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
@@ -56,6 +57,8 @@ export default function CustomerDashboard() {
 
   // Read from Redux — correctly set on login and preserved during HM context switches
   const isCompanyAdmin = useSelector((state) => state.auth.isCompanyAdmin);
+  const sharedHiringManagerId = useSelector((state) => state.commonCustFilters.hiringManagerId);
+  const sharedSeeAllHM = useSelector((state) => state.commonCustFilters.seeAllHiringManagerJobs);
   const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
   const isSwitching = useSelector((state) => state.auth.isSwitching);
   const hiringManagers = useSelector((state) => state.customerReportReducer?.companyHiringManagers || []);
@@ -184,6 +187,18 @@ export default function CustomerDashboard() {
     const dashUserId = localStorage.getItem("userId");
     const dashCompanyId = localStorage.getItem("companyid");
     const activeFilters = filters || pipelineFilters;
+    // When an explicit HM/toggle is provided via filters use it directly.
+    // Otherwise fall back to the current shared Redux filter state so that
+    // a re-mount (navigating back to Dashboard) picks up changes made on
+    // other screens without needing a second API call.
+    const resolvedHM = activeFilters.hiringManagerId !== undefined
+      ? activeFilters.hiringManagerId
+      : sharedHiringManagerId;
+    const resolvedViewAll = activeFilters.viewAllCompanyJobs !== undefined
+      ? activeFilters.viewAllCompanyJobs
+      : sharedSeeAllHM;
+    // Only fall back to userId when NOT in view-all mode AND no HM is set.
+    const effectiveHM = resolvedViewAll ? resolvedHM : (resolvedHM || dashUserId);
     if (dashUserId) {
       dispatch(
         custJobListActions.getJobs({
@@ -192,8 +207,8 @@ export default function CustomerDashboard() {
           companyId: dashCompanyId,
           searchText: activeFilters.searchText || "",
           searchType: activeFilters.searchType || "JobTitle",
-          hiringManagerId: activeFilters.hiringManagerId || dashUserId,
-          viewAllCompanyJobs: activeFilters.viewAllCompanyJobs || false,
+          hiringManagerId: effectiveHM,
+          viewAllCompanyJobs: resolvedViewAll,
         })
       );
       setJobListPage(pageNumber);
@@ -216,17 +231,15 @@ export default function CustomerDashboard() {
   };
 
   const handlePipelineFilterChange = (filters) => {
-    setPipelineFilters(filters);
+    setPipelineFilters({
+      searchText: filters.searchText || "",
+      searchType: filters.searchType || "JobTitle",
+    });
     setSelectedJobId(null);
     loadJobListPage(1, filters);
   };
 
   useEffect(() => {
-    // Load job list for the Active Pipelines section
-    const dashUserId = localStorage.getItem("userId");
-    if (dashUserId) {
-      loadJobListPage(1);
-    }
     if (
       localStorage.getItem("companyreferrallogid") &&
       localStorage.getItem("companyreferrallogname")
@@ -260,12 +273,45 @@ export default function CustomerDashboard() {
    
   }, []);
 
+  // Reload Active Pipelines whenever the shared HM filter changes (including on mount).
+  // This covers: navigating back from another screen, external sync, and view-as changes.
+  // Two API calls may fire when AP also calls onFilterChange — both have correct params.
+  useEffect(() => {
+    const dashUserId = localStorage.getItem("userId");
+    const dashCompanyId = localStorage.getItem("companyid");
+    if (!dashUserId) return;
+    const effectiveHM = sharedSeeAllHM
+      ? sharedHiringManagerId
+      : (sharedHiringManagerId || dashUserId);
+    dispatch(
+      custJobListActions.getJobs({
+        pageSize: 15,
+        pageNumber: 1,
+        companyId: dashCompanyId,
+        searchText: "",
+        searchType: "JobTitle",
+        hiringManagerId: effectiveHM,
+        viewAllCompanyJobs: sharedSeeAllHM,
+      })
+    );
+    setJobListPage(1);
+  }, [sharedHiringManagerId, sharedSeeAllHM, dispatch]);
+
   // Auto-select the first job whenever the pipeline job list loads
   useEffect(() => {
     if (pipelineJobList?.length > 0 && !selectedJobId) {
       setSelectedJobId(pipelineJobList[0].jobid);
     }
   }, [pipelineJobList]);
+
+  // Reset selection whenever the HM filter changes so the stale auto-select
+  // (which fires with old Redux data on mount) is overridden. This effect is
+  // defined AFTER auto-select so React runs it last in the same commit — ensuring
+  // it always wins. The next pipelineJobList arrival (from getJobs.fulfilled) then
+  // triggers auto-select with !selectedJobId=true and picks the correct fresh job.
+  useEffect(() => {
+    setSelectedJobId(null);
+  }, [sharedHiringManagerId, sharedSeeAllHM]);
 
   // Fetch full job detail whenever the selected tab changes
   useEffect(() => {
@@ -462,7 +508,7 @@ export default function CustomerDashboard() {
           <Col sm="12" md="4" lg="3">
             <div className="d-flex align-items-center">
               <label className="me-2 mb-0 text-nowrap" style={{ fontWeight: 500 }}>
-                View data for:
+                View as:
               </label>
               <select
                 className="form-select form-control"
@@ -488,6 +534,28 @@ export default function CustomerDashboard() {
               </select>
               {isSwitching && (
                 <span className="ms-2 spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true" />
+              )}
+              {!isSwitching && dropdownValue !== "all" && (
+                <button
+                  type="button"
+                  onClick={() => handleHiringManagerChange({ target: { value: "all" } })}
+                  title="Reset to all users"
+                  style={{
+                    marginLeft: "8px",
+                    padding: "0",
+                    fontSize: "14px",
+                    fontWeight: 400,
+                    border: "none",
+                    background: "transparent",
+                    color: "#2F479B",
+                    cursor: "pointer",
+                    textDecoration: "none",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
+                  onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}
+                >
+                  Reset
+                </button>
               )}
             </div>
           </Col>

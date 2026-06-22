@@ -44,7 +44,7 @@ import { use, useRef } from "react";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { setSeeAllHiringManagerJobs } from "_store/commonCustFiltersSlice";
+import { setSeeAllHiringManagerJobs, setHiringManagerId as setSharedHiringManagerId } from "_store/commonCustFiltersSlice";
 import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 
 Providers.globalProvider = new Msal2Provider({
@@ -62,10 +62,15 @@ export function ScheduleInterview({ fromDashboard }) {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
-  const [hiringManagerId, setHiringManagerId] = useState(Number(localStorage.getItem("userId")));
+  // Shared across screens via Redux — syncs with Job List and Active Pipelines
+  const hiringManagerId = useSelector((state) => state.commonCustFilters.hiringManagerId);
   const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState("");
   const [offerUploadLoading, setOfferUploadLoading] = useState(false);
+  const [isHMDataLoading, setIsHMDataLoading] = useState(false);
+  // Counts how many getAllInterview API calls are still in-flight.
+  // Spinner stays on until ALL concurrent calls have resolved.
+  const hmLoadingCountRef = useRef(0);
 
   const views = {
     month: true,
@@ -88,7 +93,6 @@ export function ScheduleInterview({ fromDashboard }) {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(getHiringMangersList({ companyId: Number(localStorage.getItem("companyid")), endpoint: 'assignUserListByCompany' }));
     dispatch(dropdownActions.getInterviewRoundListThunk({ searchText: "interviewRound", commonId: 0, searchBy: "" }));
-
   }, []);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
@@ -125,8 +129,25 @@ export function ScheduleInterview({ fromDashboard }) {
   const seeAllHiringManagerJobs = useSelector(
     (state) => state?.commonCustFilters?.seeAllHiringManagerJobs
   );
-  const isCompanyAdmin = Number(localStorage.getItem("userroleid")) === 4 ||
-    localStorage.getItem("isCompanyAdmin") === "true";
+  const isCompanyAdmin = useSelector((state) => state.auth.isCompanyAdmin);
+
+  // Auto-sync when admin switches "View data for" context on the dashboard
+  const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
+  const selectedHMSyncedRef = useRef(false);
+  useEffect(() => {
+    if (selectedHiringManagerId) {
+      selectedHMSyncedRef.current = true;
+      const companyId = Number(localStorage.getItem("companyid"));
+      dispatch(setSharedHiringManagerId(String(selectedHiringManagerId)));
+      dispatch(setSeeAllHiringManagerJobs(true));
+      dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+    } else if (selectedHMSyncedRef.current) {
+      // Switched back to "Select a Hiring Manager" — reset toggle and HM
+      selectedHMSyncedRef.current = false;
+      dispatch(setSharedHiringManagerId(""));
+      dispatch(setSeeAllHiringManagerJobs(false));
+    }
+  }, [selectedHiringManagerId, dispatch]);
 
   const activeHiringManagerList = seeAllHiringManagerJobs
     ? allCompanyHiringManagers
@@ -153,7 +174,7 @@ export function ScheduleInterview({ fromDashboard }) {
     const isOn = e.target.checked;
     const companyId = Number(localStorage.getItem("companyid"));
     dispatch(setSeeAllHiringManagerJobs(isOn));
-    setHiringManagerId(Number(localStorage.getItem("userId")));
+    dispatch(setSharedHiringManagerId(""));
     if (isOn) {
       dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
     }
@@ -201,7 +222,7 @@ export function ScheduleInterview({ fromDashboard }) {
         "YYYY-MM-DD HH:mm:ss"
       );
 
-      if (Number(localStorage.getItem("userId")) === hiringManagerId || hiringManagerId === '') {
+      if (String(localStorage.getItem("userId")) === String(hiringManagerId) || !hiringManagerId) {
 
         let interviewData = {
           id: upcomingInterview.scheduleinterviewid,
@@ -667,7 +688,13 @@ export function ScheduleInterview({ fromDashboard }) {
 
   useEffect(() => {
     upData = [];
-    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }));
+    hmLoadingCountRef.current += 1;
+    setIsHMDataLoading(true);
+    dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: hiringManagerId, viewAllCompanyJobs: seeAllHiringManagerJobs }))
+      .finally(() => {
+        hmLoadingCountRef.current -= 1;
+        if (hmLoadingCountRef.current === 0) setIsHMDataLoading(false);
+      });
   }, [dispatch, hiringManagerId, seeAllHiringManagerJobs]);
 
   const hiringManagerIdRef = useRef(hiringManagerId);
@@ -779,6 +806,20 @@ export function ScheduleInterview({ fromDashboard }) {
 
   return (
     <>
+      {isHMDataLoading && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(255, 255, 255, 0.55)",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          pointerEvents: "all",
+        }}>
+          <div className="spinner-border text-primary" style={{ width: "2.5rem", height: "2.5rem" }} role="status" />
+        </div>
+      )}
       <PageTitle heading="Calendar" icon={titlelogo} />
       <Container fluid className="card-schedule-interview">
         <Row>
@@ -905,44 +946,65 @@ export function ScheduleInterview({ fromDashboard }) {
                 className="mb-3"
               >
                 <div className="d-flex align-items-center justify-content-end gap-2">
-                  {isCompanyAdmin && (
-                    <div className="form-check form-switch mb-0 form-switch-lg me-2">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="seeAllHMToggleCalendar"
-                        checked={seeAllHiringManagerJobs}
-                        onChange={handleSeeAllToggle}
-                      />
-                      <SafeUncontrolledTooltip
-                        placement="top"
-                        target="seeAllHMToggleCalendar"
-                      >
-                        See all hiring managers jobs
-                      </SafeUncontrolledTooltip>
-                    </div>
-                  )}
-                  <Input
-                    type="select"
-                    title="Hiring Manger"
-                    value={hiringManagerId}
-                    name="hiringmanagerId"
-                    id="hiringmanagerId"
-                    placeholder="Hiring Manger"
-                    style={{ minWidth: 200, maxWidth: 220 }}
-                    onChange={(e) => {
-                      setHiringManagerId(Number(e.target.value));
-                    }}
-                  >
-                    <option value={""}>Select a Hiring Manger</option>
-                    {activeHiringManagerList?.length > 0 ? (
-                      activeHiringManagerList.map((data) => (
-                        <option value={data.id} key={data.id}>
-                          {data.name}
-                        </option>
-                      ))
-                    ) : null}
-                  </Input>
+                  {isCompanyAdmin && (() => {
+                    const viewAsActive = !!selectedHiringManagerId;
+                    return (
+                      <span id="siSeeAllToggleWrapper" style={{ display: "inline-flex", cursor: viewAsActive ? "not-allowed" : "default" }}>
+                        <div
+                          className="form-check form-switch mb-0 form-switch-lg me-2"
+                          style={viewAsActive ? { pointerEvents: "none", opacity: 0.5 } : {}}
+                        >
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="seeAllHMToggleCalendar"
+                            checked={seeAllHiringManagerJobs}
+                            onChange={handleSeeAllToggle}
+                            disabled={viewAsActive}
+                          />
+                        </div>
+                        <SafeUncontrolledTooltip placement="top" target="siSeeAllToggleWrapper">
+                          {viewAsActive
+                            ? 'Not available while "View as" is active'
+                            : 'See all hiring managers jobs'}
+                        </SafeUncontrolledTooltip>
+                      </span>
+                    );
+                  })()}
+                  {(() => {
+                    const viewAsActive = !!selectedHiringManagerId;
+                    return (
+                      <span id="siHMSelectWrapper" style={{ cursor: viewAsActive ? "not-allowed" : "default" }}>
+                        <Input
+                          type="select"
+                          title="Hiring Manger"
+                          value={hiringManagerId}
+                          name="hiringmanagerId"
+                          id="hiringmanagerId"
+                          placeholder="Hiring Manger"
+                          style={{ minWidth: 200, maxWidth: 220, ...(viewAsActive ? { pointerEvents: "none", opacity: 0.6 } : {}) }}
+                          onChange={(e) => {
+                            dispatch(setSharedHiringManagerId(e.target.value));
+                          }}
+                          disabled={viewAsActive}
+                        >
+                          <option value={""}>Select a Hiring Manger</option>
+                          {activeHiringManagerList?.length > 0 ? (
+                            activeHiringManagerList.map((data) => (
+                              <option value={data.id} key={data.id}>
+                                {data.name}
+                              </option>
+                            ))
+                          ) : null}
+                        </Input>
+                        {viewAsActive && (
+                          <SafeUncontrolledTooltip placement="top" target="siHMSelectWrapper">
+                            Controlled by &quot;View as&quot; on the dashboard
+                          </SafeUncontrolledTooltip>
+                        )}
+                      </span>
+                    );
+                  })()}
                 </div>
               </Col>)}
             </Row>
