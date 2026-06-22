@@ -70,6 +70,26 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         ? allCompanyHiringManagers
         : hiringManagerDownList;
 
+    // 🔹 Sync with "View data for" context switch from the dashboard
+    const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
+    const selectedHMSyncedRef = React.useRef(false);
+    useEffect(() => {
+        if (selectedHiringManagerId) {
+            selectedHMSyncedRef.current = true;
+            const companyId = Number(localStorage.getItem("companyid"));
+            dispatch(setSeeAllHiringManagerJobs(true));
+            dispatch(setHiringManagerId(String(selectedHiringManagerId)));
+            dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+            onJobHiringMangerChange && onJobHiringMangerChange(String(selectedHiringManagerId));
+        } else if (selectedHMSyncedRef.current) {
+            // Switched back to "Select a Hiring Manager" — reset toggle and HM filter
+            selectedHMSyncedRef.current = false;
+            dispatch(setSeeAllHiringManagerJobs(false));
+            dispatch(setHiringManagerId(""));
+            onJobHiringMangerChange && onJobHiringMangerChange("");
+        }
+    }, [selectedHiringManagerId, dispatch]);
+
     // 🔹 Fetch hiring managers
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
@@ -78,10 +98,15 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         if (seeAllHiringManagerJobs) {
             dispatch(getHiringMangersList({ companyId: companyId, endpoint: 'allUserListByCompany' }));
         }
-        if (!hiringManagerId) {
-            dispatch(setHiringManagerId(localStorage.getItem("userId")));
-        }
     }, [dispatch]);
+
+    // 🔹 When toggle turns on from any screen, ensure allUserListByCompany is loaded
+    useEffect(() => {
+        if (seeAllHiringManagerJobs) {
+            const companyId = Number(localStorage.getItem("companyid"));
+            dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+        }
+    }, [seeAllHiringManagerJobs, dispatch]);
 
     // 🔹 Handle search type (JobTitle, City, etc.)
     const handleSelectChange = (e) => {
@@ -231,48 +256,66 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                         <div className="filter-label" style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "8px" }}>
                             Filters:
                             {/* See All Hiring Managers Jobs Toggle — only visible to company admins */}
-                            {showSeeAllHMToggle && (
-                                <div className="form-check form-switch mb-0 form-switch-lg">
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        id="seeAllHiringManagersToggle"
-                                        checked={seeAllHiringManagerJobs}
-                                        onChange={handleSeeAllToggle}
-                                        disabled={viewType === "list"}
-                                    />
-                                    <SafeUncontrolledTooltip
-                                        placement="top"
-                                        target="seeAllHiringManagersToggle"
-                                    >
-                                        See all hiring managers jobs
-                                    </SafeUncontrolledTooltip>
-                                </div>
-                            )}
+                            {showSeeAllHMToggle && (() => {
+                                const viewAsActive = !!selectedHiringManagerId;
+                                return (
+                                    <span id="seeAllHMToggleWrapper" style={{ display: "inline-flex", cursor: viewAsActive ? "not-allowed" : "default" }}>
+                                        <div
+                                            className="form-check form-switch mb-0 form-switch-lg"
+                                            style={viewAsActive ? { pointerEvents: "none", opacity: 0.5 } : {}}
+                                        >
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id="seeAllHiringManagersToggle"
+                                                checked={seeAllHiringManagerJobs}
+                                                onChange={handleSeeAllToggle}
+                                                disabled={viewAsActive || viewType === "list"}
+                                            />
+                                        </div>
+                                        <SafeUncontrolledTooltip placement="top" target="seeAllHMToggleWrapper">
+                                            {viewAsActive
+                                                ? 'Not available while "View as" is active'
+                                                : 'See all hiring managers jobs'}
+                                        </SafeUncontrolledTooltip>
+                                    </span>
+                                );
+                            })()}
                         </div>
 
                         <div className="filter-controls">
                             <Row className="gx-2 gy-3 align-items-center filter-row">
                                 {/* Hiring Manager */}
                                 <Col xs={12} sm={6} md={4} lg={2}>
-                                    <Input
-                                        id="hiringManagerId"
-                                        type="select"
-                                        value={hiringManagerId}
-                                        onChange={(e) =>
-                                            handleHiringManagerChange(e.target.value)
-                                        }
-                                        className="filter-select"
-                                        disabled={viewType === "list"}
-                                    >
-                                        <option value={""}>Select a Hiring Manager</option>
-                                        {activeHiringManagerList?.length > 0 &&
-                                            activeHiringManagerList.map((data) => (
-                                                <option value={data.id} key={data.id}>
-                                                    {data.name}
-                                                </option>
-                                            ))}
-                                    </Input>
+                                    {(() => {
+                                        const viewAsActive = !!selectedHiringManagerId;
+                                        return (
+                                            <span id="cfHMSelectWrapper" style={{ display: "block", cursor: viewAsActive ? "not-allowed" : "default" }}>
+                                                <Input
+                                                    id="hiringManagerId"
+                                                    type="select"
+                                                    value={hiringManagerId}
+                                                    onChange={(e) => handleHiringManagerChange(e.target.value)}
+                                                    className="filter-select"
+                                                    disabled={viewAsActive || viewType === "list"}
+                                                    style={viewAsActive ? { pointerEvents: "none", opacity: 0.6 } : {}}
+                                                >
+                                                    <option value={""}>Select a Hiring Manager</option>
+                                                    {activeHiringManagerList?.length > 0 &&
+                                                        activeHiringManagerList.map((data) => (
+                                                            <option value={data.id} key={data.id}>
+                                                                {data.name}
+                                                            </option>
+                                                        ))}
+                                                </Input>
+                                                {viewAsActive && (
+                                                    <SafeUncontrolledTooltip placement="top" target="cfHMSelectWrapper">
+                                                        Controlled by &quot;View as&quot; on the dashboard
+                                                    </SafeUncontrolledTooltip>
+                                                )}
+                                            </span>
+                                        );
+                                    })()}
                                 </Col>
 
                                 {/* Job Type */}
