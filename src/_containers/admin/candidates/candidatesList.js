@@ -50,6 +50,8 @@ export default function AdmCandidateList() {
     value: "",
     label: "Search city/state",
   });
+  const [isDelete, setIsDelete] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchData, setSearchText] = useState("");
   const [status, setStatus] = useState("");
   const [source, setSource] = useState("");
@@ -183,6 +185,19 @@ export default function AdmCandidateList() {
                 >
                   <FaEye style={{ fontSize: "18px" }} />
                 </Button>
+                {localStorage.getItem("userroleid") === "1" && (
+                  <Button
+                    size="sm"
+                    title="Delete candidate"
+                    className="btn-icon"
+                    color="secondary"
+                    onClick={(e) => {
+                      openDeleteConfirm(row);
+                    }}
+                  >
+                    <img src={customerIcons?.list_delete} alt="Delete candidate"></img>
+                  </Button>
+                )}
               </>
             ) : row.status === 1 && row?.source?.toLowerCase() === "admin" ? (
               <>
@@ -227,6 +242,19 @@ export default function AdmCandidateList() {
                 >
                   <FaEye style={{ fontSize: "18px" }} />
                 </Button>
+                {localStorage.getItem("userroleid") === "1" && (
+                  <Button
+                    size="sm"
+                    title="Delete candidate"
+                    className="btn-icon"
+                    color="secondary"
+                    onClick={(e) => {
+                      openDeleteConfirm(row);
+                    }}
+                  >
+                    <img src={customerIcons?.list_delete} alt="Delete candidate"></img>
+                  </Button>
+                )}
               </>
             ) : (
               <>
@@ -242,6 +270,19 @@ export default function AdmCandidateList() {
                 >
                   <FaEye style={{ fontSize: "18px" }} />
                 </Button>
+                  {localStorage.getItem("userroleid") === "1" && (
+                    <Button
+                      size="sm"
+                      title="Delete candidate"
+                      className="btn-icon"
+                      color="secondary"
+                      onClick={(e) => {
+                        openDeleteConfirm(row);
+                      }}
+                    >
+                      <img src={customerIcons?.list_delete} alt="Delete candidate"></img>
+                    </Button>
+                  )}
               </>
             )}
           </ButtonGroup>
@@ -416,6 +457,38 @@ export default function AdmCandidateList() {
     );
     setShowProfile(true);
     localStorage.setItem("admcandid", id);
+  };
+
+  const openDeleteConfirm = (row) => {
+    setSelectedRowData(row);
+    setIsDelete(true);
+  };
+
+  const performDeleteCandidate = async () => {
+    const candidateid = selectedRowData?.candidateid;
+    if (!candidateid) {
+      setIsDelete(false);
+      showSweetAlert({ title: "Invalid candidate selected.", type: "error" });
+      return;
+    }
+
+    // Audit logging disabled for permanent candidate delete per request
+
+    let res = await dispatch(
+      adminListingActions.deleteAdmCandidatePermanent(candidateid)
+    );
+
+    setIsDelete(false);
+
+    if (
+      res?.payload &&
+      (res.payload.statusCode === 204 || res.payload.statusCode === 200 || res.payload.statusCode === 201)
+    ) {
+      getCandidateListData(pageNo, pageSize, searchData);
+      showSweetAlert({ title: res.payload.message || "Candidate deleted successfully.", type: "success" });
+    } else {
+      showSweetAlert({ title: res?.error?.message ? res.error.message : "Error while deleting candidate", type: "error" });
+    }
   };
 
   const backToList = () => {
@@ -614,6 +687,35 @@ export default function AdmCandidateList() {
         />
         {showAlert.description}
       </>
+      <div>
+        {isDelete && (
+          <SweetAlert
+            title={"Are you sure want to delete the candidate!!"}
+            type="warning"
+            showConfirm={false}
+          >
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    style={{ background: "#545CD8" }}
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => performDeleteCandidate()}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    className="success-close-btn"
+                    onClick={(evt) => setIsDelete(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </SweetAlert>
+        )}
+      </div>
       <>
         {showAddCandMod ? (
           <>

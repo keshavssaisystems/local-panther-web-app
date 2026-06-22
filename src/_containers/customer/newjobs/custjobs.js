@@ -398,7 +398,11 @@ export default function CustJobList() {
                           customer={data.companyname}
                           minExperience={data.minexperience}
                           maxExperience={data.maxexperience}
-                          location={data.cityname + ", " + data.statename}
+                          location={
+                            data.cityname && data.statename
+                              ? data.cityname + ", " + data.statename
+                              : data.cityname || data.statename || "-"
+                          }
                           description={data.description}
                           role={data.jobrole}
                           jobId={data.jobid}

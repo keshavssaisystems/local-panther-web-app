@@ -239,6 +239,14 @@ export const getAdmCandidateList = createAsyncThunk(
   }
 );
 
+export const deleteAdmCandidatePermanent = createAsyncThunk(
+  `${name}/deleteAdmCandidatePermanent`,
+  async (id) => {
+    const DELETE_URL = `${baseUrl}/Candidate/DeletePermanent/${id}`;
+    return await fetchWrapper.delete(DELETE_URL);
+  }
+);
+
 export const sendEmailInvitation = createAsyncThunk(
   `${name}/sendEmailInvitation`,
   async (candidateId) => {
@@ -673,6 +681,17 @@ const adminListingSlice = createSlice({
     [getAdmCandidateList.rejected]: (state, action) => {
       state.candListLoading = false;
     },
+    [deleteAdmCandidatePermanent.pending]: (state) => {
+      state.candListLoading = true;
+      state.error = null;
+    },
+    [deleteAdmCandidatePermanent.fulfilled]: (state, { payload = {} }) => {
+      state.candListLoading = false;
+    },
+    [deleteAdmCandidatePermanent.rejected]: (state, action) => {
+      state.candListLoading = false;
+      state.error = action.error;
+    },
     [sendEmailInvitation.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -792,6 +811,7 @@ export const adminListingActions = {
   deleteFlaggedWords,
   getFlaggedWordList,
   getAdmCandidateList,
+  deleteAdmCandidatePermanent,
   sendEmailInvitation,
   admAddCandidate,
   updateIsVisibleToOthersById,
