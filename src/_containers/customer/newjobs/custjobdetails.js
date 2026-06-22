@@ -84,7 +84,7 @@ export function CustJobDetail({
     } else if ( jobDetail?.cityname && jobDetail?.countryname) {
       return `${ jobDetail?.cityname} , ${ jobDetail?.countryname}`;
     } else {
-      return "";
+      return "-";
     }
   };
 
