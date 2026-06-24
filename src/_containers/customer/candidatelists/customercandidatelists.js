@@ -98,6 +98,7 @@ export default function CustomerCandidateLists(props) {
 
   const isCompanyAdmin = Number(localStorage.getItem("userroleid")) === 4 ||
     localStorage.getItem("isCompanyAdmin") === "true";
+  const loggedInUserId = localStorage.getItem("userId");
 
   const [candidateHistoryList, setCandidateHistoryList] = useState([]);
   const [interviewFeedbackStatusId1, setInterviewFeedbackStatusId1] = useState(0);
@@ -196,21 +197,20 @@ export default function CustomerCandidateLists(props) {
     if (!id) {
       setPageNo(1);
       let pageno = 1;
-      onGetPageList(pageno, props.type || activeTab, "");
+      // clearText=true ensures stale searchText (e.g. a job title carried over from a
+      // job-specific page) is never sent in auto-load API calls. Explicit searches still
+      // use onSearchData() which reads searchText/searchType from Redux directly.
+      onGetPageList(pageno, props.type || activeTab, "", true);
     }
   }, [props.type, hiringManagerId, selectedJobId, seeAllHiringManagerJobs]);
 
   useEffect(() => {
     if (id) {
-      // setShowInterviewFeedbackStatusFilter(props.type === "scheduled" || activeTab === "scheduled" ? true : false);
-      // setShowFromToDateFilter(props.type === "scheduled" || activeTab === "scheduled" ? true : false);
-      setShowSearch(false);
-      setShowClearButtonAtEnd(false);
       setPageNo(1);
       // Pass jobPostedbyId directly so the first API call uses the correct userId
       // without waiting for the Redux setHiringManagerId dispatch to settle
       const userId = jobPostedbyId || hiringManagerId || undefined;
-      onGetPageList(1, props.type || activeTab, id, false, userId);
+      onGetPageList(1, props.type || activeTab, id, true, userId);
     }
   }, [props.type, id, hiringManagerId, selectedJobId, seeAllHiringManagerJobs]);
 
@@ -262,20 +262,21 @@ export default function CustomerCandidateLists(props) {
   // userId param lets callers bypass the Redux hiringManagerId timing gap
   // (e.g. when jobPostedbyId from URL is known before Redux is updated)
   const onGetCandidatesCount = (id, clearText = false, userId = null) => {
-    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: userId || hiringManagerId, searchText: clearText ? "" : searchText ? searchText : "", searchType: clearText ? "" : selectedOpt, viewAllCompanyJobs: seeAllHiringManagerJobs }));
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: userId || hiringManagerId || loggedInUserId, searchText: clearText ? "" : searchText ? searchText : "", searchType: clearText ? "" : selectedOpt, viewAllCompanyJobs: seeAllHiringManagerJobs }));
   }
 
   const onGetPageList = (pageNo, type, id, clearText = false, userId = null) => {
-    const actionbyId = userId || hiringManagerId;
+    const actionbyId = userId || hiringManagerId || loggedInUserId;
+    const viewAllCompanyJobs = seeAllHiringManagerJobs;
     let candObj = {
       pageNumber: pageNo,
       pageSize: type === "matched" ? cardPageSize : listPageSize,
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
       searchText: clearText ? "" : searchText ? searchText : "",
-      searchType: selectedOpt,
+      searchType: clearText ? "" : selectedOpt,
       actionbyId,
-      viewAllCompanyJobs: seeAllHiringManagerJobs
+      viewAllCompanyJobs
     };
 
     if (type === 'scheduled') {
@@ -776,6 +777,7 @@ export default function CustomerCandidateLists(props) {
       <CommonFilters
         showJobStatus={false}
         onSearchData={() => onSearchData()}
+        onClearSearch={() => onClearFilters()}
         showClearButton={false}
         showOnlyJobTitle={true}
         // placeHolder={placeHolder}

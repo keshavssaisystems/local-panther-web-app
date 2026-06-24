@@ -24,6 +24,7 @@ function createInitialState() {
     rejectDrpDwnList: [],
     candidateList: [],
     totalRecords: 0,
+    latestCandidateListRequestId: null,
     durationOptions: [],
     scheduledInterviewList: [],
     prescreenQues: [],
@@ -439,12 +440,16 @@ function createExtraReducers() {
     function getCandidateLists() {
       let { pending, fulfilled, rejected } = extraActions.getCandidateLists;
       builder
-        .addCase(pending, (state) => {
+        .addCase(pending, (state, action) => {
           state.loading = true;
           state.candidateList = [];
           state.totalRecords = 0;
+          // Track the latest request so stale race-condition responses are ignored.
+          state.latestCandidateListRequestId = action.meta.requestId;
         })
         .addCase(fulfilled, (state, action) => {
+          // Only apply result if this is still the most recent request.
+          if (state.latestCandidateListRequestId !== action.meta.requestId) return;
           state.candidateList = action?.payload?.data
             ?.candidateRecommendedJobDtoList
             ? action?.payload?.data?.candidateRecommendedJobDtoList
