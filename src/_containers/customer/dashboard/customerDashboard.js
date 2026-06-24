@@ -89,7 +89,7 @@ export default function CustomerDashboard() {
     }
   }, [selectedHiringManagerId]);
 
-  const reloadDashboardData = () => {
+  const reloadDashboardData = (explicitFilters) => {
     getDashboardCounts();
     getDashboardJobsDataCount();
     getDashboardGraphData();
@@ -97,7 +97,7 @@ export default function CustomerDashboard() {
     dispatch(scheduleInterviewActions.getAllInterviewThunk({ userList: localStorage.getItem("userId"), viewAllCompanyJobs: false }));
     const dashUserId = localStorage.getItem("userId");
     if (dashUserId) {
-      loadJobListPage(1);
+      loadJobListPage(1, explicitFilters);
     }
   };
 
@@ -132,6 +132,9 @@ export default function CustomerDashboard() {
           return;
         }
       }
+      // Pass explicit empty HM/viewAll so loadJobListPage doesn't read stale
+      // sharedHiringManagerId from the Redux closure before it resets.
+      reloadDashboardData({ hiringManagerId: "", viewAllCompanyJobs: false });
     } else {
       // Switch to the selected user (including admin's own entry)
       const result = await dispatch(authActions.switchToHiringManagerThunk(parseInt(value)));
@@ -139,8 +142,8 @@ export default function CustomerDashboard() {
         setDropdownValue(previousValue);
         return;
       }
+      reloadDashboardData();
     }
-    reloadDashboardData();
   };
   const getDashboardCounts = async function () {
     await dispatch(customerDashboardActions.getCustomerDashboardThunk());
@@ -197,8 +200,8 @@ export default function CustomerDashboard() {
     const resolvedViewAll = activeFilters.viewAllCompanyJobs !== undefined
       ? activeFilters.viewAllCompanyJobs
       : sharedSeeAllHM;
-    // Only fall back to userId when NOT in view-all mode AND no HM is set.
-    const effectiveHM = resolvedViewAll ? resolvedHM : (resolvedHM || dashUserId);
+    // Always fall back to dashUserId when no HM is explicitly selected.
+    const effectiveHM = resolvedHM || dashUserId;
     if (dashUserId) {
       dispatch(
         custJobListActions.getJobs({
@@ -280,9 +283,7 @@ export default function CustomerDashboard() {
     const dashUserId = localStorage.getItem("userId");
     const dashCompanyId = localStorage.getItem("companyid");
     if (!dashUserId) return;
-    const effectiveHM = sharedSeeAllHM
-      ? sharedHiringManagerId
-      : (sharedHiringManagerId || dashUserId);
+    const effectiveHM = sharedHiringManagerId || dashUserId;
     dispatch(
       custJobListActions.getJobs({
         pageSize: 15,
