@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import uitoolkit from "@zoom/videosdk-ui-toolkit";
 import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions, scheduleInterviewActions, dropdownActions, customerCandidateListsActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -47,6 +47,9 @@ export default function ZoomVideoScreen(props) {
   const [usersData, setUsersData] = useState([]);
   const [fbUsersData, setFBUsersData] = useState([]);
   const fbUserRef = useRef(fbUsersData);
+  // Mutable ref so closures inside useEffect([]) always read the current role,
+  // even after an inline host login that updates localStorage post-mount.
+  const userRoleIdRef = useRef(localStorage.getItem("userroleid"));
 
   const [isOpen, setIsOpen] = useState(
     userRoleId === "2" || userRoleId === "4"
@@ -66,6 +69,8 @@ export default function ZoomVideoScreen(props) {
   let name = userDetails ? userDetails.FirstName + " " + userDetails.LastName : "Guest";
   const host = userRoleId === "2" || userRoleId === "4";
   const navigate = useNavigate();
+  const location = useLocation();
+  const [hostLoginError, setHostLoginError] = useState("");
   let config = {
     videoSDKJWT: "",
     sessionName: "",
@@ -108,6 +113,7 @@ export default function ZoomVideoScreen(props) {
       userRoleId &&
       (userRoleId === "2" || userRoleId === "4")
     ) {
+
       dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
       dispatch(dropdownActions.getInterviewRoundListThunk({
         searchText: "interviewRound",
@@ -123,7 +129,7 @@ export default function ZoomVideoScreen(props) {
       const data = snapshot.val();
       setIsLoaded(true);
 
-      if (userRoleId === "2" || userRoleId === "4") {
+      if (userRoleIdRef.current === "2" || userRoleIdRef.current === "4") {
         checkUserJoinedEvent(data, usersData);
       }
       setFBUsersData(data ? data : []);
@@ -132,7 +138,7 @@ export default function ZoomVideoScreen(props) {
 
     // Cleanup listener on unmount
     return () => {
-      if ((userRoleId === "2" || userRoleId === "4") && !hostLeave) {
+      if ((userRoleIdRef.current === "2" || userRoleIdRef.current === "4") && !hostLeave) {
         database.ref("users/" + urlParams).remove();
       }
       nameRef.off();
@@ -153,14 +159,14 @@ export default function ZoomVideoScreen(props) {
     event.returnValue = ""; // Required for Chrome to show confirmation dialog
     await UserLeftSession();
     // Add your cleanup or API call logic here
-    if (userRoleId === "2" && !hostLeave) {
+    if (userRoleIdRef.current === "2" && !hostLeave) {
       database.ref("users/" + urlParams).remove();
     }
 
     if (
       sessionContainer &&
       uitoolkit &&
-      (userRoleId === "2" || userRoleId === "4")
+      (userRoleIdRef.current === "2" || userRoleIdRef.current === "4")
     ) {
       // uitoolkit?.closeSession(sessionContainer);
       uitoolkit?.offSessionJoined(sessionJoined);
@@ -530,6 +536,63 @@ export default function ZoomVideoScreen(props) {
     );
   };
 
+  const onHostLogin = async ({ email, name: hostName, password }) => {
+    setHostLoginError("");
+    // Prime router state so handleLoginSuccess navigates back to this interview URL
+    // instead of defaulting to "/". Same-URL SPA navigation — component stays mounted.
+    navigate(location.pathname, {
+      state: { from: { pathname: location.pathname } },
+      replace: true,
+    });
+    const result = await dispatch(authActions.loginThunk({ email, password }));
+    if (result?.error) {
+      setHostLoginError(
+        result.error?.message || "Incorrect password. Please try again."
+      );
+      return;
+    }
+
+    // Login succeeded:
+    // handleLoginSuccess has set localStorage (token, userroleid="2", userDetails, etc.)
+    // On the next re-render triggered below, userRoleId re-reads "2" from localStorage
+    // so host=true, Waiting Room button shows, and the Zoom config uses the correct role.
+
+    // Read host identity from fresh localStorage (set by handleLoginSuccess)
+    const freshUserDetails = JSON.parse(localStorage.getItem("userDetails"));
+    const freshName = freshUserDetails
+      ? freshUserDetails.FirstName + " " + freshUserDetails.LastName
+      : hostName;
+
+    // Generate the Zoom session token as an authenticated host
+    // fetchWrapper now has the auth token from localStorage so this call is authorised
+    const tokenResponse = await dispatch(
+      authActions.generateToken({
+        scheduleInterviewId: id,
+        userIdentity: freshName,
+      })
+    );
+
+    if (tokenResponse?.payload?.statusCode === 201) {
+      // Sync the ref so closures (Firebase listener, cleanup, handleBeforeUnload)
+      // see the updated role without needing a re-render.
+      userRoleIdRef.current = localStorage.getItem("userroleid");
+      // Load host-required dropdowns (done in useEffect([]) for pre-logged-in hosts)
+      dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+      dispatch(dropdownActions.getInterviewRoundListThunk({
+        searchText: "interviewRound",
+        commonId: 0,
+        searchBy: "",
+      }));
+      setIsOpen(true);                              // open Waiting Room panel
+      setSessionData([tokenResponse.payload.data]); // triggers Zoom SDK join via useEffect
+      setShowScreen("host");                        // hides GuestPreview, shows HostPreview
+    } else {
+      setHostLoginError(
+        tokenResponse?.error?.message || "Something went wrong, please try later!!"
+      );
+    }
+  };
+
 
   const getGuestToken = async (data, ind) => {
     let response = await dispatch(
@@ -583,6 +646,8 @@ export default function ZoomVideoScreen(props) {
           showSweetAlert={(data) => showSweetAlert(data)}
           checkSessionAccess={(data) => checkSessionAccess(data)}
           interviewSessionAccessData={sessionInterviewAccessData}
+          onHostLogin={(data) => onHostLogin(data)}
+          hostLoginError={hostLoginError}
         >
           {" "}
         </GuestPreview>
