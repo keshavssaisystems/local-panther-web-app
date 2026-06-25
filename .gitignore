@@ -13,7 +13,6 @@
 
 # misc
 .DS_Store
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -28,9 +27,9 @@ package-lock.json
 .eslintcache
 
 .github/
-.vscode/
 .scannerwork/
 # Playwright test artifacts
 /test-results/
 /playwright-report/
 .playwright/
+config.bat
