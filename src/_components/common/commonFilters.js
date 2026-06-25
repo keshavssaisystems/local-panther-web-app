@@ -31,7 +31,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
-export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
+export const CommonFilters = ({ onSearchData, onClearSearch, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
     showJobStatus = true,
     showSearch = true,
     showClearButtonAtStart = false,
@@ -143,6 +143,9 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         dispatch(setHiringManagerId(""));  // reset selected HM so list re-fetches fresh
         if (isOn) {
             dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
+        } else {
+            // Toggle OFF — behave the same as clicking Clear
+            if (onClearSearch) onClearSearch();
         }
     };
 
@@ -448,6 +451,10 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                 onChange={(e) => {
                                                     dispatch(setSearchText(e.target.value));
                                                     searchOptionDropdown(e.target.value);
+                                                    // Native × clear button sets value to ""; trigger a
+                                                    // fresh API call via onClearSearch (uses clearText=true
+                                                    // to avoid stale-closure searchText in the parent).
+                                                    if (e.target.value === "" && onClearSearch) onClearSearch();
                                                 }}
                                                 className="filter-search-input"
                                             />

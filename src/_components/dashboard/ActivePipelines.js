@@ -255,18 +255,10 @@ export const ActivePipelines = ({
     prevFiltersRef.current = curr; // always update so next run has correct baseline
 
     if (prev === null) {
-      // First render after mount — load the HM dropdown options if needed so the
-      // dropdown has entries, and ensure toggle is on when an HM was pre-selected.
-      // The job list fetch itself is handled by customerDashboard's
-      // useEffect([sharedHiringManagerId, sharedSeeAllHM]) — no onFilterChange needed here.
+      // First render after mount — load the HM dropdown options if needed.
       if (curr.hm || curr.toggle) {
         const companyId = Number(localStorage.getItem("companyid"));
         dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
-        if (curr.hm && !curr.toggle) {
-          // HM set but toggle off — turn toggle on so the HM is visible in dropdown.
-          apSelfChangeRef.current = true;
-          dispatch(setSeeAllHiringManagerJobs(true));
-        }
       }
       return;
     }
@@ -275,13 +267,7 @@ export const ActivePipelines = ({
 
     // External change from another screen
     const companyId = Number(localStorage.getItem("companyid"));
-    if (curr.hm && !curr.toggle) {
-      // HM was set externally but toggle is still off — enable toggle so the
-      // HM option is visible in the dropdown, then guard the resulting re-run.
-      apSelfChangeRef.current = true;
-      dispatch(setSeeAllHiringManagerJobs(true));
-      dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
-    } else if (curr.toggle && !prev.toggle) {
+    if (curr.toggle && !prev.toggle) {
       // Toggle just turned on externally — ensure all-HM list is loaded.
       dispatch(getHiringMangersList({ companyId, endpoint: "allUserListByCompany" }));
     }

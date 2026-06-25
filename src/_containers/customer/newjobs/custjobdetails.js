@@ -37,8 +37,10 @@ export function CustJobDetail({
   let internalUserId = JSON.parse(
     localStorage.getItem("userDetails")
   ).InternalUserId;
-  // Always ensure a valid userId in navigation URLs — fall back to current user if HM filter is empty
-  const effectiveHMId = hiringManagerId || internalUserId;
+  // Always ensure a valid userId in navigation URLs — fall back to current user if HM filter is empty.
+  // Use the regular userId (used consistently by the candidate list API's jobPostedBy param)
+  // before falling back to internalUserId, which may differ from userId in the backend.
+  const effectiveHMId = hiringManagerId || localStorage.getItem("userId") || internalUserId;
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const shiftsOption = useSelector((state) => state.dropdown.shift);
