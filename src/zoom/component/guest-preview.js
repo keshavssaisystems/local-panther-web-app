@@ -266,7 +266,7 @@ export const GuestPreview = (props) => {
                 <Col md={12}>
                   <FormGroup>
                     <Label for="hostPassword" className="input-label">
-                      You are the host. Please enter your password to start the meeting.
+                      You are the host. Please enter your OpenWorX account password to start the meeting.
                     </Label>
                     <Input
                       type="password"
