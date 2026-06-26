@@ -831,7 +831,7 @@ export const CandidateCardView = (props) => {
                                   </div>
                                 </>
                               ) : (
-                                <div>Update Assignment</div>
+                                <div>Not on Assignment</div>
                               )}
                             </div>
                             <div className="me-3 float-end">
@@ -899,7 +899,7 @@ export const CandidateCardView = (props) => {
                                   </div>
                                 </>
                               ) : (
-                                <div>Update Assignment</div>
+                                <div>Not on Assignment</div>
                               )}
                             </div>
                             <div className="me-3 float-end">
