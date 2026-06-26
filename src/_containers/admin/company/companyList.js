@@ -233,7 +233,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
                 }}
               >
                 <div
-                  title="Store Candidate Scan History"
+                  title="Candidate data, including the job matching percentage for each job, will be permanently stored."
                   className="switch has-switch"
                   data-on-label="ON"
                   data-off-label="OFF"
@@ -1005,12 +1005,12 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
 
       <ConfirmModal
         isOpen={showScanHistoryModal}
-        title="Confirm Store Candidate Scan History"
+        title="Confirm Candidate Scan History"
         icon={info}
         message={
           <>
-            <p>This will update whether non-recommended candidate scan results are stored for this company.</p>
-            <p>Do you want to continue?</p>
+            <p>This action will enable or disable the storage of non-recommended candidate scan results for this company.</p>
+            <p>Are you sure you want to continue?</p>
           </>
         }
         confirmText="Update Setting"

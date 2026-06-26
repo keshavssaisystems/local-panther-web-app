@@ -690,7 +690,7 @@ export default function AdmCandidateList() {
       <div>
         {isDelete && (
           <SweetAlert
-            title={"Are you sure want to delete the candidate!!"}
+            title={"Are you sure you want to delete this candidate? All account data will be permanently deleted and cannot be recovered."}
             type="warning"
             showConfirm={false}
           >
