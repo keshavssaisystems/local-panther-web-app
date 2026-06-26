@@ -38,6 +38,10 @@ export const GuestPreview = (props) => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [emailForPassword, setEmailForPassword] = useState("");
   const [password, setPassword] = useState("");
+  const [showHostPasswordEntry, setShowHostPasswordEntry] = useState(false);
+  const [hostPassword, setHostPassword] = useState("");
+  const [hostLoginError, setHostLoginError] = useState("");
+  const [hostLoginLoading, setHostLoginLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -70,12 +74,7 @@ export const GuestPreview = (props) => {
     if (props?.interviewSessionAccessData && getValues("email") !== "") {
       if (props?.interviewSessionAccessData && props?.interviewSessionAccessData?.role?.toLowerCase() === "host"
         && props?.interviewSessionAccessData?.requirelogin === true) {
-        navigate("/login", {
-          state: {
-            redirect: location.pathname,
-            email: getValues("email")
-          }
-        });
+        setShowHostPasswordEntry(true);
         return;
       }
       else if (props?.interviewSessionAccessData && props?.interviewSessionAccessData?.canjoin === true) {
@@ -125,6 +124,10 @@ export const GuestPreview = (props) => {
     props.submitGuestUserData({ email: values?.email, name: values?.name });
   }
   function onSubmit(payload) {
+    if (showHostPasswordEntry) {
+      handleHostPasswordSubmit();
+      return;
+    }
     if (props?.fbUsersData?.length > 0) {
       let ind = props.fbUsersData.findIndex(
         (d) => d.email === payload.email && !d.isDenied && !d.isAllowed
@@ -191,6 +194,25 @@ export const GuestPreview = (props) => {
     setPassword("");
   };
 
+  const handleHostPasswordSubmit = async () => {
+    if (hostPassword.trim() === "") {
+      setHostLoginError("Please enter your password.");
+      return;
+    }
+    setHostLoginError("");
+    setHostLoginLoading(true);
+    // Track mount status so we never call setState after the component unmounts
+    // (GuestPreview unmounts immediately on successful login when showScreen → "host")
+    let mounted = true;
+    await props.onHostLogin({
+      email: getValues("email"),
+      name: getValues("name"),
+      password: hostPassword,
+    });
+    if (mounted) setHostLoginLoading(false);
+    return () => { mounted = false; };
+  };
+
 
 
   return (
@@ -205,7 +227,7 @@ export const GuestPreview = (props) => {
             <Row>
               <Col md={12}>
                 <FormGroup>
-                  <Label for="email" className="input-label">
+                  <Label for="name" className="input-label">
                     Your full name <span className="required-icon">*</span>
                   </Label>
                   <input
@@ -214,6 +236,7 @@ export const GuestPreview = (props) => {
                     id="name"
                     placeholder="Enter your full name"
                     {...register("name")}
+                    disabled={showHostPasswordEntry}
                     className={` form-control ${errors.name ? "is-invalid error-text" : "input-text"
                       }`}
                   />
@@ -225,30 +248,63 @@ export const GuestPreview = (props) => {
                   <Label for="email" className="input-label">
                     Your email <span className="required-icon">*</span>
                   </Label>
-
                   <input
                     placeholder="Enter your email"
                     name="email"
-                    type={"text"}
+                    type="text"
                     id="email"
                     {...register("email")}
-                    className={`form-control ${errors.email ? "is-invalid" : ""
-                      }`}
+                    disabled={showHostPasswordEntry}
+                    className={`form-control ${errors.email ? "is-invalid" : ""}`}
                   />
-
                   <div className="invalid-feedback">
                     {errors.email?.message}
                   </div>
-
-                  <Button
-                    className="mt-4"
-                    style={{ width: "100%" }}
-                    color="primary"
-                    size="lg"
-                  >
-                    Join Meeting
-                  </Button>
                 </FormGroup>
+              </Col>
+              {showHostPasswordEntry && (
+                <Col md={12}>
+                  <FormGroup>
+                    <Label for="hostPassword" className="input-label">
+                      You are the host. Please enter your OpenWorX account password to start the meeting.
+                    </Label>
+                    <Input
+                      type="password"
+                      id="hostPassword"
+                      placeholder="Enter your password"
+                      value={hostPassword}
+                      onChange={(e) => {
+                        setHostPassword(e.target.value);
+                        setHostLoginError("");
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") handleHostPasswordSubmit();
+                      }}
+                      className={hostLoginError ? "is-invalid" : ""}
+                    />
+                    {hostLoginError && (
+                      <div className="invalid-feedback d-block">{hostLoginError}</div>
+                    )}
+                    {props.hostLoginError && (
+                      <div className="text-danger mt-1" style={{ fontSize: "0.875em" }}>
+                        {props.hostLoginError}
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+              )}
+              <Col md={12}>
+                <Button
+                  className="mt-2"
+                  style={{ width: "100%" }}
+                  color="primary"
+                  size="lg"
+                  disabled={showHostPasswordEntry && hostLoginLoading}
+                >
+                  {showHostPasswordEntry
+                    ? hostLoginLoading ? "Signing in..." : "Start Meeting"
+                    : "Join Meeting"}
+                </Button>
               </Col>
             </Row>
           </Form>
