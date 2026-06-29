@@ -34,6 +34,16 @@ export const getCompletedCustomerListThunk = createAsyncThunk(
   }
 );
 
+//Candidate gets HMs where chat should be disabled
+export const getDisabledChatCustomerListThunk = createAsyncThunk(
+  `${name}/getDisabledChatCustomerListThunk`,
+  async () => {
+    let userId = Number(localStorage.getItem("userId"));
+    const CUSTOMER_LIST = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=DisabledChatCustomerList&commonId=${userId}`;
+    return await fetchWrapper.get(CUSTOMER_LIST);
+  }
+);
+
 // sendChatNotification thunk - posts chat notification metadata to backend
 export const sendChatNotification = createAsyncThunk(
   `${name}/sendChatNotification`,
@@ -92,6 +102,7 @@ const chatSlice = createSlice({
     customerList: [],
     candidateList: [],
     completedCustomerList: [],
+    disabledChatCustomerList: [],
     loading: false,
   },
   reducers: {},
@@ -133,6 +144,18 @@ const chatSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getDisabledChatCustomerListThunk.pending]: (state) => {
+      state.loading = true;
+      state.disabledChatCustomerList = [];
+    },
+    [getDisabledChatCustomerListThunk.fulfilled]: (state, action) => {
+      state.disabledChatCustomerList = action.payload.data;
+      state.loading = false;
+    },
+    [getDisabledChatCustomerListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = false;
+    },
   },
 });
 
@@ -142,6 +165,7 @@ export const chatActions = {
   getCustomerListThunk,
   getCandidateListThunk,
   getCompletedCustomerListThunk,
+  getDisabledChatCustomerListThunk,
   sendChatNotification,
   trackChatMessage,
   markChatAsRead,

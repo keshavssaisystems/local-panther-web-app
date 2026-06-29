@@ -15,7 +15,8 @@ export function ChatInterface() {
     }
     if (userRole === 3) {
       getCustomerList();
-      dispatch(chatActions.getCompletedCustomerListThunk());
+      //  use DisabledChatCustomerList so chat stays active during Offer/Accepted stages
+      dispatch(chatActions.getDisabledChatCustomerListThunk());
     }
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -34,7 +35,11 @@ export function ChatInterface() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (userRole !== 2 && userRole !== 4) getCustomerList();
+      if (userRole !== 2 && userRole !== 4) {
+        getCustomerList();
+        // re-fetch disabled list so chat re-enables when HM reschedules
+        dispatch(chatActions.getDisabledChatCustomerListThunk());
+      }
     }, 30000); // 30000 ms = 30 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
