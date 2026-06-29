@@ -838,7 +838,7 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>OpenWorX CV</span>
             </DropdownItem>
-            {isStaffingFirm ? (<DropdownItem onClick={() => props.onCandidateResume(candidateid, row?.candidateResumeDto?.resumepath)}>
+            {(isStaffingFirm || row?.iscandidateresumevisible) && row?.candidateResumeDto && !!row?.candidateResumeDto?.resumepath ? (<DropdownItem onClick={() => props.onCandidateResume(candidateid, row?.candidateResumeDto?.resumepath)}>
               <i className="dropdown-icon lnr-layers"></i>
               <span>Candidate CV</span>
             </DropdownItem>) : (<></>)}

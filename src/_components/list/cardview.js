@@ -67,6 +67,8 @@ export const CandidateCardView = (props) => {
   const [isConnectingOAuth, setIsConnectingOAuth] = useState(false);
   const [connectedEmail, setConnectedEmail] = useState("");
   const isStaffingFirm = props.isStaffingFirm;
+  const isCandidateResumeVisible = props?.data?.iscandidateresumevisible;
+  console.log("[CandidateCardView] isStaffingFirm:", isStaffingFirm, "isCandidateResumeVisible (from row):", isCandidateResumeVisible, "resumepath:", props?.data?.candidateResumeDto?.resumepath);
   const dispatch = useDispatch();
 
   const API_BASE = process.env.REACT_APP_NEW_API_URL;
@@ -420,20 +422,22 @@ export const CandidateCardView = (props) => {
               onClick={() => onBuildResume()}
             ></img></p>
         </Col>
-        <Col sm={5} md={5} lg={5} xl={5} className="card-details-op">
-          {props?.data?.candidateResumeDto?.resumepath && (
-            <p>
-              <span style={{ cursor: "pointer", marginLeft: "3px" }} onClick={() => onCandidateResume()}>
-                Candidate CV
-              </span>
-              <img
-                style={{ float: "left", cursor: "pointer" }}
-                src={customerIcons.view_cv_icon}
-                alt="view cv icon"
-                onClick={() => onCandidateResume()}
-              ></img></p>
-          )}
-        </Col>
+        {(isStaffingFirm || isCandidateResumeVisible) && (
+          <Col sm={5} md={5} lg={5} xl={5} className="card-details-op">
+            {props?.data?.candidateResumeDto?.resumepath && (
+              <p>
+                <span style={{ cursor: "pointer", marginLeft: "3px" }} onClick={() => onCandidateResume()}>
+                  Candidate CV
+                </span>
+                <img
+                  style={{ float: "left", cursor: "pointer" }}
+                  src={customerIcons.view_cv_icon}
+                  alt="view cv icon"
+                  onClick={() => onCandidateResume()}
+                ></img></p>
+            )}
+          </Col>
+        )}
       </Row>)
   };
 
@@ -728,36 +732,13 @@ export const CandidateCardView = (props) => {
                   <Col md="11" lg="11">
                     <b>Certfications/Licences </b>{" "}
                     <div>
-                      {isStaffingFirm === false && (
-                        <>
-                          <img
-                            style={{
-                              float: "right",
-                              marginLeft: "0.25rem",
-                              marginTop: "2px",
-                              cursor: "pointer",
-                            }}
-                            src={customerIcons.view_cv_text}
-                            alt="view cv text"
-                            onClick={() => onBuildResume()}
-                          ></img>
-                          <img
-                            style={{ float: "right", cursor: "pointer" }}
-                            src={customerIcons.view_cv_icon}
-                            alt="view cv icon"
-                            onClick={() => onBuildResume()}
-                          ></img>
-                        </>
-                      )}
-
                       <p style={{ overflow: "visible" }}>{returnCert()}</p>
                     </div>
                   </Col>
                 </Row>
               </p>
             </Col>
-            {isStaffingFirm && (
-              <>
+            <>
                 <Col className="col-12">
                   <p className="card-details">
                     <Row>
@@ -930,7 +911,7 @@ export const CandidateCardView = (props) => {
                     </div>
                   </Col>
                 )}
-              </>)}
+              </>
           </Row>
           <Row className="mt-2">
             <Col md={6} lg={6}>

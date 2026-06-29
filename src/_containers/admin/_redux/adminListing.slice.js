@@ -316,6 +316,15 @@ export const updateStoreCandidateScanHistory = createAsyncThunk(
   }
 );
 
+// Update candidate resume visibility for hiring managers - PUT /api/V2/543985EC-3630-437F-9E09-9955033C7482/{id}
+export const updateCandidateResumeVisibility = createAsyncThunk(
+  `${name}/updateCandidateResumeVisibility`,
+  async ({ id, payload }) => {
+    const put_candidate_resume_visibility_url = `${baseUrl}/V2/543985EC-3630-437F-9E09-9955033C7482/${id}`;
+    return await fetchWrapper.put(put_candidate_resume_visibility_url, payload);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
