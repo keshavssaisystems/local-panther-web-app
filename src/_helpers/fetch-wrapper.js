@@ -18,6 +18,7 @@ const EXCLUDED_DROPDOWN_KEYS = [
   'allUserListByCompany',
   'ScheduledCandidatesForCustomer',
   'ScheduledCandidateListByUserId',
+  'DisabledChatCustomerList',
 ];
 
 function isCacheableDropdown(url) {
