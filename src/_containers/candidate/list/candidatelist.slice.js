@@ -164,6 +164,42 @@ export const getCandidateOfferHistory = createAsyncThunk(
   }
 );
 
+// post candidate counter offer
+export const postCounterOffer = createAsyncThunk(
+  `${name}/postCounterOffer`,
+  async (payload) => {
+    const COUNTER_OFFER_END_POINT = `${process.env.REACT_APP_NEW_API_URL}V2/3DE75CB9-2B22-4BF4-A60E-6A7EB359305D`;
+    return await fetchWrapper.post(COUNTER_OFFER_END_POINT, payload);
+  }
+);
+
+// fetch counter offers for a specific job offer (by jobofferid)
+export const getCounterOffers = createAsyncThunk(
+  `${name}/getCounterOffers`,
+  async (jobofferid) => {
+    const END_POINT = `${process.env.REACT_APP_NEW_API_URL}V2/jobcounteroffer/${jobofferid}`;
+    return await fetchWrapper.get(END_POINT);
+  }
+);
+
+// edit an existing active counter offer
+export const putCounterOffer = createAsyncThunk(
+  `${name}/putCounterOffer`,
+  async ({ id, ...payload }) => {
+    const END_POINT = `${process.env.REACT_APP_NEW_API_URL}V2/jobcounteroffer/${id}`;
+    return await fetchWrapper.put(END_POINT, payload);
+  }
+);
+
+// notify hiring manager by email when candidate submits a counter offer
+export const notifyCounterOffer = createAsyncThunk(
+  `${name}/notifyCounterOffer`,
+  async ({ jobcounterofferid, jobofferid }) => {
+    const END_POINT = `${process.env.REACT_APP_NEW_API_URL}JobOffer/NotifyCounterOffer`;
+    return await fetchWrapper.post(END_POINT, { jobcounterofferid, jobofferid });
+  }
+);
+
 // Create the slice
 const candidateList = createSlice({
   name,
@@ -176,6 +212,10 @@ const candidateList = createSlice({
     prescreenQues: [],
     acceptedJobList: [],
     offerHistory: [],
+  counterOfferLoading: false,
+  counterOfferError: null,
+  counterOffers: [],
+  counterOffersFetching: false,
   },
   reducers: {},
 
@@ -397,6 +437,40 @@ const candidateList = createSlice({
       state.offerHistory = payload.data;
     },
     [getCandidateOfferHistory.rejected]: (state, action) => {},
+    [postCounterOffer.pending]: (state) => {
+      state.counterOfferLoading = true;
+      state.counterOfferError = null;
+    },
+    [postCounterOffer.fulfilled]: (state) => {
+      state.counterOfferLoading = false;
+    },
+    [postCounterOffer.rejected]: (state, action) => {
+      state.counterOfferLoading = false;
+      state.counterOfferError = action.error?.message ?? "Failed to submit counter offer.";
+    },
+    [getCounterOffers.pending]: (state) => {
+      state.counterOffersFetching = true;
+      state.counterOffers = [];
+    },
+    [getCounterOffers.fulfilled]: (state, { payload = {} }) => {
+      state.counterOffersFetching = false;
+      state.counterOffers = payload?.data ?? [];
+    },
+    [getCounterOffers.rejected]: (state) => {
+      state.counterOffersFetching = false;
+      state.counterOffers = [];
+    },
+    [putCounterOffer.pending]: (state) => {
+      state.counterOfferLoading = true;
+      state.counterOfferError = null;
+    },
+    [putCounterOffer.fulfilled]: (state) => {
+      state.counterOfferLoading = false;
+    },
+    [putCounterOffer.rejected]: (state, action) => {
+      state.counterOfferLoading = false;
+      state.counterOfferError = action.error?.message ?? "Failed to update counter offer.";
+    },
   },
 });
 
@@ -417,5 +491,9 @@ export const candidateListActions = {
   updateRescheduleReason,
   getAcceptedJobListThunk,
   getCandidateOfferHistory,
+  postCounterOffer,
+  getCounterOffers,
+  putCounterOffer,
+  notifyCounterOffer,
 };
 export const candidateListReducer = candidateList.reducer;

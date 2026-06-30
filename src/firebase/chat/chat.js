@@ -23,7 +23,7 @@ import { chatActions } from "_store";
 export function Chat({ groupId, details }) {
   const dispatch = useDispatch();
   const completedInterviewCustomerList = useSelector(
-    (state) => state.chat.completedCustomerList
+    (state) => state.chat.disabledChatCustomerList
   );
   let customerArray = [];
   if (completedInterviewCustomerList?.length > 0) {
@@ -188,8 +188,7 @@ export function Chat({ groupId, details }) {
             {userRole === 3 && customerArray.includes(customerId) ? (
               <>
                 <Col style={{ color: "red" }}>
-                  Your interview process is completed. You can no longer send
-                  messages to the hiring manager.
+                  Chat is no longer available for this hiring process.
                 </Col>
               </>
             ) : (

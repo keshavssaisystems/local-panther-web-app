@@ -14,6 +14,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  Badge,
 } from "reactstrap";
 import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import { BsXCircle } from "react-icons/bs";
@@ -74,6 +75,8 @@ export const CustCandidateListView = (props) => {
   const [showFeedbackPendingModal, setShowFeedbackPendingModal] = useState(false);
   const [feedbackPendingRow, setFeedbackPendingRow] = useState(null);
   const [feedbackSubmitLoading, setFeedbackSubmitLoading] = useState(false);
+  const [showCounterOfferViewModal, setShowCounterOfferViewModal] = useState(false);
+  const [counterOfferViewRow, setCounterOfferViewRow] = useState(null);
   // custom styles to make column sizing predictable and enable truncation
   const customStyles = {
     table: {
@@ -838,7 +841,7 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>OpenWorX CV</span>
             </DropdownItem>
-            {isStaffingFirm ? (<DropdownItem onClick={() => props.onCandidateResume(candidateid, row?.candidateResumeDto?.resumepath)}>
+            {(isStaffingFirm || row?.iscandidateresumevisible) && row?.candidateResumeDto && !!row?.candidateResumeDto?.resumepath ? (<DropdownItem onClick={() => props.onCandidateResume(candidateid, row?.candidateResumeDto?.resumepath)}>
               <i className="dropdown-icon lnr-layers"></i>
               <span>Candidate CV</span>
             </DropdownItem>) : (<></>)}
@@ -861,6 +864,7 @@ export const CustCandidateListView = (props) => {
             ) : (
               <></>
             )}
+
             <DropdownItem onClick={() => props.onCandidateHistory(candidateid, row)}>
               <i className="dropdown-icon lnr-layers"></i>
               <span>Candidate History</span>
@@ -1568,6 +1572,27 @@ export const CustCandidateListView = (props) => {
                 sortable: true,
                 maxWidth: "12%",
               },
+              ...(props.type === "offers" ? [{
+                name: <span className="table-title">Counter Offer</span>,
+                cell: (row) =>
+                  row?.jobCounterOfferDtos?.length > 0 ? (
+                    <Button
+                      color="link"
+                      className="p-0 text-primary"
+                      style={{ fontSize: "inherit" }}
+                      title={`Candidate has submitted ${row.jobCounterOfferDtos.length} counter offer(s) — click to view`}
+                      onClick={() => { setCounterOfferViewRow(row); setShowCounterOfferViewModal(true); }}
+                    >
+                      <u>View</u>
+                    </Button>
+                  ) : (
+                    <span className="text-muted" style={{ fontSize: "12px" }}>—</span>
+                  ),
+                ignoreRowClick: true,
+                button: true,
+                maxWidth: "12%",
+                minWidth: "10%",
+              }] : []),
               {
                 name: <span className="table-title">Interest</span>,
                 cell: (row) =>
@@ -2762,6 +2787,7 @@ export const CustCandidateListView = (props) => {
         )}
       </>
       <ViewDocumentModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)} url={documentUrl} />
+
       <>
         {showFeedbackPendingModal && (
           <Modal isOpen={showFeedbackPendingModal} toggle={() => setShowFeedbackPendingModal(false)} backdrop="static" size="md">
@@ -2778,6 +2804,65 @@ export const CustCandidateListView = (props) => {
           </Modal>
         )}
       </>
+      {showCounterOfferViewModal && counterOfferViewRow && (
+        <Modal
+          isOpen={showCounterOfferViewModal}
+          toggle={() => { setShowCounterOfferViewModal(false); setCounterOfferViewRow(null); }}
+          size="md"
+        >
+          <ModalHeader toggle={() => { setShowCounterOfferViewModal(false); setCounterOfferViewRow(null); }}>
+            Counter Offer Details
+          </ModalHeader>
+          <ModalBody>
+            {counterOfferViewRow.jobOfferDtos?.[0]?.salary && (
+              <div
+                className="mb-3 px-3 py-2"
+                style={{ backgroundColor: "#f0f4ff", borderLeft: "4px solid #4a6cf7", borderRadius: "4px", fontSize: "14px" }}
+              >
+                <span className="text-muted me-1">Offered Salary:</span>
+                <strong>${new Intl.NumberFormat("en-US").format(counterOfferViewRow.jobOfferDtos[0].salary)}</strong>
+                {counterOfferViewRow.jobOfferDtos[0].payperiodtype && (
+                  <span className="text-muted ms-1">/ {counterOfferViewRow.jobOfferDtos[0].payperiodtype}</span>
+                )}
+              </div>
+            )}
+            {(() => {
+              const offer = counterOfferViewRow.jobCounterOfferDtos?.[0];
+              if (!offer) return null;
+              return (
+              <div key={offer.jobcounterofferid}>
+                <div className="row g-2 mb-2">
+                  <div className="col-6">
+                    <div className="text-muted" style={{ fontSize: "12px" }}>Counter Offer Amount</div>
+                    <div style={{ fontWeight: 600 }}>
+                      {offer.counterofferamount ? `$${new Intl.NumberFormat("en-US").format(offer.counterofferamount)}` : "—"}
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <div className="text-muted" style={{ fontSize: "12px" }}>Proposed Start Date</div>
+                    <div style={{ fontWeight: 600 }}>
+                      {offer.proposedstartdate ? moment(offer.proposedstartdate).format("MM/DD/YYYY") : "—"}
+                    </div>
+                  </div>
+                </div>
+                {offer.requestedbenefits && (
+                  <div className="mb-2">
+                    <div className="text-muted" style={{ fontSize: "12px" }}>Requested Benefits</div>
+                    <div>{offer.requestedbenefits}</div>
+                  </div>
+                )}
+                {offer.otherrequests && (
+                  <div>
+                    <div className="text-muted" style={{ fontSize: "12px" }}>Other Requests</div>
+                    <div>{offer.otherrequests}</div>
+                  </div>
+                )}
+              </div>
+              );
+            })()}
+          </ModalBody>
+        </Modal>
+      )}
     </>
   );
 };

@@ -17,7 +17,7 @@ import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { dropdownActions, addCustomerActions } from "_store";
-import { getCompanies, updateAllowDataSharing, updateCandidateNameVisibility, updateStoreCandidateScanHistory, setCompanyActive } from "_containers/admin/_redux/adminListing.slice";
+import { getCompanies, updateAllowDataSharing, updateCandidateNameVisibility, updateStoreCandidateScanHistory, setCompanyActive, updateCandidateResumeVisibility } from "_containers/admin/_redux/adminListing.slice";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
 import { useNavigate } from "react-router-dom";
@@ -58,6 +58,8 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   const [pendingScanHistoryToggle, setPendingScanHistoryToggle] = useState(null);
   const [pendingCompanyToggle, setPendingCompanyToggle] = useState(null);
   const [showCompanyConfirmModal, setShowCompanyConfirmModal] = useState(false);
+  const [showResumeVisibilityModal, setShowResumeVisibilityModal] = useState(false);
+  const [pendingResumeVisibilityToggle, setPendingResumeVisibilityToggle] = useState(null);
 
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
@@ -306,6 +308,59 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         width: "12%",
       }
      ] : []),
+    ...((currentRoleId === 1 || currentRoleId === 4 || isCompanyAdmin)
+      ? [
+        {
+          name: "Allow Hiring Managers to View Original Resume",
+          cell: (row) => {
+            console.log("[CompanyList] Resume Visibility row data:", {
+              companyid: row.companyid,
+              companyname: row.companyname,
+              iscandidateresumevisible: row.iscandidateresumevisible,
+            });
+            return (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  title="Allow Hiring Managers to view the candidate's original uploaded resume"
+                  className="switch has-switch"
+                  data-on-label="ON"
+                  data-off-label="OFF"
+                  style={{ cursor: "pointer" }}
+                  onClick={() =>
+                    openResumeVisibilityConfirmModal(
+                      !row.iscandidateresumevisible,
+                      row
+                    )
+                  }
+                >
+                  <div
+                    className={cx("switch-animate", {
+                      "switch-on": row.iscandidateresumevisible,
+                      "switch-off": !row.iscandidateresumevisible,
+                    })}
+                    size="sm"
+                  >
+                    <input type="checkbox" />
+                    <span className="switch-left">ON</span>
+                    <label>&nbsp;</label>
+                    <span className="switch-right">OFF</span>
+                  </div>
+                </div>
+              </div>
+            );
+          },
+          sortable: false,
+          width: "12%",
+        },
+      ]
+      : []),
     ...(currentRoleId === 1
       ? [
       {
@@ -489,6 +544,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
     }
 
     await dispatch(getCompanies(urlParams));
+    console.log("[CompanyList] getCompanyList - fetched data from store. Check state.adminListing.data for iscandidateresumevisible field per row.");
     setLoading(false);
   };
 
@@ -656,6 +712,12 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
     setPendingScanHistoryToggle({ value, row });
   };
 
+  const openResumeVisibilityConfirmModal = (value, row) => {
+    console.log("[CompanyList] openResumeVisibilityConfirmModal - value:", value, "row:", row);
+    setShowResumeVisibilityModal(true);
+    setPendingResumeVisibilityToggle({ value, row });
+  };
+
   const handleCandidateNameConfirm = async () => {
     if (!pendingCandidateNameToggle) return;
     const { value, row } = pendingCandidateNameToggle;
@@ -668,6 +730,14 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
     const { value, row } = pendingScanHistoryToggle;
     await handleToggleStoreScanHistory(value, row);
     setShowScanHistoryModal(false);
+  };
+
+  const handleResumeVisibilityConfirm = async () => {
+    if (!pendingResumeVisibilityToggle) return;
+    const { value, row } = pendingResumeVisibilityToggle;
+    console.log("[CompanyList] handleResumeVisibilityConfirm - value:", value, "row:", row);
+    await handleToggleCandidateResumeVisibility(value, row);
+    setShowResumeVisibilityModal(false);
   };
 
   const handleToggleCandidateNameVisibility = async function (value, row) {
@@ -704,6 +774,36 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       storecandidatescanhistory: value,
     };
     let response = await dispatch(updateStoreCandidateScanHistory({ id, payload: data }));
+    if (response.payload) {
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    } else {
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+    getCompanyList(pageSize, pageNo);
+  };
+
+  const handleToggleCandidateResumeVisibility = async function (value, row) {
+    let id = row.companyid;
+    let data = {
+      iscandidateresumevisible: value ? 1 : 0,
+    };
+    console.log("[CompanyList] handleToggleCandidateResumeVisibility - id:", id, "payload:", data);
+    let response = await dispatch(updateCandidateResumeVisibility({ id, payload: data }));
+    console.log("[CompanyList] handleToggleCandidateResumeVisibility - response:", response);
     if (response.payload) {
       dispatch(showSnackbar({
         message: response.payload.message,
@@ -1048,6 +1148,33 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         onCancel={() => {
           setShowCompanyConfirmModal(false);
           setPendingCompanyToggle(null);
+        }}
+        zIndex={1050}
+      />
+
+      <ConfirmModal
+        isOpen={showResumeVisibilityModal}
+        title="Confirm Original Resume Visibility"
+        icon={info}
+        message={
+          <>
+            <p>
+              {pendingResumeVisibilityToggle?.value
+                ? "This will allow Hiring Managers to view the candidate's original uploaded resume."
+                : "This will prevent Hiring Managers from viewing the candidate's original uploaded resume."}
+            </p>
+            <p>Do you want to continue?</p>
+          </>
+        }
+        confirmText="Update Setting"
+        cancelText="Cancel"
+        onConfirm={() => {
+          handleResumeVisibilityConfirm();
+          setPendingResumeVisibilityToggle(null);
+        }}
+        onCancel={() => {
+          setShowResumeVisibilityModal(false);
+          setPendingResumeVisibilityToggle(null);
         }}
         zIndex={1050}
       />

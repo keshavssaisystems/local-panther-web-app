@@ -59,7 +59,6 @@ function createExtraActions() {
     putPresentCandidate: putPresentCandidate(),
     putCandidatePlaced: putCandidatePlaced(),
     postScheduleInterviewOffline: postScheduleInterviewOffline(),
-
   };
 
   function getDrpDwnJobLists() {
@@ -380,6 +379,7 @@ function createExtraActions() {
         await fetchWrapper.post(`${newUrl}/ScheduledInterview/ScheduledInterviewOffline`, payload)
     );
   }
+
 }
 
 function createExtraReducers() {
@@ -775,5 +775,6 @@ function createExtraReducers() {
            state.loading = false;
         });
     }
+
   };
 }
