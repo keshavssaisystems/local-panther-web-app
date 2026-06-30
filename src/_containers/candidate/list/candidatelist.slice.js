@@ -191,6 +191,15 @@ export const putCounterOffer = createAsyncThunk(
   }
 );
 
+// notify hiring manager by email when candidate submits a counter offer
+export const notifyCounterOffer = createAsyncThunk(
+  `${name}/notifyCounterOffer`,
+  async ({ jobcounterofferid, jobofferid }) => {
+    const END_POINT = `${process.env.REACT_APP_NEW_API_URL}JobOffer/NotifyCounterOffer`;
+    return await fetchWrapper.post(END_POINT, { jobcounterofferid, jobofferid });
+  }
+);
+
 // Create the slice
 const candidateList = createSlice({
   name,
@@ -485,5 +494,6 @@ export const candidateListActions = {
   postCounterOffer,
   getCounterOffers,
   putCounterOffer,
+  notifyCounterOffer,
 };
 export const candidateListReducer = candidateList.reducer;

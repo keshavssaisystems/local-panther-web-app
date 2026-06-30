@@ -401,6 +401,8 @@ export default function CustomerDashboard() {
       history.navigate("/customer-candidate-applied");
     } else if (item?.notificationmessage?.toLowerCase().includes("rejected interview")) {
       history.navigate("/customer-candidate-scheduled");
+    } else if (item?.notificationmessage?.toLowerCase().includes("counter offer")) {
+      history.navigate("/customer-candidate-offers");
     } else {
       history.navigate("/candidate-list");
     }
