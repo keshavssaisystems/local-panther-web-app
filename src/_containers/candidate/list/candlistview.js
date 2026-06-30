@@ -88,7 +88,12 @@ export const CandListView = (props) => {
   const onCounterOfferClick = (row) => {
     setCounterOfferRow(row);
     const dtos = row.jobCounterOfferDtos ?? [];
-    const existing = dtos.length > 0 ? dtos[0] : null;
+    const currentJobOfferid = row.jobOfferDtos?.[0]?.jobofferid;
+    // Only treat as existing if the counter offer matches the current job offer
+    const existing =
+      dtos.length > 0 && dtos[0].jobofferid === currentJobOfferid
+        ? dtos[0]
+        : null;
     setCounterOfferExisting(existing);
     setShowCounterOfferModal(true);
   };
