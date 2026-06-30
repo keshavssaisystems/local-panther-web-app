@@ -23,9 +23,13 @@ import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.sv
 import newOffer from "assets/utils/images/job-detail-icons/newoffer.svg";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { getAcceptedListUniqueData } from "_helpers/helper";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { analytics } from "../../../firebase/index";
 import { ViewDocumentModal } from "_components/modal/viewdocumentmodal";
+import { CounterOfferModal } from "_components/modal/counteroffermodal";
+import { candidateListActions } from "./candidatelist.slice";
+import { showSnackbar } from "_store/snackbar.slice";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION } from "_constants/snackbarMessages";
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
     props.onCandidateActions(type, candidaterecommendedjobid, reason);
@@ -33,6 +37,7 @@ export const CandListView = (props) => {
   const acceptedList = useSelector(
     (state) => state.candidateListReducer.acceptedJobList?.data
   );
+  const dispatch = useDispatch();
   const [rejectReasonModal, setRejectReasonModal] = useState(false);
   const [candidaterecommendedjobid, setRecommendedJobId] = useState(0);
   const [rejectType, setRejectType] = useState("");
@@ -45,6 +50,10 @@ export const CandListView = (props) => {
   });
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState("");
+  const [showCounterOfferModal, setShowCounterOfferModal] = useState(false);
+  const [counterOfferRow, setCounterOfferRow] = useState(null);
+  const [counterOfferExisting, setCounterOfferExisting] = useState(null);
+  const [counterOfferLoading, setCounterOfferLoading] = useState(false);
 
   useEffect(() => {
     if (analytics) {
@@ -74,6 +83,69 @@ export const CandListView = (props) => {
 
   const onShowOHModal = (row) => {
     props.onShowOHModal(row);
+  };
+
+  const onCounterOfferClick = (row) => {
+    setCounterOfferRow(row);
+    const dtos = row.jobCounterOfferDtos ?? [];
+    const existing = dtos.length > 0 ? dtos[0] : null;
+    setCounterOfferExisting(existing);
+    setShowCounterOfferModal(true);
+  };
+
+  // mode: "post" (new entry) | "put" (editing existing)
+  const handleCounterOfferSubmit = async (payload, mode) => {
+    setCounterOfferLoading(true);
+    try {
+      const action =
+        mode === "put"
+          ? candidateListActions.putCounterOffer(payload)
+          : candidateListActions.postCounterOffer(payload);
+      const res = await dispatch(action);
+      if (res?.payload?.statusCode === 200 || res?.payload?.statusCode === 201) {
+        dispatch(
+          showSnackbar({
+            message:
+              mode === "put"
+                ? "Counter offer updated successfully."
+                : "Counter offer submitted successfully.",
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 4000,
+          })
+        );
+        setShowCounterOfferModal(false);
+        setCounterOfferRow(null);
+        setCounterOfferExisting(null);
+        props.onCandidateActions("counterOfferSubmitted", null);
+
+      } else {
+        dispatch(
+          showSnackbar({
+            message:
+              res?.payload?.message ||
+              "Failed to save counter offer. Please try again.",
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 4000,
+          })
+        );
+      }
+    } catch {
+      dispatch(
+        showSnackbar({
+          message: "An unexpected error occurred. Please try again.",
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 4000,
+        })
+      );
+    } finally {
+      setCounterOfferLoading(false);
+    }
   };
   const renderButtons = (row) => {
     if (props.type === "liked") {
@@ -308,6 +380,15 @@ export const CandListView = (props) => {
             <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
           <Button
+            size="sm"
+            title="Counter Offer"
+            className="btn-icon"
+            color="warning"
+            onClick={() => onCounterOfferClick(row)}
+          >
+            <img src={customerIcons?.list_maybe} alt="counter offer"></img>
+          </Button>
+          <Button
             // outline
             size="sm"
             title="Decline offer"
@@ -345,6 +426,15 @@ export const CandListView = (props) => {
               <DropdownItem onClick={() => onShowOHModal(row)}>
                 <i className="dropdown-icon lnr-layers"></i>
                 <span>Offer history</span>
+              </DropdownItem>
+            ) : (
+              <></>
+            )}
+
+            {props.type === "offers" ? (
+              <DropdownItem onClick={() => onCounterOfferClick(row)}>
+                <i className="dropdown-icon lnr-pencil"></i>
+                <span>Counter Offer</span>
               </DropdownItem>
             ) : (
               <></>
@@ -1611,6 +1701,18 @@ export const CandListView = (props) => {
       </>
       <ViewDocumentModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)}
         url={documentUrl} />
+      <CounterOfferModal
+        isOpen={showCounterOfferModal}
+        onClose={() => {
+          setShowCounterOfferModal(false);
+          setCounterOfferRow(null);
+          setCounterOfferExisting(null);
+        }}
+        onSubmit={handleCounterOfferSubmit}
+        loading={counterOfferLoading}
+        jobOffer={counterOfferRow?.jobOfferDtos?.[0]}
+        existingCounterOffer={counterOfferExisting}
+      />
     </>
   );
 };

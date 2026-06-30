@@ -300,6 +300,30 @@ export const CustomerUploadOffer = (props) => {
       <ModalBody
         style={{ maxHeight: "75vh", overflow: "auto", minHeight: "65vh" }}
       >
+        {(() => {
+          const latestCounterOffer = props.data?.jobCounterOfferDtos?.[0];
+          return latestCounterOffer?.counterofferamount ? (
+            <div
+              className="mb-3 px-3 py-2"
+              style={{
+                backgroundColor: "#fff8e1",
+                borderLeft: "4px solid #f5a623",
+                borderRadius: "4px",
+                fontSize: "14px",
+              }}
+            >
+              <span className="text-muted me-1">Candidate Counter Offer:</span>
+              <strong>
+                ${new Intl.NumberFormat("en-US").format(latestCounterOffer.counterofferamount)}
+              </strong>
+              {latestCounterOffer.proposedstartdate && (
+                <span className="text-muted ms-2">
+                  &middot; Proposed Start: {latestCounterOffer.proposedstartdate}
+                </span>
+              )}
+            </div>
+          ) : null;
+        })()}
         <div>
           <Nav fill pills>
             <NavItem>
