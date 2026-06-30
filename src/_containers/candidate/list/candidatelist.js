@@ -437,6 +437,8 @@ export default function CandidateList(props) {
           maxWidth: 500,
         }));
       }
+    } else if (type === "counterOfferSubmitted") {
+      toggle(activeTab, pageNo);
     }
   };
 
