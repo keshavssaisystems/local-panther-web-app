@@ -120,6 +120,17 @@ export const CandListView = (props) => {
         setCounterOfferExisting(null);
         props.onCandidateActions("counterOfferSubmitted", null);
 
+        // Fire-and-forget: notify the hiring manager by email (only for new submissions)
+        if (mode === "post") {
+          const jobcounterofferid =
+            res?.payload?.data?.jobcounterofferid ??
+            res?.payload?.data?.[0]?.jobcounterofferid;
+          const jobofferid = payload?.jobofferid;
+          if (jobcounterofferid && jobofferid) {
+            dispatch(candidateListActions.notifyCounterOffer({ jobcounterofferid, jobofferid }));
+          }
+        }
+
       } else {
         dispatch(
           showSnackbar({
