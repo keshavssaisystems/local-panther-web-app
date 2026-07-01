@@ -289,8 +289,7 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   <h6 className="mb-0 job-heading-custom">City</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                      previewData.basicInformation.cityName === undefined ||
-                      Number(previewData.basicInformation.jobLocation) === 1
+                      previewData.basicInformation.cityName === undefined 
                       ? "-"
                       : previewData.basicInformation.cityName}
                   </p>
@@ -301,8 +300,7 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   <h6 className="mb-0 job-heading-custom">State</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                      previewData.basicInformation.stateName === undefined ||
-                      Number(previewData.basicInformation.jobLocation) === 1
+                      previewData.basicInformation.stateName === undefined 
                       ? "-"
                       : previewData.basicInformation.stateName}
                   </p>
@@ -325,8 +323,7 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   <h6 className="mb-0 job-heading-custom">Zip code</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                      previewData.basicInformation.zipcode === undefined ||
-                      Number(previewData.basicInformation.jobLocation) === 1
+                      previewData.basicInformation.zipcode === undefined
                       ? "-"
                       : previewData.basicInformation.zipcode}
                   </p>
