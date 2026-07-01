@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import moment from "moment";
 import {
   Modal,
   ModalHeader,
@@ -33,7 +34,7 @@ export const CounterOfferModal = ({
   useEffect(() => {
     if (isOpen && existingCounterOffer) {
       setCounterofferamount(existingCounterOffer.counterofferamount ?? "");
-      setProposedstartdate(existingCounterOffer.proposedstartdate ?? "");
+      setProposedstartdate(existingCounterOffer.proposedstartdate ? moment.utc(existingCounterOffer.proposedstartdate).format("YYYY-MM-DD") : "");
       setRequestedbenefits(existingCounterOffer.requestedbenefits ?? "");
       setOtherrequests(existingCounterOffer.otherrequests ?? "");
       setErrors({});

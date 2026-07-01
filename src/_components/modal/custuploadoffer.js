@@ -318,7 +318,7 @@ export const CustomerUploadOffer = (props) => {
               </strong>
               {latestCounterOffer.proposedstartdate && (
                 <span className="text-muted ms-2">
-                  &middot; Proposed Start: {latestCounterOffer.proposedstartdate}
+                  &middot; Proposed Start: {moment.utc(latestCounterOffer.proposedstartdate).format("MM/DD/YYYY")}
                 </span>
               )}
             </div>
