@@ -2841,7 +2841,7 @@ export const CustCandidateListView = (props) => {
                   <div className="col-6">
                     <div className="text-muted" style={{ fontSize: "12px" }}>Proposed Start Date</div>
                     <div style={{ fontWeight: 600 }}>
-                      {offer.proposedstartdate ? moment(offer.proposedstartdate).format("MM/DD/YYYY") : "—"}
+                      {offer.proposedstartdate ? moment.utc(offer.proposedstartdate).format("MM/DD/YYYY") : "—"}
                     </div>
                   </div>
                 </div>
