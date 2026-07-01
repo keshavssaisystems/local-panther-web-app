@@ -1033,9 +1033,8 @@ export const CreateJob = forwardRef(
         event.target.elements.openPositions.value === "" ||
         Number(event.target.elements.openPositions.value) === 0;
       const isJobLocationInvalid = event.target.elements.jobLocation.value === "0";
-      const isRemote = Number(jobLocationOption) === 1;
-      const isCityInvalid = !isRemote && event.target.elements.city.value === "";
-      const isZipCodeInvalid = !isRemote && event.target.elements.zipCode.value === "";
+      const isCityInvalid = event.target.elements.city.value === "";
+      const isZipCodeInvalid = event.target.elements.zipCode.value === "";
       const isAddressInvalid =
         event.target.elements.zipCode.value === "3" &&
         event.target.elements.address.value === "";
@@ -1159,8 +1158,8 @@ export const CreateJob = forwardRef(
         event.target.elements.openPositions.value !== "" &&
         event.target.elements.jobLocation.value !== "0" &&
         Number(event.target.elements.openPositions.value) !== 0 &&
-        (isRemote || event.target.elements.zipCode.value !== "") &&
-        (isRemote || event.target.elements.city.value !== "") &&
+        event.target.elements.zipCode.value !== "" &&
+        event.target.elements.city.value !== "" &&
         descriptionData !== "" &&
         checkJobLocationCondition === true &&
         checkSecurity === true &&
@@ -2586,7 +2585,7 @@ export const CreateJob = forwardRef(
                       <Col md={6} lg={3}>
                         <FormGroup>
                           <Label for="city" className="fw-semi-bold">
-                            City, State{Number(jobLocationOption) !== 1 && <span style={{ color: "red" }}>* </span>}{" "}
+                            City, State<span style={{ color: "red" }}>* </span>{" "}
                             {zipcodeChange}
                           </Label>
                           <AsyncSelect
@@ -2628,7 +2627,7 @@ export const CreateJob = forwardRef(
                         <Col md={6} lg={3}>
                           <FormGroup>
                             <Label for="zipCode" className="fw-semi-bold">
-                              Zip code{Number(jobLocationOption) !== 1 && <span style={{ color: "red" }}>* </span>}
+                              Zip code<span style={{ color: "red" }}>* </span>
                             </Label>
                             <InputMask
                               className={
@@ -2660,7 +2659,7 @@ export const CreateJob = forwardRef(
                         <Col md={6} lg={3}>
                           <FormGroup>
                             <Label for="zipCode" className="fw-semi-bold">
-                              Zip code{Number(jobLocationOption) !== 1 && <span style={{ color: "red" }}>* </span>}
+                              Zip code<span style={{ color: "red" }}>* </span>
                             </Label>
                             <InputMask
                               className={
