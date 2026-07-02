@@ -10,7 +10,7 @@ export const ProgressCircle = (props) => {
         type="circle"
         width={60}
         strokeWidth={6}
-        symbol={props?.avgscore * 10 + "%"}
+        symbol={Math.round(props?.avgscore * 10) + "%"}
         status={
           props?.avgscore * 10 < 40
             ? "error"
@@ -20,18 +20,18 @@ export const ProgressCircle = (props) => {
         }
         theme={{
           error: {
-            symbol: <span className="perc">{props?.avgscore * 10 + "%"}</span>,
+            symbol: <span className="perc">{Math.round(props?.avgscore * 10) + "%"}</span>,
             trailColor: "#FFEBF0",
             color: "#FF406D",
           },
 
           active: {
-            symbol: <span className="perc">{props?.avgscore * 10 + "%"}</span>,
+            symbol: <span className="perc">{Math.round(props?.avgscore * 10) + "%"}</span>,
             trailColor: "#FFF3D6",
             color: "#F7B924",
           },
           success: {
-            symbol: <span className="perc">{props?.avgscore * 10 + "%"}</span>,
+            symbol: <span className="perc">{Math.round(props?.avgscore * 10) + "%"}</span>,
             trailColor: "#D0F2E0",
             color: "#14BD66",
           },
