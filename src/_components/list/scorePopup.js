@@ -82,7 +82,7 @@ export function ScorePopup({ scoreJson }) {
                               <div className="counter float-end mb-0">
                                 {validatedJson[key] === undefined
                                   ? "-"
-                                  : validatedJson[key]}
+                                  : Math.round(validatedJson[key])}
                               </div>
                             </Col>
                           </Row>
@@ -129,7 +129,7 @@ export function ScorePopup({ scoreJson }) {
                     <div className="counter float-end mb-0">
                       {validatedJson[key] === undefined
                         ? "-"
-                        : validatedJson[key]}
+                        : Math.round(validatedJson[key])}
                     </div>
                   </NavItem>
                 ))}
