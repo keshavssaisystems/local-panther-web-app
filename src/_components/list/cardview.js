@@ -755,6 +755,7 @@ export const CandidateCardView = (props) => {
                     </Row>
                   </p>
                 </Col>
+                {isStaffingFirm && (
                 <Col className="col-12">
                   <p className="card-details">
                     <Row>
@@ -770,8 +771,8 @@ export const CandidateCardView = (props) => {
                     </Row>
                   </p>
                 </Col>
-                {//props.data.assignedInfoDTO?.[0]?.isassigned === true 
-                  props.data?.isatscandidate === true && 
+                )}
+                {isStaffingFirm && props.data?.isatscandidate === true && 
                 (<Col className="col-12"> 
                     <div className="card-details"> 
                       <Row> 
@@ -841,7 +842,7 @@ export const CandidateCardView = (props) => {
                       </Row> 
                     </div> 
                 </Col> )}
-                {props.data?.isatscandidate === false && (
+                {isStaffingFirm && props.data?.isatscandidate === false && (
                   <Col className="col-12">
                     <div className="card-details">
                       <Row>
