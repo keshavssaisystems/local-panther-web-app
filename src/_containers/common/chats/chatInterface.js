@@ -9,6 +9,11 @@ import "./chat.scss";
 export function ChatInterface() {
   let userRole = Number(localStorage.getItem("userroleid"));
   const dispatch = useDispatch();
+
+  // Re-fetch chat list whenever "View as" user changes so the list reflects
+  // the newly selected hiring manager rather than showing stale data.
+  const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
+
   useEffect(() => {
     if (userRole === 2 || userRole === 4) {
       getCandidateList();
@@ -26,6 +31,13 @@ export function ChatInterface() {
       });
     }
   }, []);
+
+  // Refetch when View As hiring manager changes
+  useEffect(() => {
+    if (userRole === 2 || userRole === 4) {
+      getCandidateList();
+    }
+  }, [selectedHiringManagerId]);
   const getCandidateList = async function () {
     await dispatch(chatActions.getCandidateListThunk());
   };
@@ -55,7 +67,7 @@ export function ChatInterface() {
       <div>
         <div className={cx("app-inner-layout chat-layout")}>
           <div className="app-inner-layout__wrapper chat-Interface">
-            <ChatList list={chatList} />
+            <ChatList key={selectedHiringManagerId ?? "default"} list={chatList} />
           </div>
         </div>
       </div>

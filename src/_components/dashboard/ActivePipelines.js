@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "react-loaders";
 import { JobPipelineTimeline } from "_components/dashboard/JobPipelineTimeline";
 import customerIcons from "assets/utils/images/customer";
-import { getHiringMangersList, dropdownActions } from "_store";
+import { getHiringMangersList, dropdownActions, authActions } from "_store";
 import { setHiringManagerId, setSeeAllHiringManagerJobs } from "_store/commonCustFiltersSlice";
 import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 
@@ -163,6 +163,8 @@ export const ActivePipelines = ({
     apSelfChangeRef.current = true;
     dispatch(setHiringManagerId(""));
     dispatch(setSeeAllHiringManagerJobs(false));
+    // Reset "View as" context only when it is active
+    if (selectedHiringManagerId) dispatch(authActions.switchBackToAdminThunk());
     setFilteredItems([]);
     // Clear cached pages because filters were reset
     pagesRef.current = {};
@@ -388,7 +390,7 @@ export const ActivePipelines = ({
                     </div>
                     <SafeUncontrolledTooltip placement="top" target="apSeeAllToggleWrapper">
                       {viewAsActive
-                        ? 'Not available while "View as" is active'
+                        ? 'Disabled while "View as" is active. Clear filters to enable.'
                         : 'See all hiring managers jobs'}
                     </SafeUncontrolledTooltip>
                   </span>
@@ -418,7 +420,7 @@ export const ActivePipelines = ({
                         </Input>
                         {viewAsActive && (
                           <SafeUncontrolledTooltip placement="top" target="apHMSelectWrapper">
-                            Controlled by &quot;View as&quot;
+                            Managed by &quot;View as&quot;. Clear filters to change.
                           </SafeUncontrolledTooltip>
                         )}
                       </span>

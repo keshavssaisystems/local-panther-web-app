@@ -85,28 +85,32 @@ export default function AdminDashboard() {
   );
   let cardOptions = [
     {
-      title: "Active companies",
+      title: "Companies",
       count: dashboardCounts.activecompanycount,
       className: "primary",
       icon: custDashIcons.activeclient,
+      path: "/masters/company",
     },
     {
-      title: "Active employers",
+      title: "Hiring Managers",
       count: dashboardCounts.activecustomercount,
       className: "info",
       icon: custDashIcons.activeemployees,
+      path: "/employers",
     },
     {
-      title: "Active candidates",
+      title: "Candidates",
       count: dashboardCounts.activecandidatecount,
       className: "danger",
       icon: custDashIcons.activecandidates,
+      path: "/candidate-list",
     },
     {
-      title: "Open jobs",
+      title: "Jobs",
       count: dashboardCounts.openjobcount,
       className: "success",
       icon: custDashIcons.openjobs,
+      path: "/report/for/77D5B1C3-B8EB-4E5A-942A-D69956F832C6",
     },
   ];
   let dashCardUI = [

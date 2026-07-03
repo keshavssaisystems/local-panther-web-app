@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import cx from "classnames";
 import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 import { UserBox } from "./Components/UserBox";
+import { ViewAsBar } from "./Components/ViewAsBar";
 import logo from "../../../assets/utils/images/panther-logo-2.png";
 import smlogo from "../../../assets/utils/images/panther-logo-2.png";
 import { useSelector } from "react-redux";
@@ -132,6 +133,7 @@ export function AppHeader({
                 </h4>
               </div>
               <div className="app-header-right">
+                <ViewAsBar />
                 {userroleid !== 1 && <ChatCounter />}
                 <span>
                   <NotificationCounter></NotificationCounter>
