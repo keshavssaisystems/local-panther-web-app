@@ -12,7 +12,7 @@ export function JobShortDetailModal({ data }) {
   return (
     <>
       <Button color="primary" className="action-button" onClick={toggle}>
-        <BsEye className="action-icon" />
+        <BsEye style={{ width: '16px', height: '16px' }} />
       </Button>
       <Modal
         isOpen={modal}
