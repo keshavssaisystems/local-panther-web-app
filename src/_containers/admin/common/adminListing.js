@@ -13,8 +13,8 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  UncontrolledTooltip,
 } from "reactstrap";
+import SafeUncontrolledTooltip from "_components/common/SafeUncontrolledTooltip";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { USPhoneNumber } from "_helpers/helper";
 import "_containers/admin/common/adminListing.scss";
@@ -139,7 +139,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
                 color="primary"
                 className="ms-2"
               ></BsFillInfoCircleFill>
-              <UncontrolledTooltip
+              <SafeUncontrolledTooltip
                 placement="bottom"
                 target={"rr_" + row.userId}
               >
@@ -147,7 +147,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
                   row?.deactivationreason !== undefined
                   ? row?.deactivationreason
                   : "-"}
-              </UncontrolledTooltip>
+              </SafeUncontrolledTooltip>
             </>
           )}
         </>

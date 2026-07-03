@@ -96,7 +96,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       id: "name",
       selector: (row) => row.companyname,
       sortable: true,
-      width: "20%",
+      width: "12%",
     },
     {
       name: "Subsidiary count",
@@ -113,7 +113,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </span>
       ),
       sortable: true,
-      width: "10%"
+      width: "7%"
     },
 
     {
@@ -155,6 +155,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       name: "Industry",
       selector: (row) => row.industry,
       sortable: true,
+      width: "8%",
     },
     ...(currentRoleId === 1
       ? [
@@ -172,6 +173,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             </span>
           ),
           sortable: true,
+          width: "6%",
         },
       ]
       : []),
@@ -219,6 +221,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             </div>
           ),
           sortable: true,
+          width: "9%",
         }
       ] : []),
       ...((currentRoleId === 1 || currentRoleId === 4 || isCompanyAdmin)
@@ -258,7 +261,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
               </div>
             ),
             sortable: false,
-            width: "8%",
+            width: "9%",
           },
         ]
         : []),
@@ -305,7 +308,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           </div>
         ),
         sortable: false,
-        width: "12%",
+        width: "9%",
       }
      ] : []),
     ...((currentRoleId === 1 || currentRoleId === 4 || isCompanyAdmin)
@@ -357,7 +360,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             );
           },
           sortable: false,
-          width: "12%",
+          width: "9%",
         },
       ]
       : []),
@@ -391,6 +394,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             </div>
           </div>
         ),
+        width: "5%",
       }
       ] : []),
     {
@@ -413,7 +417,6 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             >
               <img src={customerIcons?.list_edit} alt="list approve"></img>
             </Button>
-
             <Button
               size="sm"
               title="View company"
@@ -446,7 +449,6 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </div>
       ),
       sortable: false,
-      width: "15%",
     },
   ];
 

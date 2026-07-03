@@ -10,7 +10,7 @@ import {
     Input,
     Button,
 } from "reactstrap";
-import { getHiringMangerListDynamic, dropdownActions ,getHiringMangersList} from "_store";
+import { getHiringMangerListDynamic, dropdownActions, getHiringMangersList, authActions } from "_store";
 import {
     setSelectedOpt,
     setSearchText,
@@ -140,11 +140,12 @@ export const CommonFilters = ({ onSearchData, onClearSearch, onJobStatusChange, 
         const isOn = e.target.checked;
         const companyId = Number(localStorage.getItem("companyid"));
         dispatch(setSeeAllHiringManagerJobs(isOn));
-        dispatch(setHiringManagerId(""));  // reset selected HM so list re-fetches fresh
         if (isOn) {
             dispatch(getHiringMangersList({ companyId, endpoint: 'allUserListByCompany' }));
         } else {
             // Toggle OFF — behave the same as clicking Clear
+            dispatch(clearFilters());
+            if (selectedHiringManagerId) dispatch(authActions.switchBackToAdminThunk());
             if (onClearSearch) onClearSearch();
         }
     };
@@ -153,6 +154,8 @@ export const CommonFilters = ({ onSearchData, onClearSearch, onJobStatusChange, 
     const handleClearFilters = (e) => {
         dispatch(clearFilters());
         e.preventDefault();
+        // Reset "View as" context only when it is active
+        if (selectedHiringManagerId) dispatch(authActions.switchBackToAdminThunk());
         if (onClearFilters) onClearFilters();
     };
 
@@ -278,7 +281,7 @@ export const CommonFilters = ({ onSearchData, onClearSearch, onJobStatusChange, 
                                         </div>
                                         <SafeUncontrolledTooltip placement="top" target="seeAllHMToggleWrapper">
                                             {viewAsActive
-                                                ? 'Not available while "View as" is active'
+                                                ? 'Disabled while "View as" is active. Clear filters to enable.'
                                                 : 'See all hiring managers jobs'}
                                         </SafeUncontrolledTooltip>
                                     </span>
@@ -313,7 +316,7 @@ export const CommonFilters = ({ onSearchData, onClearSearch, onJobStatusChange, 
                                                 </Input>
                                                 {viewAsActive && (
                                                     <SafeUncontrolledTooltip placement="top" target="cfHMSelectWrapper">
-                                                        Controlled by &quot;View as&quot; on the dashboard
+                                                        Managed by &quot;View as&quot;. Clear filters to change.
                                                     </SafeUncontrolledTooltip>
                                                 )}
                                             </span>
