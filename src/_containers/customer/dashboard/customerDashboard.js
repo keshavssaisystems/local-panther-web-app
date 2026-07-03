@@ -588,6 +588,7 @@ export default function CustomerDashboard() {
         <Row>
           <Col sm="12">
             <ActivePipelines
+              key={`pipeline-${sharedHiringManagerId || "default"}-${sharedSeeAllHM}`}
               pipelineJobList={pipelineJobList}
               pipelineJobDetail={pipelineJobDetail}
               pipelineJdLoading={pipelineJdLoading}
