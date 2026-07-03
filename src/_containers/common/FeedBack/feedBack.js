@@ -29,6 +29,7 @@ const FeedBack = () => {
 
   const dispatch = useDispatch();
   const { feedback_data_profile, loading,totalRows } = useSelector((state) => state.feedback);
+  const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
   
   const userroleid = localStorage.getItem("userroleid");
    
@@ -40,7 +41,7 @@ const FeedBack = () => {
         userroleid: userroleid,
         })
     );
-  }, [dispatch, page, pageSize]);
+  }, [dispatch, page, pageSize, selectedHiringManagerId]);
 
 
   const columns = [

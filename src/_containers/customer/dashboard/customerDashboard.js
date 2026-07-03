@@ -11,7 +11,6 @@ import {
   customerCandidateListsActions,
   candidateDashboardActions,
   custJobListActions,
-  authActions,
   getHiringMangersList,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
@@ -60,34 +59,6 @@ export default function CustomerDashboard() {
   const sharedHiringManagerId = useSelector((state) => state.commonCustFilters.hiringManagerId);
   const sharedSeeAllHM = useSelector((state) => state.commonCustFilters.seeAllHiringManagerJobs);
   const selectedHiringManagerId = useSelector((state) => state.auth.selectedHiringManagerId);
-  const isSwitching = useSelector((state) => state.auth.isSwitching);
-  const hiringManagers = useSelector((state) => state.customerReportReducer?.companyHiringManagers || []);
-
-  // Local state for the dropdown — updated immediately on selection to avoid
-  // the controlled-component "stuck" issue where React won't fire onChange
-  // if value hasn't changed in state yet.
-  const [dropdownValue, setDropdownValue] = useState(
-    localStorage.getItem("selectedHiringManagerId") || "all"
-  );
-
-  // Track whether this is the initial mount. On reload, dropdownValue is already
-  // correctly seeded from localStorage — we must not let the useEffect override it
-  // with "all" in case Redux selectedHiringManagerId is momentarily null.
-  const isFirstRender = useRef(true);
-
-  // Keep local dropdown value in sync when Redux state changes AFTER initial mount
-  // (e.g. after a switch completes or a switch-back completes).
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    if (selectedHiringManagerId) {
-      setDropdownValue(String(selectedHiringManagerId));
-    } else {
-      setDropdownValue("all");
-    }
-  }, [selectedHiringManagerId]);
 
   const reloadDashboardData = (explicitFilters) => {
     getDashboardCounts();
@@ -101,50 +72,20 @@ export default function CustomerDashboard() {
     }
   };
 
-  const handleHiringManagerChange = async (e) => {
-    const value = e.target.value;
+  // Reload dashboard counts/graph when "View as" user changes from any page
+  // (e.g. switched via the global ViewAsBar in the header).
+  // Skips the initial mount since the [] effect already covers it.
+  // The job list is handled separately by [sharedHiringManagerId, sharedSeeAllHM]
+  // to avoid a duplicate fetch.
+  const dashboardViewAsRef = useRef(true);
+  useEffect(() => {
+    if (dashboardViewAsRef.current) { dashboardViewAsRef.current = false; return; }
+    getDashboardCounts();
+    getDashboardJobsDataCount();
+    getDashboardGraphData();
+    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
+  }, [selectedHiringManagerId]);
 
-    // No-op: user re-selected the already active option
-    if (value === dropdownValue) return;
-
-    // Snapshot previous value before any state changes — used to revert on failure
-    const previousValue = dropdownValue;
-
-    // Persist selected HM name so the dropdown has a matching option on next reload
-    if (value === "all") {
-      localStorage.removeItem("selectedHiringManagerName");
-    } else {
-      const selectedHM = hiringManagers.find(hm => String(hm.id) === value);
-      if (selectedHM) localStorage.setItem("selectedHiringManagerName", selectedHM.name);
-    }
-
-    // Update local state immediately so the dropdown never appears frozen
-    setDropdownValue(value);
-
-    const originalAdminUserId = localStorage.getItem("adminOriginalUserId");
-
-    if (!value || value === "all") {
-      // "All Users" — restore original admin context
-      if (originalAdminUserId) {
-        const result = await dispatch(authActions.switchBackToAdminThunk());
-        if (result?.error) {
-          setDropdownValue(previousValue);
-          return;
-        }
-      }
-      // Pass explicit empty HM/viewAll so loadJobListPage doesn't read stale
-      // sharedHiringManagerId from the Redux closure before it resets.
-      reloadDashboardData({ hiringManagerId: "", viewAllCompanyJobs: false });
-    } else {
-      // Switch to the selected user (including admin's own entry)
-      const result = await dispatch(authActions.switchToHiringManagerThunk(parseInt(value)));
-      if (result?.error) {
-        setDropdownValue(previousValue);
-        return;
-      }
-      reloadDashboardData();
-    }
-  };
   const getDashboardCounts = async function () {
     await dispatch(customerDashboardActions.getCustomerDashboardThunk());
   };
@@ -507,62 +448,6 @@ export default function CustomerDashboard() {
   return (
     <>
       <div>
-        {isCompanyAdmin && <Row className="mb-3">
-          <Col sm="12" md="4" lg="3">
-            <div className="d-flex align-items-center">
-              <label className="me-2 mb-0 text-nowrap" style={{ fontWeight: 500 }}>
-                View as:
-              </label>
-              <select
-                className="form-select form-control"
-                value={dropdownValue}
-                onChange={handleHiringManagerChange}
-                disabled={isSwitching}
-                style={{ minWidth: 200 }}
-              >
-                <option value="all">Select a Hiring Manager</option>
-                {/* Pre-populate the selected option while the full list is loading on reload,
-                    so the controlled <select> always has a matching <option> and never
-                    visually falls back to "All Users" during the async load. */}
-                {dropdownValue !== "all" && !hiringManagers.some(hm => String(hm.id) === dropdownValue) && (
-                  <option value={dropdownValue}>
-                    {localStorage.getItem("selectedHiringManagerName") || dropdownValue}
-                  </option>
-                )}
-                {hiringManagers.map((hm) => (
-                  <option key={hm.id} value={hm.id}>
-                    {hm.name}
-                  </option>
-                ))}
-              </select>
-              {isSwitching && (
-                <span className="ms-2 spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true" />
-              )}
-              {!isSwitching && dropdownValue !== "all" && (
-                <button
-                  type="button"
-                  onClick={() => handleHiringManagerChange({ target: { value: "all" } })}
-                  title="Reset to all users"
-                  style={{
-                    marginLeft: "8px",
-                    padding: "0",
-                    fontSize: "14px",
-                    fontWeight: 400,
-                    border: "none",
-                    background: "transparent",
-                    color: "#2F479B",
-                    cursor: "pointer",
-                    textDecoration: "none",
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
-                  onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}
-                >
-                  Reset
-                </button>
-              )}
-            </div>
-          </Col>
-        </Row>}
         <Row>
           <Col sm="12" md="12" lg="12">
             <WidgetCard
