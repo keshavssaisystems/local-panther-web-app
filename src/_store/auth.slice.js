@@ -294,7 +294,7 @@ export const switchBackToAdminThunk = createAsyncThunk(
   `${name}/switchBackToAdminThunk`,
   async (_, { rejectWithValue }) => {
     const originalAdminUserId = localStorage.getItem("adminOriginalUserId");
-    if (!originalAdminUserId) throw new Error("No original admin session found");
+    if (!originalAdminUserId) return rejectWithValue("No original admin session found");
     try {
       return await callSwitchAPI(parseInt(originalAdminUserId));
     } catch (err) {
@@ -360,27 +360,8 @@ const authSlice = createSlice({
       : localStorage.getItem("isCompanyAdmin") === "true",
   },
   reducers: {
-    logout: (state, { payload }) => {
-      state.user = {};
-      state.token = null;
-      state.loader = false;
-      state.selectedHiringManagerId = null;
-      state.isSwitching = false;
-      state.switchError = null;
-      state.isCompanyAdmin = false;
-      let logo = localStorage.getItem("logo");
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToekn");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("userDetails");
-      localStorage.removeItem("userroleid");
-      localStorage.removeItem("pushnotification");
-      localStorage.removeItem("userLoginInfoId");
-      localStorage.removeItem("emailnotification");
-      localStorage.clear();
-      localStorage.setItem("logo", logo);
-      history.navigate("/login");
+    logout: (state) => {
+      handleLogoutSuccess(state);
     },
   },
 
@@ -564,7 +545,8 @@ const authSlice = createSlice({
       handleLogoutSuccess(state);
     },
     [logoutThunk.rejected]: (state, action) => {
-      // do nothing
+      // API call failed — still clear local session so the user isn't stuck
+      handleLogoutSuccess(state);
     },
     [postAddAuditLogs.pending]: (state, { payload }) => {
       // do nothing
@@ -702,6 +684,13 @@ const authSlice = createSlice({
         // Freeze isCompanyAdmin — the admin flag belongs to the original user,
         // not to whoever is currently being impersonated.
         localStorage.setItem("adminOriginalIsCompanyAdmin", localStorage.getItem("isCompanyAdmin"));
+        // Freeze the full menu list so admin-only items (Master, ATS Master) are
+        // restored when switching back — the SwitchToHiringManager API never
+        // returns those menus even on reset. Only save if a value actually exists.
+        const currentMenuList = localStorage.getItem("menuList");
+        if (currentMenuList) {
+          localStorage.setItem("adminOriginalMenuList", currentMenuList);
+        }
       }
 
       localStorage.setItem("selectedHiringManagerId", String(hiringManagerUserId));
@@ -731,6 +720,21 @@ const authSlice = createSlice({
       // If not, we still clear the switch state so the UI isn't stuck.
       if (data?.token) {
         handleSwitchContext(state, data);
+        // Restore the original admin menu list — the SwitchToHiringManager API
+        // never returns admin-only menus (Master, ATS Master) even on reset.
+        const originalMenuList = localStorage.getItem("adminOriginalMenuList");
+        if (originalMenuList) {
+          try {
+            const parsed = JSON.parse(originalMenuList);
+            // Only apply if it's a valid array — guards against "null" or corrupted values
+            if (Array.isArray(parsed)) {
+              state.menuList = parsed;
+              localStorage.setItem("menuList", originalMenuList);
+            }
+          } catch (e) {
+            // Malformed JSON — leave state.menuList as set by handleSwitchContext
+          }
+        }
       }
 
       // Always clean up switch context — admin is back to their own session.
@@ -740,6 +744,7 @@ const authSlice = createSlice({
       localStorage.removeItem("adminOriginalUserDetails");
       localStorage.removeItem("adminOriginalUserLoginInfoId");
       localStorage.removeItem("adminOriginalIsCompanyAdmin");
+      localStorage.removeItem("adminOriginalMenuList");
       localStorage.removeItem("selectedHiringManagerId");
       localStorage.removeItem("selectedHiringManagerName");
 
