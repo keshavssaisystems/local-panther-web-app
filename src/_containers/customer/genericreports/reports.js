@@ -374,7 +374,18 @@ const ReportsList = () => {
                                         <div key={lineIdx} style={{ marginBottom: '6px' }}>
                                             {parts.map((part, i) =>
                                                 /^https?:\/\//i.test(part) ? (
-                                                    <a key={i} href={part} target="_blank" rel="noopener noreferrer">{part}</a>
+                                                    <Button
+                                                        key={i}
+                                                        tag="a"
+                                                        href={part}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        size="sm"
+                                                        color="primary"
+                                                        style={{ padding: '2px 8px', fontSize: '11px' }}
+                                                    >
+                                                        Response
+                                                    </Button>
                                                 ) : (
                                                     <span key={i}>{part}</span>
                                                 )
