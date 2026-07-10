@@ -46,9 +46,7 @@ const AddClient = ({ isOpen, onClose, url, onSuccess }) => {
     if (!form.companyname || form.companyname.trim() === "") {
       newErrors.companyname = "Company name is required";
     }
-    if (!form.email || form.email.trim() === "") {
-      newErrors.email = "Email is required";
-    } else {
+    if (form.email && form.email.trim() !== "") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(form.email)) {
         newErrors.email = "Invalid email format";
@@ -184,7 +182,7 @@ const AddClient = ({ isOpen, onClose, url, onSuccess }) => {
         </FormGroup>
 
         <FormGroup>
-          <Label>Email<span className="text-danger">*</span></Label>
+          <Label>Email</Label>
           <Input
             type="email"
             name="email"
