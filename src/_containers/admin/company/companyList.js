@@ -96,10 +96,10 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       id: "name",
       selector: (row) => row.companyname,
       sortable: true,
-      width: "12%",
+      grow: 2,
     },
     {
-      name: "Subsidiary count",
+      name: <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>Subsidiary count</div>,
 
       cell: (row) => (
         <span
@@ -113,7 +113,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </span>
       ),
       sortable: true,
-      width: "7%"
+      grow: 1,
     },
 
     {
@@ -124,7 +124,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </span>
       ),
       sortable: true,
-      width: "20%",
+      grow: 3,
     },
     // {
     //   name: "City",
@@ -155,7 +155,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       name: "Industry",
       selector: (row) => row.industry,
       sortable: true,
-      width: "8%",
+      grow: 1,
     },
     ...(currentRoleId === 1
       ? [
@@ -173,14 +173,14 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             </span>
           ),
           sortable: true,
-          width: "6%",
+          grow: 1,
         },
       ]
       : []),
     ...(currentRoleId === 1 || isStaffingFirm
       ? [
         {
-          name: "Allow Data Sharing with OpenWorX Ecosystem",
+          name: <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>Allow Data Sharing with OpenWorX Ecosystem</div>,
           cell: (row) => (
             <div
               style={{
@@ -221,13 +221,13 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             </div>
           ),
           sortable: true,
-          width: "9%",
+          grow: 1,
         }
       ] : []),
-      ...((currentRoleId === 1 || currentRoleId === 4 || isCompanyAdmin)
+      ...((currentRoleId === 1 || isCompanyAdmin)
         ? [
           {
-            name: "Store Candidate Scan History",
+            name: <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>Store Candidate Scan History</div>,
             cell: (row) => (
               <div
                 style={{
@@ -261,14 +261,14 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
               </div>
             ),
             sortable: false,
-            width: "9%",
+            grow: 1,
           },
         ]
         : []),
     ...( isStaffingFirm===false
       ? [  
       {
-        name: "Candidate Name Visibility",
+        name: <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>Candidate Name Visibility</div>,
         cell: (row) => (
           <div
             style={{
@@ -308,13 +308,13 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           </div>
         ),
         sortable: false,
-        width: "9%",
+        grow: 1,
       }
      ] : []),
-    ...((currentRoleId === 1 || currentRoleId === 4 || isCompanyAdmin)
+    ...((currentRoleId === 1 || (isCompanyAdmin && !isStaffingFirm))
       ? [
         {
-          name: "Allow Hiring Managers to View Original Resume",
+          name: <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>Allow Hiring Managers to View Original Resume</div>,
           cell: (row) => {
             console.log("[CompanyList] Resume Visibility row data:", {
               companyid: row.companyid,
@@ -360,7 +360,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             );
           },
           sortable: false,
-          width: "9%",
+          grow: 1,
         },
       ]
       : []),
@@ -394,7 +394,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             </div>
           </div>
         ),
-        width: "5%",
+        grow: 1,
       }
       ] : []),
     {
@@ -436,11 +436,11 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
               <>
                 {row.billingdetailstatus ? (
                   <Button color="link" onClick={() => onViewBilling(row)} title="View Payment Details">
-                    <span style={{ textDecoration: "underline" }}>Payment Details</span>
+                    <span style={{ textDecoration: "underline", whiteSpace: "nowrap" }}>Payment Details</span>
                   </Button>
                 ) : (
                   <Button color="link" onClick={() => onAddBilling(row)} title="Add Payment Details">
-                    <span style={{ textDecoration: "underline" }}>Payment Details</span>
+                    <span style={{ textDecoration: "underline", whiteSpace: "nowrap" }}>Payment Details</span>
                   </Button>
                 )}
               </>
@@ -449,6 +449,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </div>
       ),
       sortable: false,
+      grow: 1.5,
     },
   ];
 
