@@ -42,6 +42,8 @@ import {
     getJobDropdownByUserid,
     getCandidateSearchDropdown,
     getCustReportJobDetail,
+    getMatchPercentageRangeMatched,
+    getMatchPercentageRangeNonMatched,
 } from "../reports/customerreport.slice";
 import { getProfileActions, getHiringMangerList, getHiringMangerListDynamic, getInterviewStatusDropDownThunk } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
@@ -137,6 +139,12 @@ const ReportsList = () => {
     };
     const recommendedJobStatusList = useSelector(
         (state) => state?.customerReportReducer?.recommendedJobStatusList
+    );
+    const matchPercentageRangeMatched = useSelector(
+        (state) => state?.customerReportReducer?.matchPercentageRangeMatched || []
+    );
+    const matchPercentageRangeNonMatched = useSelector(
+        (state) => state?.customerReportReducer?.matchPercentageRangeNonMatched || []
     );
     const handleChange = (name, value) => {
         setFilter({
@@ -499,6 +507,8 @@ const ReportsList = () => {
         // new Promise((resolve) => debouncedFetch({ inputValue: "", hiringmanagerId: hmId }, resolve));
         setJobSelected(null);
         setOfferStatusId("");
+        setMinMatch(null);
+        setMaxMatch(null);
         fetchData(1, 10, startdate, enddate, "", candidateSelected, subsidiaryId, null, hiringmanagerId, jobStatus, statusFilter, profileStatusFilter, profileSourceFilter, recommStatusId, null, null, null, 0, "", "");
         // handleClear();
     }, [path]);
@@ -520,6 +530,8 @@ const ReportsList = () => {
         // dispatch(getJobDropdownByUserid({inputValue:"", hiringmanagerId}));
         dispatch(getCandidateSearchDropdown());
         dispatch(getRecommendedJobStatus());
+        dispatch(getMatchPercentageRangeMatched());
+        dispatch(getMatchPercentageRangeNonMatched());
         dispatch(getInterviewStatusDropDownThunk());
         dispatch(getHiringMangerListDynamic({ companyId: companyId, endpoint: "allUserListByCompanyForReport" }));
     }, []);
@@ -802,62 +814,31 @@ const ReportsList = () => {
                                             <FormGroup>
                                                 <Input
                                                     type="select"
-                                                    value={showCustomMatch ? 'custom' : (minMatch !== null && maxMatch !== null ? `${minMatch}-${maxMatch}` : '')}
+                                                    value={minMatch !== null && maxMatch !== null ? `${minMatch}-${maxMatch}` : ''}
                                                     onChange={(e) => {
                                                         const v = e.target.value;
                                                         if (!v) {
                                                             setMinMatch(null);
                                                             setMaxMatch(null);
-                                                            setShowCustomMatch(false);
-                                                        } else if (v === 'custom') {
-                                                            setShowCustomMatch(true);
-                                                            setMinMatch(null);
-                                                            setMaxMatch(null);
                                                         } else {
-                                                            setShowCustomMatch(false);
                                                             const parts = v.split('-');
                                                             setMinMatch(parts[0] ? Number(parts[0]) : null);
                                                             setMaxMatch(parts[1] ? Number(parts[1]) : null);
                                                         }
                                                     }}
                                                 >
-                                                    <option value="">Match% Range</option>
-                                                    <option value="40-70">40% to 70%</option>
-                                                    <option value="70-90">70% to 90%</option>
-                                                    <option value="90-100">90% to 100%</option>
-                                                    {/* <option value="custom">Custom</option> */}
+                                                    <option value="">{filter.matchPercentageFilterType === 'NonMatched' ? 'Non-Match% Range' : 'Match% Range'}</option>
+                                                    {(filter.matchPercentageFilterType === 'NonMatched'
+                                                        ? matchPercentageRangeNonMatched
+                                                        : matchPercentageRangeMatched
+                                                    ).map((r) => (
+                                                        <option key={r.id} value={r.name}>
+                                                            {r.name.replace('-', '% to ') + '%'}
+                                                        </option>
+                                                    ))}
                                                 </Input>
                                             </FormGroup>
                                         </Col>
-                                    )}
-
-                                    {showCustomMatch && (
-                                        <>
-                                            <Col lg="1" md="2" sm="6" xs={6}>
-                                                <FormGroup>
-                                                    <Input
-                                                        type="number"
-                                                        min={0}
-                                                        max={100}
-                                                        placeholder="Min %"
-                                                        value={minMatch ?? ''}
-                                                        onChange={(e) => setMinMatch(e.target.value ? Number(e.target.value) : null)}
-                                                    />
-                                                </FormGroup>
-                                            </Col>
-                                            <Col lg="1" md="2" sm="6" xs={6}>
-                                                <FormGroup>
-                                                    <Input
-                                                        type="number"
-                                                        min={0}
-                                                        max={100}
-                                                        placeholder="Max %"
-                                                        value={maxMatch ?? ''}
-                                                        onChange={(e) => setMaxMatch(e.target.value ? Number(e.target.value) : null)}
-                                                    />
-                                                </FormGroup>
-                                            </Col>
-                                        </>
                                     )}
 
                                     {filter.candidateFilter == 1 && (

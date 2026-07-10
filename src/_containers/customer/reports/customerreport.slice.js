@@ -160,6 +160,22 @@ export const getRecommendedJobStatus = createAsyncThunk(
   }
 );
 
+// get match percentage range for matched report (Report14 — min 40%)
+export const getMatchPercentageRangeMatched = createAsyncThunk(
+  `${name}/getMatchPercentageRangeMatched`,
+  async () => {
+    return await fetchWrapper.get(`${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=MatchPercentageRangeMatched`);
+  }
+);
+
+// get match percentage range for non-matched report (Report25 — max 90%)
+export const getMatchPercentageRangeNonMatched = createAsyncThunk(
+  `${name}/getMatchPercentageRangeNonMatched`,
+  async () => {
+    return await fetchWrapper.get(`${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=MatchPercentageRangeNonMatched`);
+  }
+);
+
 // get Scheduled Candidates For Customer Dropdown
 export const getScheduledCandidatesForCustomerDropdown = createAsyncThunk(
   `${name}/getScheduledCandidatesForCustomerDropdown`,
@@ -283,6 +299,8 @@ const customerReportSlice = createSlice({
     jobDropDownList: [],
     candidateDropDownList: [],
     recommendedJobStatusList: [],
+    matchPercentageRangeMatched: [],
+    matchPercentageRangeNonMatched: [],
     jobDetail: [],
     scheduleInterviewDetail: [],
     subsidiaryList: [],
@@ -502,6 +520,22 @@ const customerReportSlice = createSlice({
       // state.jobDropDownList = action?.payload?.data;
     },
     [getJobDropdownByUserid.rejected]: (state, action) => { },
+
+    [getMatchPercentageRangeMatched.pending]: (state) => {
+      state.matchPercentageRangeMatched = [];
+    },
+    [getMatchPercentageRangeMatched.fulfilled]: (state, action) => {
+      state.matchPercentageRangeMatched = action?.payload?.data || [];
+    },
+    [getMatchPercentageRangeMatched.rejected]: (state) => { },
+
+    [getMatchPercentageRangeNonMatched.pending]: (state) => {
+      state.matchPercentageRangeNonMatched = [];
+    },
+    [getMatchPercentageRangeNonMatched.fulfilled]: (state, action) => {
+      state.matchPercentageRangeNonMatched = action?.payload?.data || [];
+    },
+    [getMatchPercentageRangeNonMatched.rejected]: (state) => { },
   },
 
 });
@@ -528,6 +562,8 @@ export const customerReportActions = {
   getHiringMangerListDynamic,
   getHiringMangersList,
   getJobDropdownByUserid,
+  getMatchPercentageRangeMatched,
+  getMatchPercentageRangeNonMatched,
 };
 
 export const customerReportReducer = customerReportSlice.reducer;
