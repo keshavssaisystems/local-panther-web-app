@@ -37,6 +37,7 @@ export const assignJobs = createAsyncThunk(
   async ({ jobIds, hiringManagerId }) => {
    
     const ASSIGN_JOBS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/V2/JobAssignedUsers`;
+    const SEND_EMAIL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/SendJobAssignmentEmail`;
     
     const payloads = [];
     jobIds.forEach((jobId) => {
@@ -49,7 +50,15 @@ export const assignJobs = createAsyncThunk(
     });
     
     const results = await Promise.all(
-      payloads.map((payload) => fetchWrapper.post(ASSIGN_JOBS_END_POINT, payload))
+      payloads.map(async (payload) => {
+        const result = await fetchWrapper.post(ASSIGN_JOBS_END_POINT, payload);
+        try {
+          await fetchWrapper.post(SEND_EMAIL_END_POINT, payload);
+        } catch (_) {
+          // email failure should not block the assignment
+        }
+        return result;
+      })
     );
     
     return results;
