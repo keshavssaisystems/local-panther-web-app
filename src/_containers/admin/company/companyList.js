@@ -157,6 +157,13 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       sortable: true,
       grow: 1,
     },
+    {
+      name: "Created Date",
+      selector: (row) => row.createddate,
+      cell: (row) => row.createddate ? new Date(row.createddate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '-',
+      sortable: true,
+      grow: 1,
+    },
     ...(currentRoleId === 1
       ? [
         {
