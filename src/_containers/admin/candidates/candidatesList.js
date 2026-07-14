@@ -568,9 +568,9 @@ export default function AdmCandidateList() {
                             >
                               <option value={""}>All Source</option>
                               <option value={"Admin"}>Admin</option>
-                              <option value={"Registration"}>
-                                Registration
-                              </option>
+                              <option value={"PortalRegistration"}>Portal Registration</option>
+                              <option value={"MobileRegistration"}>Mobile Registration</option>
+                              <option value={"ATS"}>ATS</option>
                             </Input>
                           </FormGroup>
                         </Col>
